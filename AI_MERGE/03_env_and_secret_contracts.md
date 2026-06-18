@@ -20,11 +20,12 @@ for `rusty-idd scan`, `plan`, `task`, `validate`, `manifest`, `spec`, `run`, or
 | Name | Required | Secret | Source | Purpose |
 |---|---:|---:|---|---|
 | `GITHUB_TOKEN` | yes | yes | GitHub Actions automatic token | Runs semantic PR title checks, release-please fallback, and release asset upload. |
-| `PARENT_REPO_PAT` | no | yes | GitHub Actions repository/org secret | Optional release-please token. Use only when release PRs created by `GITHUB_TOKEN` cannot trigger required follow-up workflows. |
+| `PARENT_REPO_PAT` | no | yes | GitHub Actions repository/org secret | Optional release-please token. When absent, the release-please job is skipped because this repo does not permit `GITHUB_TOKEN` to create pull requests. |
+| `ENABLE_RELEASE_PLEASE` | no | no | GitHub Actions repository/org variable | Set to `true` only after `PARENT_REPO_PAT` is configured and allowed to create release PRs. |
 
 `PARENT_REPO_PAT` is intentionally optional. If it is absent, release-please
-falls back to `GITHUB_TOKEN`; maintainers may need to manually verify release
-PR checks depending on repository settings.
+does not run; release PR creation must be performed manually or by adding a
+least-privilege repository/org secret and setting `ENABLE_RELEASE_PLEASE=true`.
 
 ## Provider Rules
 

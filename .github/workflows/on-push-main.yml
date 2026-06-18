@@ -16,6 +16,7 @@ jobs:
   release-please:
     name: Release Please
     needs: quality
+    if: ${{ vars.ENABLE_RELEASE_PLEASE == 'true' }}
     runs-on: ubuntu-latest
     outputs:
       release_created: ${{ steps.release.outputs.release_created }}
@@ -28,6 +29,6 @@ jobs:
         id: release
         uses: googleapis/release-please-action@v4
         with:
-          token: ${{ secrets.PARENT_REPO_PAT || secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.PARENT_REPO_PAT }}
           config-file: release-please-config.json
           manifest-file: .release-please-manifest.json
