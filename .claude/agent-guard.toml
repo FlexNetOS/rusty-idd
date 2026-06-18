@@ -1,0 +1,23 @@
+[policy]
+mode = "warn"
+integration_branch = "develop"
+protected_branches = ["main", "master", "develop"]
+
+[commands]
+deny = [
+  "git reset --hard",
+  "git clean -fd",
+  "git clean -ffdx",
+  "git branch -D",
+  "rm -rf"
+]
+
+[evidence]
+required = [
+  "build",
+  "test",
+  "lint",
+  "audit",
+  "validate",
+  "manifest"
+]

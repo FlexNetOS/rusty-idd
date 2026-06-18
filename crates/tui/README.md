@@ -38,6 +38,7 @@ rusty-idd tui
 - Switch between **Active** and **Archived** tabs with `h`/`l`
 - Change list shows task progress (completed/total) per change
 - Select a change to view its artifacts (Proposal, Design, Tasks, Specs)
+- Active and archived change metadata is read from local OpenSpec files; no external `openspec` runtime binary is required
 
 ### Implementation Runner
 
@@ -68,7 +69,7 @@ rusty-idd tui
 ### Configuration
 
 - Built-in TUI config editor accessible with `C`
-- Configurable fields: Command, Prompt, Post-Implementation Prompt, Interactive Command, Run Finished Command
+- Configurable fields: Command, Prompt, Post-Implementation Prompt, Interactive Command, Run Finished Command, Retry On Failure
 - Config stored in `openspec/tui-config.yaml`
 
 ### Log Viewing

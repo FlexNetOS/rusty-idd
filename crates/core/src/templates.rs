@@ -60,12 +60,25 @@ pub const ENV_SCHEMA_EXAMPLE: &str = r#"{
 }
 "#;
 
-pub const GITHUB_ACTIONS_CI: &str = r#"name: idd-ci
+pub const ENV_CONTRACT_EXAMPLE: &str = r#"runtime:
+  secrets_required: false
+  optional_env: []
+
+ci_release:
+  secrets:
+    - name: GITHUB_TOKEN
+      required: true
+      provider: github-actions
+      purpose: Automatic token for pull request checks and repository automation.
+"#;
+
+pub const GITHUB_ACTIONS_CI: &str = r#"name: ci
 
 on:
+  workflow_call:
   pull_request:
   push:
-    branches: [main]
+    branches: [main, develop]
 
 permissions:
   contents: read
@@ -75,9 +88,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@1.96.0
         with:
           components: rustfmt, clippy
+      - uses: Swatinem/rust-cache@v2
       - name: Format
         run: cargo fmt --all -- --check
       - name: Clippy
@@ -87,7 +101,15 @@ jobs:
       - name: IDD validation
         run: cargo run --bin rusty-idd -- validate --workspace .
       - name: IDD manifest refresh check
-        run: cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
+        run: |
+          cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
+          git diff --exit-code -- .idd/MANIFEST.tsv
+      - name: Install cargo-audit
+        uses: taiki-e/install-action@v2
+        with:
+          tool: cargo-audit
+      - name: Security audit
+        run: cargo audit --deny warnings
 "#;
 
 pub const TASK_TEMPLATE: &str = r#"# IDD Task: {{TITLE}}

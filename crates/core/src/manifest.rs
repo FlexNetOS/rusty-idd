@@ -81,4 +81,45 @@ mod tests {
         let out = manifest_tsv(&[]);
         assert_eq!(out, "path\tsize_bytes\tfnv1a64\n");
     }
+
+    #[test]
+    fn manifest_excludes_local_execution_artifacts() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
+        fs::create_dir(root.join(".idd")).unwrap();
+        fs::write(root.join(".idd/MANIFEST.tsv"), "old self hash\n").unwrap();
+        fs::write(root.join("Cargo.toml.idd-bak-1"), "stale\n").unwrap();
+        fs::create_dir(root.join("_workspace")).unwrap();
+        fs::write(root.join("_workspace/HANDOFF.md"), "local\n").unwrap();
+        fs::create_dir(root.join(".devin")).unwrap();
+        fs::write(root.join(".devin/config.local.json"), "{}\n").unwrap();
+        fs::create_dir(root.join(".worktrees")).unwrap();
+        fs::write(root.join(".worktrees/branch.txt"), "local\n").unwrap();
+
+        let paths = generate_manifest(root)
+            .unwrap()
+            .into_iter()
+            .map(|entry| entry.path)
+            .collect::<Vec<_>>();
+
+        assert_eq!(paths, vec!["Cargo.toml"]);
+    }
+
+    #[test]
+    fn write_manifest_is_idempotent() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        fs::create_dir(root.join(".idd")).unwrap();
+        fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
+        let manifest = root.join(".idd/MANIFEST.tsv");
+
+        write_manifest(root, &manifest).unwrap();
+        let first = fs::read_to_string(&manifest).unwrap();
+        write_manifest(root, &manifest).unwrap();
+        let second = fs::read_to_string(&manifest).unwrap();
+
+        assert_eq!(first, second);
+        assert!(!first.contains(".idd/MANIFEST.tsv"));
+    }
 }

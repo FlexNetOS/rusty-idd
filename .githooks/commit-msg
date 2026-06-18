@@ -1,0 +1,8 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if command -v npx >/dev/null 2>&1; then
+  npx --no -- commitlint --edit "$1"
+else
+  echo "commitlint skipped: npx is not installed" >&2
+fi

@@ -67,7 +67,11 @@ fn cmd_init(args: &[String]) -> Result<(), String> {
         templates::ENV_SCHEMA_EXAMPLE,
     )?;
     write_template(
-        &target.join(".github/workflows/idd-ci.yml"),
+        &target.join(".env.contract.yaml"),
+        templates::ENV_CONTRACT_EXAMPLE,
+    )?;
+    write_template(
+        &target.join(".github/workflows/ci.yml"),
         templates::GITHUB_ACTIONS_CI,
     )?;
     write_template(
@@ -214,7 +218,7 @@ fn cmd_github(args: &[String]) -> Result<(), String> {
         templates::ISSUE_TEMPLATE,
     )?;
     write_template(
-        &workspace.join(".github/workflows/idd-ci.yml"),
+        &workspace.join(".github/workflows/ci.yml"),
         templates::GITHUB_ACTIONS_CI,
     )?;
     write_template(&workspace.join("SECURITY.md"), templates::SECURITY_MD)?;

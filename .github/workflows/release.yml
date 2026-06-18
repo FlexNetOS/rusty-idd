@@ -1,0 +1,47 @@
+name: Release
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build ${{ matrix.suffix }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest
+            suffix: linux-x86_64
+            exe: ""
+          - os: ubuntu-24.04-arm
+            suffix: linux-aarch64
+            exe: ""
+          - os: macos-13
+            suffix: macos-x86_64
+            exe: ""
+          - os: macos-14
+            suffix: macos-aarch64
+            exe: ""
+          - os: windows-latest
+            suffix: windows-x86_64
+            exe: ".exe"
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@1.96.0
+      - uses: Swatinem/rust-cache@v2
+      - name: Build release binary
+        run: cargo build --workspace --locked --release --bin rusty-idd
+      - name: Stage asset
+        shell: bash
+        run: |
+          mkdir -p dist
+          cp "target/release/rusty-idd${{ matrix.exe }}" "dist/rusty-idd-${{ matrix.suffix }}${{ matrix.exe }}"
+      - name: Upload release asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*

@@ -9,4 +9,4 @@ Track tasks assigned to AI agents.
 - E2: Byte-exact contradiction (DONE)
 - E3: ADRs (DONE)
 - E4: Harden drift-check (DONE)
-- E5: Zero-warning validate (IN PROGRESS)
+- E5: Zero-warning validate (DONE)

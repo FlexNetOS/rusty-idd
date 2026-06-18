@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+if git diff --cached --name-only -- '*.rs' | grep -q .; then
+  cargo fmt --all -- --check
+fi

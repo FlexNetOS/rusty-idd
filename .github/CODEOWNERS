@@ -1,0 +1,10 @@
+# Repository-wide review ownership. Update the team name if GitHub reports it
+# as unavailable for this org.
+* @FlexNetOS/maintainers
+
+# CI, release, and agent control-plane changes require the same ownership.
+/.github/ @FlexNetOS/maintainers
+/.claude/ @FlexNetOS/maintainers
+/.gemini/ @FlexNetOS/maintainers
+/AI_MERGE/ @FlexNetOS/maintainers
+/.idd/ @FlexNetOS/maintainers

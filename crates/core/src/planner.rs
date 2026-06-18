@@ -106,7 +106,11 @@ pub fn generate_workspace(
         templates::ENV_SCHEMA_EXAMPLE,
     )?;
     write_preserve(
-        &out.join(".github/workflows/idd-ci.yml"),
+        &out.join(".env.contract.yaml"),
+        templates::ENV_CONTRACT_EXAMPLE,
+    )?;
+    write_preserve(
+        &out.join(".github/workflows/ci.yml"),
         templates::GITHUB_ACTIONS_CI,
     )?;
 

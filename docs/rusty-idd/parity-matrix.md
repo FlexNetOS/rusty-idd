@@ -22,7 +22,7 @@ The interactive task runner and execution layer, now in `crates/tui` and `crates
 |---------|------|--------|-------|
 | Terminal UI | `rusty-idd tui` | **pass** | `crates/tui` UI + `crates/runner` execution. |
 | Headless Run | `rusty-idd run` | **pass** | `crates/cli` wraps `crates/runner`. |
-| Task tracking | `crates/runner` | **pass** | Parsed from `tasks.md` checkboxes. |
+| Task tracking | `crates/runner` | **pass** | Parsed from `tasks.md` checkboxes; active change/status discovery is filesystem-backed and does not require the external `openspec` CLI. |
 | Stall detection | `crates/runner` | **pass** | Aborts after 3 no-progress runs. |
 | Dependency sort | `crates/runner` | **pass** | Topological sort of `change-config.yaml` deps. |
 | Archive view | `rusty-idd tui` | **pass** | Displays archived changes from `openspec/changes/archive/`. |

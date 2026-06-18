@@ -637,22 +637,18 @@ fn implementation_loop(
         };
 
         if completed > prev_completed {
-            // Progress was made — reset both the global and per-task counters
+            // Progress was made; reset both the global and per-task counters.
             stall_count = 0;
             task_failures = 0;
             prev_completed = completed;
         } else {
-            // No progress — first bump the per-task retry counter. When it
-            // exceeds the configured per-task limit, stall (default 1 means
-            // the task is re-issued once, then stalls on the second
-            // no-progress run — see SCEN-3.1).
+            // Default retry_on_failure=1 re-issues once, then stalls on the
+            // second no-progress run. STALL_THRESHOLD is still an absolute cap.
             task_failures += 1;
             if task_failures > config.retry_on_failure {
                 stalled = true;
                 break;
             }
-            // STALL_THRESHOLD remains an absolute upper bound regardless of
-            // how high `retry_on_failure` is set (REQ-4).
             stall_count += 1;
             if stall_count >= STALL_THRESHOLD {
                 stalled = true;
@@ -1106,6 +1102,76 @@ mod tests {
         assert!(matches!(msg, ImplUpdate::Stalled));
     }
 
+    /// T4 (SCEN-3.1 / REQ-3): the loop stalls after exactly
+    /// `retry_on_failure + 1` no-progress runs.
+    ///
+    /// Uses `true` as the command: it spawns successfully and exits 0 but never
+    /// marks a task, so every run is a no-progress run. With
+    /// `retry_on_failure = 2`, two runs emit `Progress`; the third run bumps the
+    /// retry counter over the limit and emits `Stalled`. That proves arbitrary
+    /// N+1 retry bounds, complementing the default-N=1 test below.
+    #[test]
+    fn test_loop_stalls_after_retry_on_failure_runs() {
+        let tmp_dir = tempfile::tempdir().unwrap();
+        let dir = tmp_dir.path();
+        let change_dir = dir.join("openspec/changes/test-retry");
+        std::fs::create_dir_all(&change_dir).unwrap();
+        let tasks_path = change_dir.join("tasks.md");
+        std::fs::write(&tasks_path, "- [ ] Task one\n").unwrap();
+
+        let retry_on_failure: u32 = 2;
+        // `true` ignores its args, exits 0, and makes no task progress.
+        let config = TuiConfig {
+            command: "true {prompt}".to_string(),
+            prompt: "test {name}".to_string(),
+            retry_on_failure,
+            ..Default::default()
+        };
+
+        let (tx, rx) = mpsc::channel();
+        let cancel_flag = Arc::new(AtomicBool::new(false));
+        let child_handle: Arc<Mutex<Option<Child>>> = Arc::new(Mutex::new(None));
+        let log_path = dir.join("test.log");
+
+        implementation_loop(
+            "test-retry",
+            &tasks_path,
+            &log_path,
+            &tx,
+            &cancel_flag,
+            &child_handle,
+            &config,
+        );
+
+        // Count no-progress runs via the messages channel: each non-stalling run
+        // emits one `Progress`, and the final run emits `Stalled` instead.
+        let mut progress_runs: u32 = 0;
+        let mut stalled = false;
+        while let Ok(msg) = rx.recv_timeout(std::time::Duration::from_secs(5)) {
+            match msg {
+                ImplUpdate::Progress { .. } => progress_runs += 1,
+                ImplUpdate::Stalled => {
+                    stalled = true;
+                    break;
+                }
+                ImplUpdate::Error(e) => panic!("unexpected error from loop: {e}"),
+                other => panic!("unexpected message before stall: {other:?}"),
+            }
+        }
+
+        assert!(stalled, "loop should stall once retries are exhausted");
+        assert_eq!(
+            progress_runs, retry_on_failure,
+            "loop should make exactly retry_on_failure no-progress runs before the stalling run"
+        );
+        // Total runs = the progress-emitting runs plus the final stalling run.
+        assert_eq!(
+            progress_runs + 1,
+            retry_on_failure + 1,
+            "loop should stall after exactly retry_on_failure + 1 runs"
+        );
+    }
+
     #[test]
     fn test_config_render_prompt_contains_all_context_references() {
         let config = TuiConfig::default();
@@ -1293,8 +1359,8 @@ mod tests {
 
     #[test]
     fn test_implementation_loop_writes_task_header() {
-        // Create a tasks file with one unchecked task so the loop tries to spawn
-        // claude (which will fail in test env), but should still write the task header
+        // Create a tasks file with one unchecked task. Use an empty command so
+        // the test never launches a real agent binary from the developer host.
         let tmp_dir = tempfile::tempdir().unwrap();
         let dir = tmp_dir.path();
         let change_dir = dir.join("openspec/changes/test-task-hdr");
@@ -1314,7 +1380,10 @@ mod tests {
             &tx,
             &cancel_flag,
             &child_handle,
-            &TuiConfig::default(),
+            &TuiConfig {
+                command: String::new(),
+                ..Default::default()
+            },
         );
 
         let content = std::fs::read_to_string(&log_path).unwrap();
@@ -1438,8 +1507,6 @@ mod tests {
         let config = TuiConfig {
             command: "true {prompt}".to_string(),
             prompt: "test {name}".to_string(),
-            // Raise the per-task retry limit above STALL_THRESHOLD so the
-            // global stall bound (3) is the binding constraint here (REQ-4).
             retry_on_failure: 5,
             ..Default::default()
         };
@@ -1513,8 +1580,6 @@ mod tests {
         let config = TuiConfig {
             command: format!("bash {} {{prompt}}", script_path.display()),
             prompt: tasks_path.to_str().unwrap().to_string(),
-            // Keep STALL_THRESHOLD the binding constraint so this test still
-            // exercises the global stall counter and its reset-on-progress.
             retry_on_failure: 5,
             ..Default::default()
         };
@@ -1593,8 +1658,6 @@ mod tests {
         let config = TuiConfig {
             command: format!("bash {} {{prompt}}", script_path.display()),
             prompt: tasks_path.to_str().unwrap().to_string(),
-            // The task only progresses on the 3rd run; allow enough per-task
-            // retries that the loop survives the first two no-progress runs.
             retry_on_failure: 5,
             ..Default::default()
         };
@@ -1636,6 +1699,79 @@ mod tests {
             ImplUpdate::Finished { success: true }
         ));
         assert!(!messages.iter().any(|m| matches!(m, ImplUpdate::Stalled)));
+    }
+
+    /// REQ-3 / SCEN-3.1: the per-task retry limit is `config.retry_on_failure`,
+    /// so a never-progressing task stalls after exactly `retry_on_failure + 1`
+    /// no-progress runs. With the default `retry_on_failure = 1` that is the
+    /// initial attempt plus one retry (2 runs total), stalling on run 2 — and
+    /// well below the global `STALL_THRESHOLD = 3`, so this isolates the
+    /// per-task path rather than the absolute cap exercised by
+    /// `test_loop_sends_stalled_after_three_no_progress_runs`.
+    #[test]
+    fn test_loop_stalls_after_retry_on_failure_plus_one_no_progress_runs() {
+        // `true` exits 0 but never marks the task complete → no progress.
+        let tmp_dir = tempfile::tempdir().unwrap();
+        let dir = tmp_dir.path();
+        let change_dir = dir.join("openspec/changes/test-retry");
+        std::fs::create_dir_all(&change_dir).unwrap();
+        let tasks_path = change_dir.join("tasks.md");
+        std::fs::write(&tasks_path, "- [ ] Task one\n").unwrap();
+        let log_path = dir.join("test.log");
+
+        let retry_on_failure = 1; // default fail-fast policy
+        let config = TuiConfig {
+            command: "true {prompt}".to_string(),
+            prompt: "test {name}".to_string(),
+            retry_on_failure,
+            ..Default::default()
+        };
+
+        let (tx, rx) = mpsc::channel();
+        let cancel_flag = Arc::new(AtomicBool::new(false));
+        let child_handle: Arc<Mutex<Option<Child>>> = Arc::new(Mutex::new(None));
+
+        implementation_loop(
+            "test-retry",
+            &tasks_path,
+            &log_path,
+            &tx,
+            &cancel_flag,
+            &child_handle,
+            &config,
+        );
+
+        let mut messages = vec![];
+        while let Ok(msg) = rx.try_recv() {
+            messages.push(msg);
+        }
+
+        // `retry_on_failure + 1` total no-progress runs: the first
+        // `retry_on_failure` runs emit Progress, the final run Stalls.
+        let expected_runs = (retry_on_failure + 1) as usize;
+        assert_eq!(
+            messages.len(),
+            expected_runs,
+            "expected {} messages, got: {}",
+            expected_runs,
+            messages.len()
+        );
+        // All but the last message are no-progress Progress updates.
+        for msg in &messages[..messages.len() - 1] {
+            assert!(
+                matches!(
+                    msg,
+                    ImplUpdate::Progress {
+                        completed: 0,
+                        total: 1
+                    }
+                ),
+                "expected no-progress Progress, got {:?}",
+                msg
+            );
+        }
+        // The loop stalls on the run after the retry budget is exhausted.
+        assert!(matches!(messages.last().unwrap(), ImplUpdate::Stalled));
     }
 
     // --- BatchImplState tests ---
