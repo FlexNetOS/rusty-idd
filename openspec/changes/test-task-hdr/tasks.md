@@ -9,5 +9,5 @@
 
 ## Verification
 
-- [ ] T5: Run workspace build + tests to confirm nothing regresses.
-- [ ] T6: Run drift check (`drift-check.sh`) to ensure core invariant is preserved.
+- [x] T5: Run workspace build + tests to confirm nothing regresses.
+- [x] T6: Run drift check (`drift-check.sh`) to ensure core invariant is preserved.
