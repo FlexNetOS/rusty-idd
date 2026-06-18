@@ -1,4 +1,8 @@
 /target
+
+# Local execution and regenerated backup artifacts
+*.idd-bak-*
+.worktrees/
 # Swap files
 *.swp
 *.swo

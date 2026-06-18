@@ -2,6 +2,7 @@ use crate::fs_utils::{
     read_to_string_lossy, relative_path, stable_walk, write_string_preserving_existing,
 };
 use crate::model::{FindingSeverity, ValidationFinding};
+use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
 
 const MAX_SCAN_BYTES: u64 = 512 * 1024;
@@ -17,11 +18,38 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
 
     let mut findings = Vec::new();
     require_file(root, "AGENTS.md", &mut findings);
+    require_file(root, ".env.schema.example.json", &mut findings);
+    require_file(root, ".env.contract.yaml", &mut findings);
     require_file(root, ".github/copilot-instructions.md", &mut findings);
     require_file(root, ".github/pull_request_template.md", &mut findings);
     require_file(root, ".github/ISSUE_TEMPLATE/idd-task.yml", &mut findings);
+    require_file(root, ".github/CODEOWNERS", &mut findings);
+    require_file(root, ".github/dependabot.yml", &mut findings);
+    require_file(root, ".github/workflows/ci.yml", &mut findings);
+    require_file(root, ".github/workflows/promote-verify.yml", &mut findings);
+    require_file(
+        root,
+        ".github/workflows/semantic-pr-title.yml",
+        &mut findings,
+    );
+    require_file(root, ".github/workflows/on-push-main.yml", &mut findings);
+    require_file(root, ".github/workflows/release.yml", &mut findings);
     require_file(root, ".idd/LOCK.md", &mut findings);
     require_file(root, ".idd/MANIFEST.tsv", &mut findings);
+    require_file(root, "VERSION", &mut findings);
+    require_file(root, "CONTRIBUTING.md", &mut findings);
+    require_file(root, "Makefile", &mut findings);
+    require_file(root, "Justfile", &mut findings);
+    require_file(root, "commitlint.config.cjs", &mut findings);
+    require_file(root, "renovate.json", &mut findings);
+    require_file(root, "release-please-config.json", &mut findings);
+    require_file(root, ".release-please-manifest.json", &mut findings);
+    require_file(root, ".claude/agent-guard.toml", &mut findings);
+    require_file(
+        root,
+        ".claude/rules/meta-destructive-commands.md",
+        &mut findings,
+    );
     require_file(root, "AI_MERGE/04_merge_plan.md", &mut findings);
     require_file(
         root,
@@ -44,6 +72,10 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
         scan_secret_patterns(&rel, &content, &mut findings);
         if is_github_workflow(&rel) {
             scan_workflow_risks(&rel, &content, &mut findings);
+            scan_workflow_policy(&rel, &content, &mut findings);
+        }
+        if rel == ".idd/MANIFEST.tsv" {
+            scan_manifest_policy(&rel, &content, &mut findings);
         }
     }
 
@@ -94,6 +126,7 @@ fn flag_committed_env_file(file: &str, findings: &mut Vec<ValidationFinding>) {
     let allowed = name == ".env.example"
         || name == "env.example"
         || name == ".env.schema.example.json"
+        || name == ".env.contract.yaml"
         || lower.ends_with(".sample")
         || lower.ends_with(".template");
 
@@ -158,6 +191,8 @@ fn scan_secret_patterns(file: &str, content: &str, findings: &mut Vec<Validation
 }
 
 fn scan_workflow_risks(file: &str, content: &str, findings: &mut Vec<ValidationFinding>) {
+    scan_duplicate_yaml_keys(file, content, findings);
+
     for (line_no, line) in content.lines().enumerate() {
         let lower = line.trim().to_ascii_lowercase();
         if lower.starts_with("pull_request_target:") || lower == "pull_request_target" {
@@ -193,6 +228,190 @@ fn scan_workflow_risks(file: &str, content: &str, findings: &mut Vec<ValidationF
     }
 }
 
+fn scan_duplicate_yaml_keys(file: &str, content: &str, findings: &mut Vec<ValidationFinding>) {
+    let mut seen_by_indent: BTreeMap<usize, BTreeSet<String>> = BTreeMap::new();
+    let mut block_scalar_indent = None;
+
+    for (line_no, raw_line) in content.lines().enumerate() {
+        let trimmed = raw_line.trim();
+        if trimmed.is_empty() || trimmed.starts_with('#') {
+            continue;
+        }
+
+        let indent = raw_line.len() - raw_line.trim_start_matches(' ').len();
+        if let Some(block_indent) = block_scalar_indent {
+            if indent > block_indent {
+                continue;
+            }
+            block_scalar_indent = None;
+        }
+
+        seen_by_indent.retain(|scope_indent, _| *scope_indent <= indent);
+
+        let (scope_indent, body) = if let Some(item) = trimmed.strip_prefix("- ") {
+            seen_by_indent.retain(|scope_indent, _| *scope_indent <= indent);
+            (indent + 2, item.trim())
+        } else {
+            (indent, trimmed)
+        };
+
+        let Some((key, value)) = body.split_once(':') else {
+            continue;
+        };
+        let key = key.trim();
+        if key.is_empty()
+            || !key
+                .chars()
+                .all(|ch| ch.is_ascii_alphanumeric() || ch == '_' || ch == '-')
+        {
+            continue;
+        }
+
+        let seen = seen_by_indent.entry(scope_indent).or_default();
+        if !seen.insert(key.to_string()) {
+            findings.push(ValidationFinding {
+                severity: FindingSeverity::Critical,
+                file: file.to_string(),
+                message: format!("duplicate YAML key `{key}` near line {}", line_no + 1),
+            });
+        }
+
+        let value = value.trim();
+        if value == "|" || value == ">" || value == "|-" || value == ">-" {
+            block_scalar_indent = Some(scope_indent);
+        }
+    }
+}
+
+fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<ValidationFinding>) {
+    let compact = content
+        .lines()
+        .map(str::trim)
+        .collect::<Vec<_>>()
+        .join("\n");
+
+    if file.ends_with("/idd-ci.yml") {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: file.to_string(),
+            message: "legacy idd-ci workflow must be consolidated into .github/workflows/ci.yml"
+                .to_string(),
+        });
+    }
+
+    if content.contains("dtolnay/rust-toolchain@stable") {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: file.to_string(),
+            message: "workflow uses floating Rust toolchain @stable; pin an explicit version"
+                .to_string(),
+        });
+    }
+
+    if file.ends_with("/ci.yml") {
+        require_workflow_contains(
+            file,
+            &compact,
+            "branches: [main, develop]",
+            "primary CI must run on both main and develop pushes",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "cargo run --bin rusty-idd -- validate --workspace .",
+            "primary CI must run rusty-idd validate",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "git diff --exit-code -- .idd/MANIFEST.tsv",
+            "primary CI must fail when manifest generation changes .idd/MANIFEST.tsv",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "cargo audit --deny warnings",
+            "primary CI must deny new cargo-audit warnings",
+            findings,
+        );
+    }
+
+    if file.ends_with("/promote-verify.yml") {
+        require_workflow_contains(
+            file,
+            content,
+            "Swatinem/rust-cache@v2",
+            "promotion verification must use the shared Rust cache",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "bash .gemini/skills/merge-verification/scripts/drift-check.sh .",
+            "promotion verification must run the Gemini drift gate",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "bash .claude/skills/merge-verification/scripts/drift-check.sh .",
+            "promotion verification must run the Claude drift gate",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "cargo audit --deny warnings",
+            "promotion verification must deny new cargo-audit warnings",
+            findings,
+        );
+    }
+}
+
+fn require_workflow_contains(
+    file: &str,
+    content: &str,
+    needle: &str,
+    message: &str,
+    findings: &mut Vec<ValidationFinding>,
+) {
+    if !content.contains(needle) {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: file.to_string(),
+            message: message.to_string(),
+        });
+    }
+}
+
+fn scan_manifest_policy(file: &str, content: &str, findings: &mut Vec<ValidationFinding>) {
+    for (line_no, line) in content.lines().enumerate().skip(1) {
+        let path = line.split('\t').next().unwrap_or_default();
+        if manifest_path_is_local_artifact(path) {
+            findings.push(ValidationFinding {
+                severity: FindingSeverity::Critical,
+                file: file.to_string(),
+                message: format!(
+                    "manifest includes local/generated artifact `{path}` near line {}",
+                    line_no + 1
+                ),
+            });
+        }
+    }
+}
+
+fn manifest_path_is_local_artifact(path: &str) -> bool {
+    path.contains(".idd-bak-")
+        || path.starts_with("_workspace/")
+        || path.starts_with(".devin/")
+        || path.starts_with(".worktrees/")
+        || path.starts_with(".vscode/")
+        || path == ".github/workflows/idd-ci.yml"
+}
+
 fn is_github_workflow(file: &str) -> bool {
     file.starts_with(".github/workflows/") && (file.ends_with(".yml") || file.ends_with(".yaml"))
 }
@@ -214,6 +433,45 @@ mod tests {
     fn flags_committed_env_file() {
         let mut findings = Vec::new();
         flag_committed_env_file(".env.production", &mut findings);
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].severity, FindingSeverity::Critical);
+    }
+
+    #[test]
+    fn allows_env_contract_file() {
+        let mut findings = Vec::new();
+        flag_committed_env_file(".env.contract.yaml", &mut findings);
+        assert!(findings.is_empty());
+    }
+
+    #[test]
+    fn flags_duplicate_workflow_keys() {
+        let mut findings = Vec::new();
+        let workflow = r#"
+name: example
+jobs:
+  test:
+    steps:
+      - name: Broken
+        run: echo first
+        run: echo second
+"#;
+        scan_workflow_risks(
+            ".github/workflows/promote-verify.yml",
+            workflow,
+            &mut findings,
+        );
+        assert_eq!(findings.len(), 1);
+        assert_eq!(findings[0].severity, FindingSeverity::Critical);
+        assert!(findings[0].message.contains("duplicate YAML key `run`"));
+    }
+
+    #[test]
+    fn flags_manifest_local_artifacts() {
+        let mut findings = Vec::new();
+        let manifest =
+            "path\tsize_bytes\tfnv1a64\n_workspace/HANDOFF.md\t1\tabc\nsrc/lib.rs\t2\tdef\n";
+        scan_manifest_policy(".idd/MANIFEST.tsv", manifest, &mut findings);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, FindingSeverity::Critical);
     }

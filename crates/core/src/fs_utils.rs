@@ -106,6 +106,10 @@ fn walk_inner(path: &Path, out: &mut Vec<PathBuf>) -> io::Result<()> {
 }
 
 pub fn should_ignore(path: &Path) -> bool {
+    if is_manifest_self_file(path) {
+        return true;
+    }
+
     let ignored = [
         ".git",
         ".hg",
@@ -117,6 +121,10 @@ pub fn should_ignore(path: &Path) -> bool {
         "build",
         ".cache",
         ".turbo",
+        ".worktrees",
+        "_workspace",
+        ".devin",
+        ".vscode",
         ".venv",
         "venv",
         "__pycache__",
@@ -126,8 +134,17 @@ pub fn should_ignore(path: &Path) -> bool {
 
     path.file_name()
         .and_then(|s| s.to_str())
-        .map(|name| ignored.contains(&name))
+        .map(|name| ignored.contains(&name) || name.contains(".idd-bak-") || name == ".idd-bak")
         .unwrap_or(false)
+}
+
+fn is_manifest_self_file(path: &Path) -> bool {
+    path.file_name().and_then(|s| s.to_str()) == Some("MANIFEST.tsv")
+        && path
+            .parent()
+            .and_then(|parent| parent.file_name())
+            .and_then(|s| s.to_str())
+            == Some(".idd")
 }
 
 fn next_backup_path(path: &Path) -> PathBuf {
@@ -221,6 +238,13 @@ mod tests {
     fn test_should_ignore() {
         assert!(should_ignore(Path::new(".git")));
         assert!(should_ignore(Path::new("target")));
+        assert!(should_ignore(Path::new(".worktrees")));
+        assert!(should_ignore(Path::new("_workspace")));
+        assert!(should_ignore(Path::new(".devin")));
+        assert!(should_ignore(Path::new(".vscode")));
+        assert!(should_ignore(Path::new("file.txt.idd-bak-1")));
+        assert!(should_ignore(Path::new(".idd-bak")));
+        assert!(should_ignore(Path::new(".idd/MANIFEST.tsv")));
         assert!(!should_ignore(Path::new("src")));
         assert!(!should_ignore(Path::new("Cargo.toml")));
     }

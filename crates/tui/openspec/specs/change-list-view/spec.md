@@ -1,19 +1,19 @@
 ## MODIFIED Requirements
 
 ### Requirement: Display active changes on startup
-The system SHALL display a list of active openspec changes retrieved via `openspec list --json` when launched, with a tab indicator showing the current view.
+The system SHALL display a list of active OpenSpec changes discovered from `openspec/changes/` when launched, with a tab indicator showing the current view.
 
 #### Scenario: Changes exist
-- **WHEN** the TUI starts and `openspec list --json` returns one or more changes
+- **WHEN** the TUI starts and `openspec/changes/` contains one or more active change directories
 - **THEN** the system displays each change name in a selectable list with the title showing `OpenSpec TUI [Active | Archived]` with Active highlighted
 
 #### Scenario: No changes exist
-- **WHEN** the TUI starts and `openspec list --json` returns an empty changes array
+- **WHEN** the TUI starts and `openspec/changes/` is missing or contains no active change directories
 - **THEN** the system displays a message indicating no active changes were found
 
-#### Scenario: openspec CLI not available
-- **WHEN** the TUI starts and the `openspec` command is not found on PATH
-- **THEN** the system displays an error message and exits
+#### Scenario: External OpenSpec CLI not installed
+- **WHEN** the TUI starts and no `openspec` command is installed on PATH
+- **THEN** active change listing still works from local files
 
 ## ADDED Requirements
 

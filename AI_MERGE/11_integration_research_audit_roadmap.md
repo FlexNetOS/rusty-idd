@@ -43,7 +43,7 @@
 
 **Key constraint:** `crates/core` is **std-only / zero-dependency**. No network, no serde, no async. Any integration that needs tokio/HTTP/serde must live in `crates/cli`, `crates/runner`, or a new adapter crate.
 
-**Key debt:** `runner::data::list_changes` and `get_change_status` still spawn the **Node `openspec` CLI** as an external binary. The Rust spec engine exists but these runner paths are legacy.
+**Resolved 2026-06-18:** `runner::data::list_changes` and `get_change_status` now read the local OpenSpec filesystem layout directly. The legacy external **Node `openspec` CLI** runtime dependency has been retired from these runner/TUI paths.
 
 ---
 
@@ -114,7 +114,7 @@
 | prompt_hub has **no MCP server** | Medium | weave speaks MCP; prompt_hub does not. Asymmetry in agent-tool integration. |
 | rusty-idd has **no async runtime** | Medium | core is std-only; runner is sync. prompt_hub and weave are async (tokio). Cannot directly `await PromptHub::new()`. |
 | No **shared crate** for data types | Medium | Each repo redefines similar concepts (Task, Change, Message, Peer). |
-| rusty-idd runner **still spawns Node `openspec`** | High | Legacy dependency that spec engine was supposed to replace. |
+| rusty-idd runner **still spawns Node `openspec`** | Resolved | Fixed 2026-06-18: active change listing/status now use local filesystem discovery. |
 | No **orchestration script** (docker-compose/justfile) | Low | All three must be started manually. No unified startup. |
 
 ### 3.3 Configuration Gaps
@@ -140,7 +140,7 @@
 | R3 | rusty-idd core purity regresses if async/serde deps leak in | Medium | High | New integration code lives in `crates/cli` or new `crates/adapter`, never in `core` |
 | R4 | prompt_hub stubs (preview, scan, deploy) are needed for full pipeline | Medium | Medium | Defer pipeline features that depend on stubs; implement stubs in parallel |
 | R5 | No shared identity/auth across repos | Medium | Medium | Define env-contract mapping (table in §3.3); implement in Slice 2 |
-| R6 | `runner::data` spawns Node `openspec` — breaks zero-Node goal | High | High | **Prerequisite:** port `list_changes`/`get_change_status` to use `rusty-idd-spec` instead |
+| R6 | `runner::data` spawns Node `openspec` — breaks zero-Node goal | Low | High | **Resolved 2026-06-18:** active list/status are filesystem-backed; keep Node only as dev-time oracle |
 | R7 | Over-eager deep coupling (making all one workspace) | Medium | High | Keep repos independent; integrate via contracts and MCP, not code coupling |
 | R8 | weave CLI may be deprecated/removed | Medium | Medium | Do not build CLI-parsing integration. MCP only. |
 
@@ -259,7 +259,7 @@ Each slice is one reviewable PR. Each slice updates `.idd/MANIFEST.tsv` and `AI_
 | Slice | Task | Validation |
 |-------|------|------------|
 | P0.1 | **Fix weave merge conflicts** in `src/main.rs` and `src/store_libsql.rs` | `cargo build --release` green |
-| P0.2 | **Retire Node `openspec` from rusty-idd runner** — port `list_changes`/`get_change_status` to use `rusty-idd-spec` | `cargo test --workspace` green; no `openspec` binary required |
+| P0.2 | **Retire Node `openspec` from rusty-idd runner** — port `list_changes`/`get_change_status` off the external CLI | **Done 2026-06-18:** runner/TUI status is filesystem-backed; focused runner tests green |
 | P0.3 | **Inventory cross-repo manifest** — generate feature matrix + contract map for all 3 repos | `AI_MERGE/` record updated |
 
 ### Phase 1: Data Contract Integration (file-based, no runtime coupling)

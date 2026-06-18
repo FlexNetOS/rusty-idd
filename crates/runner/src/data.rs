@@ -2,9 +2,8 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs;
 use std::path::{Path, PathBuf};
-use std::process::Command;
 
-// Types for `openspec list --json`
+// Types backing active and archived change lists.
 #[derive(Debug, Deserialize, Clone)]
 pub struct ChangeListOutput {
     pub changes: Vec<ChangeEntry>,
@@ -18,7 +17,7 @@ pub struct ChangeEntry {
     pub total_tasks: u32,
 }
 
-// Types for `openspec status --change <name> --json`
+// Types backing artifact availability in the TUI.
 #[derive(Debug, Deserialize, Clone)]
 #[serde(rename_all = "camelCase")]
 pub struct ChangeStatusOutput {
@@ -38,60 +37,28 @@ pub struct SpecItem {
     pub path: PathBuf,
 }
 
-/// Construct a `Command` for invoking the `openspec` CLI.
+/// List active changes by reading `openspec/changes/` directory entries.
 ///
-/// On Windows, npm-installed tools use `.cmd` wrappers that `Command::new`
-/// cannot resolve directly. We use `cmd /C openspec` so that `cmd.exe`
-/// handles PATHEXT resolution. On Unix/macOS, invoke the binary directly.
-#[cfg(windows)]
-fn openspec_command() -> Command {
-    let mut cmd = Command::new("cmd");
-    cmd.args(["/C", "openspec"]);
-    cmd
-}
-
-#[cfg(not(windows))]
-fn openspec_command() -> Command {
-    Command::new("openspec")
-}
-
-/// Run `openspec list --json` and parse the result.
+/// Each subdirectory becomes a `ChangeEntry` with task progress parsed from its
+/// `tasks.md`. The legacy TUI used to shell out to the Node `openspec` CLI for
+/// this; rusty-idd owns the lifecycle format now, so discovery stays local.
 pub fn list_changes() -> Result<ChangeListOutput, String> {
-    let output = openspec_command()
-        .args(["list", "--json"])
-        .output()
-        .map_err(|e| {
-            if e.kind() == std::io::ErrorKind::NotFound {
-                "openspec CLI not found on PATH. Please install openspec first.".to_string()
-            } else {
-                format!("Failed to run openspec: {e}")
-            }
-        })?;
-
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(format!("openspec list failed: {stderr}"));
-    }
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    serde_json::from_str(&stdout).map_err(|e| format!("Failed to parse openspec list output: {e}"))
+    let cwd = std::env::current_dir().map_err(|e| format!("Failed to get cwd: {e}"))?;
+    let changes_dir = cwd.join("openspec").join("changes");
+    list_changes_from_dir(&changes_dir).map(|changes| ChangeListOutput { changes })
 }
 
-/// Run `openspec status --change <name> --json` and parse the result.
+/// Build a status result for an active change by checking generated files.
 pub fn get_change_status(name: &str) -> Result<ChangeStatusOutput, String> {
-    let output = openspec_command()
-        .args(["status", "--change", name, "--json"])
-        .output()
-        .map_err(|e| format!("Failed to run openspec status: {e}"))?;
-
-    if !output.status.success() {
-        let stderr = String::from_utf8_lossy(&output.stderr);
-        return Err(format!("openspec status failed: {stderr}"));
+    let cwd = std::env::current_dir().map_err(|e| format!("Failed to get cwd: {e}"))?;
+    let change_dir = cwd.join("openspec").join("changes").join(name);
+    if !change_dir.is_dir() {
+        return Err(format!(
+            "change directory not found: {}",
+            change_dir.display()
+        ));
     }
-
-    let stdout = String::from_utf8_lossy(&output.stdout);
-    serde_json::from_str(&stdout)
-        .map_err(|e| format!("Failed to parse openspec status output: {e}"))
+    Ok(change_status_from_dir(&change_dir))
 }
 
 /// List archived changes by reading `openspec/changes/archive/` directory entries.
@@ -163,6 +130,51 @@ pub fn list_archived_changes() -> Result<Vec<ChangeEntry>, String> {
 /// Instead of calling `openspec status`, checks which artifact files exist in the
 /// archive directory. All existing files are treated as "done".
 pub fn get_archived_change_status(change_dir: &Path) -> ChangeStatusOutput {
+    change_status_from_dir(change_dir)
+}
+
+fn list_changes_from_dir(changes_dir: &Path) -> Result<Vec<ChangeEntry>, String> {
+    if !changes_dir.exists() {
+        return Ok(Vec::new());
+    }
+
+    let entries = fs::read_dir(changes_dir).map_err(|e| {
+        format!(
+            "Failed to read changes directory {}: {e}",
+            changes_dir.display()
+        )
+    })?;
+
+    let mut changes: Vec<ChangeEntry> = entries
+        .filter_map(|entry| {
+            let entry = entry.ok()?;
+            let path = entry.path();
+            if !path.is_dir() {
+                return None;
+            }
+            let name = entry.file_name().to_string_lossy().to_string();
+            if name == "archive" {
+                return None;
+            }
+            let tasks_path = path.join("tasks.md");
+            let (completed_tasks, total_tasks) = if tasks_path.exists() {
+                parse_task_progress(&tasks_path).unwrap_or_default()
+            } else {
+                (0, 0)
+            };
+            Some(ChangeEntry {
+                name,
+                completed_tasks,
+                total_tasks,
+            })
+        })
+        .collect();
+
+    changes.sort_by(|a, b| a.name.cmp(&b.name));
+    Ok(changes)
+}
+
+fn change_status_from_dir(change_dir: &Path) -> ChangeStatusOutput {
     let artifact_checks = [
         ("proposal", "proposal.md"),
         ("design", "design.md"),
@@ -710,13 +722,58 @@ mod tests {
     }
 
     #[test]
-    fn test_openspec_command_returns_valid_command() {
-        let cmd = openspec_command();
-        let program = format!("{:?}", cmd.get_program());
-        #[cfg(not(windows))]
-        assert_eq!(program, "\"openspec\"");
-        #[cfg(windows)]
-        assert_eq!(program, "\"cmd\"");
+    fn test_list_changes_from_dir_reads_active_changes() {
+        let tmp = tempfile::tempdir().unwrap();
+        let changes_dir = tmp.path().join("openspec/changes");
+        fs::create_dir_all(changes_dir.join("beta")).unwrap();
+        fs::create_dir_all(changes_dir.join("alpha")).unwrap();
+        fs::create_dir_all(changes_dir.join("archive/old-change")).unwrap();
+        fs::write(
+            changes_dir.join("alpha/tasks.md"),
+            "- [x] done\n- [ ] todo\n",
+        )
+        .unwrap();
+
+        let changes = list_changes_from_dir(&changes_dir).unwrap();
+
+        assert_eq!(changes.len(), 2);
+        assert_eq!(changes[0].name, "alpha");
+        assert_eq!(changes[0].completed_tasks, 1);
+        assert_eq!(changes[0].total_tasks, 2);
+        assert_eq!(changes[1].name, "beta");
+        assert_eq!(changes[1].completed_tasks, 0);
+        assert_eq!(changes[1].total_tasks, 0);
+    }
+
+    #[test]
+    fn test_list_changes_from_dir_missing_returns_empty() {
+        let tmp = tempfile::tempdir().unwrap();
+        let changes = list_changes_from_dir(&tmp.path().join("openspec/changes")).unwrap();
+        assert!(changes.is_empty());
+    }
+
+    #[test]
+    fn test_change_status_from_dir_checks_generated_artifacts() {
+        let tmp = tempfile::tempdir().unwrap();
+        let change_dir = tmp.path().join("openspec/changes/add-api");
+        fs::create_dir_all(change_dir.join("specs/api")).unwrap();
+        fs::write(change_dir.join("proposal.md"), "# Proposal\n").unwrap();
+        fs::write(change_dir.join("tasks.md"), "- [ ] Task\n").unwrap();
+        fs::write(change_dir.join("specs/api/spec.md"), "# Spec\n").unwrap();
+
+        let status = change_status_from_dir(&change_dir);
+
+        let artifact = |id: &str| {
+            status
+                .artifacts
+                .iter()
+                .find(|a| a.id == id)
+                .map(|a| a.status.as_str())
+        };
+        assert_eq!(artifact("proposal"), Some("done"));
+        assert_eq!(artifact("design"), Some("pending"));
+        assert_eq!(artifact("tasks"), Some("done"));
+        assert_eq!(artifact("specs"), Some("done"));
     }
 
     #[test]
