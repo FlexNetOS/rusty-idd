@@ -3,6 +3,7 @@
 pub mod codex;
 pub mod core;
 pub mod knowledge;
+pub mod merge_tools;
 pub mod run;
 pub mod spec;
 pub mod spec_adr;

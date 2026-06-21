@@ -15,6 +15,7 @@ rusty-idd --help
 |------------|---------|--------|
 | Repository scan / plan / manifest | `rusty-idd scan`, `plan`, `manifest` | `crates/core` (zero-dep std-only) |
 | OpenSpec lifecycle (`validate`, `archive`, `sync`) | `rusty-idd spec validate`, `archive`, `sync` | `crates/spec` (comrak + serde_norway) |
+| Merge-goal workflow package | `rusty-idd merge-tools show` | `crates/merge-tools` (legacy merge content consolidated into Rusty IDD) |
 | Headless task runner | `rusty-idd run <change>` | `crates/runner` |
 | Interactive terminal UI | `rusty-idd tui` | `crates/tui` (ratatui + crossterm) |
 
@@ -26,6 +27,7 @@ A Cargo workspace producing a single `rusty-idd` binary:
 - **`crates/runner/`** — the task-execution engine + OpenSpec data layer (split out of the TUI).
 - **`crates/tui/`** — the ratatui OpenSpec TUI (was `openspec-tui-main`).
 - **`crates/spec/`** — the OpenSpec lifecycle engine ported to Rust (parse / validate / transactional archive — no Node).
+- **`crates/merge-tools/`** — reusable merge-goal workflow package derived from retired `idd-merge-idd` bridge material.
 - **`crates/cli/`** — **`rusty-idd`**, the unified clap binary wiring everything together.
 
 ## Build & test

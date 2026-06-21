@@ -1,0 +1,16 @@
+[package]
+name = "rusty-idd-merge-tools"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+name = "rusty_idd_merge_tools"
+path = "src/lib.rs"
+
+[dependencies]

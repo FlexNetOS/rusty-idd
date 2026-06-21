@@ -13,7 +13,7 @@
 - [x] 2.1 Create proposal for `upgrade-codex-harness-rusty-idd-flow`.
 - [x] 2.2 Create `codex-harness-flow` spec delta.
 - [x] 2.3 Create design document.
-- [x] 2.4 Create ADR-0006 superseding ADR-0003.
+- [x] 2.4 Create the single active Codex harness ADR and summarize retired ADRs outside `adr/`.
 - [x] 2.5 Validate the OpenSpec change status and spec structure.
 
 ## 3. Harness Upgrade
@@ -23,6 +23,8 @@
 - [x] 3.3 Update `rusty-idd codex env-check` invariants to check Rusty IDD workflow surfaces instead of AI_MERGE-centered phrases.
 - [x] 3.4 Update `AGENTS.md`, `.agents/skills/*`, and `docs/rusty-idd/codex-environment.md` to document the true flow.
 - [x] 3.5 Update AI_MERGE documentation only where needed to label it as a tool/evidence surface.
+- [x] 3.6 Add `crates/merge-tools` and `rusty-idd merge-tools` as the reusable merge-goal package.
+- [x] 3.7 Retire active Claude/Gemini `idd-merge-idd` bridge surfaces and route bridge docs to Rusty IDD.
 
 ## 4. Validation
 
@@ -32,3 +34,4 @@
 - [x] 4.4 Run `rusty-idd codex model-loop`.
 - [x] 4.5 Refresh `.idd/MANIFEST.tsv`.
 - [x] 4.6 Run `rusty-idd validate --workspace .`.
+- [x] 4.7 Run `rusty-idd merge-tools show`.
