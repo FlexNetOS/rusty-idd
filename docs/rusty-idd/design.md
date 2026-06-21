@@ -38,7 +38,9 @@ Author rusty-idd's own specs as hand-written Markdown now (no binary needed; for
 - **Lifecycle port complexity** → Mitigation: it is the *last* substantive slice (after low-risk structural moves); golden fixtures from the Node oracle make it test-driven; `oonid/OpenSpec-rs` is a tractability reference.
 - **Mixed-edition workspace build on old toolchains** → Mitigation: require Rust ≥ 1.85 (the 2024 edition baseline); document MSRV.
 - **Core purity regressing via a careless dep** → Mitigation: `drift-check.sh` + CI `cargo-deny` on the core crate; the harness's QA makes this priority-one.
-- **Two control planes (idd `AI_MERGE/` vs OpenSpec `openspec/changes/`)** → Open question below.
+- **Workflow ownership** → ADR-0006 resolves the former two-control-plane
+  question: Rusty IDD/OpenSpec is the workflow, and `AI_MERGE/` is an optional
+  audit/evidence surface.
 
 ## Migration Plan
 
@@ -46,6 +48,8 @@ Per `slice-sequence.md`: workspace skeleton → fold in existing crates → port
 
 ## Open Questions
 
-- **Control-plane reconciliation**: does rusty-idd keep both idd's `AI_MERGE/` and OpenSpec's `openspec/changes/`, or unify them? (Candidate for an ADR.)
+- **Control-plane reconciliation**: resolved by ADR-0006. Rusty IDD keeps
+  `AI_MERGE/` as an evidence tool while OpenSpec and `.idd/knowledge` carry the
+  active workflow.
 - **CLI namespace**: flat verbs (`rusty-idd propose|scan|run`) vs grouped (`rusty-idd spec …|merge …|run …`)? (Candidate for an ADR — D1 commits to one binary, not to the verb taxonomy.)
 - **TUI scope in v1**: ship the ratatui TUI in the first unified binary, or land it after the CLI is stable?

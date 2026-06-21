@@ -2,6 +2,8 @@ set dotenv-load := false
 
 cargo := env_var_or_default("CARGO", "cargo")
 rusty_idd := cargo + " run --bin rusty-idd --"
+change := env_var_or_default("RUSTY_IDD_CHANGE", "upgrade-codex-harness-rusty-idd-flow")
+goal := env_var_or_default("RUSTY_IDD_GOAL", "update the .codex agent harness and related files to reflect the true flow of rusty-idd. Ai_merge is a tool for rusty_idd and must be treated as one and removed as the main intent")
 
 build:
     {{cargo}} build --workspace --locked
@@ -73,11 +75,11 @@ integration-readiness-check:
     tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge integration-readiness --workspace . --next --out "$tmpdir/integration-readiness.json" && {{rusty_idd}} knowledge integration-readiness --workspace . --next --out "$tmpdir/integration-readiness.md" && cmp -s .idd/knowledge/integration-readiness.json "$tmpdir/integration-readiness.json" && cmp -s .idd/knowledge/integration-readiness.md "$tmpdir/integration-readiness.md" || { echo ".idd/knowledge integration-readiness artifacts are stale; run just integration-readiness" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
 plan-context:
-    {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work"
-    {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work"
+    {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --change "{{change}}" --goal "{{goal}}"
+    {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --change "{{change}}" --goal "{{goal}}"
 
 plan-context-check:
-    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge plan-context --workspace . --out "$tmpdir/plan-context.json" --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work" && {{rusty_idd}} knowledge plan-context --workspace . --out "$tmpdir/plan-context.md" --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work" && cmp -s .idd/knowledge/plan-context.json "$tmpdir/plan-context.json" && cmp -s .idd/knowledge/plan-context.md "$tmpdir/plan-context.md" || { echo ".idd/knowledge plan-context artifacts are stale; run just plan-context" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
+    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge plan-context --workspace . --out "$tmpdir/plan-context.json" --change "{{change}}" --goal "{{goal}}" && {{rusty_idd}} knowledge plan-context --workspace . --out "$tmpdir/plan-context.md" --change "{{change}}" --goal "{{goal}}" && cmp -s .idd/knowledge/plan-context.json "$tmpdir/plan-context.json" && cmp -s .idd/knowledge/plan-context.md "$tmpdir/plan-context.md" || { echo ".idd/knowledge plan-context artifacts are stale; run just plan-context" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
 knowledge-check:
     tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge index --workspace . --out "$tmpdir/index.json" && {{rusty_idd}} knowledge report --workspace . --out "$tmpdir/report.md" && {{rusty_idd}} knowledge architecture --workspace . --out "$tmpdir/architecture.json" && {{rusty_idd}} knowledge architecture --workspace . --out "$tmpdir/architecture.md" && cmp -s .idd/knowledge/index.json "$tmpdir/index.json" && cmp -s .idd/knowledge/report.md "$tmpdir/report.md" && cmp -s .idd/knowledge/architecture.json "$tmpdir/architecture.json" && cmp -s .idd/knowledge/architecture.md "$tmpdir/architecture.md" || { echo ".idd/knowledge artifacts are stale; run just knowledge" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"

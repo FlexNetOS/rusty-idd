@@ -1,11 +1,11 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:c6cba7e8aa31f25a`
+- Workspace fingerprint: `fnv1a64:bdc9b303d44270b9`
 - Source graph provider: `codegraph-rust`
-- Source graph: 135 files, 8456 nodes, 34489 edges
+- Source graph: 135 files, 8456 nodes, 34504 edges
 - Source languages: rust
 - Context provider: `repomix-rs`
-- Context package: 193 files, 135997 tokens
+- Context package: 198 files, 138824 tokens
 
 ## Automation Stages
 
@@ -32,7 +32,7 @@
 | Component | Kind | Files | Nodes | Edges | Languages |
 |---|---|---:|---:|---:|---|
 | `cli` | crate | 22 | 734 | 3067 | Rust, rust |
-| `core` | crate | 11 | 415 | 2373 | Rust, rust |
+| `core` | crate | 11 | 415 | 2388 | Rust, rust |
 | `knowledge` | crate | 1 | 616 | 4509 | Rust, rust |
 | `runner` | crate | 4 | 770 | 3135 | Rust, rust |
 | `spec` | crate | 24 | 461 | 1936 | Rust, rust |
@@ -108,4 +108,4 @@
 ## Findings
 
 - CodeGraph-backed parsing completed without source failures
-- repomix context package measured 193 files and 135997 tokens
+- repomix context package measured 198 files and 138824 tokens

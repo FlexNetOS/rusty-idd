@@ -139,11 +139,25 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
         ".agents/skills/rusty-idd-knowledge/SKILL.md",
         ".idd/knowledge/index.json",
         ".idd/knowledge/report.md",
+        ".idd/knowledge/architecture.json",
+        ".idd/knowledge/architecture.md",
+        ".idd/knowledge/system-architecture.json",
+        ".idd/knowledge/system-architecture.md",
+        ".idd/knowledge/operating-model.json",
+        ".idd/knowledge/operating-model.md",
+        ".idd/knowledge/integration-plan.json",
+        ".idd/knowledge/integration-plan.md",
+        ".idd/knowledge/integration-status.json",
+        ".idd/knowledge/integration-status.md",
+        ".idd/knowledge/plan-context.json",
+        ".idd/knowledge/plan-context.md",
         "docs/rusty-idd/codex-environment.md",
         "adr/0004-knowledge-direct-crate-integration.md",
-        "AI_MERGE/12_knowledge_deep_audit.md",
-        "AI_MERGE/13_codex_environment.md",
-        "AI_MERGE/14_upstream_full_adoption.md",
+        "adr/0006-ai-merge-as-rusty-idd-tool.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/proposal.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/specs/codex-harness-flow/spec.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/design.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/tasks.md",
         "third_party/upstream/UPSTREAMS.md",
         "third_party/upstream/codegraph-rust/Cargo.toml",
         "third_party/upstream/repomix-rs/Cargo.toml",
@@ -196,8 +210,10 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
         (
             "AGENTS.md",
             &[
+                "Rusty IDD is the intent-driven workflow engine",
+                "`AI_MERGE/` is a Rusty IDD tool and evidence surface",
+                "Before writes, create or select an OpenSpec change",
                 "Adopt first, cut after evidence",
-                "The agent owns output quality",
                 "Upgrade only",
                 "Treat stale or orphaned work as unfinished",
                 "Tooling required to run this repo must be tracked",
@@ -213,13 +229,11 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
             ][..],
         ),
         (
-            "AI_MERGE/12_knowledge_deep_audit.md",
-            &["Audit Cuts", "local Rust AST semantic pass were removed"][..],
-        ),
-        (
             "docs/rusty-idd/codex-environment.md",
             &[
-                "Agent-Owned Tool Growth",
+                "`AI_MERGE/` is a tool/evidence surface",
+                "The default harness order is",
+                "Write-capable implementation is intentionally outside the default loop",
                 "Upgrade-Only Gap Handling",
                 "meta` / `envctl`",
                 "Multi-Model Loop",
@@ -229,25 +243,27 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
             ][..],
         ),
         (
-            "AI_MERGE/13_codex_environment.md",
+            ".codex/loops/rusty-idd-model-loop.toml",
             &[
-                "rusty-idd codex env-check",
-                "rusty-idd codex model-loop",
-                "rusty-idd codex runtime-audit",
-                "rusty-idd codex system-audit",
-                "Codex owns its output quality",
-                "stale or orphaned work",
-                "Missing binaries needed for this repo",
+                "design-first",
+                ".idd/knowledge/plan-context.md",
+                "OpenSpec",
+                "Treat AI_MERGE as evidence",
             ][..],
         ),
         (
-            "AI_MERGE/14_upstream_full_adoption.md",
+            ".codex/agents/rusty-idd-implementer.toml",
             &[
-                "ce5bf27a2978983a9089d177447f296e4c6521bb",
-                "946df10d48c669ca3a99f757ffd2c6fa35844e62",
-                "Native Upstream Diagnostics",
-                "Consolidation Cuts Kept",
-                "PR #50 Baseline Comparison",
+                "Before editing, verify the active OpenSpec change",
+                "Update AI_MERGE only when the workflow calls for",
+            ][..],
+        ),
+        (
+            "adr/0006-ai-merge-as-rusty-idd-tool.md",
+            &[
+                "AI_MERGE as Rusty IDD tool and evidence surface",
+                "supersedes ADR-0003",
+                "not the authoritative Rusty IDD control plane",
             ][..],
         ),
         (
@@ -750,7 +766,7 @@ fn model_loop(args: ModelLoopArgs) -> anyhow::Result<()> {
     let output_dir = args
         .output_dir
         .or(config.output_dir)
-        .unwrap_or_else(|| PathBuf::from("/tmp/rusty-idd-codex-loop"));
+        .unwrap_or_else(|| PathBuf::from(".idd/runs/rusty-idd-codex-loop"));
     fs::create_dir_all(&output_dir)
         .with_context(|| format!("create model loop output dir {}", output_dir.display()))?;
 

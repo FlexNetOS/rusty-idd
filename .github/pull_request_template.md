@@ -24,10 +24,9 @@
 
 -
 
-### AI_MERGE updates
+### Rusty IDD artifacts
 
-- [ ] Feature matrix updated if capability changed
-- [ ] Env/secrets contract updated if config changed
-- [ ] Conflict register updated if collision found
-- [ ] Agent queue updated
+- [ ] OpenSpec proposal/spec/design/ADR/tasks updated or intentionally unchanged
+- [ ] `.idd/knowledge/*` refreshed or intentionally unchanged
 - [ ] Manifest updated or intentionally unchanged
+- [ ] AI_MERGE evidence updated only if audit, migration, rollback, or merge records are required

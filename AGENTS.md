@@ -1,4 +1,4 @@
-# AGENTS.md — Intent Driven Development
+# AGENTS.md — rusty-idd (Intent Driven Development)
 
 ## North Star
 
@@ -10,31 +10,40 @@ Unify repositories by preserving working behavior, making contracts explicit, an
 2. Do not introduce a new secret provider unless the env/secrets contract says why.
 3. Do not delete source code during migration; deprecate first, remove after parity tests pass.
 4. Keep PRs narrow: one vertical slice, one migration intent, one validation path.
-5. Every generated PR must update the relevant `/AI_MERGE` record.
+5. Every generated PR must update the relevant OpenSpec, `.idd`, ADR, and evidence records; use `/AI_MERGE` only when audit, migration, rollback, or merge evidence is required.
 6. Never commit real secrets. Use `.env.example`, `.env.schema.example.json`, GitHub Actions secrets, OIDC, or provider references.
 7. If two agents conflict, stop and update `/AI_MERGE/05_conflict_risk_register.md` before continuing.
 8. Treat `.idd/MANIFEST.tsv` as the audit baseline for generated control-plane artifacts.
 9. Break work into sub-59-minute tasks when using cloud coding agents with hard session limits.
 10. One integration branch has authority. Other branches are research, staging, or disposable.
 
+## Rusty IDD Workflow Rules
+
+1. Rusty IDD is the intent-driven workflow engine: user intent, graph/context artifacts, OpenSpec proposal/spec/design/ADR/tasks, implementation gating, validation, archive, and handoff evidence.
+2. `AI_MERGE/` is a Rusty IDD tool and evidence surface. Use it for audit notes, migration history, rollback, and merge evidence when the workflow calls for it; do not treat it as the main intent source or authoritative control plane.
+3. Before implementation, create or refresh the relevant `.idd/knowledge/*` graph artifacts and bind the goal with `rusty-idd knowledge plan-context`.
+4. Before writes, create or select an OpenSpec change and verify readiness with `rusty-idd spec status` or `rusty-idd spec next`.
+5. ADR decisions live in repo-level `adr/`; accepted ADRs are immutable. Supersede with a new ADR instead of editing prior accepted decisions.
+6. Implementation follows tasks only after the OpenSpec artifacts are ready.
+7. Validation must refresh deterministic artifacts: `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, OpenSpec status, and Rusty IDD validation.
+
 ## Codex Environment Rules
 
-1. Adopt first, cut after evidence. For crate, tool, agent, skill, hook, or repo integrations, first vendor or depend on the upstream/current surface as intactly as possible, build it, audit it, then cut only the concrete compile, audit, security, or scope friction that evidence exposes.
-2. Do not replace an upstream capability with local guesses before proving the upstream surface cannot be used. If a cut is required, record the reason in an ADR or `/AI_MERGE` note and keep the adapter thin.
-3. Use `.idd/knowledge/report.md` and `.idd/knowledge/index.json` before broad manual rescans. Refresh knowledge after source or control-plane changes that affect graph/report output.
-4. Use repo-local Codex surfaces intentionally:
+1. Use `.idd/knowledge/report.md`, `.idd/knowledge/architecture.md`, `.idd/knowledge/plan-context.md`, and OpenSpec status before broad manual rescans or edits.
+2. Use repo-local Codex surfaces intentionally:
    - `AGENTS.md` for durable repo rules.
    - `.agents/skills` for reusable workflows.
    - `.codex/agents` for project-scoped subagents.
    - `.codex/rules` for project-scoped exec policy.
    - `.codex/hooks.json` and `.codex/hooks` for lifecycle checks.
-5. The agent owns output quality and tool-surface growth. When evidence from a miss, slow path, stale artifact, weak verification, or repeated manual step shows that a Codex skill, rule, hook, agent, plugin, MCP server, or local Rust helper would materially improve accuracy or speed, decide and add the narrowest tracked tool surface instead of waiting for the user to micromanage it. Record the reason, keep it bounded, and verify it.
-6. Depend less on human-in-the-loop approval for tool choice. Ask only when the change would cross repo scope, require credentials, alter host/user-global state, create a destructive path, or conflict with an explicit owner boundary.
-7. Upgrade only. Never downgrade a working surface, dependency, action, model, agent, skill, or generated artifact to simplify a task; move forward to the latest stable or more capable tracked path unless concrete build, audit, compatibility, or owner-boundary evidence requires a scoped hold.
-8. Treat stale or orphaned work as unfinished work by default. Before ignoring a stale artifact, orphaned file, skipped TODO, ignored generated output, or disconnected tool surface, prove it is intentionally local/ignored or finish it, document it, regenerate affected artifacts, and verify it.
-9. Tooling required to run this repo must be tracked and provisioned through the parent `meta` / `envctl` path first. Do not install missing binaries into user-global state to make a gate pass; add or fix the parent-managed tool surface, or use an already tracked repo-local equivalent while recording the gap.
-10. Parallel subagents are for read-heavy exploration, verification, and gap hunting unless a single integration branch/worktree owner coordinates writes.
-11. Host service and process management is out of scope for this repo. Do not use raw `systemctl`, daemon kills, or binary installation as a way to make repository work pass.
+3. The default Codex harness is read-only and design-first. A write-capable implementation pass requires explicit authorization and ready OpenSpec artifacts.
+4. Adopt first, cut after evidence. For crate, tool, agent, skill, hook, or repo integrations, first bring the upstream/current surface forward intactly enough to diagnose it, then cut only evidenced compile, audit, security, or scope friction.
+5. Do not replace an upstream capability with local guesses before proving the upstream surface cannot be used. If a cut is required, record the reason in an ADR or evidence note and keep the adapter thin.
+6. Upgrade only. Never downgrade a working surface, dependency, action, model, agent, skill, or generated artifact to simplify a task.
+7. Treat stale or orphaned work as unfinished by default unless evidence proves it is intentionally local and ignored.
+8. Tooling required to run this repo must be tracked and provisioned through the parent `meta` / `envctl` path first. Do not install missing binaries into user-global state to make a gate pass.
+9. Parallel subagents are for read-heavy exploration, verification, and gap hunting unless a single integration branch/worktree owner coordinates writes.
+10. Host service and process management is out of scope for this repo. Do not use raw `systemctl`, daemon kills, or binary installation as a way to make repository work pass.
 
 ## Required PR Evidence
 

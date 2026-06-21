@@ -30,9 +30,9 @@ artifacts or when preparing compact context for an agent.
    - Impact lookup:
      `rusty-idd knowledge query --index .idd/knowledge/index.json --impact NODE_ID`
 
-3. Use focused pack outputs for temporary context.
-   - Prefer `/tmp` for exploratory packs:
-     `rusty-idd knowledge pack --workspace . --out /tmp/rusty-idd-pack.xml --style xml --compress`
+3. Use focused pack outputs for bounded agent context.
+   - Put exploratory packs under ignored repo-local run output:
+     `rusty-idd knowledge pack --workspace . --out .idd/runs/context-packs/rusty-idd-pack.xml --style xml --compress`
    - Use `--include` and `--ignore` to narrow the bundle.
    - Use `--remove-comments`, `--remove-empty-lines`, `--line-numbers`, `--truncate-base64`,
      `--git-diff`, and `--git-log` only when they directly help the task.
@@ -40,15 +40,15 @@ artifacts or when preparing compact context for an agent.
 
 4. Generate a fresh architecture graph when integration boundaries are unclear.
    - Markdown for reading:
-     `rusty-idd knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md`
+     `rusty-idd knowledge architecture --workspace . --out .idd/knowledge/architecture.md`
    - JSON for tooling:
-     `rusty-idd knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.json`
+     `rusty-idd knowledge architecture --workspace . --out .idd/knowledge/architecture.json`
    - The graph combines CodeGraph-backed source structure with repomix-backed context
      package metrics and maps both to Rusty IDD automation stages.
 
 5. Generate a system graph when the task crosses repo boundaries.
    - Use the parent meta workspace when working from this checkout:
-     `rusty-idd knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md`
+     `rusty-idd knowledge system-architecture --workspace . --system-root .. --out .idd/knowledge/system-architecture.md`
    - The system graph prefers `meta project list --json` and falls back to immediate
      child git repo discovery.
    - When a peer repo already publishes `.idd/knowledge/architecture.json`, the
@@ -64,9 +64,9 @@ artifacts or when preparing compact context for an agent.
 
 6. Generate graph planning context before writing or changing OpenSpec artifacts.
    - Markdown for humans/agents:
-     `rusty-idd knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"`
+     `rusty-idd knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --goal "describe the task"`
    - JSON for automation:
-     `rusty-idd knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.json --goal "describe the task"`
+     `rusty-idd knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --goal "describe the task"`
    - The planning context consumes `.idd/knowledge/architecture.json` and, when
      present, `.idd/knowledge/system-architecture.json` and
      `.idd/knowledge/operating-model.json`; use it to choose
@@ -78,9 +78,9 @@ artifacts or when preparing compact context for an agent.
 
 7. Generate the operating model when the task touches the wider agentic company system.
    - Markdown for humans/agents:
-     `rusty-idd knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.md`
+     `rusty-idd knowledge operating-model --workspace . --out .idd/knowledge/operating-model.md`
    - JSON for automation:
-     `rusty-idd knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.json`
+     `rusty-idd knowledge operating-model --workspace . --out .idd/knowledge/operating-model.json`
    - The operating model consumes `.idd/knowledge/system-architecture.json` and
      maps discovered repos to agentic-company layers and capabilities: board
      reasoning, Rusty IDD/handoff control plane, weave communication, envctl and
@@ -94,9 +94,9 @@ artifacts or when preparing compact context for an agent.
 
 8. Generate the integration plan when the task needs ordered cross-repo execution.
    - Markdown for humans/agents:
-     `rusty-idd knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.md`
+     `rusty-idd knowledge integration-plan --workspace . --out .idd/knowledge/integration-plan.md`
    - JSON for automation:
-     `rusty-idd knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.json`
+     `rusty-idd knowledge integration-plan --workspace . --out .idd/knowledge/integration-plan.json`
    - The integration plan consumes `.idd/knowledge/operating-model.json` and
      turns partial, external, or missing capabilities into OpenSpec-ready work
      items with owner repos, unresolved anchors, adopt-first inputs, validation
@@ -107,9 +107,9 @@ artifacts or when preparing compact context for an agent.
 
 9. Generate integration status before scaffolding more work.
    - Markdown for humans/agents:
-     `rusty-idd knowledge integration-status --workspace . --out /tmp/rusty-idd-integration-status.md`
+     `rusty-idd knowledge integration-status --workspace . --out .idd/knowledge/integration-status.md`
    - JSON for automation:
-     `rusty-idd knowledge integration-status --workspace . --out /tmp/rusty-idd-integration-status.json`
+     `rusty-idd knowledge integration-status --workspace . --out .idd/knowledge/integration-status.json`
    - The status queue consumes `.idd/knowledge/integration-plan.json` and
      joins work items to OpenSpec change state. Use it to see planned,
      incomplete-scaffold, scaffolded, ready-to-archive, and archived items and
@@ -117,9 +117,9 @@ artifacts or when preparing compact context for an agent.
 
 10. Generate owner surfaces before implementing cross-repo work.
    - Markdown for humans/agents:
-     `rusty-idd knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.md`
+     `rusty-idd knowledge integration-owners --workspace . --next --out .idd/knowledge/integration-owners.md`
    - JSON for automation:
-     `rusty-idd knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.json`
+     `rusty-idd knowledge integration-owners --workspace . --next --out .idd/knowledge/integration-owners.json`
    - Select exactly one work item with `--next`, `--next-planned`, `--change`,
      `--capability`, or `--work-item`.
    - Prefer `--next` for durable `.idd/knowledge/integration-owners.*`
@@ -135,9 +135,9 @@ artifacts or when preparing compact context for an agent.
 
 11. Generate integration readiness before crossing toolchain, host, or vault boundaries.
    - Markdown for humans/agents:
-     `rusty-idd knowledge integration-readiness --workspace . --next --out /tmp/rusty-idd-integration-readiness.md`
+     `rusty-idd knowledge integration-readiness --workspace . --next --out .idd/knowledge/integration-readiness.md`
    - JSON for automation:
-     `rusty-idd knowledge integration-readiness --workspace . --next --out /tmp/rusty-idd-integration-readiness.json`
+     `rusty-idd knowledge integration-readiness --workspace . --next --out .idd/knowledge/integration-readiness.json`
    - The readiness report consumes the same selector and source artifacts as
      `integration-owners`, then emits owner state, required tools, parent
      `meta`/`envctl` provisioning boundaries, runtime assumptions, feature
@@ -165,6 +165,8 @@ artifacts or when preparing compact context for an agent.
      OpenSpec changes, so repeated runs advance the queue.
    - This is the handoff from graph planning into the normal Rusty IDD
      OpenSpec lifecycle; implementation still follows adopt-first TDD.
+   - `AI_MERGE/` may provide audit, migration, rollback, or merge evidence, but
+     it is not the primary intent source or Rusty IDD control plane.
 
 13. Use machine-readable OpenSpec lifecycle status for automation.
    - Human status:
@@ -201,13 +203,13 @@ After changing source or control-plane files, refresh artifacts and run:
 
 ```bash
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
-cargo run --bin rusty-idd -- knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md
-cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md
-cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.md
-cargo run --bin rusty-idd -- knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.md
-cargo run --bin rusty-idd -- knowledge integration-status --workspace . --out /tmp/rusty-idd-integration-status.md
-cargo run --bin rusty-idd -- knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.md
-cargo run --bin rusty-idd -- knowledge integration-readiness --workspace . --next --out /tmp/rusty-idd-integration-readiness.md
-cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"
+cargo run --bin rusty-idd -- knowledge architecture --workspace . --out .idd/knowledge/architecture.md
+cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out .idd/knowledge/system-architecture.md
+cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out .idd/knowledge/operating-model.md
+cargo run --bin rusty-idd -- knowledge integration-plan --workspace . --out .idd/knowledge/integration-plan.md
+cargo run --bin rusty-idd -- knowledge integration-status --workspace . --out .idd/knowledge/integration-status.md
+cargo run --bin rusty-idd -- knowledge integration-owners --workspace . --next --out .idd/knowledge/integration-owners.md
+cargo run --bin rusty-idd -- knowledge integration-readiness --workspace . --next --out .idd/knowledge/integration-readiness.md
+cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --goal "describe the task"
 cargo run --bin rusty-idd -- validate --workspace .
 ```

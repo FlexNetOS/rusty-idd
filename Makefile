@@ -1,7 +1,9 @@
 CARGO ?= cargo
 RUSTY_IDD ?= $(CARGO) run --bin rusty-idd --
+RUSTY_IDD_CHANGE ?= upgrade-codex-harness-rusty-idd-flow
+RUSTY_IDD_GOAL ?= update the .codex agent harness and related files to reflect the true flow of rusty-idd. Ai_merge is a tool for rusty_idd and must be treated as one and removed as the main intent
 
-.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check operating-model operating-model-check integration-plan integration-plan-check integration-status integration-status-check integration-owners integration-owners-check integration-readiness integration-readiness-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
+.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check operating-model operating-model-check integration-plan integration-plan-check integration-status integration-status-check integration-owners integration-owners-check integration-readiness integration-readiness-check plan-context plan-context-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
 
 build:
 	$(CARGO) build --workspace --locked
@@ -71,6 +73,13 @@ integration-readiness:
 integration-readiness-check:
 	tmpdir=$$(mktemp -d) && $(RUSTY_IDD) knowledge integration-readiness --workspace . --next --out "$$tmpdir/integration-readiness.json" && $(RUSTY_IDD) knowledge integration-readiness --workspace . --next --out "$$tmpdir/integration-readiness.md" && cmp -s .idd/knowledge/integration-readiness.json "$$tmpdir/integration-readiness.json" && cmp -s .idd/knowledge/integration-readiness.md "$$tmpdir/integration-readiness.md" || (echo ".idd/knowledge integration-readiness artifacts are stale; run make integration-readiness" >&2; rm -rf "$$tmpdir"; exit 1); rm -rf "$$tmpdir"
 
+plan-context:
+	$(RUSTY_IDD) knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --change "$(RUSTY_IDD_CHANGE)" --goal "$(RUSTY_IDD_GOAL)"
+	$(RUSTY_IDD) knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --change "$(RUSTY_IDD_CHANGE)" --goal "$(RUSTY_IDD_GOAL)"
+
+plan-context-check:
+	tmpdir=$$(mktemp -d) && $(RUSTY_IDD) knowledge plan-context --workspace . --out "$$tmpdir/plan-context.json" --change "$(RUSTY_IDD_CHANGE)" --goal "$(RUSTY_IDD_GOAL)" && $(RUSTY_IDD) knowledge plan-context --workspace . --out "$$tmpdir/plan-context.md" --change "$(RUSTY_IDD_CHANGE)" --goal "$(RUSTY_IDD_GOAL)" && cmp -s .idd/knowledge/plan-context.json "$$tmpdir/plan-context.json" && cmp -s .idd/knowledge/plan-context.md "$$tmpdir/plan-context.md" || (echo ".idd/knowledge plan-context artifacts are stale; run make plan-context" >&2; rm -rf "$$tmpdir"; exit 1); rm -rf "$$tmpdir"
+
 codex-env-check:
 	$(RUSTY_IDD) codex env-check
 
@@ -83,7 +92,7 @@ codex-runtime-audit:
 codex-system-audit:
 	$(RUSTY_IDD) codex system-audit
 
-ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
 
 install-hooks:
 	git config core.hooksPath .githooks

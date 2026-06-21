@@ -10,12 +10,40 @@ Unify repositories by preserving working behavior, making contracts explicit, an
 2. Do not introduce a new secret provider unless the env/secrets contract says why.
 3. Do not delete source code during migration; deprecate first, remove after parity tests pass.
 4. Keep PRs narrow: one vertical slice, one migration intent, one validation path.
-5. Every generated PR must update the relevant `/AI_MERGE` record.
+5. Every generated PR must update the relevant OpenSpec, `.idd`, ADR, and evidence records; use `/AI_MERGE` only when audit, migration, rollback, or merge evidence is required.
 6. Never commit real secrets. Use `.env.example`, `.env.schema.example.json`, GitHub Actions secrets, OIDC, or provider references.
 7. If two agents conflict, stop and update `/AI_MERGE/05_conflict_risk_register.md` before continuing.
 8. Treat `.idd/MANIFEST.tsv` as the audit baseline for generated control-plane artifacts.
 9. Break work into sub-59-minute tasks when using cloud coding agents with hard session limits.
 10. One integration branch has authority. Other branches are research, staging, or disposable.
+
+## Rusty IDD Workflow Rules
+
+1. Rusty IDD is the intent-driven workflow engine: user intent, graph/context artifacts, OpenSpec proposal/spec/design/ADR/tasks, implementation gating, validation, archive, and handoff evidence.
+2. `AI_MERGE/` is a Rusty IDD tool and evidence surface. Use it for audit notes, migration history, rollback, and merge evidence when the workflow calls for it; do not treat it as the main intent source or authoritative control plane.
+3. Before implementation, create or refresh the relevant `.idd/knowledge/*` graph artifacts and bind the goal with `rusty-idd knowledge plan-context`.
+4. Before writes, create or select an OpenSpec change and verify readiness with `rusty-idd spec status` or `rusty-idd spec next`.
+5. ADR decisions live in repo-level `adr/`; accepted ADRs are immutable. Supersede with a new ADR instead of editing prior accepted decisions.
+6. Implementation follows tasks only after the OpenSpec artifacts are ready.
+7. Validation must refresh deterministic artifacts: `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, OpenSpec status, and Rusty IDD validation.
+
+## Codex Environment Rules
+
+1. Use `.idd/knowledge/report.md`, `.idd/knowledge/architecture.md`, `.idd/knowledge/plan-context.md`, and OpenSpec status before broad manual rescans or edits.
+2. Use repo-local Codex surfaces intentionally:
+   - `AGENTS.md` for durable repo rules.
+   - `.agents/skills` for reusable workflows.
+   - `.codex/agents` for project-scoped subagents.
+   - `.codex/rules` for project-scoped exec policy.
+   - `.codex/hooks.json` and `.codex/hooks` for lifecycle checks.
+3. The default Codex harness is read-only and design-first. A write-capable implementation pass requires explicit authorization and ready OpenSpec artifacts.
+4. Adopt first, cut after evidence. For crate, tool, agent, skill, hook, or repo integrations, first bring the upstream/current surface forward intactly enough to diagnose it, then cut only evidenced compile, audit, security, or scope friction.
+5. Do not replace an upstream capability with local guesses before proving the upstream surface cannot be used. If a cut is required, record the reason in an ADR or evidence note and keep the adapter thin.
+6. Upgrade only. Never downgrade a working surface, dependency, action, model, agent, skill, or generated artifact to simplify a task.
+7. Treat stale or orphaned work as unfinished by default unless evidence proves it is intentionally local and ignored.
+8. Tooling required to run this repo must be tracked and provisioned through the parent `meta` / `envctl` path first. Do not install missing binaries into user-global state to make a gate pass.
+9. Parallel subagents are for read-heavy exploration, verification, and gap hunting unless a single integration branch/worktree owner coordinates writes.
+10. Host service and process management is out of scope for this repo. Do not use raw `systemctl`, daemon kills, or binary installation as a way to make repository work pass.
 
 ## Required PR Evidence
 
@@ -174,10 +202,10 @@ body:
   - type: textarea
     id: source-of-truth
     attributes:
-      label: Source of truth
+      label: Rusty IDD artifacts
       value: |
-        Use AGENTS.md and AI_MERGE as the source of truth.
-        Update the relevant AI_MERGE files in the PR.
+        Use AGENTS.md, .idd/knowledge, and OpenSpec artifacts as the source of truth.
+        Treat AI_MERGE as an audit/evidence surface when the workflow calls for it.
     validations:
       required: true
   - type: textarea
@@ -229,27 +257,29 @@ pub const PR_TEMPLATE: &str = r#"## IDD PR Evidence
 
 -
 
-### AI_MERGE updates
+### Rusty IDD artifacts
 
-- [ ] Feature matrix updated if capability changed
-- [ ] Env/secrets contract updated if config changed
-- [ ] Conflict register updated if collision found
-- [ ] Agent queue updated
+- [ ] OpenSpec proposal/spec/design/ADR/tasks updated or intentionally unchanged
+- [ ] `.idd/knowledge/*` refreshed or intentionally unchanged
 - [ ] Manifest updated or intentionally unchanged
+- [ ] AI_MERGE evidence updated only if audit, migration, rollback, or merge records are required
 "#;
 
 pub const COPILOT_INSTRUCTIONS: &str = r#"# Repository Instructions for AI Coding Agents
 
-Follow `AGENTS.md` first. Treat `/AI_MERGE` as the current control plane.
+Follow `AGENTS.md` first. Treat Rusty IDD as the intent-driven workflow engine.
+`AI_MERGE/` is an audit and evidence tool that Rusty IDD may use, not the main
+intent source.
 
 Preferred workflow:
 
-1. Read the task file completely.
-2. Inspect the repo inventory and env/secrets contract.
-3. Make the smallest behavior-preserving change.
-4. Run relevant tests and `idd validate` when available.
-5. Update the affected `/AI_MERGE` documents.
-6. Never commit secret values.
+1. Read the user goal and active OpenSpec change completely.
+2. Inspect `.idd/knowledge/report.md`, `.idd/knowledge/architecture.md`, and `.idd/knowledge/plan-context.md`.
+3. Verify `rusty-idd spec status <change>` before editing.
+4. Make the smallest behavior-preserving change authorized by `tasks.md`.
+5. Refresh `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, and validation artifacts.
+6. Update `AI_MERGE/` only when audit, migration, rollback, or merge evidence is required.
+7. Never commit secret values.
 
 Do not perform broad cleanup, style-only rewrites, dependency swaps, or folder flattening unless the task explicitly says so.
 "#;
@@ -309,7 +339,7 @@ main
 1. One task per issue.
 2. One branch per task.
 3. One PR per task.
-4. PRs must update the affected `/AI_MERGE` files.
+4. PRs must update OpenSpec, `.idd/knowledge`, manifest, and AI_MERGE evidence only as required by the Rusty IDD workflow.
 5. If an agent hits a timeout, split the task instead of increasing scope.
 6. If an agent needs a second repo, import or mirror required context into this repo first; do not assume one cloud-agent run can mutate two repos.
 

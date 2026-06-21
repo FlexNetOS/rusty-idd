@@ -1,11 +1,11 @@
 # System Architecture Graph
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
 - Discovery source: `meta project list --json`
 - Repos: 65
 - Roles: 13
-- Edges: 195
+- Edges: 196
 
 ## Roles
 
@@ -16,7 +16,7 @@
 | `Coordination and domain surface` | Provides orchestration, MCP, and domain-adjacent system coordination surfaces | repo:atc, repo:handoff, repo:mcp-hub, repo:weave |
 | `Documentation and knowledge` | Stores documentation and wiki surfaces | repo:flexnetos-brain, repo:flexnetos-wiki, repo:my-wiki, repo:obsidian-mind |
 | `Domain upgrade surface` | Contributes domain behavior through weave plus Obscura upgrade paths | repo:obscura |
-| `Fleet handoff` | Carries central and fleet handoff state for cross-repo agent continuity | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:weave |
+| `Fleet handoff` | Carries central and fleet handoff state for cross-repo agent continuity | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:teri, repo:weave |
 | `Rusty IDD control plane` | Owns OpenSpec, ADR, task, validation, manifest, and graph-driven implementation workflow | repo:rusty-idd |
 | `Knowledge and memory` | Stores memory or knowledge surfaces used by agents | repo:icm, repo:obsidian-mind |
 | `Meta control plane` | Provides parent meta workspace inventory and execution surfaces | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli |
@@ -42,13 +42,13 @@
 | `commands` | `feat/recall-remember-speak-commands` | false | commands, hub | role:capability-hub | github-actions |
 | `copilot-plugin` | `main` | true | ai, plugin | role:agent-environment |  |
 | `database_hub` | `master` | false | database, hub | role:capability-hub | github-actions |
-| `envctl` | `master` | false | env, tools | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider | rust, handoff, claude, github-actions |
+| `envctl` | `master` | true | env, tools | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider | rust, handoff, claude, github-actions |
 | `flexnetos_brain` | `` | false | data, docs | role:documentation-knowledge |  |
 | `flexnetos_github_app` | `main` | false | github-app, ops | role:rust-code-surface | rust, github-actions |
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | ops, runner | role:fleet-handoff, role:rust-code-surface | rust, handoff, github-actions |
 | `flexnetos_wiki` | `` | false | docs | role:documentation-knowledge |  |
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
-| `github_org` | `ci/promote-trivy-reconcile-flags` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
+| `github_org` | `fix/autonomous-feature-develop-approval` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
 | `handoff` | `develop` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `master` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
@@ -73,7 +73,7 @@
 | `meta_project_cli` | `main` | false | canon | role:meta-control-plane, role:rust-code-surface | rust, github-actions |
 | `meta_rust_cli` | `main` | false | canon | role:meta-control-plane, role:rust-code-surface | rust, github-actions |
 | `my-wiki` | `` | false | docs, wiki | role:documentation-knowledge |  |
-| `n8n` | `harness/epic-d` | false | automation, forked | role:agent-environment | node, agents, claude, github-actions |
+| `n8n` | `develop` | false | automation, forked | role:agent-environment | node, agents, claude, github-actions |
 | `network-control` | `main` | false |  | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
 | `network_hub` | `master` | false | hub, network | role:capability-hub | github-actions |
 | `obscura` | `main` | false | untriaged | role:domain-upgrade-surface, role:rust-code-surface | rust, github-actions |
@@ -84,11 +84,11 @@
 | `prompt_hub` | `main` | true | ai, prompts | role:agent-environment, role:capability-hub, role:fleet-handoff, role:rust-code-surface, role:spec-producer | rust, handoff, claude, github-actions |
 | `rtk-tokenkill` | `develop` | false | ai, optimization, tools | role:agent-environment, role:rust-code-surface | rust, claude, github-actions |
 | `ruflo` | `main` | true | ai, forked, rust, wasm | role:agent-environment | node, agents, claude, github-actions |
-| `rusty-idd` | `develop` | false | idd, tools | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | rust, openspec, idd-knowledge, handoff, agents, claude, github-actions, make, just |
+| `rusty-idd` | `` | false | idd, tools | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | rust, openspec, idd-knowledge, handoff, agents, claude, github-actions, make, just |
 | `ruvector` | `main` | false | ai, forked, rust, wasm | role:agent-environment, role:rust-code-surface | rust, node, claude, github-actions |
 | `shimmy` | `feat/openai-embeddings-endpoint` | false | forked, untriaged | role:rust-code-surface | rust, github-actions, make |
 | `template_hub` | `master` | false | hub, templates | role:capability-hub | github-actions |
-| `teri` | `fix/keyless-envctl-gguf-guard` | false | forked, untriaged | role:rust-code-surface | rust, claude |
+| `teri` | `verify/main-embeddings-ruvllm` | true | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
 | `tool_hub` | `feat/stage-github-org-tool-pins` | true | hub, tools | role:capability-hub | github-actions |
 | `vault_hub` | `main` | false | hub, vault | role:capability-hub |  |
 | `vox` | `main` | false | forked, tools, voice | role:rust-code-surface | rust, claude, github-actions |
@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 135 files, 8440 nodes, 34370 edges via `codegraph-rust` | 188 files, 132590 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, cli |
+| `rusty-idd` | 135 files, 8456 nodes, 34504 edges via `codegraph-rust` | 198 files, 138824 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
 
 ## Edges
 
@@ -225,6 +225,7 @@
 | `repo:ruvector` | provides | `role:rust-code-surface` |
 | `repo:shimmy` | provides | `role:rust-code-surface` |
 | `repo:template-hub` | provides | `role:capability-hub` |
+| `repo:teri` | provides | `role:fleet-handoff` |
 | `repo:teri` | provides | `role:rust-code-surface` |
 | `repo:tool-hub` | provides | `role:capability-hub` |
 | `repo:vault-hub` | provides | `role:capability-hub` |
@@ -304,6 +305,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 8 repos have local dirty state recorded as evidence
+- 10 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries

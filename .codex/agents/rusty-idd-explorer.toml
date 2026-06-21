@@ -4,10 +4,15 @@ sandbox_mode = "read-only"
 model_reasoning_effort = "medium"
 developer_instructions = """
 Explore without editing files.
-Start with .idd/knowledge/report.md and targeted rusty-idd knowledge queries before broad source reads.
-For integrations, inventory the existing repo and upstream/current surface before recommending cuts.
-Return concise evidence: files, symbols, commands inspected, and gaps that still need verification.
+Start with .idd/knowledge/report.md, .idd/knowledge/architecture.md,
+.idd/knowledge/plan-context.md, and targeted rusty-idd knowledge queries before
+broad source reads.
+Map the Rusty IDD workflow order: intent, graph/context, OpenSpec artifacts,
+ADR, tasks, implementation gate, validation, and optional AI_MERGE evidence.
+For integrations, inventory the existing repo and upstream/current surface
+before recommending cuts.
+Return concise evidence: files, symbols, commands inspected, current artifact
+state, and gaps that still need verification.
 Do not manage host services or processes.
 """
 nickname_candidates = ["Scout", "Atlas", "Surveyor"]
-

@@ -1,11 +1,12 @@
 # Dry-run-first Codex model loop for Rusty IDD.
+# Default mode is read-only and design-first.
 #
 # This is a repo-local workflow definition. It does not configure providers or
 # credentials; those remain user/admin Codex configuration.
 
 name = "rusty-idd-model-loop"
-description = "Run read-heavy Codex passes across multiple model roles, then hand one writer a synthesized plan."
-output_dir = "/tmp/rusty-idd-codex-loop"
+description = "Run read-only Codex passes that follow Rusty IDD intent, graph, OpenSpec, and verification order before any implementation is authorized."
+output_dir = ".idd/runs/rusty-idd-codex-loop"
 
 [[passes]]
 name = "explore"
@@ -15,8 +16,10 @@ reasoning = "medium"
 sandbox = "read-only"
 prompt = """
 Inspect the current Rusty IDD repo state. Start from .idd/knowledge/report.md,
-AGENTS.md, AI_MERGE, ADRs, and the Codex environment docs. Return concise
-findings about repo shape, existing surfaces, and missing evidence. Do not edit.
+.idd/knowledge/architecture.md, .idd/knowledge/plan-context.md, OpenSpec
+changes, ADRs, and the Codex environment docs. Treat AI_MERGE as evidence that
+Rusty IDD may use, not as the main intent source. Return concise findings about
+repo shape, current workflow artifacts, and missing evidence. Do not edit.
 """
 
 [[passes]]
@@ -26,10 +29,11 @@ model = "gpt-5.5"
 reasoning = "high"
 sandbox = "read-only"
 prompt = """
-Audit the requested end state against current files. Look specifically for
-premature cuts, missing generated artifacts, weak verification, stale docs, and
-unimplemented Codex environment surfaces. Return actionable gaps with evidence.
-Do not edit.
+Audit the requested end state against the Rusty IDD artifact flow. Check whether
+intent, graph context, OpenSpec proposal/spec/design/ADR/tasks, status, and
+validation artifacts exist before any implementation. Treat AI_MERGE as an
+optional evidence surface only. Return actionable gaps with evidence. Do not
+edit.
 """
 
 [[passes]]
@@ -39,21 +43,9 @@ model = "gpt-5.5"
 reasoning = "high"
 sandbox = "read-only"
 prompt = """
-Verify the current Rusty IDD Codex/Rust environment. Prefer Makefile, Justfile,
-AGENTS.md, AI_MERGE, and generated artifact checks. Return commands that should
-be run, the evidence they prove, and residual risks. Do not edit.
+Verify the current Rusty IDD Codex/Rust environment. Prefer rusty-idd knowledge
+commands, rusty-idd spec status/next/validate, AGENTS.md, ADRs, and generated
+artifact checks. AI_MERGE may be checked as evidence only when the workflow
+calls for audit or merge records. Return commands that should be run, the
+evidence they prove, and residual risks. Do not edit.
 """
-
-[[passes]]
-name = "implement"
-agent = "rusty-idd-implementer"
-model = "gpt-5.5"
-reasoning = "high"
-sandbox = "workspace-write"
-prompt = """
-Using the exploration, gap-hunt, and verification summaries supplied as context,
-implement the next narrow Rusty IDD environment upgrade. Follow adopt-first:
-preserve current surfaces, build them, then cut only evidenced friction.
-Refresh generated artifacts and run relevant gates.
-"""
-
