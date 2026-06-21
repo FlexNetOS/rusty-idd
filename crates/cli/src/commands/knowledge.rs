@@ -4,9 +4,10 @@ use std::path::PathBuf;
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
     build_architecture_graph, build_graph_planning_context, build_integration_automation_plan,
-    build_knowledge_report, build_system_architecture_graph, build_system_operating_model,
-    index_workspace, load_index, pack_workspace, query_knowledge_index, refresh_workspace,
-    ArchitectureFormat, ArchitectureOptions, IndexOptions, IntegrationPlanOptions, KnowledgeQuery,
+    build_integration_status_report, build_knowledge_report, build_system_architecture_graph,
+    build_system_operating_model, index_workspace, load_index, pack_workspace,
+    query_knowledge_index, refresh_workspace, ArchitectureFormat, ArchitectureOptions,
+    IndexOptions, IntegrationPlanOptions, IntegrationStatusOptions, KnowledgeQuery,
     OperatingModelOptions, PackStyle, PackWorkspaceOptions, PlanContextFormat, PlanContextOptions,
     ReportFormat, ReportOptions, SystemArchitectureOptions,
 };
@@ -27,6 +28,8 @@ pub enum KnowledgeCommand {
     OperatingModel(OperatingModelArgs),
     /// Generate an OpenSpec-ready integration backlog from the operating model.
     IntegrationPlan(IntegrationPlanArgs),
+    /// Report integration backlog execution state from OpenSpec changes.
+    IntegrationStatus(IntegrationStatusArgs),
     /// Generate a graph-backed planning packet for OpenSpec work.
     PlanContext(PlanContextArgs),
     /// Answer local graph questions from an existing index.
@@ -127,6 +130,16 @@ pub struct IntegrationPlanArgs {
     pub out: PathBuf,
     #[arg(long)]
     pub operating_model: Option<PathBuf>,
+}
+
+#[derive(Args)]
+pub struct IntegrationStatusArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+    #[arg(long)]
+    pub integration_plan: Option<PathBuf>,
 }
 
 #[derive(Args)]
@@ -313,6 +326,27 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
                 "wrote integration automation plan to {}",
                 args.out.display()
             );
+        }
+        KnowledgeCommand::IntegrationStatus(args) => {
+            let format = if args
+                .out
+                .extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("json"))
+            {
+                PlanContextFormat::Json
+            } else {
+                PlanContextFormat::Markdown
+            };
+            let mut options = IntegrationStatusOptions::new(args.workspace, format);
+            options.integration_plan_path = args.integration_plan;
+            let report = build_integration_status_report(options)?;
+            if matches!(format, PlanContextFormat::Json) {
+                write_text(&args.out, &(report + "\n"))?;
+            } else {
+                write_text(&args.out, &report)?;
+            }
+            println!("wrote integration status to {}", args.out.display());
         }
         KnowledgeCommand::PlanContext(args) => {
             let format = if args

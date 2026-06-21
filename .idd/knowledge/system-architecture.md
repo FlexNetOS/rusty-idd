@@ -48,7 +48,7 @@
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | ops, runner | role:fleet-handoff, role:rust-code-surface | rust, handoff, github-actions |
 | `flexnetos_wiki` | `` | false | docs | role:documentation-knowledge |  |
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
-| `github_org` | `chore/wrap-up-2026-06-21-002` | true | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
+| `github_org` | `chore/wrap-up-2026-06-21-002` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
 | `handoff` | `fix/windows-ledger-path-and-promote-checkout` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `master` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 135 files, 8239 nodes, 33116 edges via `codegraph-rust` | 153 files, 110800 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, runner, knowledge |
+| `rusty-idd` | 135 files, 8287 nodes, 33408 edges via `codegraph-rust` | 158 files, 113941 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, runner |
 
 ## Edges
 
@@ -305,6 +305,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 10 repos have local dirty state recorded as evidence
+- 9 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries

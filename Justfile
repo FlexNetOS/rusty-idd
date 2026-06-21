@@ -51,6 +51,13 @@ integration-plan:
 integration-plan-check:
     tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge integration-plan --workspace . --out "$tmpdir/integration-plan.json" && {{rusty_idd}} knowledge integration-plan --workspace . --out "$tmpdir/integration-plan.md" && cmp -s .idd/knowledge/integration-plan.json "$tmpdir/integration-plan.json" && cmp -s .idd/knowledge/integration-plan.md "$tmpdir/integration-plan.md" || { echo ".idd/knowledge integration-plan artifacts are stale; run just integration-plan" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
+integration-status:
+    {{rusty_idd}} knowledge integration-status --workspace . --out .idd/knowledge/integration-status.json
+    {{rusty_idd}} knowledge integration-status --workspace . --out .idd/knowledge/integration-status.md
+
+integration-status-check:
+    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge integration-status --workspace . --out "$tmpdir/integration-status.json" && {{rusty_idd}} knowledge integration-status --workspace . --out "$tmpdir/integration-status.md" && cmp -s .idd/knowledge/integration-status.json "$tmpdir/integration-status.json" && cmp -s .idd/knowledge/integration-status.md "$tmpdir/integration-status.md" || { echo ".idd/knowledge integration-status artifacts are stale; run just integration-status" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
+
 plan-context:
     {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work"
     {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work"
@@ -73,4 +80,4 @@ codex-runtime-audit:
 codex-system-audit:
     {{rusty_idd}} codex system-audit
 
-ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check integration-status-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
