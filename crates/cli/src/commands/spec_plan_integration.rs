@@ -35,6 +35,7 @@ fn try_run(args: PlanIntegrationArgs) -> Result<PathBuf> {
     let plan = read_plan(&plan_path)?;
     let item = select_work_item(
         &plan,
+        &args.base,
         args.change.as_deref(),
         args.capability.as_deref(),
         args.work_item.as_deref(),
@@ -51,6 +52,7 @@ fn read_plan(path: &Path) -> Result<IntegrationAutomationPlan> {
 
 fn select_work_item<'a>(
     plan: &'a IntegrationAutomationPlan,
+    base: &Path,
     change: Option<&str>,
     capability: Option<&str>,
     work_item: Option<&str>,
@@ -85,15 +87,22 @@ fn select_work_item<'a>(
     } else {
         plan.work_items
             .iter()
+            .filter(|item| !work_item_has_openspec_slot(base, item))
             .min_by(|a, b| {
                 a.priority
                     .cmp(&b.priority)
                     .then(a.change_id.cmp(&b.change_id))
             })
-            .context("integration plan contains no work items")?
+            .context("no planned integration work items remain; active or archived OpenSpec changes already exist for every work item")?
     };
 
     Ok(selected)
+}
+
+fn work_item_has_openspec_slot(base: &Path, item: &IntegrationWorkItem) -> bool {
+    let changes_root = base.join("openspec/changes");
+    changes_root.join(&item.change_id).exists()
+        || changes_root.join("archive").join(&item.change_id).exists()
 }
 
 fn write_change(base: &Path, item: &IntegrationWorkItem, force: bool) -> Result<PathBuf> {

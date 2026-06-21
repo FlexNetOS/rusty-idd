@@ -422,9 +422,9 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "chore/wrap-up-2026-06-21-002",
-      "head": "54bdad7023b649c58cf8a8d54e5fcd9c5062daa2",
-      "dirty": false,
+      "branch": "research/harness-upgrade-targets",
+      "head": "2a5647727a70a51606c7cc88d51804cfb4b3d210",
+      "dirty": true,
       "tags": [
         "ci",
         "org"
@@ -1269,8 +1269,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8287,
-          "edges": 33408,
+          "nodes": 8296,
+          "edges": 33472,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 158,
-          "tokens": 113941,
+          "files": 163,
+          "tokens": 116033,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1432,7 +1432,7 @@
             "kind": "crate",
             "files": 1,
             "nodes": 502,
-            "edges": 3636,
+            "edges": 3637,
             "languages": [
               "Rust",
               "rust"
@@ -1455,8 +1455,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 22,
-            "nodes": 687,
-            "edges": 2854,
+            "nodes": 696,
+            "edges": 2918,
             "languages": [
               "Rust",
               "rust"
@@ -3622,7 +3622,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "9 repos have local dirty state recorded as evidence",
+    "10 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]
