@@ -10,8 +10,10 @@ artifacts or when preparing compact context for an agent.
 
 ## Workflow
 
-1. Start with `.idd/knowledge/report.md`.
+1. Start with `.idd/knowledge/report.md` and `.idd/knowledge/architecture.md`.
    - Check the workspace fingerprint, file count, token count, top files, hotspots, and findings.
+   - Use the architecture graph to map repo components, integration surfaces, OpenSpec
+     stages, and evidence paths before deciding which files to edit.
    - If the report is missing or stale, run:
      `rusty-idd knowledge refresh --workspace .`
 
@@ -35,12 +37,21 @@ artifacts or when preparing compact context for an agent.
      `--git-diff`, and `--git-log` only when they directly help the task.
    - Do not commit ad hoc pack files.
 
-4. Read compactly.
-   - Grep or slice generated packs and indexes instead of dumping the full file.
-   - Treat `.idd/knowledge/index.json` and `.idd/knowledge/report.md` as durable control-plane
-     artifacts; keep them deterministic and bounded.
+4. Generate a fresh architecture graph when integration boundaries are unclear.
+   - Markdown for reading:
+     `rusty-idd knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md`
+   - JSON for tooling:
+     `rusty-idd knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.json`
+   - The graph combines CodeGraph-backed source structure with repomix-backed context
+     package metrics and maps both to Rusty IDD automation stages.
 
-5. Stay in-process.
+5. Read compactly.
+   - Grep or slice generated packs and indexes instead of dumping the full file.
+   - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
+     `.idd/knowledge/architecture.json`, and `.idd/knowledge/architecture.md`
+     as durable control-plane artifacts; keep them deterministic and bounded.
+
+6. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
@@ -52,5 +63,6 @@ After changing source or control-plane files, refresh artifacts and run:
 
 ```bash
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
+cargo run --bin rusty-idd -- knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md
 cargo run --bin rusty-idd -- validate --workspace .
 ```

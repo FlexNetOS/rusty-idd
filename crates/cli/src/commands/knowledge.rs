@@ -3,9 +3,9 @@ use std::path::PathBuf;
 
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
-    build_knowledge_report, index_workspace, load_index, pack_workspace, query_knowledge_index,
-    refresh_workspace, IndexOptions, KnowledgeQuery, PackStyle, PackWorkspaceOptions, ReportFormat,
-    ReportOptions,
+    build_architecture_graph, build_knowledge_report, index_workspace, load_index, pack_workspace,
+    query_knowledge_index, refresh_workspace, ArchitectureFormat, ArchitectureOptions,
+    IndexOptions, KnowledgeQuery, PackStyle, PackWorkspaceOptions, ReportFormat, ReportOptions,
 };
 
 #[derive(Subcommand)]
@@ -16,6 +16,8 @@ pub enum KnowledgeCommand {
     Pack(PackArgs),
     /// Combine inventory, graph, pack metrics, hotspots, and findings.
     Report(ReportArgs),
+    /// Generate the system architecture graph from CodeGraph and repomix surfaces.
+    Architecture(ArchitectureArgs),
     /// Answer local graph questions from an existing index.
     Query(QueryArgs),
     /// Regenerate .idd/knowledge/index.json and report.md.
@@ -72,6 +74,14 @@ pub struct PackArgs {
 
 #[derive(Args)]
 pub struct ReportArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+}
+
+#[derive(Args)]
+pub struct ArchitectureArgs {
     #[arg(long)]
     pub workspace: PathBuf,
     #[arg(long)]
@@ -154,6 +164,25 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             write_text(&args.out, &report)?;
             println!("wrote knowledge report to {}", args.out.display());
         }
+        KnowledgeCommand::Architecture(args) => {
+            let format = if args
+                .out
+                .extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("json"))
+            {
+                ArchitectureFormat::Json
+            } else {
+                ArchitectureFormat::Markdown
+            };
+            let graph = build_architecture_graph(ArchitectureOptions::new(args.workspace, format))?;
+            if matches!(format, ArchitectureFormat::Json) {
+                write_text(&args.out, &(graph + "\n"))?;
+            } else {
+                write_text(&args.out, &graph)?;
+            }
+            println!("wrote architecture graph to {}", args.out.display());
+        }
         KnowledgeCommand::Query(args) => {
             let index = load_index(&args.index)?;
             let query = selected_query(&args)?;
@@ -161,11 +190,13 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             print_query_result(&result);
         }
         KnowledgeCommand::Refresh(args) => {
-            let (index, report) = refresh_workspace(args.workspace)?;
+            let artifacts = refresh_workspace(args.workspace)?;
             println!(
-                "refreshed knowledge artifacts: {}, {}",
-                index.display(),
-                report.display()
+                "refreshed knowledge artifacts: {}, {}, {}, {}",
+                artifacts.index.display(),
+                artifacts.report.display(),
+                artifacts.architecture_json.display(),
+                artifacts.architecture_markdown.display()
             );
         }
     }

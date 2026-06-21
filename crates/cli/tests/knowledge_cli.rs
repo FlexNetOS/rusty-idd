@@ -102,7 +102,27 @@ fn knowledge_commands_cover_index_pack_report_query_and_refresh() {
         .unwrap()
         .contains("# Knowledge Report"));
 
+    run_ok(
+        &[
+            "knowledge",
+            "architecture",
+            "--workspace",
+            ".",
+            "--out",
+            "architecture.json",
+        ],
+        root.path(),
+    );
+    let architecture = fs::read_to_string(root.path().join("architecture.json")).unwrap();
+    assert!(architecture.contains("\"provider\": \"codegraph-rust\""));
+    assert!(architecture.contains("\"provider\": \"repomix-rs\""));
+
     run_ok(&["knowledge", "refresh", "--workspace", "."], root.path());
     assert!(root.path().join(".idd/knowledge/index.json").exists());
     assert!(root.path().join(".idd/knowledge/report.md").exists());
+    assert!(root
+        .path()
+        .join(".idd/knowledge/architecture.json")
+        .exists());
+    assert!(root.path().join(".idd/knowledge/architecture.md").exists());
 }
