@@ -12,7 +12,7 @@ durable skills, hooks, and subagent roles.
 - `.codex/config.toml` enables project hooks and caps subagent fan-out.
 - `.codex/rules/default.rules` blocks raw host/process management and prompts
   for untracked global tool installation.
-- `.codex/hooks.json` registers a Stop hook.
+- `.codex/hooks.json` registers a git-root anchored Stop hook.
 - `rusty-idd codex env-check` verifies required artifacts and known regression
   markers.
 - `.codex/agents/` defines read-only explorer, verifier, gap-hunter, and one
@@ -24,6 +24,12 @@ durable skills, hooks, and subagent roles.
   Codex loop.
 - `rusty-idd codex model-loop` emits or executes exact `codex exec` commands
   for that loop.
+- `rusty-idd codex runtime-audit` classifies Python mentions and fails if
+  repo-local Codex hooks, agents, loops, or targets depend on Python runtime
+  commands.
+- `rusty-idd codex system-audit` checks the active Codex binary and optional
+  parent `codex`/`envctl` roots to distinguish Rust runtime from upstream
+  Python developer/package tooling.
 - `docs/rusty-idd/codex-environment.md` documents the environment.
 
 ## Research Basis
@@ -69,6 +75,8 @@ repo-local equivalent and keep the gap visible.
 
 ```bash
 just codex-env-check
+cargo run --bin rusty-idd -- codex runtime-audit
+cargo run --bin rusty-idd -- codex system-audit --codex-source ../codex --envctl ../envctl
 cargo fmt --all -- --check
 cargo test --workspace --locked
 cargo clippy --workspace --all-targets --all-features -- -D warnings
@@ -84,6 +92,17 @@ cargo run --bin rusty-idd -- codex model-loop
 - `cargo run --bin rusty-idd -- codex env-check`: passed.
 - `make codex-env-check`: passed.
 - `cargo run --bin rusty-idd -- codex env-check`: parsed hook JSON plus project config, agent, and loop TOML successfully.
+- Stop hook hardening: `.codex/hooks.json` now resolves the git root, runs
+  Cargo with `--manifest-path`, passes `--workspace` explicitly, and uses a
+  180-second timeout to avoid false failures from subdirectory launches or
+  short Cargo build-lock waits.
+- `cargo run --bin rusty-idd -- codex runtime-audit`: passed and reported zero
+  live Codex Python commands and zero obsolete Python Codex tool files.
+- `cargo run --bin rusty-idd -- codex system-audit --codex-source ../codex --envctl ../envctl`:
+  passed; active `codex` resolved to a native ELF source build under
+  `../codex/codex-rs/target/release/codex`, envctl uses direct high-parallel
+  Cargo source builds with mold and Bun fallback, and upstream Python was
+  classified as developer/package tooling.
 - `cargo fmt --all -- --check`: passed.
 - `cargo build --workspace --locked`: passed.
 - `cargo test --workspace --locked`: passed, 584 tests passed and 3 vendored watcher timing tests ignored.

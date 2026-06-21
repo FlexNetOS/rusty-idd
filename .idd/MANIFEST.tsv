@@ -1,7 +1,7 @@
 path	size_bytes	fnv1a64
 .agents/skills/rusty-idd-adopt-first/SKILL.md	2322	83338bf9d020a7eb
-.agents/skills/rusty-idd-codex-rust-env/SKILL.md	3930	f7704d46bfcf4d04
-.agents/skills/rusty-idd-knowledge/SKILL.md	1941	54b5921096587332
+.agents/skills/rusty-idd-codex-rust-env/SKILL.md	4314	3697af05e72d81ee
+.agents/skills/rusty-idd-knowledge/SKILL.md	2156	80e3a934320c0604
 .cargo/audit.toml	1371	581e4e83e760f244
 .claude/agent-guard.toml	316	a05fb9faa045160a
 .claude/agents/continuity-steward.md	4043	168bb3883208a6ac
@@ -28,7 +28,7 @@ path	size_bytes	fnv1a64
 .codex/agents/rusty-idd-implementer.toml	799	a3bfa75a9a2051ec
 .codex/agents/rusty-idd-verifier.toml	636	8689ed79416ace13
 .codex/config.toml	302	433b917faea682b6
-.codex/hooks.json	314	e6705613aaeb2a5a
+.codex/hooks.json	431	52a408adf472e804
 .codex/loops/rusty-idd-model-loop.toml	1923	8a9264271cfba5e8
 .codex/rules/default.rules	2016	60ff5458b8bb80be
 .env.contract.yaml	792	153cf8151809f104
@@ -71,8 +71,8 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/index.json	15293090	540657f1711db09f
-.idd/knowledge/report.md	4544	e1e88c266a29bcd1
+.idd/knowledge/index.json	15497444	b0881f1cefa7098a
+.idd/knowledge/report.md	4545	66674077de9c3ec4
 .release-please-manifest.json	19	f96b929db2fa1886
 AGENTS.md	4438	aa3104bfef8f872b
 AI_MERGE/03_env_and_secret_contracts.md	1894	e23b0ed94b9df35c
@@ -81,16 +81,16 @@ AI_MERGE/08_agent_queue.md	246	3a294fadd8bd0193
 AI_MERGE/10_parity_test_plan.md	207	a4a81d2af6091748
 AI_MERGE/11_integration_research_audit_roadmap.md	20934	3120aa59a0159819
 AI_MERGE/12_knowledge_deep_audit.md	6528	98e3905f58c45da2
-AI_MERGE/13_codex_environment.md	4993	a4bbaa9c7b2b9db5
+AI_MERGE/13_codex_environment.md	6269	9b4883c292078efd
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	17040	a1326db4e07ce73e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
 Cargo.lock	117624	c1308b0da94c375e
 Cargo.toml	1333	bb97f200b6b1c22f
 GEMINI.md	17022	7aa9ea970dad36a4
-Justfile	1466	b2d9fa6a244570aa
+Justfile	1604	bf9e62c804298ee6
 LICENSE	1084	48ecb3c3d178a316
-Makefile	1598	5e731cd38bf0f258
+Makefile	1767	3381768f6adb7e3d
 README.md	2225	984aa0edb8043b37
 SECURITY.md	555	f3cca6f3551f3d64
 VERSION	6	2470ea8fb2f12876
@@ -100,7 +100,7 @@ adr/0003-authoritative-control-plane.md	1028	7a0dfd555db33da2
 adr/0004-knowledge-direct-crate-integration.md	3594	4e3c856dea219b5b
 commitlint.config.cjs	348	83ecfbe9e12d50ac
 crates/cli/Cargo.toml	1265	f20810810b918677
-crates/cli/src/commands/codex.rs	14228	e12bef9755b51e4f
+crates/cli/src/commands/codex.rs	28754	ef9c30642a32533d
 crates/cli/src/commands/core.rs	963	f1b569ea54a904c9
 crates/cli/src/commands/knowledge.rs	8412	c2ee6bb2a3832041
 crates/cli/src/commands/mod.rs	229	98365d2e603fea14
@@ -114,7 +114,7 @@ crates/cli/src/commands/tui.rs	422	374f9014c8caa807
 crates/cli/src/lib.rs	3890	c08e04cac6d315a8
 crates/cli/src/main.rs	207	b078697d840d6a6c
 crates/cli/tests/archive_cli.rs	8615	65fa9077ee609c7f
-crates/cli/tests/codex_cli.rs	4657	09187c9637a5381a
+crates/cli/tests/codex_cli.rs	10885	d22e2e583e74fd15
 crates/cli/tests/knowledge_cli.rs	2749	3a79e20b37ee9fd3
 crates/cli/tests/run_cli.rs	1254	ae3af19f916ab1f5
 crates/cli/tests/spec_adr_cli.rs	3006	e36ff73f7c003d8f
@@ -444,7 +444,7 @@ crates/tui/src/app.rs	195144	e05491939b145e8d
 crates/tui/src/lib.rs	6981	809321747bfb2538
 crates/tui/src/ui.rs	84930	8993c1a7fab71e0e
 docs/rusty-idd/architecture-diagrams.md	56406	406566fcfb67465a
-docs/rusty-idd/codex-environment.md	6962	7a6029c4901aa322
+docs/rusty-idd/codex-environment.md	9729	c5964efa41ccd0f9
 docs/rusty-idd/dependency-duplication.md	3837	93266b2549c197c6
 docs/rusty-idd/design.md	5750	f6d3230dbe7156c7
 docs/rusty-idd/lifecycle-contract.md	14191	8954f4f9c6e402da

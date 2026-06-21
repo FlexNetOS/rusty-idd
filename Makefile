@@ -1,7 +1,7 @@
 CARGO ?= cargo
 RUSTY_IDD ?= $(CARGO) run --bin rusty-idd --
 
-.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check codex-env-check codex-model-loop ci install-hooks clean
+.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
 
 build:
 	$(CARGO) build --workspace --locked
@@ -42,7 +42,13 @@ codex-env-check:
 codex-model-loop:
 	$(RUSTY_IDD) codex model-loop
 
-ci: build test validate manifest-check knowledge-check codex-env-check codex-model-loop fmt-check lint audit
+codex-runtime-audit:
+	$(RUSTY_IDD) codex runtime-audit
+
+codex-system-audit:
+	$(RUSTY_IDD) codex system-audit
+
+ci: build test validate manifest-check knowledge-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
 
 install-hooks:
 	git config core.hooksPath .githooks

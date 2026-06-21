@@ -1,3 +1,8 @@
+---
+name: rusty-idd-knowledge
+description: "Use when investigating Rusty IDD with generated knowledge artifacts, querying .idd/knowledge indexes and reports, or preparing bounded repo context packs for agents."
+---
+
 # rusty-idd Knowledge Skill
 
 Use this skill when investigating this repository with the generated `rusty-idd knowledge`
@@ -44,4 +49,3 @@ After changing source or control-plane files, refresh artifacts and run:
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
 cargo run --bin rusty-idd -- validate --workspace .
 ```
-

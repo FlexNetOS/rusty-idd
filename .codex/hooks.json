@@ -5,8 +5,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "cargo run --quiet --bin rusty-idd -- codex env-check",
-            "timeout": 30,
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex env-check --workspace \"$root\"'",
+            "timeout": 180,
             "statusMessage": "Checking Rusty IDD Codex invariants"
           }
         ]
