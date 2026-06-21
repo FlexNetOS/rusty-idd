@@ -201,3 +201,18 @@ Rollback:
 - Re-run `rusty-idd knowledge refresh` and manifest generation after rollback.
 - Use this note plus `AI_MERGE/14_upstream_full_adoption.md` as the evidence
   baseline for any narrower reattempt.
+
+## Merge Completion Correction
+
+This OpenSpec change was merged by PR #54:
+
+- Merge commit: `c96e6a4`
+- Subject: `Merge pull request #54 from FlexNetOS/integration/full-feature-upstream-revisit`
+- Implementation commit: `88158c0` (`Adopt full upstream knowledge integration workflow`)
+- Current verification: `develop` contains this note and the OpenSpec change,
+  and the local worktree was clean before this correction slice.
+
+The final task checkbox in
+`openspec/changes/revisit-upstream-knowledge-integration/tasks.md` was stale
+after the merge. It is now marked complete so the control-plane state matches
+the repository history.

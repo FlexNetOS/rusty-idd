@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:b255ddf8b269d0fe`
+- Workspace fingerprint: `fnv1a64:63b1368db69afd09`
 - Indexed source files: 134
 - Graph nodes: 8178
 - Graph edges: 32790
 - Resolved call edges: 18537
 - Functions with complexity: 2054
 - Packed files: 113
-- Packed tokens: 95822
+- Packed tokens: 95965
 - Suspicious files: 0
 
 ## Hotspots
@@ -46,9 +46,9 @@
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
 | 2820 | `crates/core/src/templates.rs` |
+| 2540 | `AI_MERGE/16_upstream_knowledge_revisit.md` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
 | 2421 | `AI_MERGE/14_upstream_full_adoption.md` |
-| 2397 | `AI_MERGE/16_upstream_knowledge_revisit.md` |
 | 2304 | `docs/rusty-idd/codex-environment.md` |
 | 2097 | `crates/tui/src/ui.rs` |
 | 1963 | `AI_MERGE/15_system_handoff_research.md` |
