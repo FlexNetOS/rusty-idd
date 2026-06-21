@@ -14,6 +14,10 @@ pub enum CodexCommand {
     EnvCheck(EnvCheckArgs),
     /// Emit or execute the dry-run-first Codex model loop.
     ModelLoop(ModelLoopArgs),
+    /// Audit whether repo-local Codex runtime paths depend on Python.
+    RuntimeAudit(RuntimeAuditArgs),
+    /// Audit the active Codex install and parent-managed source-build path.
+    SystemAudit(SystemAuditArgs),
 }
 
 #[derive(Args)]
@@ -32,6 +36,22 @@ pub struct ModelLoopArgs {
     pub only: Vec<String>,
     #[arg(long)]
     pub output_dir: Option<PathBuf>,
+}
+
+#[derive(Args)]
+pub struct RuntimeAuditArgs {
+    #[arg(long, default_value = ".")]
+    pub workspace: PathBuf,
+}
+
+#[derive(Args)]
+pub struct SystemAuditArgs {
+    #[arg(long)]
+    pub codex_bin: Option<PathBuf>,
+    #[arg(long)]
+    pub codex_source: Option<PathBuf>,
+    #[arg(long)]
+    pub envctl: Option<PathBuf>,
 }
 
 #[derive(Debug, Deserialize)]
@@ -95,6 +115,8 @@ fn try_run(command: CodexCommand) -> anyhow::Result<()> {
     match command {
         CodexCommand::EnvCheck(args) => env_check(&args.workspace),
         CodexCommand::ModelLoop(args) => model_loop(args),
+        CodexCommand::RuntimeAudit(args) => runtime_audit(&args.workspace),
+        CodexCommand::SystemAudit(args) => system_audit(args),
     }
 }
 
@@ -114,6 +136,7 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
         ".codex/loops/rusty-idd-model-loop.toml",
         ".agents/skills/rusty-idd-adopt-first/SKILL.md",
         ".agents/skills/rusty-idd-codex-rust-env/SKILL.md",
+        ".agents/skills/rusty-idd-knowledge/SKILL.md",
         ".idd/knowledge/index.json",
         ".idd/knowledge/report.md",
         "docs/rusty-idd/codex-environment.md",
@@ -157,6 +180,16 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
 
     for (rel, needles) in [
         (
+            ".codex/hooks.json",
+            &[
+                "git rev-parse --show-toplevel",
+                "--manifest-path",
+                "codex env-check",
+                "--workspace",
+                "\"timeout\": 180",
+            ][..],
+        ),
+        (
             "AGENTS.md",
             &[
                 "Adopt first, cut after evidence",
@@ -192,6 +225,8 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
             &[
                 "rusty-idd codex env-check",
                 "rusty-idd codex model-loop",
+                "rusty-idd codex runtime-audit",
+                "rusty-idd codex system-audit",
                 "Codex owns its output quality",
                 "stale or orphaned work",
                 "Missing binaries needed for this repo",
@@ -236,6 +271,419 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
 
     println!("Rusty IDD Codex invariant check passed.");
     Ok(())
+}
+
+fn runtime_audit(workspace: &Path) -> anyhow::Result<()> {
+    let root = canonical_workspace(workspace)?;
+    let mut audit = RuntimePythonAudit::default();
+
+    scan_dir(&root, &root, &mut audit)?;
+
+    println!("Codex runtime audit");
+    println!("- Live Codex Python commands: {}", audit.live_runtime.len());
+    for finding in &audit.live_runtime {
+        println!("  - {}: {}", finding.path, finding.detail);
+    }
+    println!(
+        "- Obsolete Python Codex tool files: {}",
+        audit.obsolete_tools.len()
+    );
+    for finding in &audit.obsolete_tools {
+        println!("  - {}", finding.path);
+    }
+    println!(
+        "- Parser/language support references: {}",
+        audit.parser_support
+    );
+    println!("- Test fixture references: {}", audit.test_fixtures);
+    println!(
+        "- Rust audit implementation references: {}",
+        audit.audit_implementation
+    );
+    println!(
+        "- Core inventory support references: {}",
+        audit.core_inventory
+    );
+    println!(
+        "- Legacy bridge material references: {}",
+        audit.legacy_bridge
+    );
+    println!("- Policy/documentation references: {}", audit.policy_docs);
+    println!("- Other repo references: {}", audit.other_repo);
+    for (path, count) in &audit.other_files {
+        println!("  - {path}: {count}");
+    }
+    println!("- Ignored generated paths: target/**, .git/**, .idd/**");
+
+    if !audit.live_runtime.is_empty() || !audit.obsolete_tools.is_empty() {
+        bail!(
+            "Codex runtime audit found {} live Python runtime command(s) and {} obsolete Python tool file(s)",
+            audit.live_runtime.len(),
+            audit.obsolete_tools.len()
+        );
+    }
+
+    println!("Verdict: repo-local Codex runtime is Rust-native; Python remains only as language support, fixtures, policy text, or documentation.");
+    Ok(())
+}
+
+fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
+    let codex_bin = match args.codex_bin {
+        Some(path) => path,
+        None => find_on_path("codex").context("locate codex on PATH")?,
+    };
+    let resolved_codex = codex_bin
+        .canonicalize()
+        .with_context(|| format!("resolve codex binary {}", codex_bin.display()))?;
+    let binary_kind = binary_kind(&resolved_codex)?;
+
+    println!("Codex system audit");
+    println!("- codex binary: {}", codex_bin.display());
+    println!("- resolved codex binary: {}", resolved_codex.display());
+    println!("- binary kind: {binary_kind}");
+    println!(
+        "- active runtime verdict: {}",
+        if binary_kind == "ELF native executable" {
+            "Rust-native binary path"
+        } else {
+            "not proven Rust-native"
+        }
+    );
+
+    if let Some(source) = args.codex_source {
+        let source = source
+            .canonicalize()
+            .with_context(|| format!("resolve Codex source root {}", source.display()))?;
+        let source_audit = audit_codex_source_root(&source)?;
+        println!("- Codex source root: {}", source.display());
+        println!(
+            "  - upstream Python developer tooling references: {}",
+            source_audit.dev_python
+        );
+        println!(
+            "  - upstream Python package/runtime references: {}",
+            source_audit.package_python
+        );
+        println!(
+            "  - source Rust workspace present: {}",
+            source_audit.rust_workspace
+        );
+    }
+
+    if let Some(envctl) = args.envctl {
+        let envctl = envctl
+            .canonicalize()
+            .with_context(|| format!("resolve envctl root {}", envctl.display()))?;
+        let envctl_audit = audit_envctl_codex_component(&envctl)?;
+        println!("- envctl root: {}", envctl.display());
+        println!("  - codex source-build path: {}", envctl_audit.source_build);
+        println!(
+            "  - direct Cargo codex build: {}",
+            envctl_audit.direct_cargo_build
+        );
+        println!(
+            "  - high-parallel Cargo jobs: {}",
+            envctl_audit.parallel_jobs
+        );
+        println!("  - mold linker path: {}", envctl_audit.mold_linker);
+        println!("  - Bun fallback only: {}", envctl_audit.bun_fallback);
+        println!(
+            "  - Python in codex component: {}",
+            envctl_audit.python_mentions
+        );
+    }
+
+    if binary_kind != "ELF native executable" {
+        bail!("active codex binary is not a native ELF executable");
+    }
+
+    println!("Verdict: active Codex execution is Rust-native; Python is upstream developer/package tooling unless an envctl fallback installs the Bun package.");
+    Ok(())
+}
+
+#[derive(Default)]
+struct CodexSourceAudit {
+    dev_python: usize,
+    package_python: usize,
+    rust_workspace: bool,
+}
+
+#[derive(Default)]
+struct EnvctlCodexAudit {
+    source_build: bool,
+    direct_cargo_build: bool,
+    parallel_jobs: bool,
+    mold_linker: bool,
+    bun_fallback: bool,
+    python_mentions: usize,
+}
+
+fn audit_codex_source_root(root: &Path) -> anyhow::Result<CodexSourceAudit> {
+    let mut audit = CodexSourceAudit {
+        rust_workspace: root.join("codex-rs/Cargo.toml").exists(),
+        ..CodexSourceAudit::default()
+    };
+    for rel in [
+        "justfile",
+        "scripts/format.py",
+        "scripts/just-shell.py",
+        ".github/scripts",
+        "tools/argument-comment-lint",
+    ] {
+        audit.dev_python += count_python_markers_under(&root.join(rel))?;
+    }
+    for rel in [
+        "codex-cli/scripts/build_npm_package.py",
+        "scripts/codex_package",
+        "sdk/python-runtime",
+    ] {
+        audit.package_python += count_python_markers_under(&root.join(rel))?;
+    }
+    Ok(audit)
+}
+
+fn audit_envctl_codex_component(root: &Path) -> anyhow::Result<EnvctlCodexAudit> {
+    let path = root.join("manifest/ai-clis.toml");
+    let text = read_text(&path)?;
+    let codex = extract_component_block(&text, "codex-cli").unwrap_or_default();
+    Ok(EnvctlCodexAudit {
+        source_build: codex.contains("codex/codex-rs/cli"),
+        direct_cargo_build: codex.contains("cargo build --release -p codex-cli"),
+        parallel_jobs: codex.contains("CODEX_CARGO_JOBS")
+            && codex.contains("CARGO_BUILD_JOBS")
+            && codex.contains("--jobs"),
+        mold_linker: codex.contains("mold") && codex.contains("fuse-ld=mold"),
+        bun_fallback: codex.contains("bun install -g @openai/codex"),
+        python_mentions: codex
+            .lines()
+            .filter(|line| contains_python_marker(line))
+            .count(),
+    })
+}
+
+fn extract_component_block(text: &str, id: &str) -> Option<String> {
+    let mut blocks = text.split("[[component]]");
+    blocks.find_map(|block| {
+        block
+            .contains(&format!("id = \"{id}\""))
+            .then(|| block.to_string())
+    })
+}
+
+fn count_python_markers_under(path: &Path) -> anyhow::Result<usize> {
+    if !path.exists() {
+        return Ok(0);
+    }
+    if path.is_file() {
+        let text = match fs::read_to_string(path) {
+            Ok(text) => text,
+            Err(_) => return Ok(0),
+        };
+        return Ok(python_marker_count(&path.display().to_string(), &text));
+    }
+    let mut count = 0;
+    for entry in fs::read_dir(path).with_context(|| format!("read dir {}", path.display()))? {
+        let entry = entry?;
+        let child = entry.path();
+        if child.is_dir() || child.is_file() {
+            count += count_python_markers_under(&child)?;
+        }
+    }
+    Ok(count)
+}
+
+fn binary_kind(path: &Path) -> anyhow::Result<&'static str> {
+    let bytes = fs::read(path).with_context(|| format!("read binary header {}", path.display()))?;
+    if bytes.starts_with(b"\x7fELF") {
+        Ok("ELF native executable")
+    } else if bytes.starts_with(b"#!/") {
+        Ok("script")
+    } else {
+        Ok("unknown")
+    }
+}
+
+fn find_on_path(command: &str) -> anyhow::Result<PathBuf> {
+    let path_var = std::env::var_os("PATH").context("PATH is not set")?;
+    for dir in std::env::split_paths(&path_var) {
+        let candidate = dir.join(command);
+        if candidate.is_file() {
+            return Ok(candidate);
+        }
+    }
+    bail!("{command} not found on PATH")
+}
+
+#[derive(Default)]
+struct RuntimePythonAudit {
+    live_runtime: Vec<RuntimeFinding>,
+    obsolete_tools: Vec<RuntimeFinding>,
+    parser_support: usize,
+    test_fixtures: usize,
+    audit_implementation: usize,
+    core_inventory: usize,
+    legacy_bridge: usize,
+    policy_docs: usize,
+    other_repo: usize,
+    other_files: BTreeMap<String, usize>,
+}
+
+struct RuntimeFinding {
+    path: String,
+    detail: String,
+}
+
+fn scan_dir(root: &Path, dir: &Path, audit: &mut RuntimePythonAudit) -> anyhow::Result<()> {
+    for entry in fs::read_dir(dir).with_context(|| format!("read dir {}", dir.display()))? {
+        let entry = entry?;
+        let path = entry.path();
+        let file_name = entry.file_name();
+        let file_name = file_name.to_string_lossy();
+        if file_name == ".git" || file_name == "target" || file_name == ".idd" {
+            continue;
+        }
+        if path.is_dir() {
+            scan_dir(root, &path, audit)?;
+            continue;
+        }
+        if path.is_file() {
+            scan_file(root, &path, audit)?;
+        }
+    }
+    Ok(())
+}
+
+fn scan_file(root: &Path, path: &Path, audit: &mut RuntimePythonAudit) -> anyhow::Result<()> {
+    let rel = rel_path(root, path);
+    let rel_str = rel.display().to_string();
+
+    if is_obsolete_python_tool(&rel_str) {
+        audit.obsolete_tools.push(RuntimeFinding {
+            path: rel_str,
+            detail: "repo-local Codex hook/script should be Rust-native".to_string(),
+        });
+        return Ok(());
+    }
+
+    let text = match fs::read_to_string(path) {
+        Ok(text) => text,
+        Err(_) => return Ok(()),
+    };
+    let mentions = python_marker_count(&rel_str, &text);
+    if mentions == 0 {
+        return Ok(());
+    }
+
+    if is_live_runtime_surface(&rel_str) {
+        let live_mentions = live_python_lines(&text);
+        audit
+            .live_runtime
+            .extend(live_mentions.into_iter().map(|line| RuntimeFinding {
+                path: rel_str.clone(),
+                detail: line,
+            }));
+    } else if is_parser_support(&rel_str) {
+        audit.parser_support += mentions;
+    } else if is_test_fixture(&rel_str) {
+        audit.test_fixtures += mentions;
+    } else if is_audit_implementation(&rel_str) {
+        audit.audit_implementation += mentions;
+    } else if is_core_inventory_support(&rel_str) {
+        audit.core_inventory += mentions;
+    } else if is_legacy_bridge_material(&rel_str) {
+        audit.legacy_bridge += mentions;
+    } else if is_policy_or_doc(&rel_str) {
+        audit.policy_docs += mentions;
+    } else {
+        audit.other_repo += mentions;
+        *audit.other_files.entry(rel_str).or_default() += mentions;
+    }
+
+    Ok(())
+}
+
+fn live_python_lines(text: &str) -> Vec<String> {
+    text.lines()
+        .map(str::trim)
+        .filter(|line| !line.starts_with('#') && contains_python_marker(line))
+        .map(|line| line.to_string())
+        .collect()
+}
+
+fn python_marker_count(path: &str, text: &str) -> usize {
+    let path_count = usize::from(path.ends_with(".py"));
+    path_count
+        + text
+            .lines()
+            .filter(|line| contains_python_marker(line))
+            .count()
+}
+
+fn contains_python_marker(text: &str) -> bool {
+    let lower = text.to_ascii_lowercase();
+    lower.contains("python")
+        || lower.contains("python3")
+        || lower.contains(".py")
+        || lower.contains("pip ")
+        || lower.contains("\"pip\"")
+        || lower.contains("pytest")
+        || lower.contains(".venv")
+        || lower.contains("venv/")
+}
+
+fn is_obsolete_python_tool(rel: &str) -> bool {
+    rel.starts_with(".codex/hooks/") && rel.ends_with(".py")
+        || rel.starts_with(".codex/scripts/") && rel.ends_with(".py")
+}
+
+fn is_live_runtime_surface(rel: &str) -> bool {
+    rel == ".codex/hooks.json"
+        || rel.starts_with(".codex/loops/")
+        || rel.starts_with(".codex/agents/")
+        || rel == "Justfile"
+        || rel == "Makefile"
+}
+
+fn is_parser_support(rel: &str) -> bool {
+    rel.starts_with("crates/external/codegraph-")
+        || rel == "Cargo.lock"
+        || rel == "Cargo.toml"
+        || rel.starts_with("crates/core/src/fs_utils.rs")
+        || rel.starts_with("crates/core/src/scanner.rs")
+        || rel.starts_with("crates/core/src/model.rs")
+}
+
+fn is_test_fixture(rel: &str) -> bool {
+    rel.contains("/tests/") || rel.ends_with("_cli.rs") || rel.contains("src/lib.rs")
+}
+
+fn is_audit_implementation(rel: &str) -> bool {
+    rel == "crates/cli/src/commands/codex.rs"
+}
+
+fn is_core_inventory_support(rel: &str) -> bool {
+    rel == "crates/core/src/env_contract.rs" || rel == "crates/core/src/planner.rs"
+}
+
+fn is_legacy_bridge_material(rel: &str) -> bool {
+    rel.starts_with(".claude/") || rel.starts_with(".gemini/")
+}
+
+fn is_policy_or_doc(rel: &str) -> bool {
+    rel == "AGENTS.md"
+        || rel.starts_with(".agents/")
+        || rel.starts_with(".codex/rules/")
+        || rel.starts_with("docs/")
+        || rel.starts_with("crates/core/docs/")
+        || rel.starts_with("AI_MERGE/")
+        || rel.starts_with("adr/")
+        || rel == "README.md"
+        || rel == "CLAUDE.md"
+        || rel == "GEMINI.md"
+}
+
+fn rel_path<'a>(root: &'a Path, path: &'a Path) -> &'a Path {
+    path.strip_prefix(root).unwrap_or(path)
 }
 
 fn validate_json(path: &Path, failures: &mut Vec<String>) {

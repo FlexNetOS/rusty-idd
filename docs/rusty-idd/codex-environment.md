@@ -21,10 +21,12 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
 | Codex env workflow | `.agents/skills/rusty-idd-codex-rust-env/SKILL.md` | Operate skills, hooks, agents, knowledge, and gates. |
 | Project config | `.codex/config.toml` | Enables hooks and caps subagent fan-out. |
 | Project rules | `.codex/rules/default.rules` | Blocks raw host/process management and prompts for untracked tool installs. |
-| Stop hook | `.codex/hooks.json` | Runs the Rusty IDD invariant checker when a turn stops. |
+| Stop hook | `.codex/hooks.json` | Runs the Rusty IDD invariant checker from the git root when a turn stops. |
 | Custom agents | `.codex/agents/*.toml` | Read-heavy explorer/gap/verifier agents and one writer agent. |
 | Model loop config | `.codex/loops/rusty-idd-model-loop.toml` | Defines dry-run-first Codex passes across model roles. |
 | Codex env CLI | `rusty-idd codex env-check` | Rust-native checks for required artifacts and forbidden regressions. |
+| Runtime audit CLI | `rusty-idd codex runtime-audit` | Rust-native proof that repo-local Codex hooks, agents, loops, and targets do not depend on Python. |
+| System audit CLI | `rusty-idd codex system-audit` | Rust-native proof that the active Codex binary and parent-managed source-build path are Rust-first. |
 | Model loop CLI | `rusty-idd codex model-loop` | Rust-native command that emits or executes exact `codex exec` commands. |
 
 ## Intentional Exclusions
@@ -124,6 +126,68 @@ The default passes are:
 Provider credentials, model availability, and account policy stay in user/admin
 Codex config. The repository only defines the workflow shape.
 
+## Runtime Language Audit
+
+The repo-local Codex hot path is intentionally Rust-first:
+
+```bash
+cargo run --bin rusty-idd -- codex runtime-audit
+```
+
+The audit classifies Python mentions instead of treating every occurrence as
+runtime evidence. A clean result means:
+
+- `.codex/hooks.json`, `.codex/agents`, `.codex/loops`, `Justfile`, and
+  `Makefile` do not call Python.
+- obsolete `.codex/hooks/*.py` and `.codex/scripts/*.py` tools are absent.
+- remaining Python references are parser/language support, test fixtures,
+  policy text, or documentation.
+
+Generated dependency build output under `target/**` is ignored because it is not
+repo-owned Codex control-plane code.
+
+## Stop Hook
+
+The Stop hook is git-root anchored so it works even when Codex starts from a
+subdirectory:
+
+```bash
+sh -lc 'root="$(git rev-parse --show-toplevel)"; exec cargo run --quiet --manifest-path "$root/Cargo.toml" --bin rusty-idd -- codex env-check --workspace "$root"'
+```
+
+The hook timeout is 180 seconds. That keeps normal stops bounded while allowing
+Cargo to wait briefly on build locks or rebuild the small CLI slice when needed.
+If Codex reports that the hook is skipped instead of failed, review and trust the
+changed hook definition with `/hooks`; Codex records trust by hook hash.
+
+## System Language Audit
+
+Use the system audit when the question is broader than this repo:
+
+```bash
+cargo run --bin rusty-idd -- codex system-audit \
+  --codex-source ../codex \
+  --envctl ../envctl
+```
+
+The audit checks the active `codex` binary first. On this workstation, the
+managed path resolves to the source-built Rust executable under
+`../codex/codex-rs/target/release/codex`. The parent `envctl` component builds
+that executable directly with Cargo, high-parallel jobs, release incremental
+artifacts, LTO disabled for local workstation builds, and `mold` when present.
+
+Python still appears in upstream Codex source material, but the audit classifies
+it as developer/package tooling:
+
+- upstream `justfile` uses Python as its recipe shell and calls
+  `scripts/format.py`;
+- upstream CI/helper scripts under `.github/scripts` and
+  `tools/argument-comment-lint` use Python;
+- upstream npm/Python package publishing surfaces use Python scripts and a
+  wheel-only `sdk/python-runtime`.
+
+Those surfaces do not contradict the active runtime being Rust-native.
+
 ## Tool Installation
 
 Do not install required tools into user-global settings from this repository.
@@ -136,6 +200,8 @@ convenience wrappers only when the parent toolchain provides `just`.
 
 ```bash
 just codex-env-check
+cargo run --bin rusty-idd -- codex runtime-audit
+cargo run --bin rusty-idd -- codex system-audit
 cargo run --bin rusty-idd -- codex model-loop
 just knowledge
 just manifest

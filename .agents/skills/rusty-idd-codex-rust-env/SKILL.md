@@ -1,6 +1,6 @@
 ---
 name: rusty-idd-codex-rust-env
-description: Use when setting up, auditing, or repairing the Rusty IDD Codex environment: repo skills, hooks, custom agents, knowledge artifacts, Rust gates, and multi-agent workflow execution.
+description: "Use when setting up, auditing, or repairing the Rusty IDD Codex environment: repo skills, hooks, custom agents, knowledge artifacts, Rust gates, and multi-agent workflow execution."
 ---
 
 # Rusty IDD Codex Rust Environment
@@ -22,6 +22,10 @@ Use this skill to operate the repo-local Codex environment.
 - `.codex/agents/*.toml`: project custom subagents.
 - `.codex/loops/*.toml`: dry-run-first multi-model loop definitions.
 - `rusty-idd codex env-check`: Rust-native invariant checker.
+- `rusty-idd codex runtime-audit`: Rust-native audit proving the repo-local Codex runtime
+  is not using Python hooks/scripts.
+- `rusty-idd codex system-audit`: Rust-native audit proving the active Codex binary and
+  parent-managed source-build path are Rust-first, while classifying upstream Python tooling.
 - `rusty-idd codex model-loop`: Rust-native model-loop command generator/runner.
 - `.agents/skills/*/SKILL.md`: repo-scoped workflows.
 - `.idd/knowledge/index.json` and `.idd/knowledge/report.md`: compact codebase knowledge.
@@ -67,6 +71,8 @@ Use this skill to operate the repo-local Codex environment.
 
 ```bash
 just codex-env-check
+just codex-runtime-audit
+cargo run --bin rusty-idd -- codex system-audit
 cargo run --bin rusty-idd -- codex model-loop
 just knowledge
 just manifest

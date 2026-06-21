@@ -42,4 +42,10 @@ codex-env-check:
 codex-model-loop:
     {{rusty_idd}} codex model-loop
 
-ci: build test validate manifest-check knowledge-check codex-env-check codex-model-loop fmt-check lint audit
+codex-runtime-audit:
+    {{rusty_idd}} codex runtime-audit
+
+codex-system-audit:
+    {{rusty_idd}} codex system-audit
+
+ci: build test validate manifest-check knowledge-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
