@@ -2,14 +2,14 @@
   "schema_version": 1,
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_plan": ".idd/knowledge/integration-plan.json",
-  "next_change_id": "integrate-idd-spec-engine",
+  "next_change_id": "integrate-prompt-front-door",
   "counts": {
     "total": 19,
-    "planned": 19,
+    "planned": 15,
     "incomplete_scaffold": 0,
     "scaffolded": 0,
     "ready_to_archive": 0,
-    "archived": 0
+    "archived": 4
   },
   "work_items": [
     {
@@ -18,8 +18,8 @@
       "capability": "capability:idd-spec-engine",
       "priority": 10,
       "change_id": "integrate-idd-spec-engine",
-      "status": "planned",
-      "openspec_path": null,
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-idd-spec-engine",
       "missing_artifacts": [],
       "unchecked_tasks": 0,
       "owner_repos": [
@@ -34,8 +34,8 @@
       "capability": "capability:fleet-handoff",
       "priority": 20,
       "change_id": "integrate-fleet-handoff",
-      "status": "planned",
-      "openspec_path": null,
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-fleet-handoff",
       "missing_artifacts": [],
       "unchecked_tasks": 0,
       "owner_repos": [
@@ -61,8 +61,8 @@
       "capability": "capability:agent-communication",
       "priority": 30,
       "change_id": "integrate-agent-communication",
-      "status": "planned",
-      "openspec_path": null,
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-agent-communication",
       "missing_artifacts": [],
       "unchecked_tasks": 0,
       "owner_repos": [
@@ -79,8 +79,8 @@
       "capability": "capability:env-vault-relay",
       "priority": 40,
       "change_id": "integrate-env-vault-relay",
-      "status": "planned",
-      "openspec_path": null,
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-env-vault-relay",
       "missing_artifacts": [],
       "unchecked_tasks": 0,
       "owner_repos": [
@@ -306,7 +306,6 @@
         "repo:codex",
         "repo:copilot-plugin",
         "repo:ecc",
-        "repo:envctl",
         "repo:flexnetos-runner",
         "repo:github-org",
         "repo:harness-hub",
@@ -389,6 +388,6 @@
   ],
   "findings": [
     "integration status classified 19 work items from .idd/knowledge/integration-plan.json",
-    "next planned integration work item is integrate-idd-spec-engine"
+    "next planned integration work item is integrate-prompt-front-door"
   ]
 }

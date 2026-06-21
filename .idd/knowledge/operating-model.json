@@ -23,7 +23,6 @@
         "repo:codex",
         "repo:copilot-plugin",
         "repo:ecc",
-        "repo:envctl",
         "repo:flexnetos-runner",
         "repo:github-org",
         "repo:grit",
@@ -253,7 +252,6 @@
         "repo:codex",
         "repo:copilot-plugin",
         "repo:ecc",
-        "repo:envctl",
         "repo:flexnetos-runner",
         "repo:github-org",
         "repo:harness-hub",
@@ -819,14 +817,6 @@
     {
       "source": "capability:agent-harness",
       "target": "repo:ecc",
-      "kind": "mapped_to_repo",
-      "evidence": [
-        "Agent harness runtime"
-      ]
-    },
-    {
-      "source": "capability:agent-harness",
-      "target": "repo:envctl",
       "kind": "mapped_to_repo",
       "evidence": [
         "Agent harness runtime"
