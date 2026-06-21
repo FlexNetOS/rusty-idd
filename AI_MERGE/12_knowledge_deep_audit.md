@@ -71,8 +71,9 @@ cut deliberately:
 - `dotenv` loading was removed from the vendored core because the direct Rusty IDD integration uses
   normal process environment and the crate is unmaintained.
 - The parser language registry now retains only grammars compatible with the workspace-pinned
-  tree-sitter runtime. Incompatible extractor source remains vendored for future compatible pins or
-  feature-gated multi-language work.
+  tree-sitter runtime. Rusty IDD graph indexing uses that registry and CodeGraph's language dispatch
+  for supported Rust, TypeScript/JavaScript, Python, Go, Java, C/C++, Swift, Ruby, and PHP files.
+  Incompatible extractor source remains vendored for future compatible pins.
 - Three vendored watcher timing tests are ignored because filesystem notification timing is outside
   the `rusty-idd knowledge` boundary.
 - Vendored license notices are required for the external CodeGraph and Repomix crates. This keeps
@@ -82,8 +83,8 @@ cut deliberately:
 
 | Capability | Status | Notes |
 | --- | --- | --- |
-| Source collection | Covered | Local ignore-aware Rust file walk for graph indexing. |
-| Tree-sitter Rust parsing | Covered | Vendored upstream `codegraph-parser` through the `crates/knowledge` boundary. |
+| Source collection | Covered | Local ignore-aware source walk uses the CodeGraph language registry for supported graph-indexed files. |
+| Tree-sitter graph parsing | Covered | Vendored upstream `codegraph-parser` dispatches supported multi-language tree-sitter extractors through the `crates/knowledge` boundary. |
 | Symbols, imports, calls, containment | Covered | Upstream parser emits symbols and symbolic edges; local adapter adds file containment and conservative target resolution. |
 | Complexity and hotspots | Covered | Upstream complexity and call-link counts feed hotspot scoring. |
 | AI-ready packing | Covered | `repomix-core` direct pack integration. |
@@ -102,7 +103,7 @@ cut deliberately:
 | Vector/semantic search | Deferred | Keep behind future `knowledge-vector` feature. |
 | SurrealDB persistent graph | Deferred | Keep behind future `knowledge-surrealdb` feature. |
 | Cloud LLM/embedding providers | Deferred | Keep behind future `knowledge-cloud` feature. |
-| Broad multi-language graph parsing | Re-evaluate | This was deferred in the old slice; current Yazelix-backed tree-sitter direction makes broad parser support an active research target. |
+| Broad multi-language graph parsing | Covered for registered CodeGraph languages | Current graph indexing dispatches all compatible upstream CodeGraph parser languages; incompatible grammar pins remain documented cuts. |
 | LSH/vector symbol resolution | Deferred | Removed from default path after audit; revisit behind `knowledge-vector` with clean dependencies. |
 | Dotenv loading | Intentionally excluded | Use process environment only; no new secret provider in the default integration. |
 

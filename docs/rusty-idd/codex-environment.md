@@ -35,6 +35,10 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
   direct Rust crate integration to avoid context rot and transport overhead.
   MCP may still be added as a narrow helper surface when evidence shows it will
   improve Codex output accuracy, speed, verification, or repeatability.
+- `tree-sitter` is active in the Rusty IDD knowledge path through the vendored
+  CodeGraph parser registry, and active in the wider system through Yazelix.
+  Default workflow exclusions only apply to host-service, daemon, or transport
+  management, not to parser availability.
 - Custom prompts are deprecated by Codex in favor of skills and are not
   repo-shared through `.codex`.
 - Memories are user/app state, not the authoritative repository rule surface.

@@ -1,7 +1,7 @@
 path	size_bytes	fnv1a64
 .agents/skills/rusty-idd-adopt-first/SKILL.md	2322	83338bf9d020a7eb
 .agents/skills/rusty-idd-codex-rust-env/SKILL.md	4314	3697af05e72d81ee
-.agents/skills/rusty-idd-knowledge/SKILL.md	2156	80e3a934320c0604
+.agents/skills/rusty-idd-knowledge/SKILL.md	2519	05ca5d4f990c8c0a
 .cargo/audit.toml	1371	581e4e83e760f244
 .claude/agent-guard.toml	316	a05fb9faa045160a
 .claude/agents/continuity-steward.md	4043	168bb3883208a6ac
@@ -71,8 +71,8 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/index.json	15534379	d3c7ebd6964bc550
-.idd/knowledge/report.md	4570	8a0ac7f107b0326b
+.idd/knowledge/index.json	15559114	0e1645a142135708
+.idd/knowledge/report.md	4581	5b539f05bd2d0469
 .release-please-manifest.json	19	f96b929db2fa1886
 AGENTS.md	4438	aa3104bfef8f872b
 AI_MERGE/03_env_and_secret_contracts.md	1894	e23b0ed94b9df35c
@@ -80,10 +80,11 @@ AI_MERGE/04_merge_plan.md	200	9911bd1707b0838e
 AI_MERGE/08_agent_queue.md	246	3a294fadd8bd0193
 AI_MERGE/10_parity_test_plan.md	207	a4a81d2af6091748
 AI_MERGE/11_integration_research_audit_roadmap.md	21551	492092153bd5e316
-AI_MERGE/12_knowledge_deep_audit.md	7124	339f0ef52646eb4f
+AI_MERGE/12_knowledge_deep_audit.md	7404	221a332d6e82f6ca
 AI_MERGE/13_codex_environment.md	6269	9b4883c292078efd
 AI_MERGE/14_upstream_full_adoption.md	10136	c44992f413e7dd13
 AI_MERGE/15_system_handoff_research.md	8042	912228807b75bc6c
+AI_MERGE/16_upstream_knowledge_revisit.md	9755	1681083fc47dbf65
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	17040	a1326db4e07ce73e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
@@ -100,6 +101,7 @@ adr/0001-unified-flat-cli.md	993	fb12afc6caf52b5e
 adr/0002-tui-in-v1.md	857	fc2583eec53a26cd
 adr/0003-authoritative-control-plane.md	1028	7a0dfd555db33da2
 adr/0004-knowledge-direct-crate-integration.md	6217	edfafaaf6ad78a51
+adr/0005-full-feature-upstream-knowledge-integration.md	2593	9693d64a31e46c5d
 commitlint.config.cjs	348	83ecfbe9e12d50ac
 crates/cli/Cargo.toml	1265	f20810810b918677
 crates/cli/src/commands/codex.rs	29719	9317436f823e1c2d
@@ -225,7 +227,7 @@ crates/external/repomix-shared/LICENSE-MIT	193	676ad2bcd0cff033
 crates/external/repomix-shared/src/lib.rs	15	1dfee4f4ebcac29c
 crates/external/repomix-shared/src/types.rs	933	b8fc1a15f1b9e97a
 crates/knowledge/Cargo.toml	893	94f37ae84c46a5d8
-crates/knowledge/src/lib.rs	47882	310504221efbf056
+crates/knowledge/src/lib.rs	50766	dbb5ed3842f6a460
 crates/runner/Cargo.toml	758	82b599192ec7f519
 crates/runner/src/config.rs	23501	4be7bbf4c1c86261
 crates/runner/src/data.rs	61962	290cec99ae0e96c8
@@ -446,7 +448,7 @@ crates/tui/src/app.rs	195144	e05491939b145e8d
 crates/tui/src/lib.rs	6981	809321747bfb2538
 crates/tui/src/ui.rs	84930	8993c1a7fab71e0e
 docs/rusty-idd/architecture-diagrams.md	56406	406566fcfb67465a
-docs/rusty-idd/codex-environment.md	9729	c5964efa41ccd0f9
+docs/rusty-idd/codex-environment.md	10006	158148ea191a3648
 docs/rusty-idd/dependency-duplication.md	3837	93266b2549c197c6
 docs/rusty-idd/design.md	5750	f6d3230dbe7156c7
 docs/rusty-idd/lifecycle-contract.md	14191	8954f4f9c6e402da
@@ -511,6 +513,10 @@ intent-driven-template/openspec/schemas/intent-driven/templates/spec.md	723	c30c
 intent-driven-template/openspec/schemas/intent-driven/templates/tasks.md	209	abb52be8d864009c
 intent-driven-template/skills-lock.json	278	f6935aad3f73973f
 openspec/changes/change-1/specs/cap-1/spec.md	78	86d78894bbc125be
+openspec/changes/revisit-upstream-knowledge-integration/design.md	4161	1fadc3bf45276755
+openspec/changes/revisit-upstream-knowledge-integration/proposal.md	2945	2db5e1b5172d202f
+openspec/changes/revisit-upstream-knowledge-integration/specs/upstream-knowledge-integration/spec.md	4322	b946caaa15e36ea2
+openspec/changes/revisit-upstream-knowledge-integration/tasks.md	2142	a8b57d81a00d444a
 openspec/changes/test-task-hdr/design.md	1839	755c2480f8e91f13
 openspec/changes/test-task-hdr/proposal.md	1324	b220bd8f5ff29bda
 openspec/changes/test-task-hdr/specs/config-retry/spec.md	1432	e916501188f2990a
