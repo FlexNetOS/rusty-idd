@@ -3,6 +3,7 @@
 # Local execution and regenerated backup artifacts
 *.idd-bak-*
 .worktrees/
+.idd/runs/
 # Swap files
 *.swp
 *.swo

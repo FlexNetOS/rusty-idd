@@ -84,11 +84,25 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
         ".agents/skills/rusty-idd-knowledge/SKILL.md",
         ".idd/knowledge/index.json",
         ".idd/knowledge/report.md",
+        ".idd/knowledge/architecture.json",
+        ".idd/knowledge/architecture.md",
+        ".idd/knowledge/system-architecture.json",
+        ".idd/knowledge/system-architecture.md",
+        ".idd/knowledge/operating-model.json",
+        ".idd/knowledge/operating-model.md",
+        ".idd/knowledge/integration-plan.json",
+        ".idd/knowledge/integration-plan.md",
+        ".idd/knowledge/integration-status.json",
+        ".idd/knowledge/integration-status.md",
+        ".idd/knowledge/plan-context.json",
+        ".idd/knowledge/plan-context.md",
         "docs/rusty-idd/codex-environment.md",
         "adr/0004-knowledge-direct-crate-integration.md",
-        "AI_MERGE/12_knowledge_deep_audit.md",
-        "AI_MERGE/13_codex_environment.md",
-        "AI_MERGE/14_upstream_full_adoption.md",
+        "adr/0006-ai-merge-as-rusty-idd-tool.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/proposal.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/specs/codex-harness-flow/spec.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/design.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/tasks.md",
         "third_party/upstream/UPSTREAMS.md",
         "third_party/upstream/codegraph-rust/Cargo.toml",
         "third_party/upstream/repomix-rs/Cargo.toml",
@@ -97,7 +111,7 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
     }
     write(
         &root.path().join("AGENTS.md"),
-        "Adopt first, cut after evidence\nThe agent owns output quality\nUpgrade only\nTreat stale or orphaned work as unfinished\nTooling required to run this repo must be tracked\nHost service and process management is out of scope\n",
+        "Rusty IDD is the intent-driven workflow engine\n`AI_MERGE/` is a Rusty IDD tool and evidence surface\nBefore writes, create or select an OpenSpec change\nAdopt first, cut after evidence\nUpgrade only\nTreat stale or orphaned work as unfinished\nTooling required to run this repo must be tracked\nHost service and process management is out of scope\n",
     );
     write(
         &root
@@ -106,20 +120,35 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
         "full upstream snapshots\nadopt the upstream parser/core\nCut audit-denied\n",
     );
     write(
-        &root.path().join("AI_MERGE/12_knowledge_deep_audit.md"),
-        "Audit Cuts\nlocal Rust AST semantic pass were removed\n",
-    );
-    write(
         &root.path().join("docs/rusty-idd/codex-environment.md"),
-        "Agent-Owned Tool Growth\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nenvctl\ntoolchain\n.codex/rules\n",
+        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nenvctl\ntoolchain\n.codex/rules\n",
     );
     write(
-        &root.path().join("AI_MERGE/13_codex_environment.md"),
-        "rusty-idd codex env-check\nrusty-idd codex model-loop\nrusty-idd codex runtime-audit\nrusty-idd codex system-audit\nCodex owns its output quality\nstale or orphaned work\nMissing binaries needed for this repo\n",
+        &root.path().join(".codex/loops/rusty-idd-model-loop.toml"),
+        r#"
+name = "design-first"
+description = ".idd/knowledge/plan-context.md OpenSpec Treat AI_MERGE as evidence"
+
+[[passes]]
+name = "verify"
+agent = "rusty-idd-verifier"
+model = "gpt-5.5"
+reasoning = "high"
+sandbox = "read-only"
+prompt = "OpenSpec"
+"#,
     );
     write(
-        &root.path().join("AI_MERGE/14_upstream_full_adoption.md"),
-        "ce5bf27a2978983a9089d177447f296e4c6521bb\n946df10d48c669ca3a99f757ffd2c6fa35844e62\nNative Upstream Diagnostics\nConsolidation Cuts Kept\nPR #50 Baseline Comparison\n",
+        &root.path().join(".codex/agents/rusty-idd-implementer.toml"),
+        r#"
+name = "rusty-idd-implementer"
+description = "Workspace-write implementer."
+developer_instructions = "Before editing, verify the active OpenSpec change. Update AI_MERGE only when the workflow calls for evidence."
+"#,
+    );
+    write(
+        &root.path().join("adr/0006-ai-merge-as-rusty-idd-tool.md"),
+        "AI_MERGE as Rusty IDD tool and evidence surface\nsupersedes ADR-0003\nnot the authoritative Rusty IDD control plane\n",
     );
     write(
         &root.path().join("third_party/upstream/UPSTREAMS.md"),

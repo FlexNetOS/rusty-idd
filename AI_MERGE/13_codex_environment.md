@@ -6,6 +6,11 @@ Build a repo-local Codex environment for Rusty IDD that preserves current
 working behavior, learns from the premature-cut failure, and gives future agents
 durable skills, hooks, and subagent roles.
 
+This file is an AI_MERGE evidence note. It is not the Rusty IDD control plane.
+Rusty IDD's workflow starts with user intent, graph-backed `.idd/knowledge`
+artifacts, OpenSpec proposal/spec/design/ADR/tasks, validation, and optional
+AI_MERGE evidence when audit or merge records are needed.
+
 ## Implemented Surfaces
 
 - `AGENTS.md` now records the Codex environment rules and adopt-first policy.
@@ -20,10 +25,10 @@ durable skills, hooks, and subagent roles.
 - `.agents/skills/rusty-idd-adopt-first/` captures the integration workflow.
 - `.agents/skills/rusty-idd-codex-rust-env/` captures the Codex/Rust operating
   workflow.
-- `.codex/loops/rusty-idd-model-loop.toml` defines a dry-run-first multi-model
-  Codex loop.
-- `rusty-idd codex model-loop` emits or executes exact `codex exec` commands
-  for that loop.
+- `.codex/loops/rusty-idd-model-loop.toml` defines a read-only, design-first
+  multi-model Codex loop.
+- `rusty-idd codex model-loop` emits or executes exact read-only `codex exec`
+  commands for that default loop.
 - `rusty-idd codex runtime-audit` classifies Python mentions and fails if
   repo-local Codex hooks, agents, loops, or targets depend on Python runtime
   commands.

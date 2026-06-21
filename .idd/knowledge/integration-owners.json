@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_plan": ".idd/knowledge/integration-plan.json",
   "source_system_architecture": ".idd/knowledge/system-architecture.json",
   "selector": {

@@ -2,7 +2,9 @@
 
 This repository uses Codex-native control surfaces to make agent work repeatable:
 repo guidance, skills, project config, rules, hooks, custom agents, and
-generated knowledge artifacts.
+generated knowledge artifacts. The harness follows Rusty IDD's intent-driven
+flow; `AI_MERGE/` is a tool/evidence surface, not Rusty IDD's main intent or
+control plane.
 
 The setup was checked against the current Codex manual fetched on 2026-06-21.
 The manual does not define a canonical "7 layer" or "8 layer" Codex model.
@@ -23,14 +25,17 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
 | Project rules | `.codex/rules/default.rules` | Blocks raw host/process management and prompts for untracked tool installs. |
 | Stop hook | `.codex/hooks.json` | Runs the Rusty IDD invariant checker from the git root when a turn stops. |
 | Custom agents | `.codex/agents/*.toml` | Read-heavy explorer/gap/verifier agents and one writer agent. |
-| Model loop config | `.codex/loops/rusty-idd-model-loop.toml` | Defines dry-run-first Codex passes across model roles. |
+| Model loop config | `.codex/loops/rusty-idd-model-loop.toml` | Defines read-only, design-first Codex passes across model roles. |
 | Codex env CLI | `rusty-idd codex env-check` | Rust-native checks for required artifacts and forbidden regressions. |
 | Runtime audit CLI | `rusty-idd codex runtime-audit` | Rust-native proof that repo-local Codex hooks, agents, loops, and targets do not depend on Python. |
 | System audit CLI | `rusty-idd codex system-audit` | Rust-native proof that the active Codex binary and parent-managed source-build path are Rust-first. |
-| Model loop CLI | `rusty-idd codex model-loop` | Rust-native command that emits or executes exact `codex exec` commands. |
+| Model loop CLI | `rusty-idd codex model-loop` | Rust-native command that emits or executes exact read-only `codex exec` commands for the default loop. |
 
 ## Intentional Exclusions
 
+- `AI_MERGE/` is excluded as the default intent/control-plane source. Rusty IDD
+  may still read or write AI_MERGE records for audit notes, migration history,
+  rollback, and merge evidence when a workflow step requires them.
 - MCP is excluded from the default knowledge integration path; this feature uses
   direct Rust crate integration to avoid context rot and transport overhead.
   MCP may still be added as a narrow helper surface when evidence shows it will
@@ -75,6 +80,21 @@ needs a tool such as `just`, add or repair the tracked parent `meta` / `envctl`
 tool surface first, or use an existing repo-local equivalent and record the
 managed-tooling gap.
 
+## Rusty IDD Flow
+
+The default harness order is:
+
+1. Capture the user goal.
+2. Refresh or read `.idd/knowledge/*`.
+3. Generate graph-backed plan context.
+4. Create or select an OpenSpec change.
+5. Write proposal, spec deltas, design, ADR decisions, and tasks in schema order.
+6. Use `rusty-idd spec status` and `rusty-idd spec next` to gate execution.
+7. Implement only after the artifacts are ready and implementation is
+   explicitly authorized.
+8. Validate, regenerate deterministic artifacts, and record optional AI_MERGE
+   evidence when audit or merge records are required.
+
 ## Adopt-First Policy
 
 The default integration path is:
@@ -84,7 +104,9 @@ The default integration path is:
 3. Build and audit that adopted baseline.
 4. Cut only concrete friction: compile conflicts, audit-denied dependencies,
    incompatible runtime versions, or out-of-scope daemon/host surfaces.
-5. Record every cut in an ADR or `AI_MERGE` note.
+5. Record every durable boundary decision in an ADR and every audit/merge
+   evidence item in the appropriate evidence surface, including AI_MERGE when
+   the workflow calls for it.
 6. Refresh `.idd/knowledge` and `.idd/MANIFEST.tsv`.
 
 This prevents the failure mode where an agent cuts too much early, then rebuilds
@@ -97,14 +119,15 @@ Use subagents explicitly, not automatically.
 - `rusty-idd-explorer`: read-only repository and upstream inventory.
 - `rusty-idd-gap-hunter`: read-only omission and regression search.
 - `rusty-idd-verifier`: read-only evidence and gate verification.
-- `rusty-idd-implementer`: the single writer for implementation slices.
+- `rusty-idd-implementer`: the single writer for implementation slices after
+  OpenSpec status shows the change is ready.
 
 Keep parallel work read-heavy unless one integration branch/worktree owner
 coordinates writes.
 
 ## Multi-Model Loop
 
-The repo includes a dry-run-first model loop definition:
+The repo includes a read-only, design-first model loop definition:
 
 ```bash
 cargo run --bin rusty-idd -- codex model-loop
@@ -112,7 +135,8 @@ cargo run --bin rusty-idd -- codex model-loop
 
 The runner reads `.codex/loops/rusty-idd-model-loop.toml` and emits JSON lines
 containing the exact `codex exec` commands for each pass. It defaults to dry-run
-mode and writes its manifest under `/tmp/rusty-idd-codex-loop`.
+mode and writes non-deterministic run manifests under
+`.idd/runs/rusty-idd-codex-loop`, which is ignored as local execution evidence.
 
 Use `--execute` only when you intentionally want to run the loop:
 
@@ -120,12 +144,15 @@ Use `--execute` only when you intentionally want to run the loop:
 cargo run --bin rusty-idd -- codex model-loop --execute
 ```
 
-The default passes are:
+The default passes are read-only:
 
 - `explore`: fast read-only scan with `gpt-5.4-mini`.
 - `gap-hunt`: high-reasoning read-only audit with `gpt-5.5`.
 - `verify`: high-reasoning read-only verification with `gpt-5.5`.
-- `implement`: single workspace-write pass with `gpt-5.5`.
+
+Write-capable implementation is intentionally outside the default loop. Use a
+separate explicitly authorized implementation pass only after OpenSpec artifacts
+are ready.
 
 Provider credentials, model availability, and account policy stay in user/admin
 Codex config. The repository only defines the workflow shape.
@@ -207,6 +234,7 @@ just codex-env-check
 cargo run --bin rusty-idd -- codex runtime-audit
 cargo run --bin rusty-idd -- codex system-audit
 cargo run --bin rusty-idd -- codex model-loop
+rusty-idd spec status openspec/changes/<change>
 just knowledge
 just manifest
 just validate

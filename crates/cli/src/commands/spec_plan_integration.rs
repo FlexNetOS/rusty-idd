@@ -232,7 +232,7 @@ fn render_tasks(item: &IntegrationWorkItem) -> String {
     let mut out = String::new();
     out.push_str(&format!("# {} - Tasks\n\n", item.change_id));
     out.push_str("## 1. Adopt-First Evidence\n\n");
-    out.push_str("- [ ] 1.1 Re-read owner repo docs, scripts, CI, package metadata, generated architecture artifacts, and relevant ADR/AI_MERGE notes.\n");
+    out.push_str("- [ ] 1.1 Re-read owner repo docs, scripts, CI, package metadata, generated architecture artifacts, in-force ADRs, and relevant AI_MERGE evidence notes.\n");
     out.push_str(
         "- [ ] 1.2 Pin or verify every upstream/current owner surface used by this slice.\n",
     );
@@ -255,7 +255,7 @@ fn render_tasks(item: &IntegrationWorkItem) -> String {
         out.push_str(&format!("- [ ] 3.{} `{gate}`\n", idx + 1));
     }
     out.push_str("- [ ] 3.10 Refresh `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.\n");
-    out.push_str("- [ ] 3.11 Record evidence in `/AI_MERGE`.\n\n");
+    out.push_str("- [ ] 3.11 Record AI_MERGE evidence only when audit, migration, rollback, or merge records are required.\n\n");
     out.push_str("## Rollback\n\n");
     for step in &item.rollback {
         out.push_str(&format!("- {step}\n"));

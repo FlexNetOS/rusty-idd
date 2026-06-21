@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:c6cba7e8aa31f25a`
+- Workspace fingerprint: `fnv1a64:bdc9b303d44270b9`
 - Indexed source files: 135
 - Graph nodes: 8456
-- Graph edges: 34489
-- Resolved call edges: 19573
+- Graph edges: 34504
+- Resolved call edges: 19588
 - Functions with complexity: 2105
-- Packed files: 123
-- Packed tokens: 109478
+- Packed files: 124
+- Packed tokens: 110227
 - Suspicious files: 0
 
 ## Hotspots
@@ -45,20 +45,20 @@
 | 5761 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
-| 2820 | `crates/core/src/templates.rs` |
+| 2619 | `docs/rusty-idd/codex-environment.md` |
 | 2540 | `AI_MERGE/16_upstream_knowledge_revisit.md` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
 | 2421 | `AI_MERGE/14_upstream_full_adoption.md` |
-| 2304 | `docs/rusty-idd/codex-environment.md` |
+| 2276 | `crates/core/src/templates.rs` |
 | 2097 | `crates/tui/src/ui.rs` |
+| 1994 | `Makefile` |
 | 1963 | `AI_MERGE/15_system_handoff_research.md` |
-| 1905 | `Justfile` |
+| 1941 | `Justfile` |
 | 1712 | `crates/runner/src/data.rs` |
 | 1679 | `AI_MERGE/31_prompt_front_door_upstream_adoption.md` |
-| 1633 | `Makefile` |
 | 1603 | `crates/runner/src/runner.rs` |
+| 1594 | `AI_MERGE/13_codex_environment.md` |
 | 1573 | `AI_MERGE/12_knowledge_deep_audit.md` |
-| 1520 | `AI_MERGE/13_codex_environment.md` |
 
 ## Findings
 

@@ -4,10 +4,12 @@ sandbox_mode = "read-only"
 model_reasoning_effort = "high"
 developer_instructions = """
 Verify claims against current files and command output.
-Prefer exact commands from Justfile, Makefile, AGENTS.md, and AI_MERGE records.
-Check generated artifacts after source/control-plane changes: .idd/MANIFEST.tsv and .idd/knowledge/*.
+Prefer exact commands from Rusty IDD knowledge, spec, validate, manifest, and
+Codex harness surfaces, plus Justfile, Makefile, AGENTS.md, and ADRs.
+Check generated artifacts after source/control-plane changes: .idd/MANIFEST.tsv,
+.idd/knowledge/*, OpenSpec change status, and AI_MERGE only as supporting
+evidence when relevant.
 Report command, result, and residual risk. Do not edit files.
 Treat weak or indirect evidence as incomplete.
 """
 nickname_candidates = ["Gauge", "Proof", "Check"]
-

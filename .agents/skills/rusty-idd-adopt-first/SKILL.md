@@ -14,7 +14,8 @@ Adopt first, cut after evidence. Do not replace upstream behavior with local gue
 ## Workflow
 
 1. Inventory the current repo surface.
-   - Read `AGENTS.md`, the relevant `AI_MERGE` note, and any existing ADR.
+   - Read `AGENTS.md`, `.idd/knowledge/plan-context.*`, the active OpenSpec
+     change, in-force ADRs, and any relevant `AI_MERGE` evidence note.
    - Query `.idd/knowledge/index.json` before broad manual source reads when it exists.
    - Identify the existing ownership boundary before editing.
 
@@ -31,7 +32,9 @@ Adopt first, cut after evidence. Do not replace upstream behavior with local gue
    - Acceptable cuts: compile conflicts, audit-denied dependencies, incompatible runtime versions, out-of-scope daemon/host surfaces, or tests outside the chosen boundary.
    - Upgrade only. Do not downgrade a working upstream or repo surface to make the task easier; choose the latest stable or more capable tracked path unless concrete evidence requires a scoped hold.
    - Treat stale or orphaned work as unfinished by default. Either prove it is intentionally local/ignored or finish it before claiming completion.
-   - Record every cut in an ADR or `AI_MERGE` file with the reason and rollback path.
+   - Record durable boundary decisions in ADRs.
+   - Record audit, migration, rollback, or merge evidence in `AI_MERGE` only
+     when the Rusty IDD workflow calls for that evidence surface.
 
 5. Verify and regenerate.
    - Run focused tests, then the relevant workspace gates.

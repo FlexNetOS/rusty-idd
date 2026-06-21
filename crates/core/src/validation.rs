@@ -440,6 +440,7 @@ fn manifest_path_is_local_artifact(path: &str) -> bool {
         || path.starts_with("_workspace/")
         || path.starts_with(".devin/")
         || path.starts_with(".worktrees/")
+        || path.starts_with(".idd/runs/")
         || path.starts_with(".vscode/")
         || path == ".github/workflows/idd-ci.yml"
 }

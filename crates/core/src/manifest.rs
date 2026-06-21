@@ -92,13 +92,14 @@ pub fn workspace_fingerprint(root: impl AsRef<Path>) -> Result<String, String> {
 
 fn fingerprint_should_skip(rel: &str) -> bool {
     rel.starts_with(".idd/knowledge/")
+        || rel.starts_with(".idd/runs/")
         || rel == ".idd/MANIFEST.tsv"
         || rel == "AI_MERGE/validation_report.md"
         || is_upstream_generated_local_artifact(rel)
 }
 
 fn manifest_should_skip(rel: &str) -> bool {
-    is_upstream_generated_local_artifact(rel)
+    rel.starts_with(".idd/runs/") || is_upstream_generated_local_artifact(rel)
 }
 
 fn is_upstream_generated_local_artifact(rel: &str) -> bool {
@@ -140,6 +141,12 @@ mod tests {
         fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
         fs::create_dir(root.join(".idd")).unwrap();
         fs::write(root.join(".idd/MANIFEST.tsv"), "old self hash\n").unwrap();
+        fs::create_dir_all(root.join(".idd/runs/rusty-idd-codex-loop")).unwrap();
+        fs::write(
+            root.join(".idd/runs/rusty-idd-codex-loop/run-manifest.json"),
+            "{}\n",
+        )
+        .unwrap();
         fs::write(root.join("Cargo.toml.idd-bak-1"), "stale\n").unwrap();
         fs::create_dir(root.join("_workspace")).unwrap();
         fs::write(root.join("_workspace/HANDOFF.md"), "local\n").unwrap();
@@ -221,6 +228,12 @@ mod tests {
         fs::create_dir(root.join(".idd/knowledge")).unwrap();
         fs::write(root.join(".idd/knowledge/index.json"), "{}\n").unwrap();
         fs::write(root.join(".idd/knowledge/report.md"), "# Report\n").unwrap();
+        fs::create_dir_all(root.join(".idd/runs/rusty-idd-codex-loop")).unwrap();
+        fs::write(
+            root.join(".idd/runs/rusty-idd-codex-loop/run-manifest.json"),
+            "{}\n",
+        )
+        .unwrap();
         fs::create_dir(root.join("AI_MERGE")).unwrap();
         fs::write(root.join("AI_MERGE/validation_report.md"), "# Validation\n").unwrap();
         fs::create_dir_all(root.join("third_party/upstream/codegraph-rust/docs/specifications"))

@@ -33,15 +33,22 @@ Use this skill to operate the repo-local Codex environment.
 ## Standard Loop
 
 1. Recall ICM context.
-2. Read `.idd/knowledge/report.md`.
-3. Query symbols/files/impact before rescanning source.
-4. Use subagents only when explicitly useful:
+2. Read `.idd/knowledge/report.md`, `.idd/knowledge/architecture.md`, and any
+   current `.idd/knowledge/plan-context.*`.
+3. Generate or refresh graph-backed context before edits when the goal is new:
+   `rusty-idd knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --goal "..."`
+4. Query symbols/files/impact before rescanning source.
+5. Use `rusty-idd spec status` or `rusty-idd spec next` to verify the active
+   OpenSpec change before any write-capable implementation.
+6. Use subagents only when explicitly useful:
    - `rusty-idd-explorer` for read-heavy mapping.
    - `rusty-idd-gap-hunter` for omissions.
    - `rusty-idd-verifier` for evidence and gates.
-   - keep one writer, usually `rusty-idd-implementer`.
-5. Apply the adopt-first workflow for integrations.
-6. Own tool-surface growth when it improves output:
+   - keep one writer, usually `rusty-idd-implementer`, only after OpenSpec is ready.
+7. Treat `AI_MERGE/` as a tool/evidence surface for audit, migration, rollback,
+   and merge records. Do not use it as the main intent source.
+8. Apply the adopt-first workflow for integrations.
+9. Own tool-surface growth when it improves output:
    - Add or update skills, rules, hooks, custom agents, model-loop passes,
      plugin packaging, MCP configuration, or local Rust helpers when evidence
      shows they would materially improve accuracy, speed, verification, or
@@ -49,23 +56,25 @@ Use this skill to operate the repo-local Codex environment.
    - Keep the addition narrow, tracked, documented, and verified.
    - Do not wait for the user to request the exact tool when the need is clear
      from prior misses or current audit evidence.
-7. Upgrade only:
+10. Upgrade only:
    - Prefer the latest stable, more capable tracked path when improving tools,
      dependencies, models, actions, skills, hooks, or generated artifacts.
    - Never downgrade a working surface to make a task easier unless concrete
      build, audit, compatibility, or owner-boundary evidence requires a scoped
      hold.
-8. Treat stale or orphaned work as unfinished by default:
+11. Treat stale or orphaned work as unfinished by default:
    - If a stale artifact, orphaned file, skipped TODO, ignored output, or
      disconnected tool surface appears, either prove it is intentionally local
      and ignored or finish it.
    - Finishing means documenting the decision, regenerating affected artifacts,
      and running the relevant gates.
-9. For multi-model loop work, start with a dry run:
+12. For multi-model loop work, start with a dry run:
    `cargo run --bin rusty-idd -- codex model-loop`
-   Inspect the emitted `codex exec` commands before using `--execute`.
-10. Verify with focused gates, then broaden.
-11. Refresh generated artifacts and run the Codex invariant check.
+   The default loop is read-only and stops at design/verification. Use a
+   write-capable pass only after explicit authorization and ready OpenSpec
+   artifacts.
+13. Verify with focused gates, then broaden.
+14. Refresh generated artifacts and run the Codex invariant check.
 
 ## Verification
 
@@ -74,6 +83,8 @@ just codex-env-check
 just codex-runtime-audit
 cargo run --bin rusty-idd -- codex system-audit
 cargo run --bin rusty-idd -- codex model-loop
+git diff --check
+rusty-idd spec status openspec/changes/<change>
 just knowledge
 just manifest
 just validate

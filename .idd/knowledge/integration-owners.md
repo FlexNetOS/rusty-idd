@@ -1,6 +1,6 @@
 # Integration Owner Surfaces
 
-- Workspace root: `/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
 - Source plan: `.idd/knowledge/integration-plan.json`
 - Source system architecture: `.idd/knowledge/system-architecture.json`
 - Change: `integrate-prompt-front-door`

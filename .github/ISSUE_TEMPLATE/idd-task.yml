@@ -13,10 +13,10 @@ body:
   - type: textarea
     id: source-of-truth
     attributes:
-      label: Source of truth
+      label: Rusty IDD artifacts
       value: |
-        Use AGENTS.md and AI_MERGE as the source of truth.
-        Update the relevant AI_MERGE files in the PR.
+        Use AGENTS.md, .idd/knowledge, OpenSpec artifacts, and ADRs as the source of truth.
+        Treat AI_MERGE as audit/evidence only when the workflow calls for it.
     validations:
       required: true
   - type: textarea
