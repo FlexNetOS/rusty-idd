@@ -2,19 +2,19 @@
 
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
 - Source plan: `.idd/knowledge/integration-plan.json`
-- Next planned work: `integrate-idd-spec-engine`
+- Next planned work: `integrate-fleet-handoff`
 
 ## Counts
 
 | Total | Planned | Incomplete Scaffold | Scaffolded | Ready To Archive | Archived |
 |---:|---:|---:|---:|---:|---:|
-| 19 | 19 | 0 | 0 | 0 | 0 |
+| 19 | 18 | 0 | 0 | 1 | 0 |
 
 ## Work Items
 
 | Priority | Change | Status | Capability | OpenSpec | Missing | Unchecked Tasks |
 |---:|---|---|---|---|---|---:|
-| 10 | `integrate-idd-spec-engine` | planned | `capability:idd-spec-engine` |  |  | 0 |
+| 10 | `integrate-idd-spec-engine` | ready-to-archive | `capability:idd-spec-engine` | `openspec/changes/integrate-idd-spec-engine` |  | 0 |
 | 20 | `integrate-fleet-handoff` | planned | `capability:fleet-handoff` |  |  | 0 |
 | 30 | `integrate-agent-communication` | planned | `capability:agent-communication` |  |  | 0 |
 | 40 | `integrate-env-vault-relay` | planned | `capability:env-vault-relay` |  |  | 0 |
@@ -37,4 +37,4 @@
 ## Findings
 
 - integration status classified 19 work items from .idd/knowledge/integration-plan.json
-- next planned integration work item is integrate-idd-spec-engine
+- next planned integration work item is integrate-fleet-handoff

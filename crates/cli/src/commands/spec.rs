@@ -65,6 +65,9 @@ pub enum SpecCommand {
     Status {
         /// The change directory (e.g. `openspec/changes/<change>`).
         change_dir: PathBuf,
+        /// Emit deterministic JSON for automation instead of human text.
+        #[arg(long)]
+        json: bool,
     },
     /// Print the next ready artifact for a change (scriptable), per the schema
     /// DAG.
@@ -145,7 +148,9 @@ pub fn run(cmd: SpecCommand) -> i32 {
         } => crate::commands::spec_archive::run(&change_dir, skip_specs, no_validate, yes),
         SpecCommand::Show { file } => cmd_show(&file),
         SpecCommand::Sync { delta, base } => cmd_sync(&delta, &base),
-        SpecCommand::Status { change_dir } => crate::commands::spec_status::run_status(&change_dir),
+        SpecCommand::Status { change_dir, json } => {
+            crate::commands::spec_status::run_status(&change_dir, json)
+        }
         SpecCommand::Next { change_dir } => crate::commands::spec_status::run_next(&change_dir),
         SpecCommand::Adr { command } => crate::commands::spec_adr::run(command),
         SpecCommand::Scaffold {
