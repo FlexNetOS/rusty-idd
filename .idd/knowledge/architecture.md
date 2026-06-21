@@ -1,6 +1,6 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:8429a018682c5ee3`
+- Workspace fingerprint: `fnv1a64:8817a8c74deae4f9`
 - Source graph provider: `codegraph-rust`
 - Source graph: 135 files, 8440 nodes, 34370 edges
 - Source languages: rust
