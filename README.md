@@ -39,7 +39,7 @@ cargo fmt --all -- --check
 cargo clippy --workspace --all-targets --all-features -- -D warnings
 ```
 
-CI gates (blocking): Rust-native drift check, build, test, fmt, clippy, and `cargo audit`. See `.github/workflows/ci.yml` and `.github/workflows/promote-verify.yml`.
+CI gates (blocking): `rusty-idd merge-tools verify`, build, test, fmt, clippy, and `cargo audit`. See `.github/workflows/ci.yml` and `.github/workflows/promote-verify.yml`.
 
 ## Recommended workflow
 

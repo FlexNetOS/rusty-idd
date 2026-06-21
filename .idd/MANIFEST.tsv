@@ -37,9 +37,9 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/architecture.json	33060	3046d235c0760c57
-.idd/knowledge/architecture.md	6633	dd3d4753db42e1ff
-.idd/knowledge/index.json	17482541	dc7967b13422c967
+.idd/knowledge/architecture.json	33060	a7252500cdd85404
+.idd/knowledge/architecture.md	6633	e599d8cff32de588
+.idd/knowledge/index.json	17482541	02543f250f7123ba
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29330	2d92302864717d93
@@ -51,8 +51,8 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.json	57058	73a0f3d80898bd3b
 .idd/knowledge/operating-model.md	21485	9184500a9924cb45
 .idd/knowledge/plan-context.json	83349	9a05e541be0b8c52
-.idd/knowledge/plan-context.md	17108	9342d1380a02440a
-.idd/knowledge/report.md	4557	2db8f70eb6b4087f
+.idd/knowledge/plan-context.md	16523	37709540126c5289
+.idd/knowledge/report.md	4557	c6e4b63d1fae1258
 .idd/knowledge/system-architecture.json	83518	f3dcf530bdf26fff
 .idd/knowledge/system-architecture.md	23505	bff2b9e616181d0c
 .release-please-manifest.json	19	f96b929db2fa1886
@@ -91,7 +91,7 @@ GEMINI.md	609	ce93a61c7f63579f
 Justfile	7461	f8d2a3f163c6d69f
 LICENSE	1084	48ecb3c3d178a316
 Makefile	7246	f52844030d741302
-README.md	2485	fdf07aa36920d0ce
+README.md	2492	db9d85ae435e549b
 SECURITY.md	555	f3cca6f3551f3d64
 VERSION	6	2470ea8fb2f12876
 adr/0001-codex-harness-rusty-idd-flow.md	1704	61de20ccc007caf0
@@ -448,7 +448,7 @@ crates/tui/src/ui.rs	84930	8993c1a7fab71e0e
 docs/rusty-idd/architecture-diagrams.md	56406	406566fcfb67465a
 docs/rusty-idd/codex-environment.md	12069	cb90038006150768
 docs/rusty-idd/dependency-duplication.md	3837	93266b2549c197c6
-docs/rusty-idd/design.md	5892	691fce771c323160
+docs/rusty-idd/design.md	5985	b2802a4850aff45d
 docs/rusty-idd/lifecycle-contract.md	14191	8954f4f9c6e402da
 docs/rusty-idd/merge-tools-package.md	3478	78ce4b200e13bb78
 docs/rusty-idd/oracle-fixtures/01-base-spec.md	1283	c509e1de573e3a85
