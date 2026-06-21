@@ -5,9 +5,10 @@ use std::path::{Path, PathBuf};
 use anyhow::{bail, Context, Result};
 use codegraph_core::{
     CodeNode as UpstreamCodeNode, EdgeRelationship as UpstreamEdge, EdgeType as UpstreamEdgeType,
-    NodeType as UpstreamNodeType,
+    Language as UpstreamLanguage, NodeType as UpstreamNodeType,
 };
-use codegraph_parser::languages::rust::RustExtractor;
+use codegraph_parser::language::LanguageRegistry;
+use codegraph_parser::languages::extract_for_language;
 use ignore::WalkBuilder;
 use repomix_config::load::PartialConfig;
 use repomix_config::schema::OutputStyle;
@@ -261,15 +262,17 @@ pub struct QueryResult {
 pub fn index_workspace(options: IndexOptions) -> Result<KnowledgeIndex> {
     let workspace = canonical_workspace(&options.workspace)?;
     let fingerprint = workspace_fingerprint(&workspace).map_err(anyhow::Error::msg)?;
-    let rust_files = collect_rust_files(&workspace, options.max_file_bytes)?;
+    let registry = LanguageRegistry::new();
+    let source_files =
+        collect_supported_source_files(&workspace, options.max_file_bytes, &registry)?;
     let mut parsed_files = Vec::new();
     let mut failures = Vec::new();
 
-    for path in rust_files {
-        match parse_rust_file_with_codegraph(&path) {
+    for source_file in source_files {
+        match parse_source_file_with_codegraph(&source_file.path, source_file.language, &registry) {
             Ok(parsed) => parsed_files.push(parsed),
             Err(error) => failures.push(ParseFailure {
-                path: display_path(&workspace, &path),
+                path: display_path(&workspace, &source_file.path),
                 error: error.to_string(),
             }),
         }
@@ -289,7 +292,7 @@ pub fn index_workspace(options: IndexOptions) -> Result<KnowledgeIndex> {
         let raw_path = parsed.path.display().to_string();
         files.push(FileSummary {
             path: rel.clone(),
-            language: "rust".to_string(),
+            language: language_name(&parsed.language),
             line_count: parsed.line_count,
             byte_count: parsed.byte_count,
             node_id: file_id,
@@ -298,6 +301,7 @@ pub fn index_workspace(options: IndexOptions) -> Result<KnowledgeIndex> {
         nodes.push(file_node_to_dto(
             file_id,
             &rel,
+            &parsed.language,
             parsed.line_count,
             parsed.byte_count,
         ));
@@ -491,27 +495,39 @@ pub fn load_index(path: impl AsRef<Path>) -> Result<KnowledgeIndex> {
 }
 
 #[derive(Debug)]
-struct ParsedRustFile {
+struct SourceFileCandidate {
     path: PathBuf,
+    language: UpstreamLanguage,
+}
+
+#[derive(Debug)]
+struct ParsedSourceFile {
+    path: PathBuf,
+    language: UpstreamLanguage,
     line_count: usize,
     byte_count: usize,
     nodes: Vec<UpstreamCodeNode>,
     edges: Vec<UpstreamEdge>,
 }
 
-fn parse_rust_file_with_codegraph(path: &Path) -> Result<ParsedRustFile> {
+fn parse_source_file_with_codegraph(
+    path: &Path,
+    language: UpstreamLanguage,
+    registry: &LanguageRegistry,
+) -> Result<ParsedSourceFile> {
     let source = fs::read_to_string(path).with_context(|| format!("read {}", path.display()))?;
-    let mut parser = tree_sitter::Parser::new();
-    parser
-        .set_language(&tree_sitter_rust::LANGUAGE.into())
-        .map_err(|error| anyhow::anyhow!("initialize Rust parser: {error}"))?;
+    let mut parser = registry
+        .create_parser(&language)
+        .with_context(|| format!("initialize {:?} parser", language))?;
     let tree = parser
         .parse(&source, None)
         .ok_or_else(|| anyhow::anyhow!("parse {}", path.display()))?;
-    let extraction = RustExtractor::extract_with_edges(&tree, &source, &path.display().to_string());
+    let extraction = extract_for_language(&language, &tree, &source, &path.display().to_string())
+        .with_context(|| format!("extract {:?} symbols", language))?;
 
-    Ok(ParsedRustFile {
+    Ok(ParsedSourceFile {
         path: path.to_path_buf(),
+        language,
         line_count: source.lines().count(),
         byte_count: source.len(),
         nodes: extraction.nodes,
@@ -522,6 +538,7 @@ fn parse_rust_file_with_codegraph(path: &Path) -> Result<ParsedRustFile> {
 fn file_node_to_dto(
     id: u64,
     rel_path: &str,
+    language: &UpstreamLanguage,
     line_count: usize,
     byte_count: usize,
 ) -> KnowledgeNode {
@@ -536,7 +553,10 @@ fn file_node_to_dto(
         visibility: None,
         unresolved_calls: Vec::new(),
         properties: BTreeMap::from([
-            ("language".to_string(), serde_json::json!("rust")),
+            (
+                "language".to_string(),
+                serde_json::json!(language_name(language)),
+            ),
             ("line_count".to_string(), serde_json::json!(line_count)),
             ("byte_count".to_string(), serde_json::json!(byte_count)),
         ]),
@@ -878,7 +898,11 @@ fn optional_vec(values: Vec<String>) -> Option<Vec<String>> {
     }
 }
 
-fn collect_rust_files(workspace: &Path, max_file_bytes: u64) -> Result<Vec<PathBuf>> {
+fn collect_supported_source_files(
+    workspace: &Path,
+    max_file_bytes: u64,
+    registry: &LanguageRegistry,
+) -> Result<Vec<SourceFileCandidate>> {
     let mut files = Vec::new();
     let walker = WalkBuilder::new(workspace)
         .hidden(false)
@@ -903,9 +927,9 @@ fn collect_rust_files(workspace: &Path, max_file_bytes: u64) -> Result<Vec<PathB
         {
             continue;
         }
-        if path.extension().and_then(|value| value.to_str()) != Some("rs") {
+        let Some(language) = registry.detect_language(&path.display().to_string()) else {
             continue;
-        }
+        };
         if fs::metadata(path)
             .map(|meta| meta.len())
             .unwrap_or(u64::MAX)
@@ -913,10 +937,33 @@ fn collect_rust_files(workspace: &Path, max_file_bytes: u64) -> Result<Vec<PathB
         {
             continue;
         }
-        files.push(path.to_path_buf());
+        files.push(SourceFileCandidate {
+            path: path.to_path_buf(),
+            language,
+        });
     }
-    files.sort();
+    files.sort_by(|a, b| a.path.cmp(&b.path));
     Ok(files)
+}
+
+fn language_name(language: &UpstreamLanguage) -> String {
+    match language {
+        UpstreamLanguage::Rust => "rust",
+        UpstreamLanguage::TypeScript => "typescript",
+        UpstreamLanguage::JavaScript => "javascript",
+        UpstreamLanguage::Python => "python",
+        UpstreamLanguage::Go => "go",
+        UpstreamLanguage::Java => "java",
+        UpstreamLanguage::Cpp => "cpp",
+        UpstreamLanguage::Swift => "swift",
+        UpstreamLanguage::Kotlin => "kotlin",
+        UpstreamLanguage::CSharp => "csharp",
+        UpstreamLanguage::Ruby => "ruby",
+        UpstreamLanguage::Php => "php",
+        UpstreamLanguage::Dart => "dart",
+        UpstreamLanguage::Other(value) => value.as_str(),
+    }
+    .to_string()
 }
 
 fn should_skip_path(workspace: &Path, path: &Path) -> bool {
@@ -1126,7 +1173,10 @@ fn render_report_markdown(report: &KnowledgeReport) -> String {
         "- Workspace fingerprint: `{}`\n",
         report.workspace_fingerprint
     ));
-    out.push_str(&format!("- Indexed Rust files: {}\n", report.files_indexed));
+    out.push_str(&format!(
+        "- Indexed source files: {}\n",
+        report.files_indexed
+    ));
     out.push_str(&format!("- Graph nodes: {}\n", report.nodes));
     out.push_str(&format!("- Graph edges: {}\n", report.edges));
     out.push_str(&format!("- Resolved call edges: {}\n", report.call_edges));
@@ -1353,6 +1403,42 @@ mod tests {
             serde_json::to_string_pretty(&first).unwrap(),
             serde_json::to_string_pretty(&second).unwrap()
         );
+    }
+
+    #[test]
+    fn indexes_multiple_tree_sitter_languages_through_codegraph_dispatch() {
+        let tmp = tempfile::tempdir().unwrap();
+        fs::create_dir_all(tmp.path().join("src")).unwrap();
+        fs::write(
+            tmp.path().join("src/lib.rs"),
+            "pub fn rust_greet(name: &str) -> String { name.to_string() }\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("src/app.ts"),
+            "export function tsGreet(name: string): string { return name; }\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("src/script.py"),
+            "def py_greet(name):\n    return name\n",
+        )
+        .unwrap();
+
+        let index = index_workspace(IndexOptions::new(tmp.path())).unwrap();
+        let languages = index
+            .files
+            .iter()
+            .map(|file| file.language.as_str())
+            .collect::<BTreeSet<_>>();
+
+        assert!(languages.contains("rust"));
+        assert!(languages.contains("typescript"));
+        assert!(languages.contains("python"));
+        assert!(index.failures.is_empty());
+        assert!(index.nodes.iter().any(|node| node.name == "rust_greet"));
+        assert!(index.nodes.iter().any(|node| node.name == "tsGreet"));
+        assert!(index.nodes.iter().any(|node| node.name == "py_greet"));
     }
 
     #[test]

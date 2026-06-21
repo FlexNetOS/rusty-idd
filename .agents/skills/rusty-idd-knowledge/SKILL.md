@@ -16,6 +16,10 @@ artifacts or when preparing compact context for an agent.
      `rusty-idd knowledge refresh --workspace .`
 
 2. Query the graph index before rescanning source manually.
+   - The index uses the vendored CodeGraph tree-sitter registry for supported
+     Rust, TypeScript/JavaScript, Python, Go, Java, C/C++, Swift, Ruby, and PHP
+     files. Treat missing languages as explicit parser-surface gaps, not proof
+     that tree-sitter is absent from the system.
    - Symbol lookup:
      `rusty-idd knowledge query --index .idd/knowledge/index.json --symbol NAME`
    - File lookup:
@@ -38,8 +42,9 @@ artifacts or when preparing compact context for an agent.
 
 5. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
-   - Optional vector search, SurrealDB, and cloud provider integrations are feature-gated future
-     surfaces, not default behavior.
+   - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
+     exist in the wider meta system, but they are feature-gated or external
+     surfaces rather than default knowledge behavior.
 
 ## Validation
 
