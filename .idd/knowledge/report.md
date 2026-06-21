@@ -1,39 +1,39 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:63b1368db69afd09`
-- Indexed source files: 134
-- Graph nodes: 8178
-- Graph edges: 32790
-- Resolved call edges: 18537
-- Functions with complexity: 2054
-- Packed files: 113
-- Packed tokens: 95965
+- Workspace fingerprint: `fnv1a64:f2d4967bd5bad62d`
+- Indexed source files: 135
+- Graph nodes: 8239
+- Graph edges: 33116
+- Resolved call edges: 18748
+- Functions with complexity: 2068
+- Packed files: 115
+- Packed tokens: 97074
 - Suspicious files: 0
 
 ## Hotspots
 
 | Score | Node | File | Reasons |
 |---:|---|---|---|
-| 3544 | `walk` (3522) | `crates/external/codegraph-parser/src/languages/rust.rs` | 400 lines, 302 graph links, 299 call links, 7 unresolved calls, cyclomatic complexity 31 |
-| 2871 | `walk` (3374) | `crates/external/codegraph-parser/src/languages/java.rs` | 349 lines, 237 graph links, 234 call links, 3 unresolved calls, cyclomatic complexity 41 |
-| 2856 | `contains` (5450) | `crates/spec/src/model/spec.rs` | 287 graph links, 284 call links |
-| 2601 | `new` (5735) | `crates/tui/src/app.rs` | 35 lines, 259 graph links, 254 call links, 1 unresolved calls |
-| 2375 | `walk` (3447) | `crates/external/codegraph-parser/src/languages/php.rs` | 299 lines, 196 graph links, 193 call links, 3 unresolved calls, cyclomatic complexity 32 |
-| 2220 | `walk` (3292) | `crates/external/codegraph-parser/src/languages/cpp.rs` | 290 lines, 182 graph links, 179 call links, 5 unresolved calls, cyclomatic complexity 29 |
-| 2193 | `walk` (3498) | `crates/external/codegraph-parser/src/languages/ruby.rs` | 273 lines, 180 graph links, 177 call links, 3 unresolved calls, cyclomatic complexity 33 |
-| 2186 | `walk` (3316) | `crates/external/codegraph-parser/src/languages/csharp.rs` | 286 lines, 180 graph links, 177 call links, 3 unresolved calls, cyclomatic complexity 28 |
-| 2141 | `walk` (3589) | `crates/external/codegraph-parser/src/languages/swift.rs` | 280 lines, 175 graph links, 172 call links, 4 unresolved calls, cyclomatic complexity 30 |
-| 2028 | `visit_dir` (2775) | `crates/external/codegraph-core/src/watch/mod.rs` | 198 graph links, 194 call links, 16 unresolved calls, cyclomatic complexity 4 |
-| 2025 | `implementation_loop` (5013) | `crates/runner/src/runner.rs` | 342 lines, 156 graph links, 143 call links, 2 unresolved calls, cyclomatic complexity 52 |
-| 1707 | `handle_config_input` (5750) | `crates/tui/src/app.rs` | 133 lines, 151 graph links, 148 call links, 3 unresolved calls, cyclomatic complexity 19 |
-| 1701 | `process_path_event` (2777) | `crates/external/codegraph-core/src/watch/mod.rs` | 194 lines, 137 graph links, 131 call links, 13 unresolved calls, cyclomatic complexity 35 |
-| 1456 | `walk` (3349) | `crates/external/codegraph-parser/src/languages/go.rs` | 193 lines, 118 graph links, 115 call links, 4 unresolved calls, cyclomatic complexity 23 |
-| 1429 | `draw_config_screen` (6452) | `crates/tui/src/ui.rs` | 214 lines, 112 graph links, 108 call links, 13 unresolved calls, cyclomatic complexity 21 |
-| 1408 | `new` (4972) | `crates/runner/src/runner.rs` | 145 graph links, 137 call links |
-| 1383 | `apply_env_overrides` (1459) | `crates/external/codegraph-core/src/config_manager.rs` | 222 lines, 91 graph links, 88 call links, 4 unresolved calls, cyclomatic complexity 65 |
-| 1272 | `extract_symbols` (2799) | `crates/external/codegraph-core/src/watch/mod.rs` | 134 lines, 103 graph links, 97 call links, 6 unresolved calls, cyclomatic complexity 33 |
-| 1179 | `parse_content_with_recovery` (3672) | `crates/external/codegraph-parser/src/parser.rs` | 194 lines, 92 graph links, 85 call links, 14 unresolved calls, cyclomatic complexity 18 |
-| 1075 | `generate_workspace` (845) | `crates/core/src/planner.rs` | 131 lines, 100 graph links, 91 call links, 1 unresolved calls |
+| 3544 | `walk` (3582) | `crates/external/codegraph-parser/src/languages/rust.rs` | 400 lines, 302 graph links, 299 call links, 7 unresolved calls, cyclomatic complexity 31 |
+| 2871 | `walk` (3434) | `crates/external/codegraph-parser/src/languages/java.rs` | 349 lines, 237 graph links, 234 call links, 3 unresolved calls, cyclomatic complexity 41 |
+| 2856 | `contains` (5510) | `crates/spec/src/model/spec.rs` | 287 graph links, 284 call links |
+| 2601 | `new` (5795) | `crates/tui/src/app.rs` | 35 lines, 259 graph links, 254 call links, 1 unresolved calls |
+| 2375 | `walk` (3507) | `crates/external/codegraph-parser/src/languages/php.rs` | 299 lines, 196 graph links, 193 call links, 3 unresolved calls, cyclomatic complexity 32 |
+| 2220 | `walk` (3352) | `crates/external/codegraph-parser/src/languages/cpp.rs` | 290 lines, 182 graph links, 179 call links, 5 unresolved calls, cyclomatic complexity 29 |
+| 2193 | `walk` (3558) | `crates/external/codegraph-parser/src/languages/ruby.rs` | 273 lines, 180 graph links, 177 call links, 3 unresolved calls, cyclomatic complexity 33 |
+| 2186 | `walk` (3376) | `crates/external/codegraph-parser/src/languages/csharp.rs` | 286 lines, 180 graph links, 177 call links, 3 unresolved calls, cyclomatic complexity 28 |
+| 2141 | `walk` (3649) | `crates/external/codegraph-parser/src/languages/swift.rs` | 280 lines, 175 graph links, 172 call links, 4 unresolved calls, cyclomatic complexity 30 |
+| 2028 | `visit_dir` (2835) | `crates/external/codegraph-core/src/watch/mod.rs` | 198 graph links, 194 call links, 16 unresolved calls, cyclomatic complexity 4 |
+| 2025 | `implementation_loop` (5073) | `crates/runner/src/runner.rs` | 342 lines, 156 graph links, 143 call links, 2 unresolved calls, cyclomatic complexity 52 |
+| 1707 | `handle_config_input` (5810) | `crates/tui/src/app.rs` | 133 lines, 151 graph links, 148 call links, 3 unresolved calls, cyclomatic complexity 19 |
+| 1701 | `process_path_event` (2837) | `crates/external/codegraph-core/src/watch/mod.rs` | 194 lines, 137 graph links, 131 call links, 13 unresolved calls, cyclomatic complexity 35 |
+| 1456 | `walk` (3409) | `crates/external/codegraph-parser/src/languages/go.rs` | 193 lines, 118 graph links, 115 call links, 4 unresolved calls, cyclomatic complexity 23 |
+| 1429 | `draw_config_screen` (6512) | `crates/tui/src/ui.rs` | 214 lines, 112 graph links, 108 call links, 13 unresolved calls, cyclomatic complexity 21 |
+| 1408 | `new` (5032) | `crates/runner/src/runner.rs` | 145 graph links, 137 call links |
+| 1383 | `apply_env_overrides` (1519) | `crates/external/codegraph-core/src/config_manager.rs` | 222 lines, 91 graph links, 88 call links, 4 unresolved calls, cyclomatic complexity 65 |
+| 1272 | `extract_symbols` (2859) | `crates/external/codegraph-core/src/watch/mod.rs` | 134 lines, 103 graph links, 97 call links, 6 unresolved calls, cyclomatic complexity 33 |
+| 1179 | `parse_content_with_recovery` (3732) | `crates/external/codegraph-parser/src/parser.rs` | 194 lines, 92 graph links, 85 call links, 14 unresolved calls, cyclomatic complexity 18 |
+| 1075 | `generate_workspace` (905) | `crates/core/src/planner.rs` | 131 lines, 100 graph links, 91 call links, 1 unresolved calls |
 
 ## Top Files By Tokens
 

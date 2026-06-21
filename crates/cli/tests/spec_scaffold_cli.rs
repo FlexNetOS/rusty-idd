@@ -105,3 +105,110 @@ fn scaffolded_spec_stub_is_show_able() {
         "spec show must handle a scaffolded stub"
     );
 }
+
+#[test]
+fn plan_integration_creates_openspec_artifacts_from_integration_plan() {
+    let base = tempfile::tempdir().unwrap();
+    let plan_dir = base.path().join(".idd/knowledge");
+    std::fs::create_dir_all(&plan_dir).unwrap();
+    std::fs::write(
+        plan_dir.join("integration-plan.json"),
+        r#"{
+  "schema_version": 1,
+  "workspace_root": ".",
+  "system_root": "..",
+  "source_model": ".idd/knowledge/operating-model.json",
+  "work_items": [
+    {
+      "id": "work:integrate-fleet-handoff",
+      "title": "Integrate Central and fleet handoff",
+      "capability": "capability:fleet-handoff",
+      "layer": "layer:coordination-communication",
+      "priority": 20,
+      "status": "partial",
+      "change_id": "integrate-fleet-handoff",
+      "owner_repos": ["repo:handoff", "repo:weave"],
+      "anchors": ["handoff central and fleet design"],
+      "adopt_first_inputs": ["handoff central and fleet design"],
+      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
+      "validation": ["cargo fmt --all -- --check", "just ci"],
+      "rollback": ["Revert the integration slice", "Regenerate knowledge artifacts"]
+    },
+    {
+      "id": "work:integrate-idd-spec-engine",
+      "title": "Integrate IDD and spec engine",
+      "capability": "capability:idd-spec-engine",
+      "layer": "layer:executive-control-plane",
+      "priority": 10,
+      "status": "partial",
+      "change_id": "integrate-idd-spec-engine",
+      "owner_repos": ["repo:rusty-idd"],
+      "anchors": [],
+      "adopt_first_inputs": [],
+      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
+      "validation": ["cargo fmt --all -- --check"],
+      "rollback": ["Revert the integration slice"]
+    }
+  ],
+  "gates": ["just ci"],
+  "findings": []
+}
+"#,
+    )
+    .unwrap();
+
+    let out = Command::new(bin())
+        .args([
+            "spec",
+            "plan-integration",
+            "--base",
+            base.path().to_str().unwrap(),
+            "--capability",
+            "fleet-handoff",
+        ])
+        .output()
+        .expect("run rusty-idd");
+    assert!(
+        out.status.success(),
+        "stdout={}\nstderr={}",
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    let change = base.path().join("openspec/changes/integrate-fleet-handoff");
+    let proposal = std::fs::read_to_string(change.join("proposal.md")).unwrap();
+    let design = std::fs::read_to_string(change.join("design.md")).unwrap();
+    let tasks = std::fs::read_to_string(change.join("tasks.md")).unwrap();
+    let spec = std::fs::read_to_string(change.join("specs/fleet-handoff/spec.md")).unwrap();
+
+    assert!(proposal.contains("repo:handoff"), "{proposal}");
+    assert!(
+        proposal.contains("handoff central and fleet design"),
+        "{proposal}"
+    );
+    assert!(design.contains("Implementation boundary"), "{design}");
+    assert!(tasks.contains("cargo fmt --all -- --check"), "{tasks}");
+    assert!(tasks.contains("Regenerate knowledge artifacts"), "{tasks}");
+    assert!(spec.contains("### Requirement: Integrate Central and fleet handoff"));
+
+    let show = Command::new(bin())
+        .args(["spec", "show"])
+        .arg(change.join("specs/fleet-handoff/spec.md"))
+        .output()
+        .expect("run rusty-idd");
+    assert!(show.status.success(), "generated spec should be show-able");
+
+    let again = Command::new(bin())
+        .args([
+            "spec",
+            "plan-integration",
+            "--base",
+            base.path().to_str().unwrap(),
+            "--capability",
+            "fleet-handoff",
+        ])
+        .output()
+        .expect("run rusty-idd");
+    assert_eq!(again.status.code(), Some(1));
+    assert!(String::from_utf8_lossy(&again.stderr).contains("refusing to overwrite"));
+}
