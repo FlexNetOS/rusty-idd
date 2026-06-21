@@ -3,10 +3,11 @@ use std::path::PathBuf;
 
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
-    build_architecture_graph, build_knowledge_report, build_system_architecture_graph,
-    index_workspace, load_index, pack_workspace, query_knowledge_index, refresh_workspace,
-    ArchitectureFormat, ArchitectureOptions, IndexOptions, KnowledgeQuery, PackStyle,
-    PackWorkspaceOptions, ReportFormat, ReportOptions, SystemArchitectureOptions,
+    build_architecture_graph, build_graph_planning_context, build_knowledge_report,
+    build_system_architecture_graph, index_workspace, load_index, pack_workspace,
+    query_knowledge_index, refresh_workspace, ArchitectureFormat, ArchitectureOptions,
+    IndexOptions, KnowledgeQuery, PackStyle, PackWorkspaceOptions, PlanContextFormat,
+    PlanContextOptions, ReportFormat, ReportOptions, SystemArchitectureOptions,
 };
 
 #[derive(Subcommand)]
@@ -21,6 +22,8 @@ pub enum KnowledgeCommand {
     Architecture(ArchitectureArgs),
     /// Generate a cross-repo system graph from a parent meta workspace.
     SystemArchitecture(SystemArchitectureArgs),
+    /// Generate a graph-backed planning packet for OpenSpec work.
+    PlanContext(PlanContextArgs),
     /// Answer local graph questions from an existing index.
     Query(QueryArgs),
     /// Regenerate .idd/knowledge/index.json and report.md.
@@ -99,6 +102,24 @@ pub struct SystemArchitectureArgs {
     pub system_root: PathBuf,
     #[arg(long)]
     pub out: PathBuf,
+}
+
+#[derive(Args)]
+pub struct PlanContextArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+    #[arg(long)]
+    pub change: Option<String>,
+    #[arg(long)]
+    pub goal: Option<String>,
+    #[arg(long)]
+    pub goal_file: Option<PathBuf>,
+    #[arg(long)]
+    pub architecture: Option<PathBuf>,
+    #[arg(long)]
+    pub system_architecture: Option<PathBuf>,
 }
 
 #[derive(Args)]
@@ -219,6 +240,31 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             }
             println!("wrote system architecture graph to {}", args.out.display());
         }
+        KnowledgeCommand::PlanContext(args) => {
+            let format = if args
+                .out
+                .extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("json"))
+            {
+                PlanContextFormat::Json
+            } else {
+                PlanContextFormat::Markdown
+            };
+            let goal = selected_goal(args.goal, args.goal_file)?;
+            let mut options = PlanContextOptions::new(args.workspace, format);
+            options.goal = goal;
+            options.change = args.change;
+            options.architecture_path = args.architecture;
+            options.system_architecture_path = args.system_architecture;
+            let context = build_graph_planning_context(options)?;
+            if matches!(format, PlanContextFormat::Json) {
+                write_text(&args.out, &(context + "\n"))?;
+            } else {
+                write_text(&args.out, &context)?;
+            }
+            println!("wrote graph planning context to {}", args.out.display());
+        }
         KnowledgeCommand::Query(args) => {
             let index = load_index(&args.index)?;
             let query = selected_query(&args)?;
@@ -237,6 +283,20 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
         }
     }
     Ok(())
+}
+
+fn selected_goal(
+    goal: Option<String>,
+    goal_file: Option<PathBuf>,
+) -> anyhow::Result<Option<String>> {
+    match (goal, goal_file) {
+        (Some(_), Some(_)) => anyhow::bail!("use only one of --goal or --goal-file"),
+        (Some(goal), None) => Ok(Some(goal)),
+        (None, Some(path)) => fs::read_to_string(&path)
+            .map(|content| Some(content.trim().to_string()))
+            .map_err(anyhow::Error::from),
+        (None, None) => Ok(None),
+    }
 }
 
 fn selected_query(args: &QueryArgs) -> anyhow::Result<KnowledgeQuery> {

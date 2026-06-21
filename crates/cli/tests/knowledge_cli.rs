@@ -117,6 +117,28 @@ fn knowledge_commands_cover_index_pack_report_query_and_refresh() {
     assert!(architecture.contains("\"provider\": \"codegraph-rust\""));
     assert!(architecture.contains("\"provider\": \"repomix-rs\""));
 
+    run_ok(
+        &[
+            "knowledge",
+            "plan-context",
+            "--workspace",
+            ".",
+            "--out",
+            "plan-context.md",
+            "--change",
+            "demo-change",
+            "--goal",
+            "Use CodeGraph and repomix for planning",
+            "--architecture",
+            "architecture.json",
+        ],
+        root.path(),
+    );
+    let plan_context = fs::read_to_string(root.path().join("plan-context.md")).unwrap();
+    assert!(plan_context.contains("# Graph Planning Context"));
+    assert!(plan_context.contains("demo-change"));
+    assert!(plan_context.contains("CodeGraph Rust"));
+
     run_ok(&["knowledge", "refresh", "--workspace", "."], root.path());
     assert!(root.path().join(".idd/knowledge/index.json").exists());
     assert!(root.path().join(".idd/knowledge/report.md").exists());

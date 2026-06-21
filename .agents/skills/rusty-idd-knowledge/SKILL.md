@@ -56,15 +56,25 @@ artifacts or when preparing compact context for an agent.
    - The command is read-only: it records peer repo state but does not start
      MCP servers, daemons, host services, or mutate peer repos.
 
-6. Read compactly.
+6. Generate graph planning context before writing or changing OpenSpec artifacts.
+   - Markdown for humans/agents:
+     `rusty-idd knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"`
+   - JSON for automation:
+     `rusty-idd knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.json --goal "describe the task"`
+   - The planning context consumes `.idd/knowledge/architecture.json` and, when
+     present, `.idd/knowledge/system-architecture.json`; use it to choose
+     proposal/spec/design/ADR/task scope and integration boundaries before edits.
+
+7. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
      `.idd/knowledge/system-architecture.json`, and
-     `.idd/knowledge/system-architecture.md`
+     `.idd/knowledge/system-architecture.md`, `.idd/knowledge/plan-context.json`,
+     and `.idd/knowledge/plan-context.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-7. Stay in-process.
+8. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
@@ -78,5 +88,6 @@ After changing source or control-plane files, refresh artifacts and run:
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
 cargo run --bin rusty-idd -- knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md
 cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md
+cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"
 cargo run --bin rusty-idd -- validate --workspace .
 ```

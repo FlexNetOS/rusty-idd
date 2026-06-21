@@ -422,6 +422,52 @@ pub struct SystemArchitectureEdge {
     pub evidence: Vec<String>,
 }
 
+#[derive(Debug, Clone)]
+pub struct PlanContextOptions {
+    pub workspace: PathBuf,
+    pub out_format: PlanContextFormat,
+    pub goal: Option<String>,
+    pub change: Option<String>,
+    pub architecture_path: Option<PathBuf>,
+    pub system_architecture_path: Option<PathBuf>,
+}
+
+impl PlanContextOptions {
+    pub fn new(workspace: impl Into<PathBuf>, out_format: PlanContextFormat) -> Self {
+        Self {
+            workspace: workspace.into(),
+            out_format,
+            goal: None,
+            change: None,
+            architecture_path: None,
+            system_architecture_path: None,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum PlanContextFormat {
+    Markdown,
+    Json,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct GraphPlanningContext {
+    pub schema_version: u32,
+    pub change: Option<String>,
+    pub goal: Option<String>,
+    pub workspace_root: String,
+    pub source_graph: ArchitectureSourceGraph,
+    pub context_package: ArchitectureContextPackage,
+    pub automation_stages: Vec<AutomationStage>,
+    pub integration_surfaces: Vec<IntegrationSurface>,
+    pub focus_components: Vec<ArchitectureComponent>,
+    pub system_roles: Vec<SystemRole>,
+    pub system_repos: Vec<SystemRepo>,
+    pub guidance: Vec<String>,
+    pub findings: Vec<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QueryResult {
     pub title: String,
@@ -636,6 +682,18 @@ pub fn build_system_architecture_graph(options: SystemArchitectureOptions) -> Re
     match options.format {
         ArchitectureFormat::Markdown => Ok(render_system_architecture_markdown(&graph)),
         ArchitectureFormat::Json => serde_json::to_string_pretty(&graph).context("serialize graph"),
+    }
+}
+
+pub fn build_graph_planning_context(options: PlanContextOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let format = options.out_format;
+    let context = graph_planning_context(&workspace, options)?;
+    match format {
+        PlanContextFormat::Markdown => Ok(render_graph_planning_context_markdown(&context)),
+        PlanContextFormat::Json => {
+            serde_json::to_string_pretty(&context).context("serialize planning context")
+        }
     }
 }
 
@@ -2474,6 +2532,298 @@ fn render_system_architecture_markdown(graph: &SystemArchitectureGraph) -> Strin
     out
 }
 
+fn graph_planning_context(
+    workspace: &Path,
+    options: PlanContextOptions,
+) -> Result<GraphPlanningContext> {
+    let architecture_path = options
+        .architecture_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/architecture.json"));
+    let architecture: ArchitectureGraph = read_json_file(&architecture_path)?;
+
+    let system_path = options
+        .system_architecture_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/system-architecture.json"));
+    let system = if system_path.exists() {
+        Some(read_json_file::<SystemArchitectureGraph>(&system_path)?)
+    } else {
+        None
+    };
+
+    let focus_components = select_focus_components(&architecture, options.goal.as_deref());
+    let (system_roles, system_repos, mut findings) =
+        select_system_context(system.as_ref(), options.goal.as_deref());
+    if system.is_none() {
+        findings.push(format!(
+            "system architecture graph unavailable at {}",
+            system_path.display()
+        ));
+    }
+
+    let mut guidance = vec![
+        "Use proposal.md to bind the goal to graph-backed scope before implementation".to_string(),
+        "Use specs/*/spec.md to express externally visible behavior and integration contracts"
+            .to_string(),
+        "Use design.md to map repo components, system roles, and feature-gated surfaces".to_string(),
+        "Use ADRs for durable boundary decisions such as default workflow versus system capability"
+            .to_string(),
+        "Use tasks.md to make every consolidation or integration cut a test-backed step".to_string(),
+        "Regenerate .idd/knowledge artifacts and .idd/MANIFEST.tsv after source or control-plane edits"
+            .to_string(),
+    ];
+    if !system_repos.is_empty() {
+        guidance.push(
+            "For cross-repo work, treat peer repo state as evidence and avoid mutating peers from this command"
+                .to_string(),
+        );
+    }
+
+    Ok(GraphPlanningContext {
+        schema_version: 1,
+        change: options.change,
+        goal: options.goal,
+        workspace_root: architecture.workspace_root,
+        source_graph: architecture.source_graph,
+        context_package: architecture.context_package,
+        automation_stages: architecture.automation_stages,
+        integration_surfaces: architecture.integration_surfaces,
+        focus_components,
+        system_roles,
+        system_repos,
+        guidance,
+        findings,
+    })
+}
+
+fn read_json_file<T: for<'de> Deserialize<'de>>(path: &Path) -> Result<T> {
+    let content = fs::read_to_string(path).with_context(|| format!("read {}", path.display()))?;
+    serde_json::from_str(&content).with_context(|| format!("parse {}", path.display()))
+}
+
+fn select_focus_components(
+    architecture: &ArchitectureGraph,
+    goal: Option<&str>,
+) -> Vec<ArchitectureComponent> {
+    let goal_terms = goal_terms(goal);
+    let mut scored = architecture
+        .components
+        .iter()
+        .cloned()
+        .map(|component| {
+            let mut score = component.nodes + component.edges + component.files * 10;
+            let haystack = [
+                component.name.as_str(),
+                component.kind.as_str(),
+                &component.languages.join(" "),
+                &component.evidence_paths.join(" "),
+            ]
+            .join(" ")
+            .to_ascii_lowercase();
+            for term in &goal_terms {
+                if haystack.contains(term) {
+                    score += 10_000;
+                }
+            }
+            (score, component)
+        })
+        .collect::<Vec<_>>();
+    scored.sort_by(|a, b| b.0.cmp(&a.0).then(a.1.id.cmp(&b.1.id)));
+    scored
+        .into_iter()
+        .take(12)
+        .map(|(_, component)| component)
+        .collect()
+}
+
+fn select_system_context(
+    system: Option<&SystemArchitectureGraph>,
+    goal: Option<&str>,
+) -> (Vec<SystemRole>, Vec<SystemRepo>, Vec<String>) {
+    let Some(system) = system else {
+        return (Vec::new(), Vec::new(), Vec::new());
+    };
+    let goal_terms = goal_terms(goal);
+    let mut selected_role_ids = BTreeSet::new();
+    for role in &system.roles {
+        let text = format!("{} {} {}", role.id, role.name, role.purpose).to_ascii_lowercase();
+        if goal_terms.is_empty()
+            || goal_terms.iter().any(|term| text.contains(term))
+            || matches!(
+                role.id.as_str(),
+                "role:idd-control-plane"
+                    | "role:fleet-handoff"
+                    | "role:coordination-domain-surface"
+                    | "role:domain-upgrade-surface"
+                    | "role:parser-runtime-surface"
+                    | "role:toolchain-provider"
+                    | "role:spec-producer"
+                    | "role:meta-control-plane"
+            )
+        {
+            selected_role_ids.insert(role.id.clone());
+        }
+    }
+
+    let mut system_roles = system
+        .roles
+        .iter()
+        .filter(|role| selected_role_ids.contains(&role.id))
+        .cloned()
+        .collect::<Vec<_>>();
+    system_roles.sort_by(|a, b| a.id.cmp(&b.id));
+
+    let mut scored_repos = Vec::new();
+    for repo in &system.repos {
+        let mut score = repo
+            .roles
+            .iter()
+            .filter(|role| selected_role_ids.contains(*role))
+            .count()
+            * 100;
+        let text = format!(
+            "{} {} {} {} {}",
+            repo.name,
+            repo.path,
+            repo.tags.join(" "),
+            repo.markers.join(" "),
+            repo.roles.join(" ")
+        )
+        .to_ascii_lowercase();
+        for term in &goal_terms {
+            if text.contains(term) {
+                score += 1_000;
+            }
+        }
+        if score > 0 || repo.name == "rusty-idd" {
+            scored_repos.push((score, repo.clone()));
+        }
+    }
+    scored_repos.sort_by(|a, b| b.0.cmp(&a.0).then(a.1.name.cmp(&b.1.name)));
+    let system_repos = scored_repos
+        .into_iter()
+        .take(20)
+        .map(|(_, repo)| repo)
+        .collect::<Vec<_>>();
+
+    let findings = vec![format!(
+        "system context selected {} roles and {} repos from {} discovered repos",
+        system_roles.len(),
+        system_repos.len(),
+        system.repos.len()
+    )];
+    (system_roles, system_repos, findings)
+}
+
+fn goal_terms(goal: Option<&str>) -> BTreeSet<String> {
+    goal.unwrap_or_default()
+        .split(|ch: char| !ch.is_ascii_alphanumeric())
+        .map(str::to_ascii_lowercase)
+        .filter(|term| term.len() >= 3)
+        .collect()
+}
+
+fn render_graph_planning_context_markdown(context: &GraphPlanningContext) -> String {
+    let mut out = String::new();
+    out.push_str("# Graph Planning Context\n\n");
+    if let Some(change) = &context.change {
+        out.push_str(&format!("- Change: `{change}`\n"));
+    }
+    if let Some(goal) = &context.goal {
+        out.push_str(&format!("- Goal: {goal}\n"));
+    }
+    out.push_str(&format!("- Workspace root: `{}`\n", context.workspace_root));
+    out.push_str(&format!(
+        "- Source graph: {} files, {} nodes, {} edges via `{}`\n",
+        context.source_graph.files,
+        context.source_graph.nodes,
+        context.source_graph.edges,
+        context.source_graph.provider
+    ));
+    out.push_str(&format!(
+        "- Context package: {} files, {} tokens via `{}`\n\n",
+        context.context_package.files,
+        context.context_package.tokens,
+        context.context_package.provider
+    ));
+
+    out.push_str("## Automation Order\n\n");
+    for stage in &context.automation_stages {
+        out.push_str(&format!(
+            "- `{}`: {} ({})\n",
+            stage.name,
+            stage.purpose,
+            stage.surfaces.join(", ")
+        ));
+    }
+
+    out.push_str("\n## Integration Surfaces\n\n");
+    for surface in &context.integration_surfaces {
+        out.push_str(&format!(
+            "- `{}` [{}]: {}. Capabilities: {}\n",
+            surface.name,
+            surface.kind,
+            surface.default_scope,
+            surface.capabilities.join(", ")
+        ));
+    }
+
+    out.push_str("\n## Focus Components\n\n");
+    out.push_str(
+        "| Component | Kind | Files | Nodes | Edges | Evidence |\n|---|---|---:|---:|---:|---|\n",
+    );
+    for component in &context.focus_components {
+        out.push_str(&format!(
+            "| `{}` | {} | {} | {} | {} | {} |\n",
+            component.name,
+            component.kind,
+            component.files,
+            component.nodes,
+            component.edges,
+            component.evidence_paths.join(", ")
+        ));
+    }
+
+    out.push_str("\n## System Roles\n\n");
+    if context.system_roles.is_empty() {
+        out.push_str("No system roles included.\n");
+    } else {
+        for role in &context.system_roles {
+            out.push_str(&format!("- `{}`: {}\n", role.name, role.purpose));
+        }
+    }
+
+    out.push_str("\n## System Repos\n\n");
+    if context.system_repos.is_empty() {
+        out.push_str("No system repos included.\n");
+    } else {
+        out.push_str("| Repo | Branch | Dirty | Roles |\n|---|---|---|---|\n");
+        for repo in &context.system_repos {
+            out.push_str(&format!(
+                "| `{}` | `{}` | {} | {} |\n",
+                repo.name,
+                repo.branch.as_deref().unwrap_or(""),
+                repo.dirty,
+                repo.roles.join(", ")
+            ));
+        }
+    }
+
+    out.push_str("\n## Planning Guidance\n\n");
+    for item in &context.guidance {
+        out.push_str(&format!("- {item}\n"));
+    }
+
+    out.push_str("\n## Findings\n\n");
+    if context.findings.is_empty() {
+        out.push_str("No findings.\n");
+    } else {
+        for finding in &context.findings {
+            out.push_str(&format!("- {finding}\n"));
+        }
+    }
+    out
+}
+
 fn slug(value: &str) -> String {
     value
         .chars()
@@ -2981,6 +3331,53 @@ mod tests {
         .unwrap();
         assert!(graph_markdown.contains("# System Architecture Graph"));
         assert!(graph_markdown.contains("Rusty IDD control plane"));
+    }
+
+    #[test]
+    fn graph_planning_context_consumes_repo_graph_without_system_graph() {
+        let tmp = tempfile::tempdir().unwrap();
+        fs::create_dir_all(tmp.path().join("crates/knowledge/src")).unwrap();
+        fs::create_dir_all(tmp.path().join(".idd/knowledge")).unwrap();
+        fs::write(
+            tmp.path().join("crates/knowledge/src/lib.rs"),
+            "pub fn plan_context() {}\n",
+        )
+        .unwrap();
+
+        let architecture = build_architecture_graph(ArchitectureOptions::new(
+            tmp.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            tmp.path().join(".idd/knowledge/architecture.json"),
+            architecture,
+        )
+        .unwrap();
+
+        let mut options = PlanContextOptions::new(tmp.path(), PlanContextFormat::Json);
+        options.goal = Some("Use CodeGraph and repomix for planning context".to_string());
+        options.change = Some("demo-graph-context".to_string());
+        let context_json = build_graph_planning_context(options).unwrap();
+        let context: GraphPlanningContext = serde_json::from_str(&context_json).unwrap();
+
+        assert_eq!(context.change.as_deref(), Some("demo-graph-context"));
+        assert_eq!(context.source_graph.provider, "codegraph-rust");
+        assert_eq!(context.context_package.provider, "repomix-rs");
+        assert!(context
+            .focus_components
+            .iter()
+            .any(|component| component.id == "crate:knowledge"));
+        assert!(context
+            .findings
+            .iter()
+            .any(|finding| finding.contains("system architecture graph unavailable")));
+
+        let mut options = PlanContextOptions::new(tmp.path(), PlanContextFormat::Markdown);
+        options.goal = Some("Use CodeGraph and repomix for planning context".to_string());
+        let markdown = build_graph_planning_context(options).unwrap();
+        assert!(markdown.contains("# Graph Planning Context"));
+        assert!(markdown.contains("## Planning Guidance"));
     }
 
     fn init_git(path: &Path) {
