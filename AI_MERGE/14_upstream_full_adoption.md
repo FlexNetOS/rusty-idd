@@ -130,6 +130,13 @@ These cuts remain deliberate:
   first-party Rusty IDD drift. Rollback path: remove the drift-check exclusion
   only if the mirrors are converted from audit input into first-party workspace
   crates with their non-Rust assets ported or feature-gated.
+- Exclude the ignored, generated upstream-local artifacts observed after native
+  diagnostics from `.idd/MANIFEST.tsv` and knowledge fingerprints:
+  `third_party/upstream/codegraph-rust/docs/specifications/**` and
+  `third_party/upstream/repomix-rs/.mind-mesh/agent/repomix.md`. They are not
+  tracked at the pinned upstream revisions and made local manifests differ from
+  clean CI checkouts. Rollback path: force-add those generated outputs as an
+  explicit artifact-adoption commit if they become required evidence.
 
 ## TDD Verification During Consolidation
 
@@ -142,6 +149,9 @@ These cuts remain deliberate:
 - Updated both `.gemini` and `.claude` merge-verification drift gates so full
   upstream mirrors remain adopted as-is without being misclassified as
   first-party Rust-native drift.
+- Added manifest/fingerprint tests proving ignored upstream-generated local
+  artifacts do not make `.idd` evidence machine-local while tracked upstream
+  files remain visible.
 
 ## PR #50 Baseline Comparison
 
