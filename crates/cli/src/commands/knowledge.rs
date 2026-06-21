@@ -4,12 +4,13 @@ use std::path::PathBuf;
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
     build_architecture_graph, build_graph_planning_context, build_integration_automation_plan,
-    build_integration_status_report, build_knowledge_report, build_system_architecture_graph,
-    build_system_operating_model, index_workspace, load_index, pack_workspace,
-    query_knowledge_index, refresh_workspace, ArchitectureFormat, ArchitectureOptions,
-    IndexOptions, IntegrationPlanOptions, IntegrationStatusOptions, KnowledgeQuery,
-    OperatingModelOptions, PackStyle, PackWorkspaceOptions, PlanContextFormat, PlanContextOptions,
-    ReportFormat, ReportOptions, SystemArchitectureOptions,
+    build_integration_owner_surfaces, build_integration_status_report, build_knowledge_report,
+    build_system_architecture_graph, build_system_operating_model, index_workspace, load_index,
+    pack_workspace, query_knowledge_index, refresh_workspace, ArchitectureFormat,
+    ArchitectureOptions, IndexOptions, IntegrationOwnersOptions, IntegrationPlanOptions,
+    IntegrationStatusOptions, KnowledgeQuery, OperatingModelOptions, PackStyle,
+    PackWorkspaceOptions, PlanContextFormat, PlanContextOptions, ReportFormat, ReportOptions,
+    SystemArchitectureOptions,
 };
 
 #[derive(Subcommand)]
@@ -30,6 +31,8 @@ pub enum KnowledgeCommand {
     IntegrationPlan(IntegrationPlanArgs),
     /// Report integration backlog execution state from OpenSpec changes.
     IntegrationStatus(IntegrationStatusArgs),
+    /// Join one integration work item to owner repo surfaces and diagnostics.
+    IntegrationOwners(IntegrationOwnersArgs),
     /// Generate a graph-backed planning packet for OpenSpec work.
     PlanContext(PlanContextArgs),
     /// Answer local graph questions from an existing index.
@@ -140,6 +143,24 @@ pub struct IntegrationStatusArgs {
     pub out: PathBuf,
     #[arg(long)]
     pub integration_plan: Option<PathBuf>,
+}
+
+#[derive(Args)]
+pub struct IntegrationOwnersArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+    #[arg(long)]
+    pub integration_plan: Option<PathBuf>,
+    #[arg(long)]
+    pub system_architecture: Option<PathBuf>,
+    #[arg(long)]
+    pub change: Option<String>,
+    #[arg(long)]
+    pub capability: Option<String>,
+    #[arg(long)]
+    pub work_item: Option<String>,
 }
 
 #[derive(Args)]
@@ -347,6 +368,31 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
                 write_text(&args.out, &report)?;
             }
             println!("wrote integration status to {}", args.out.display());
+        }
+        KnowledgeCommand::IntegrationOwners(args) => {
+            let format = if args
+                .out
+                .extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("json"))
+            {
+                PlanContextFormat::Json
+            } else {
+                PlanContextFormat::Markdown
+            };
+            let mut options = IntegrationOwnersOptions::new(args.workspace, format);
+            options.integration_plan_path = args.integration_plan;
+            options.system_architecture_path = args.system_architecture;
+            options.change = args.change;
+            options.capability = args.capability;
+            options.work_item = args.work_item;
+            let report = build_integration_owner_surfaces(options)?;
+            if matches!(format, PlanContextFormat::Json) {
+                write_text(&args.out, &(report + "\n"))?;
+            } else {
+                write_text(&args.out, &report)?;
+            }
+            println!("wrote integration owner surfaces to {}", args.out.display());
         }
         KnowledgeCommand::PlanContext(args) => {
             let format = if args

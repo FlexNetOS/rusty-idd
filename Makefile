@@ -1,7 +1,7 @@
 CARGO ?= cargo
 RUSTY_IDD ?= $(CARGO) run --bin rusty-idd --
 
-.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check operating-model operating-model-check integration-plan integration-plan-check integration-status integration-status-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
+.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check operating-model operating-model-check integration-plan integration-plan-check integration-status integration-status-check integration-owners integration-owners-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
 
 build:
 	$(CARGO) build --workspace --locked
@@ -57,6 +57,13 @@ integration-status:
 integration-status-check:
 	tmpdir=$$(mktemp -d) && $(RUSTY_IDD) knowledge integration-status --workspace . --out "$$tmpdir/integration-status.json" && $(RUSTY_IDD) knowledge integration-status --workspace . --out "$$tmpdir/integration-status.md" && cmp -s .idd/knowledge/integration-status.json "$$tmpdir/integration-status.json" && cmp -s .idd/knowledge/integration-status.md "$$tmpdir/integration-status.md" || (echo ".idd/knowledge integration-status artifacts are stale; run make integration-status" >&2; rm -rf "$$tmpdir"; exit 1); rm -rf "$$tmpdir"
 
+integration-owners:
+	$(RUSTY_IDD) knowledge integration-owners --workspace . --change integrate-fleet-handoff --out .idd/knowledge/integration-owners.json
+	$(RUSTY_IDD) knowledge integration-owners --workspace . --change integrate-fleet-handoff --out .idd/knowledge/integration-owners.md
+
+integration-owners-check:
+	tmpdir=$$(mktemp -d) && $(RUSTY_IDD) knowledge integration-owners --workspace . --change integrate-fleet-handoff --out "$$tmpdir/integration-owners.json" && $(RUSTY_IDD) knowledge integration-owners --workspace . --change integrate-fleet-handoff --out "$$tmpdir/integration-owners.md" && cmp -s .idd/knowledge/integration-owners.json "$$tmpdir/integration-owners.json" && cmp -s .idd/knowledge/integration-owners.md "$$tmpdir/integration-owners.md" || (echo ".idd/knowledge integration-owners artifacts are stale; run make integration-owners" >&2; rm -rf "$$tmpdir"; exit 1); rm -rf "$$tmpdir"
+
 codex-env-check:
 	$(RUSTY_IDD) codex env-check
 
@@ -69,7 +76,7 @@ codex-runtime-audit:
 codex-system-audit:
 	$(RUSTY_IDD) codex system-audit
 
-ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check integration-status-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check integration-status-check integration-owners-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
 
 install-hooks:
 	git config core.hooksPath .githooks
