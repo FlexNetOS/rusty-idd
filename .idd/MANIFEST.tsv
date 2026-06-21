@@ -71,9 +71,9 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/architecture.json	32133	73f2183d37978f01
-.idd/knowledge/architecture.md	6351	9fda1041e573e048
-.idd/knowledge/index.json	18314240	6553c63506903618
+.idd/knowledge/architecture.json	32151	0b13cd0cadc37d08
+.idd/knowledge/architecture.md	6351	5d173ea71f566041
+.idd/knowledge/index.json	18314240	2225a867d04d9555
 .idd/knowledge/integration-owners.json	3625	52b17c642e6edfbb
 .idd/knowledge/integration-owners.md	1361	914a7d7e597bd74b
 .idd/knowledge/integration-plan.json	29338	0eac265a55a973ea
@@ -86,7 +86,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21441	9758e2c3e1eddbd5
 .idd/knowledge/plan-context.json	81292	09feb4818378f72a
 .idd/knowledge/plan-context.md	16544	66c4d50b9492073d
-.idd/knowledge/report.md	4531	4e00df4b2985ea23
+.idd/knowledge/report.md	4531	8cf5376330154a65
 .idd/knowledge/system-architecture.json	83305	8dcbd18deffe217b
 .idd/knowledge/system-architecture.md	23457	d246376fbdf1ba34
 .release-please-manifest.json	19	f96b929db2fa1886
@@ -115,7 +115,7 @@ AI_MERGE/27_archive_idd_spec_engine.md	2345	08491d3882aa8796
 AI_MERGE/28_fleet_handoff_owner_surfaces.md	5447	1305c9a52baece78
 AI_MERGE/29_agent_communication_queue_owner_surfaces.md	5075	7aa21a980d87ddff
 AI_MERGE/30_env_vault_relay_readiness.md	4230	c1bcfea56843c04a
-AI_MERGE/31_prompt_front_door_upstream_adoption.md	4244	fbddfa0b7e84b135
+AI_MERGE/31_prompt_front_door_upstream_adoption.md	5791	05ead242778e0653
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	17040	a1326db4e07ce73e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
@@ -585,10 +585,10 @@ openspec/changes/archive/integrate-idd-spec-engine/proposal.md	1313	d824b395e2fa
 openspec/changes/archive/integrate-idd-spec-engine/specs/idd-spec-engine/spec.md	1763	f3c573b432a22bbd
 openspec/changes/archive/integrate-idd-spec-engine/tasks.md	1463	2a3cdf6e3b4219df
 openspec/changes/change-1/specs/cap-1/spec.md	78	86d78894bbc125be
-openspec/changes/integrate-prompt-front-door/design.md	1793	c381ed1021566cbe
-openspec/changes/integrate-prompt-front-door/proposal.md	1177	64b3e82e3aaee2d0
+openspec/changes/integrate-prompt-front-door/design.md	2365	68164aa8a3fa1b06
+openspec/changes/integrate-prompt-front-door/proposal.md	1547	6f7b3312d1118a0e
 openspec/changes/integrate-prompt-front-door/specs/prompt-front-door/spec.md	1161	24a951092ab37130
-openspec/changes/integrate-prompt-front-door/tasks.md	1574	e8d46e73d28f3470
+openspec/changes/integrate-prompt-front-door/tasks.md	1574	93c5e9dd03c3dab0
 openspec/changes/queue-aware-plan-integration/design.md	1951	5bd9f0ad0eb01221
 openspec/changes/queue-aware-plan-integration/proposal.md	1248	86d3a744f6b52543
 openspec/changes/queue-aware-plan-integration/specs/integration-automation-plan/spec.md	2194	5e6f1fc6adc45026

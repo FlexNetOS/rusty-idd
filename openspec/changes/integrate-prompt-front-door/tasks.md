@@ -18,16 +18,16 @@
 
 ## 3. Validation
 
-- [ ] 3.1 `cargo fmt --all -- --check`
-- [ ] 3.2 `cargo test --workspace --all-features --locked`
-- [ ] 3.3 `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --all-features --no-deps --locked`
-- [ ] 3.4 `cargo audit --deny warnings`
-- [ ] 3.5 `cargo run --bin rusty-idd -- validate --workspace .`
-- [ ] 3.6 `cargo run --bin rusty-idd -- spec validate --all`
-- [ ] 3.7 `just ci`
-- [ ] 3.8 `make ci`
-- [ ] 3.9 `affected CLI smoke tests`
-- [ ] 3.10 Refresh `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.
+- [x] 3.1 `cargo fmt --all -- --check`
+- [x] 3.2 `cargo test --workspace --all-features --locked`
+- [x] 3.3 `RUSTDOCFLAGS="-D warnings" cargo doc --workspace --all-features --no-deps --locked`
+- [x] 3.4 `cargo audit --deny warnings`
+- [x] 3.5 `cargo run --bin rusty-idd -- validate --workspace .`
+- [x] 3.6 `cargo run --bin rusty-idd -- spec validate --all`
+- [x] 3.7 `just ci`
+- [x] 3.8 `make ci`
+- [x] 3.9 `affected CLI smoke tests`
+- [x] 3.10 Refresh `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.
 - [x] 3.11 Record evidence in `/AI_MERGE`.
 
 ## Rollback

@@ -92,6 +92,29 @@ The readiness report now records:
 This preserves `crates/core` as std-only and keeps host services out of default
 Rusty IDD workflows.
 
+## Automation Environment Context
+
+This slice treats prompt/front-door work as part of the wider Rusty IDD
+automation flow rather than as a standalone merge checklist:
+
+- `prompt_hub` remains the user-facing producer/front door for prompts that
+  should become OpenSpec plans, ADRs, specs, tasks, implementation work, and
+  validation evidence.
+- Yazelix is the current terminal/parser/runtime surface and carries the
+  tree-sitter direction, nushell, Lua, Ghostty, Zellij, and contributor-tool
+  expectations. This slice does not downgrade those assumptions.
+- RTK is the foundational command/tool wrapper, with rtk-ai surfaces including
+  ICM, VOX, and GRIT. Repository commands in this work were run through
+  `rtk proxy` so tool execution stays inside the parent-managed environment.
+- Beads is mandatory for future code contributors through Yazelix. The current
+  system operating model already records the Beads upstream anchors under
+  `capability:github-agent-run-upgrades`; this prompt-front-door slice only
+  records readiness and does not select or vendor a canonical Beads
+  implementation.
+- Missing tools required by upstreams remain parent/meta/envctl-managed
+  requirements. The local diagnostics observed Node and Postgres assumptions,
+  but no user-global tool install or host service start was performed.
+
 ## Valuable Upstream Surfaces
 
 `prompts.chat` contributes prompt registry, prompt package, CLI, plugin,
@@ -117,6 +140,10 @@ Cuts made:
 - Excluded generated install/build outputs (`node_modules`, `.next`, `dist`,
   `build`, `coverage`).
 
+No prompt registry, plugin, MCP/server, Prisma, WordPress/Gutenberg, lint, test,
+or packaging feature was replaced with a local guess. Runtime activation remains
+feature-gated until the owning repo/spec makes it explicit.
+
 Rollback:
 
 1. Revert `third_party/upstream/prompts.chat` and
@@ -124,4 +151,3 @@ Rollback:
 2. Revert the `IntegrationUpstreamInput` readiness model.
 3. Re-run focused owner/upstream diagnostics plus Rusty IDD gates.
 4. Regenerate `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.
-

@@ -21,6 +21,13 @@ Integration work item `work:integrate-prompt-front-door` maps capability `capabi
 
 - Implementation boundary: Adopt upstream repo surface first, run native diagnostics, then add thin Rusty IDD mapping.
 - Every consolidation cut must cite failing build, audit, platform, or scope evidence and include rollback.
+- Treat prompt/front-door inputs as producers for the full Rusty IDD OpenSpec
+  lifecycle: plans, ADRs, specs, tasks, implementation, validation, and audit
+  records.
+- Respect the parent-managed automation environment: RTK wraps command
+  execution, ICM/VOX/GRIT are rtk-ai foundation surfaces, Yazelix carries the
+  current tree-sitter/terminal/runtime direction, and Beads is mandatory for
+  future contributor workflows through Yazelix.
 - Adopt-first inputs:
   - `github.com/f/prompts.chat`
   - `github.com/f/ai-prompt`
@@ -29,6 +36,8 @@ Integration work item `work:integrate-prompt-front-door` maps capability `capabi
 
 - Cross-repo ownership may require separate PRs in owner repos; this Rusty IDD change records the execution contract first.
 - Native diagnostics may fail for upstream reasons; failures are evidence, not permission to pre-filter.
+- This slice records Beads/Yazelix/RTK expectations but does not select a
+  canonical Beads implementation or start host services.
 
 ## Migration Plan
 
