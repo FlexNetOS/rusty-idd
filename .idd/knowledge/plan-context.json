@@ -17,7 +17,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 193,
-    "tokens": 135188,
+    "tokens": 135745,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -101,6 +101,10 @@
         1452
       ],
       [
+        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
+        1427
+      ],
+      [
         "adr/0004-knowledge-direct-crate-integration.md",
         1366
       ],
@@ -115,10 +119,6 @@
       [
         "AI_MERGE/29_agent_communication_queue_owner_surfaces.md",
         1352
-      ],
-      [
-        "crates/cli/src/commands/codex.rs",
-        1294
       ]
     ],
     "suspicious_files": 0,

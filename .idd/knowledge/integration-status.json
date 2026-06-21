@@ -7,8 +7,8 @@
     "total": 19,
     "planned": 14,
     "incomplete_scaffold": 0,
-    "scaffolded": 1,
-    "ready_to_archive": 0,
+    "scaffolded": 0,
+    "ready_to_archive": 1,
     "archived": 4
   },
   "work_items": [
@@ -99,10 +99,10 @@
       "capability": "capability:prompt-front-door",
       "priority": 50,
       "change_id": "integrate-prompt-front-door",
-      "status": "scaffolded",
+      "status": "ready-to-archive",
       "openspec_path": "openspec/changes/integrate-prompt-front-door",
       "missing_artifacts": [],
-      "unchecked_tasks": 10,
+      "unchecked_tasks": 0,
       "owner_repos": [
         "repo:prompt-hub"
       ],

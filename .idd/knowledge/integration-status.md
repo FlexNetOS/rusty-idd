@@ -8,7 +8,7 @@
 
 | Total | Planned | Incomplete Scaffold | Scaffolded | Ready To Archive | Archived |
 |---:|---:|---:|---:|---:|---:|
-| 19 | 14 | 0 | 1 | 0 | 4 |
+| 19 | 14 | 0 | 0 | 1 | 4 |
 
 ## Work Items
 
@@ -18,7 +18,7 @@
 | 20 | `integrate-fleet-handoff` | archived | `capability:fleet-handoff` | `openspec/changes/archive/integrate-fleet-handoff` |  | 0 |
 | 30 | `integrate-agent-communication` | archived | `capability:agent-communication` | `openspec/changes/archive/integrate-agent-communication` |  | 0 |
 | 40 | `integrate-env-vault-relay` | archived | `capability:env-vault-relay` | `openspec/changes/archive/integrate-env-vault-relay` |  | 0 |
-| 50 | `integrate-prompt-front-door` | scaffolded | `capability:prompt-front-door` | `openspec/changes/integrate-prompt-front-door` |  | 10 |
+| 50 | `integrate-prompt-front-door` | ready-to-archive | `capability:prompt-front-door` | `openspec/changes/integrate-prompt-front-door` |  | 0 |
 | 60 | `integrate-rtk-ai-foundation` | planned | `capability:rtk-ai-foundation` |  |  | 0 |
 | 70 | `integrate-github-agent-run-upgrades` | planned | `capability:github-agent-run-upgrades` |  |  | 0 |
 | 80 | `integrate-parser-runtime` | planned | `capability:parser-runtime` |  |  | 0 |
