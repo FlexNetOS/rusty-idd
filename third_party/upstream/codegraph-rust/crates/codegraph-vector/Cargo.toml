@@ -1,0 +1,82 @@
+[package]
+name = "codegraph-vector"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+description = "Vector storage and similarity search using FAISS for CodeGraph"
+
+[dependencies]
+codegraph-core = { workspace = true }
+codegraph-graph = { path = "../codegraph-graph", features = ["surrealdb"] }
+ndarray = { workspace = true, optional = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+sha2 = { workspace = true }
+bincode = { workspace = true }
+thiserror = { workspace = true }
+anyhow = { workspace = true }
+tracing = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+parking_lot = { workspace = true }
+uuid = { workspace = true }
+memmap2 = { workspace = true, optional = true }
+flate2 = { workspace = true, optional = true }
+dashmap = { workspace = true }
+rayon = { workspace = true }
+crossbeam-channel = { workspace = true }
+chrono = { workspace = true }
+futures = { workspace = true }
+num_cpus = { workspace = true }
+unicode-normalization = "0.1"
+
+# Local embeddings (Candle) - optional via feature
+candle-core = { version = "0.9.1", optional = true, default-features = false, features = ["metal"] }
+candle-nn = { version = "0.9.1", optional = true, default-features = false }
+candle-transformers = { version = "0.9.1", optional = true, default-features = false }
+tokenizers = { workspace = true }  # Always available for token counting in Jina provider
+hf-hub = { version = "0.4", optional = true, default-features = true, features = ["tokio"] }
+lru = { workspace = true }
+
+# OpenAI API client
+reqwest = { workspace = true, optional = true }
+
+# ONNX Runtime provider (optional)
+ort = { version = "2.0.0-rc.10", optional = true, default-features = false, features = ["std", "ndarray", "download-binaries"] }
+semchunk-rs = { workspace = true }
+fxhash = "0.2.1"
+
+
+
+[dev-dependencies]
+tokio-test = { workspace = true }
+tempfile = { workspace = true }
+approx = { workspace = true }
+criterion = { workspace = true }
+fastrand = { workspace = true }
+tracing-subscriber = { workspace = true }
+dotenvy = "0.15"
+
+
+
+[features]
+# Minimal defaults; opt-in providers from dependents
+default = []
+persistent = ["dep:memmap2", "dep:flate2"]
+openai = ["dep:reqwest"]
+local-embeddings = [
+    "dep:candle-core",
+    "dep:candle-nn",
+    "dep:candle-transformers",
+    "dep:hf-hub",
+]
+onnx = ["dep:ort", "dep:hf-hub", "dep:ndarray"]
+onnx-coreml = ["onnx"]
+ollama = ["dep:reqwest"]
+jina = ["dep:reqwest"]
+lmstudio = ["dep:reqwest"]
+
+[[example]]
+name = "rag_demo"
+path = "examples/rag_demo.rs"

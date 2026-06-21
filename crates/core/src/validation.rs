@@ -87,7 +87,7 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
 
     for abs in stable_walk(root).map_err(|e| format!("walk failed: {e}"))? {
         let rel = relative_path(root, &abs);
-        if rel.contains(".git/") || rel.starts_with("target/") {
+        if validation_scan_should_skip(&rel) {
             continue;
         }
         flag_committed_env_file(&rel, &mut findings);
@@ -141,6 +141,10 @@ fn require_file(root: &Path, rel: &str, findings: &mut Vec<ValidationFinding>) {
             message: "required IDD/GitHub control-plane file is missing".to_string(),
         });
     }
+}
+
+fn validation_scan_should_skip(rel: &str) -> bool {
+    rel.contains(".git/") || rel.starts_with("target/") || rel.starts_with("third_party/upstream/")
 }
 
 fn flag_committed_env_file(file: &str, findings: &mut Vec<ValidationFinding>) {
@@ -553,6 +557,14 @@ jobs:
         scan_manifest_policy(".idd/MANIFEST.tsv", manifest, &mut findings);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, FindingSeverity::Critical);
+    }
+
+    #[test]
+    fn skips_full_upstream_mirror_policy_scan() {
+        assert!(validation_scan_should_skip(
+            "third_party/upstream/repomix-rs/crates/core/tests/integration_test.rs"
+        ));
+        assert!(!validation_scan_should_skip("crates/core/src/lib.rs"));
     }
 
     #[test]

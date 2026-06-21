@@ -1,0 +1,369 @@
+use std::path::PathBuf;
+use std::sync::Arc;
+
+use anyhow::Result;
+use rmcp::handler::server::router::tool::ToolRouter;
+use rmcp::handler::server::wrapper::Parameters;
+use rmcp::model::{
+    CallToolResult, Content, ErrorData, Implementation, ProtocolVersion, ServerCapabilities,
+    ServerInfo,
+};
+use rmcp::schemars;
+use rmcp::{ServerHandler, tool, tool_handler, tool_router};
+use serde::{Deserialize, Serialize};
+use tokio::sync::Mutex;
+
+use repomix_config::schema::RepomixConfig;
+use repomix_core::packager::{NoopProgress, PackResult, pack};
+
+use crate::helpers::validate_remote_url;
+use crate::output_path::{
+    cleanup_stale_mcp_outputs, make_mcp_output_path, validate_mcp_output_path,
+};
+pub use crate::params::{PackCodebaseParams, PackRemoteRepositoryParams, PackSharedParams};
+
+// ===== Result / metrics structs =====
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PackToolResult {
+    pub description: String,
+    pub result: String,
+    pub directory_structure: String,
+    pub output_id: String,
+    /// 主输出文件路径（分片时为第一片）。
+    pub output_file_path: String,
+    /// 全部输出文件路径（分片时有多条）。
+    pub output_paths: Vec<String>,
+    pub total_files: usize,
+    pub total_tokens: usize,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+pub struct PackMetrics {
+    pub total_files: usize,
+    pub total_tokens: usize,
+    pub total_characters: usize,
+    pub file_token_counts: std::collections::HashMap<String, usize>,
+    pub file_char_counts: std::collections::HashMap<String, usize>,
+    /// 按 token 数降序的前 N 个文件（路径, token）。
+    pub top_files_by_tokens: Vec<(String, usize)>,
+}
+
+impl From<&PackResult> for PackMetrics {
+    fn from(r: &PackResult) -> Self {
+        Self {
+            total_files: r.total_files,
+            total_tokens: r.total_tokens,
+            total_characters: r.total_characters,
+            file_token_counts: r.file_token_counts.clone(),
+            file_char_counts: r.file_char_counts.clone(),
+            top_files_by_tokens: r.top_files_by_tokens.clone(),
+        }
+    }
+}
+
+// ===== Tool parameter types =====
+
+#[derive(Debug, Deserialize, schemars::JsonSchema)]
+pub struct ReadRepomixOutputParams {
+    /// Path to the repomix output file.
+    pub file_path: String,
+}
+
+#[derive(Debug, Deserialize, schemars::JsonSchema)]
+pub struct GrepRepomixOutputParams {
+    /// Path to the repomix output file.
+    pub file_path: String,
+    /// Regular expression to search for.
+    pub pattern: String,
+    /// Number of context lines before and after each match. Default: 0.
+    #[serde(default)]
+    pub context: Option<usize>,
+}
+
+// ===== helpers =====
+
+/// 与 CLI 一致：从 CWD 加载分层配置，再应用 MCP 工具参数。
+fn load_mcp_config(
+    partial: repomix_config::load::PartialConfig,
+) -> Result<RepomixConfig, ErrorData> {
+    let config_root = std::env::current_dir().map_err(|e| {
+        ErrorData::internal_error(format!("cannot resolve config root: {}", e), None)
+    })?;
+    RepomixConfig::load(Some(partial), &config_root)
+        .map_err(|e| ErrorData::internal_error(format!("load config: {}", e), None))
+}
+
+/// 创建唯一临时目录（PID + 时间戳 + 随机后缀）
+fn make_temp_dir(prefix: &str) -> Result<PathBuf> {
+    use std::collections::hash_map::DefaultHasher;
+    use std::hash::{Hash, Hasher};
+    use std::time::SystemTime;
+
+    let nanos = SystemTime::now()
+        .duration_since(SystemTime::UNIX_EPOCH)
+        .map(|d| d.as_nanos())
+        .unwrap_or(0);
+    let mut h = DefaultHasher::new();
+    SystemTime::now().hash(&mut h);
+    let rand = h.finish();
+    let dir = std::env::temp_dir().join(format!(
+        "{}_{}_{}_{:x}",
+        prefix,
+        std::process::id(),
+        nanos,
+        rand
+    ));
+    std::fs::create_dir_all(&dir)?;
+    Ok(dir)
+}
+
+/// RAII 临时目录守卫；drop 时 best-effort 清理目录。
+struct TempDirGuard {
+    path: PathBuf,
+}
+
+impl TempDirGuard {
+    fn new(path: PathBuf) -> Self {
+        Self { path }
+    }
+}
+
+impl Drop for TempDirGuard {
+    fn drop(&mut self) {
+        if let Err(e) = std::fs::remove_dir_all(&self.path) {
+            tracing::warn!(
+                "Failed to clean up temp dir '{}': {}. \
+                 This may be a permission issue or the directory is in use.",
+                self.path.display(),
+                e
+            );
+        }
+    }
+}
+
+fn pack_tool_result(result: &PackResult, output_id: &str, description: &str) -> PackToolResult {
+    PackToolResult {
+        description: description.to_string(),
+        result: serde_json::to_string_pretty(&PackMetrics::from(result)).unwrap_or_default(),
+        directory_structure: result.directory_structure.clone(),
+        output_id: output_id.to_string(),
+        output_file_path: result.output_paths.first().cloned().unwrap_or_default(),
+        output_paths: result.output_paths.clone(),
+        total_files: result.total_files,
+        total_tokens: result.total_tokens,
+    }
+}
+
+fn ok_result(value: serde_json::Value) -> Result<CallToolResult, ErrorData> {
+    let text = serde_json::to_string_pretty(&value)
+        .map_err(|e| ErrorData::internal_error(format!("serialize result: {}", e), None))?;
+    Ok(CallToolResult::success(vec![Content::text(text)]))
+}
+
+// ===== MCP server =====
+
+#[derive(Clone)]
+pub struct RepomixMcpServer {
+    tool_router: ToolRouter<Self>,
+    /// 防止并发 pack 同一仓库（rayon + git 子进程，串行化更安全）
+    lock: Arc<Mutex<()>>,
+}
+
+impl Default for RepomixMcpServer {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+#[tool_router]
+impl RepomixMcpServer {
+    pub fn new() -> Self {
+        Self {
+            tool_router: Self::tool_router(),
+            lock: Arc::new(Mutex::new(())),
+        }
+    }
+
+    #[tool(
+        name = "pack_codebase",
+        description = "Pack a local directory into an AI-friendly format (XML/Markdown/Plain/JSON). Returns a JSON object with total_files, total_tokens, output_file_path and metrics breakdown. Use this when the user wants to feed a codebase to an LLM."
+    )]
+    async fn pack_codebase(
+        &self,
+        Parameters(p): Parameters<PackCodebaseParams>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let _guard = self.lock.lock().await;
+
+        let root_dir: PathBuf = p
+            .directory
+            .as_deref()
+            .map(PathBuf::from)
+            .or_else(|| std::env::current_dir().ok())
+            .ok_or_else(|| {
+                ErrorData::invalid_params("directory not provided and CWD unavailable", None)
+            })?;
+
+        let partial = p.shared.into_mcp_overrides()?.into_partial_config();
+        let mut config = load_mcp_config(partial)?;
+
+        let mcp_output = make_mcp_output_path(&config.output.style)?;
+        config.output.file_path = mcp_output.path.to_string_lossy().to_string();
+
+        let result = pack(vec![root_dir], config, Box::new(NoopProgress))
+            .await
+            .map_err(|e| ErrorData::internal_error(format!("pack failed: {}", e), None))?;
+
+        let tool_result = pack_tool_result(
+            &result,
+            &mcp_output.output_id,
+            &format!(
+                "Successfully packed {} files ({} tokens) from repository",
+                result.total_files, result.total_tokens
+            ),
+        );
+        ok_result(serde_json::to_value(&tool_result).unwrap_or_default())
+    }
+
+    #[tool(
+        name = "pack_remote_repository",
+        description = "Clone a remote git repository to a temporary directory and pack it. Returns the same structure as pack_codebase."
+    )]
+    async fn pack_remote_repository(
+        &self,
+        Parameters(p): Parameters<PackRemoteRepositoryParams>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let _guard = self.lock.lock().await;
+
+        validate_remote_url(&p.url)?;
+
+        let temp_dir = make_temp_dir("repomix_mcp_remote")
+            .map_err(|e| ErrorData::internal_error(format!("create temp dir: {}", e), None))?;
+        let _temp_guard = TempDirGuard::new(temp_dir.clone());
+
+        repomix_core::git::remote::clone_remote_repo(&p.url, &temp_dir)
+            .map_err(|e| ErrorData::internal_error(format!("git clone failed: {}", e), None))?;
+
+        let partial = p.shared.into_mcp_overrides()?.into_partial_config();
+        let mut config = load_mcp_config(partial)?;
+        let mcp_output = make_mcp_output_path(&config.output.style)?;
+        config.output.file_path = mcp_output.path.to_string_lossy().to_string();
+
+        let result = pack(vec![temp_dir.clone()], config, Box::new(NoopProgress))
+            .await
+            .map_err(|e| ErrorData::internal_error(format!("pack failed: {}", e), None))?;
+
+        let tool_result = pack_tool_result(
+            &result,
+            &mcp_output.output_id,
+            &format!(
+                "Successfully packed {} files ({} tokens) from remote repository",
+                result.total_files, result.total_tokens
+            ),
+        );
+        ok_result(serde_json::to_value(&tool_result).unwrap_or_default())
+    }
+
+    #[tool(
+        name = "read_repomix_output",
+        description = "Read the contents of a previously generated repomix output file. Returns the raw text content."
+    )]
+    async fn read_repomix_output(
+        &self,
+        Parameters(p): Parameters<ReadRepomixOutputParams>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let path = validate_mcp_output_path(&p.file_path)?;
+        let content = tokio::task::spawn_blocking(move || std::fs::read_to_string(path))
+            .await
+            .map_err(|e| ErrorData::internal_error(format!("read task failed: {}", e), None))?
+            .map_err(|e| ErrorData::internal_error(format!("read failed: {}", e), None))?;
+        Ok(CallToolResult::success(vec![Content::text(content)]))
+    }
+
+    #[tool(
+        name = "grep_repomix_output",
+        description = "Search a repomix output file for lines matching a regular expression. Returns a JSON object with match_count and a matches array."
+    )]
+    async fn grep_repomix_output(
+        &self,
+        Parameters(p): Parameters<GrepRepomixOutputParams>,
+    ) -> Result<CallToolResult, ErrorData> {
+        let path = validate_mcp_output_path(&p.file_path)?;
+        let regex = regex::Regex::new(&p.pattern)
+            .map_err(|e| ErrorData::invalid_params(format!("invalid regex: {}", e), None))?;
+        let pattern = p.pattern.clone();
+        let context = p.context.unwrap_or(0);
+        let file_display = p.file_path.clone();
+
+        let matches = tokio::task::spawn_blocking(move || {
+            let content =
+                std::fs::read_to_string(&path).map_err(|e| format!("read failed: {}", e))?;
+            let lines: Vec<&str> = content.lines().collect();
+            let mut matches: Vec<serde_json::Value> = Vec::new();
+
+            for (i, line) in lines.iter().enumerate() {
+                if regex.is_match(line) {
+                    let mut entry = serde_json::Map::new();
+                    entry.insert("line_number".into(), serde_json::json!(i + 1));
+                    entry.insert("text".into(), serde_json::json!(line));
+                    if context > 0 {
+                        let start = i.saturating_sub(context);
+                        let end = (i + context + 1).min(lines.len());
+                        entry.insert(
+                            "context_before".into(),
+                            serde_json::json!(lines[start..i].join("\n")),
+                        );
+                        entry.insert(
+                            "context_after".into(),
+                            serde_json::json!(lines[i + 1..end].join("\n")),
+                        );
+                    }
+                    matches.push(serde_json::Value::Object(entry));
+                }
+            }
+
+            Ok::<_, String>(matches)
+        })
+        .await
+        .map_err(|e| ErrorData::internal_error(format!("grep task failed: {}", e), None))?
+        .map_err(|e| ErrorData::internal_error(e, None))?;
+        ok_result(serde_json::json!({
+            "file": file_display,
+            "pattern": pattern,
+            "match_count": matches.len(),
+            "matches": matches,
+        }))
+    }
+}
+
+#[tool_handler(router = self.tool_router)]
+impl ServerHandler for RepomixMcpServer {
+    fn get_info(&self) -> ServerInfo {
+        ServerInfo::new(ServerCapabilities::builder().enable_tools().build())
+            .with_protocol_version(ProtocolVersion::V_2024_11_05)
+            .with_instructions(
+                "Pack codebases into AI-friendly formats. Tools: pack_codebase, \
+                 pack_remote_repository, read_repomix_output, grep_repomix_output.",
+            )
+            .with_server_info(Implementation::new("repomix", env!("CARGO_PKG_VERSION")))
+    }
+}
+
+/// 真正以 MCP 协议启动 stdio 服务器
+pub async fn run_stdio_server() -> Result<()> {
+    use rmcp::ServiceExt;
+    use rmcp::transport::stdio;
+
+    cleanup_stale_mcp_outputs();
+
+    let server = RepomixMcpServer::new();
+    let service = server
+        .serve(stdio())
+        .await
+        .map_err(|e| anyhow::anyhow!("mcp stdio serve failed: {}", e))?;
+    service
+        .waiting()
+        .await
+        .map_err(|e| anyhow::anyhow!("mcp server stopped: {}", e))?;
+    Ok(())
+}

@@ -19,7 +19,7 @@ Run in this order; stop and report if a higher-priority gate fails, because lowe
 Run `scripts/drift-check.sh` from the repo root. It discovers crates by their `Cargo.toml` (works at the repo root *or* under `crates/*`) and checks:
 - every discovered crate `src/` tree is `.rs`-only — and **errors loudly if it finds no src trees at all** (so a restructure can't make it pass vacuously),
 - the **zero-dep core crate** (`crates/core` / `crates/idd` / today `intent-driven-development`) keeps its *own* `[dependencies]` table empty — parsed from the crate manifest, **not** a lockfile package count (the workspace lockfile legitimately grows once sibling crates have deps),
-- no stray foreign package manifests (`.omc`, `*.ecc`, `package.json`, `pyproject.toml`, `go.mod`, `requirements.txt`) outside the whitelisted asset trees (`intent-driven-template/`, `.gemini/`, `.github/`, `docs/`, `openspec/`, `.opencode/`, `.agents/`, which are legitimately non-Rust).
+- no stray foreign package manifests (`.omc`, `*.ecc`, `package.json`, `pyproject.toml`, `go.mod`, `requirements.txt`) outside the whitelisted asset trees (`intent-driven-template/`, `third_party/upstream/`, `.gemini/`, `.github/`, `docs/`, `openspec/`, `.opencode/`, `.agents/`, which are legitimately non-Rust or audited upstream mirrors).
 
 ```bash
 bash .gemini/skills/merge-verification/scripts/drift-check.sh .

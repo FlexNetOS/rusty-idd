@@ -17,14 +17,14 @@ cd "$ROOT" || { echo "drift-check: cannot cd to $ROOT"; exit 2; }
 fail=0
 
 # Asset trees that are LEGITIMATELY non-Rust (OpenSpec schema, agent skills,
-# opencode commands, CI, docs). Never flagged as drift.
-WHITELIST_RE='(^|/)(intent-driven-template|\.claude|\.github|docs|openspec|\.opencode|\.agents)(/|$)'
+# opencode commands, CI, docs, audited upstream mirrors). Never flagged as drift.
+WHITELIST_RE='(^|/)(intent-driven-template|third_party/upstream|\.claude|\.github|docs|openspec|\.opencode|\.agents)(/|$)'
 
 echo "== Rust-native source purity =="
 # Discover every Rust crate by its Cargo.toml, then assert its src/ tree is
 # .rs-only. Works whether crates sit at the repo root or under crates/*.
 mapfile -t crate_dirs < <(find . \
-  \( -path ./.git -o -path '*/target/*' -o -path '*/node_modules/*' \) -prune -o \
+  \( -path ./.git -o -path './third_party/upstream' -o -path '*/target/*' -o -path '*/node_modules/*' \) -prune -o \
   -name Cargo.toml -print 2>/dev/null | sed 's#/Cargo.toml$##' | sort -u)
 
 src_trees=()
@@ -76,7 +76,7 @@ echo "== Stray auto-generated foreign packages =="
 # Catch agent tooling that auto-pushes a package in another language/format
 # (.omc, ecc-style, Node/Python/Go manifests) OUTSIDE the whitelisted asset trees.
 stray=$(find . -maxdepth 4 \
-  \( -path ./.git -o -path '*/target/*' -o -path '*/node_modules/*' \) -prune -o \
+  \( -path ./.git -o -path './third_party/upstream' -o -path '*/target/*' -o -path '*/node_modules/*' \) -prune -o \
   -type f \( -name '*.omc' -o -name '*.ecc' -o -name 'package.json' -o -name 'pyproject.toml' \
              -o -name 'go.mod' -o -name 'requirements.txt' \) -print 2>/dev/null \
   | grep -Ev "$WHITELIST_RE")

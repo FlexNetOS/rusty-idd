@@ -361,6 +361,7 @@ pub fn pack_workspace(options: PackWorkspaceOptions) -> Result<PackSummary> {
         ".idd/knowledge/**".to_string(),
         "target/**".to_string(),
         ".git/**".to_string(),
+        "third_party/upstream/**".to_string(),
     ];
     ignore_patterns.extend(options.ignore_patterns);
 
@@ -425,6 +426,9 @@ pub fn build_knowledge_report(options: ReportOptions) -> Result<String> {
     pack_options
         .ignore_patterns
         .push("crates/external/**".to_string());
+    pack_options
+        .ignore_patterns
+        .push("third_party/upstream/**".to_string());
     let pack = pack_workspace(pack_options)?;
     let report = report_from_parts(&index, pack);
 
@@ -921,7 +925,13 @@ fn should_skip_path(workspace: &Path, path: &Path) -> bool {
         let name = component.as_os_str().to_string_lossy();
         matches!(
             name.as_ref(),
-            ".git" | "target" | "node_modules" | ".idd-bak" | ".worktrees" | "_workspace"
+            ".git"
+                | "target"
+                | "node_modules"
+                | ".idd-bak"
+                | ".worktrees"
+                | "_workspace"
+                | "third_party"
         )
     }) || rel.starts_with(".idd/knowledge")
 }
@@ -1413,6 +1423,28 @@ mod tests {
         assert!(content.contains("kept.ts"));
         assert!(!content.contains("export const ignored"));
         assert!(!content.contains("\n\n\n"));
+    }
+
+    #[test]
+    fn knowledge_defaults_skip_full_upstream_mirrors() {
+        let tmp = tempfile::tempdir().unwrap();
+        fs::create_dir_all(tmp.path().join("src")).unwrap();
+        fs::create_dir_all(tmp.path().join("third_party/upstream/codegraph-rust/src")).unwrap();
+        fs::write(tmp.path().join("src/lib.rs"), "pub fn local() {}\n").unwrap();
+        fs::write(
+            tmp.path()
+                .join("third_party/upstream/codegraph-rust/src/lib.rs"),
+            "pub fn upstream_mirror() {}\n",
+        )
+        .unwrap();
+
+        let index = index_workspace(IndexOptions::new(tmp.path())).unwrap();
+
+        assert!(index.files.iter().any(|file| file.path == "src/lib.rs"));
+        assert!(!index
+            .files
+            .iter()
+            .any(|file| file.path.contains("third_party/upstream")));
     }
 
     #[test]

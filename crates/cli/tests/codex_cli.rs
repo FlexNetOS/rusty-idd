@@ -88,6 +88,10 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
         "adr/0004-knowledge-direct-crate-integration.md",
         "AI_MERGE/12_knowledge_deep_audit.md",
         "AI_MERGE/13_codex_environment.md",
+        "AI_MERGE/14_upstream_full_adoption.md",
+        "third_party/upstream/UPSTREAMS.md",
+        "third_party/upstream/codegraph-rust/Cargo.toml",
+        "third_party/upstream/repomix-rs/Cargo.toml",
     ] {
         write(&root.path().join(path), "");
     }
@@ -99,7 +103,7 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
         &root
             .path()
             .join("adr/0004-knowledge-direct-crate-integration.md"),
-        "adopt the upstream parser/core\nCut audit-denied\n",
+        "full upstream snapshots\nadopt the upstream parser/core\nCut audit-denied\n",
     );
     write(
         &root.path().join("AI_MERGE/12_knowledge_deep_audit.md"),
@@ -112,6 +116,14 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
     write(
         &root.path().join("AI_MERGE/13_codex_environment.md"),
         "rusty-idd codex env-check\nrusty-idd codex model-loop\nrusty-idd codex runtime-audit\nrusty-idd codex system-audit\nCodex owns its output quality\nstale or orphaned work\nMissing binaries needed for this repo\n",
+    );
+    write(
+        &root.path().join("AI_MERGE/14_upstream_full_adoption.md"),
+        "ce5bf27a2978983a9089d177447f296e4c6521bb\n946df10d48c669ca3a99f757ffd2c6fa35844e62\nNative Upstream Diagnostics\nConsolidation Cuts Kept\nPR #50 Baseline Comparison\n",
+    );
+    write(
+        &root.path().join("third_party/upstream/UPSTREAMS.md"),
+        "Jakedismo/codegraph-rust\nsopaco/repomix-rs\nce5bf27a2978983a9089d177447f296e4c6521bb\n946df10d48c669ca3a99f757ffd2c6fa35844e62\n",
     );
     write(&root.path().join(".codex/hooks.json"), STOP_HOOK_JSON);
 
