@@ -42,6 +42,6 @@ jobs:
           mkdir -p dist
           cp "target/release/rusty-idd${{ matrix.exe }}" "dist/rusty-idd-${{ matrix.suffix }}${{ matrix.exe }}"
       - name: Upload release asset
-        uses: softprops/action-gh-release@v2
+        uses: softprops/action-gh-release@v3
         with:
           files: dist/*
