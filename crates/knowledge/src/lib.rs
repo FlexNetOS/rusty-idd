@@ -379,6 +379,23 @@ impl SystemArchitectureOptions {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct OperatingModelOptions {
+    pub workspace: PathBuf,
+    pub system_architecture_path: Option<PathBuf>,
+    pub format: PlanContextFormat,
+}
+
+impl OperatingModelOptions {
+    pub fn new(workspace: impl Into<PathBuf>, format: PlanContextFormat) -> Self {
+        Self {
+            workspace: workspace.into(),
+            system_architecture_path: None,
+            format,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemArchitectureGraph {
     pub schema_version: u32,
@@ -455,6 +472,47 @@ pub struct SystemArchitectureEdge {
     pub evidence: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SystemOperatingModel {
+    pub schema_version: u32,
+    pub workspace_root: String,
+    pub system_root: String,
+    pub source_graph: String,
+    pub layers: Vec<OperatingModelLayer>,
+    pub capabilities: Vec<OperatingCapability>,
+    pub edges: Vec<OperatingModelEdge>,
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OperatingModelLayer {
+    pub id: String,
+    pub name: String,
+    pub purpose: String,
+    pub capabilities: Vec<String>,
+    pub repos: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OperatingCapability {
+    pub id: String,
+    pub name: String,
+    pub layer: String,
+    pub purpose: String,
+    pub status: String,
+    pub repos: Vec<String>,
+    pub anchors: Vec<String>,
+    pub evidence: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct OperatingModelEdge {
+    pub source: String,
+    pub target: String,
+    pub kind: String,
+    pub evidence: Vec<String>,
+}
+
 #[derive(Debug, Clone)]
 pub struct PlanContextOptions {
     pub workspace: PathBuf,
@@ -463,6 +521,7 @@ pub struct PlanContextOptions {
     pub change: Option<String>,
     pub architecture_path: Option<PathBuf>,
     pub system_architecture_path: Option<PathBuf>,
+    pub operating_model_path: Option<PathBuf>,
 }
 
 impl PlanContextOptions {
@@ -474,6 +533,7 @@ impl PlanContextOptions {
             change: None,
             architecture_path: None,
             system_architecture_path: None,
+            operating_model_path: None,
         }
     }
 }
@@ -497,6 +557,8 @@ pub struct GraphPlanningContext {
     pub focus_components: Vec<ArchitectureComponent>,
     pub system_roles: Vec<SystemRole>,
     pub system_repos: Vec<SystemRepo>,
+    pub operating_layers: Vec<OperatingModelLayer>,
+    pub operating_capabilities: Vec<OperatingCapability>,
     pub guidance: Vec<String>,
     pub findings: Vec<String>,
 }
@@ -715,6 +777,22 @@ pub fn build_system_architecture_graph(options: SystemArchitectureOptions) -> Re
     match options.format {
         ArchitectureFormat::Markdown => Ok(render_system_architecture_markdown(&graph)),
         ArchitectureFormat::Json => serde_json::to_string_pretty(&graph).context("serialize graph"),
+    }
+}
+
+pub fn build_system_operating_model(options: OperatingModelOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let system_path = options
+        .system_architecture_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/system-architecture.json"));
+    let system = read_json_file::<SystemArchitectureGraph>(&system_path)?;
+    let model = system_operating_model(&workspace, &system, &system_path);
+
+    match options.format {
+        PlanContextFormat::Markdown => Ok(render_system_operating_model_markdown(&model)),
+        PlanContextFormat::Json => {
+            serde_json::to_string_pretty(&model).context("serialize operating model")
+        }
     }
 }
 
@@ -2672,6 +2750,544 @@ fn render_system_architecture_markdown(graph: &SystemArchitectureGraph) -> Strin
     out
 }
 
+struct OperatingLayerDefinition {
+    id: &'static str,
+    name: &'static str,
+    purpose: &'static str,
+}
+
+struct OperatingCapabilityDefinition {
+    id: &'static str,
+    name: &'static str,
+    layer: &'static str,
+    purpose: &'static str,
+    repo_names: &'static [&'static str],
+    role_ids: &'static [&'static str],
+    anchors: &'static [&'static str],
+}
+
+fn system_operating_model(
+    workspace: &Path,
+    system: &SystemArchitectureGraph,
+    source_path: &Path,
+) -> SystemOperatingModel {
+    let layer_definitions = operating_layer_definitions();
+    let capability_definitions = operating_capability_definitions();
+    let mut findings = vec![format!(
+        "operating model derived from {} repos and {} roles in {}",
+        system.repos.len(),
+        system.roles.len(),
+        display_path(workspace, source_path)
+    )];
+    let mut capabilities = Vec::new();
+    let mut edges = Vec::new();
+
+    edges.push(OperatingModelEdge {
+        source: "system:agentic-company".to_string(),
+        target: "repo:rusty-idd".to_string(),
+        kind: "planned_by".to_string(),
+        evidence: vec!["Rusty IDD graph/spec workflow".to_string()],
+    });
+
+    for definition in &capability_definitions {
+        let repos = matching_operating_repos(system, definition);
+        let status = if repos.is_empty() && definition.anchors.is_empty() {
+            "missing"
+        } else if repos.is_empty() {
+            "external"
+        } else if definition.anchors.is_empty() {
+            "mapped"
+        } else {
+            "partial"
+        }
+        .to_string();
+        if repos.is_empty() {
+            findings.push(format!(
+                "{} has no discovered repo owner in the system graph",
+                definition.name
+            ));
+        }
+        for anchor in definition.anchors {
+            findings.push(format!(
+                "{} records external or future anchor: {}",
+                definition.name, anchor
+            ));
+        }
+
+        edges.push(OperatingModelEdge {
+            source: definition.layer.to_string(),
+            target: definition.id.to_string(),
+            kind: "contains_capability".to_string(),
+            evidence: vec![definition.purpose.to_string()],
+        });
+        for repo in &repos {
+            edges.push(OperatingModelEdge {
+                source: definition.id.to_string(),
+                target: repo.clone(),
+                kind: "mapped_to_repo".to_string(),
+                evidence: vec![definition.name.to_string()],
+            });
+        }
+        for anchor in definition.anchors {
+            edges.push(OperatingModelEdge {
+                source: definition.id.to_string(),
+                target: format!("anchor:{}", slug(anchor)),
+                kind: "records_anchor".to_string(),
+                evidence: vec![anchor.to_string()],
+            });
+        }
+
+        capabilities.push(OperatingCapability {
+            id: definition.id.to_string(),
+            name: definition.name.to_string(),
+            layer: definition.layer.to_string(),
+            purpose: definition.purpose.to_string(),
+            status,
+            repos,
+            anchors: definition
+                .anchors
+                .iter()
+                .map(|anchor| anchor.to_string())
+                .collect(),
+            evidence: operating_capability_evidence(definition),
+        });
+    }
+
+    let mut layers = layer_definitions
+        .iter()
+        .map(|definition| {
+            let capability_ids = capabilities
+                .iter()
+                .filter(|capability| capability.layer == definition.id)
+                .map(|capability| capability.id.clone())
+                .collect::<Vec<_>>();
+            let mut repos = capabilities
+                .iter()
+                .filter(|capability| capability.layer == definition.id)
+                .flat_map(|capability| capability.repos.clone())
+                .collect::<Vec<_>>();
+            repos.sort();
+            repos.dedup();
+            edges.push(OperatingModelEdge {
+                source: "system:agentic-company".to_string(),
+                target: definition.id.to_string(),
+                kind: "contains_layer".to_string(),
+                evidence: vec![definition.purpose.to_string()],
+            });
+            OperatingModelLayer {
+                id: definition.id.to_string(),
+                name: definition.name.to_string(),
+                purpose: definition.purpose.to_string(),
+                capabilities: capability_ids,
+                repos,
+            }
+        })
+        .collect::<Vec<_>>();
+
+    capabilities.sort_by(|a, b| a.id.cmp(&b.id));
+    layers.sort_by(|a, b| a.id.cmp(&b.id));
+    edges.sort_by(|a, b| {
+        a.source
+            .cmp(&b.source)
+            .then(a.target.cmp(&b.target))
+            .then(a.kind.cmp(&b.kind))
+    });
+    findings.sort();
+    findings.dedup();
+
+    SystemOperatingModel {
+        schema_version: 1,
+        workspace_root: workspace.display().to_string(),
+        system_root: system.system_root.clone(),
+        source_graph: display_path(workspace, source_path),
+        layers,
+        capabilities,
+        edges,
+        findings,
+    }
+}
+
+fn operating_layer_definitions() -> Vec<OperatingLayerDefinition> {
+    vec![
+        OperatingLayerDefinition {
+            id: "layer:governance-reasoning",
+            name: "Governance and reasoning",
+            purpose: "Board-style reasoning, strategy, and policy without direct execution",
+        },
+        OperatingLayerDefinition {
+            id: "layer:executive-control-plane",
+            name: "Executive control plane",
+            purpose: "Company-level command, OpenSpec, handoff, and repo governance",
+        },
+        OperatingLayerDefinition {
+            id: "layer:coordination-communication",
+            name: "Coordination and communication",
+            purpose: "Agent communication, orchestration, and cross-agent continuity",
+        },
+        OperatingLayerDefinition {
+            id: "layer:environment-security",
+            name: "Environment and security",
+            purpose: "Vault, key relay, certificates, and parent-managed toolchains",
+        },
+        OperatingLayerDefinition {
+            id: "layer:knowledge-runtime",
+            name: "Knowledge and runtime",
+            purpose: "Memory, vector/progress databases, inference, training, and runtime state",
+        },
+        OperatingLayerDefinition {
+            id: "layer:front-door-experience",
+            name: "Front door experience",
+            purpose: "Prompt, chat, LifeOS, and operator-facing user experience surfaces",
+        },
+        OperatingLayerDefinition {
+            id: "layer:agent-runtime",
+            name: "Agent runtime",
+            purpose: "Agent harnesses, execution workers, and automation runtimes",
+        },
+        OperatingLayerDefinition {
+            id: "layer:simulation-validation",
+            name: "Simulation and validation",
+            purpose: "Digital twin simulation and high-fidelity failure space for agents",
+        },
+        OperatingLayerDefinition {
+            id: "layer:infrastructure-device-fabric",
+            name: "Infrastructure and device fabric",
+            purpose:
+                "Network control plus distributed device compute, storage, inference, and memory",
+        },
+        OperatingLayerDefinition {
+            id: "layer:toolchain-parser-runtime",
+            name: "Toolchain and parser runtime",
+            purpose: "Tree-sitter, Lua, terminal/runtime, parser, and toolchain surfaces",
+        },
+        OperatingLayerDefinition {
+            id: "layer:interface-automation",
+            name: "Interface automation",
+            purpose: "AR-glasses workflow, local automation, media, and home interfaces",
+        },
+    ]
+}
+
+fn operating_capability_definitions() -> Vec<OperatingCapabilityDefinition> {
+    vec![
+        OperatingCapabilityDefinition {
+            id: "capability:board-reasoning",
+            name: "Board reasoning layer",
+            layer: "layer:governance-reasoning",
+            purpose: "Non-executing strategic reasoning layer for company direction",
+            repo_names: &[
+                "flexnetos_brain",
+                "flexnetos_wiki",
+                "my_wiki",
+                "obsidian_mind",
+            ],
+            role_ids: &["role:documentation-knowledge", "role:knowledge-memory"],
+            anchors: &["company hierarchy board layer"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:idd-spec-engine",
+            name: "IDD and spec engine",
+            layer: "layer:executive-control-plane",
+            purpose: "Turns goals into OpenSpec, ADR, tasks, implementation, validation, and merge evidence",
+            repo_names: &["rusty_idd", "handoff"],
+            role_ids: &["role:idd-control-plane"],
+            anchors: &["Rusty IDD built into handoff"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:meta-peer-control",
+            name: "Meta peer repo control",
+            layer: "layer:executive-control-plane",
+            purpose: "Controls the peer-repo environment and hosts full-system execution context",
+            repo_names: &[
+                "meta_cli",
+                "meta_core",
+                "meta_git_cli",
+                "meta_git_lib",
+                "meta_project_cli",
+                "meta_rust_cli",
+            ],
+            role_ids: &["role:meta-control-plane"],
+            anchors: &["meta peer repo system"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:fleet-handoff",
+            name: "Central and fleet handoff",
+            layer: "layer:coordination-communication",
+            purpose: "Maintains central and fleet handoff state for cross-repo agents",
+            repo_names: &["handoff", "rusty_idd", "weave"],
+            role_ids: &["role:fleet-handoff"],
+            anchors: &["handoff central and fleet design"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:agent-communication",
+            name: "Agent communication layer",
+            layer: "layer:coordination-communication",
+            purpose: "Provides agent communication and orchestration paths",
+            repo_names: &["weave", "atc", "mcp_hub"],
+            role_ids: &["role:coordination-domain-surface"],
+            anchors: &["weave agent communication layer"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:domain-upgrade",
+            name: "Domain upgrade path",
+            layer: "layer:coordination-communication",
+            purpose: "Routes domain behavior through weave plus Obscura upgrades",
+            repo_names: &["weave", "obscura"],
+            role_ids: &["role:domain-upgrade-surface"],
+            anchors: &["weave plus Obscura domain upgrades"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:env-vault-relay",
+            name: "Environment and vault relay",
+            layer: "layer:environment-security",
+            purpose: "Mints relay credentials from long-running vault material through parent-managed env tooling",
+            repo_names: &["envctl", "vault_hub"],
+            role_ids: &["role:toolchain-provider"],
+            anchors: &["/run/media/drdave/COGNITUM", "Cognitum vault on Pi Zero"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:prompt-front-door",
+            name: "Prompt front door",
+            layer: "layer:front-door-experience",
+            purpose: "Routes prompts into handoff and Rusty IDD lifecycle automation",
+            repo_names: &["prompt_hub"],
+            role_ids: &["role:spec-producer"],
+            anchors: &[
+                "github.com/f/prompts.chat",
+                "github.com/f/ai-prompt",
+                "prompt_hub front door to handoff and rusty-idd",
+            ],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:user-front-door",
+            name: "User front door",
+            layer: "layer:front-door-experience",
+            purpose: "Operator chat, LifeOS, and UI entrypoint for the agentic system",
+            repo_names: &["lifeos", "ruvector", "prompt_hub"],
+            role_ids: &[],
+            anchors: &["goose-like chat integration", "LifeOS front door"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:vector-runtime",
+            name: "Vector and agentic runtime",
+            layer: "layer:knowledge-runtime",
+            purpose: "Provides vector DB, progress DB, agentic runtime, inference, and training surfaces",
+            repo_names: &["ruvector", "database_hub", "icm"],
+            role_ids: &["role:knowledge-memory"],
+            anchors: &["meta-ruvector full agentic system"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:agent-harness",
+            name: "Agent harness runtime",
+            layer: "layer:agent-runtime",
+            purpose: "Builds and runs agent harnesses and automation workers",
+            repo_names: &[
+                "harness_hub",
+                "flexnetos_runner",
+                "agent",
+                "hermes_agent",
+                "n8n",
+                "ruflo",
+            ],
+            role_ids: &["role:agent-environment"],
+            anchors: &["harness-agent-rs rust port"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:github-agent-run-upgrades",
+            name: "GitHub agent-run upgrades",
+            layer: "layer:agent-runtime",
+            purpose: "Provides GRIT and Beads foundations for GitHub-centered agent contribution runs",
+            repo_names: &["grit", "yazelix"],
+            role_ids: &[],
+            anchors: &[
+                "GRIT from rtk-ai",
+                "Beads mandatory for code contributors through Yazelix",
+                "github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
+                "github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b",
+            ],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:digital-twin-simulation",
+            name: "Digital twin simulation",
+            layer: "layer:simulation-validation",
+            purpose: "Simulates target environments so agents can test implementation behavior before real-world execution",
+            repo_names: &["teri"],
+            role_ids: &[],
+            anchors: &["Teri digital twin simulator"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:network-engineering",
+            name: "Network engineering and control",
+            layer: "layer:infrastructure-device-fabric",
+            purpose: "Owns network engineering, control, and lane-to-network-manager upgrade path",
+            repo_names: &["lane", "network_control", "network_hub"],
+            role_ids: &[],
+            anchors: &["lane merges into network-manager"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:distributed-device-fabric",
+            name: "Distributed device fabric",
+            layer: "layer:infrastructure-device-fabric",
+            purpose: "Uses user devices for distributed compute, storage, inference, and memory",
+            repo_names: &["oh_my_pi", "network_control", "envctl"],
+            role_ids: &[],
+            anchors: &["user devices for distributed compute storage inference memory"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:parser-runtime",
+            name: "Parser and terminal runtime",
+            layer: "layer:toolchain-parser-runtime",
+            purpose: "Carries tree-sitter, Yazelix terminal, parser, and runtime support",
+            repo_names: &["yazelix", "rusty_idd", "tool_hub"],
+            role_ids: &["role:parser-runtime-surface"],
+            anchors: &[
+                "tree-sitter via Yazelix",
+                "Yazelix default terminal",
+                "nushell",
+                "Lua",
+                "Ghostty",
+                "Zellij",
+            ],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:rtk-ai-foundation",
+            name: "RTK AI foundation",
+            layer: "layer:toolchain-parser-runtime",
+            purpose: "Provides foundational RTK, ICM, VOX, and GRIT surfaces from rtk-ai",
+            repo_names: &["rtk_tokenkill", "icm", "vox", "grit"],
+            role_ids: &[],
+            anchors: &["RTK from rtk-ai", "ICM from rtk-ai", "VOX from rtk-ai", "GRIT from rtk-ai"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:lua-ar-interface",
+            name: "Lua and AR interface automation",
+            layer: "layer:interface-automation",
+            purpose: "Supports AR-glasses coding and local automation with Rust-native Lua surfaces",
+            repo_names: &["lifeos", "oh_my_pi", "yazelix"],
+            role_ids: &[],
+            anchors: &["Lua required for AR glasses workflow", "Brilliant Labs Noa style Rust-native agent UX"],
+        },
+        OperatingCapabilityDefinition {
+            id: "capability:personal-automation",
+            name: "Personal media and home automation",
+            layer: "layer:interface-automation",
+            purpose: "Adds local personal life, media, TV, and home automation surfaces",
+            repo_names: &["lifeos", "oh_my_pi"],
+            role_ids: &[],
+            anchors: &["personal life media TV home automation"],
+        },
+    ]
+}
+
+fn matching_operating_repos(
+    system: &SystemArchitectureGraph,
+    definition: &OperatingCapabilityDefinition,
+) -> Vec<String> {
+    let expected_names = definition
+        .repo_names
+        .iter()
+        .map(|name| canonical_repo_name(name))
+        .collect::<BTreeSet<_>>();
+    let expected_roles = definition.role_ids.iter().copied().collect::<BTreeSet<_>>();
+    let mut repos = system
+        .repos
+        .iter()
+        .filter(|repo| {
+            expected_names.contains(&canonical_repo_name(&repo.name))
+                || repo
+                    .roles
+                    .iter()
+                    .any(|role| expected_roles.contains(role.as_str()))
+        })
+        .map(|repo| repo.id.clone())
+        .collect::<Vec<_>>();
+    repos.sort();
+    repos.dedup();
+    repos
+}
+
+fn operating_capability_evidence(definition: &OperatingCapabilityDefinition) -> Vec<String> {
+    let mut evidence = Vec::new();
+    evidence.extend(
+        definition
+            .repo_names
+            .iter()
+            .map(|name| format!("repo-name:{name}")),
+    );
+    evidence.extend(
+        definition
+            .role_ids
+            .iter()
+            .map(|role| format!("system-role:{role}")),
+    );
+    evidence.extend(
+        definition
+            .anchors
+            .iter()
+            .map(|anchor| format!("anchor:{anchor}")),
+    );
+    evidence
+}
+
+fn canonical_repo_name(name: &str) -> String {
+    name.to_ascii_lowercase().replace(['-', ' '], "_")
+}
+
+fn render_system_operating_model_markdown(model: &SystemOperatingModel) -> String {
+    let mut out = String::new();
+    out.push_str("# System Operating Model\n\n");
+    out.push_str(&format!("- System root: `{}`\n", model.system_root));
+    out.push_str(&format!("- Workspace root: `{}`\n", model.workspace_root));
+    out.push_str(&format!("- Source graph: `{}`\n", model.source_graph));
+    out.push_str(&format!("- Layers: {}\n", model.layers.len()));
+    out.push_str(&format!("- Capabilities: {}\n", model.capabilities.len()));
+    out.push_str(&format!("- Edges: {}\n\n", model.edges.len()));
+
+    out.push_str("## Layers\n\n");
+    out.push_str("| Layer | Purpose | Capabilities | Repos |\n|---|---|---:|---:|\n");
+    for layer in &model.layers {
+        out.push_str(&format!(
+            "| `{}` | {} | {} | {} |\n",
+            layer.name,
+            layer.purpose,
+            layer.capabilities.len(),
+            layer.repos.len()
+        ));
+    }
+
+    out.push_str("\n## Capabilities\n\n");
+    out.push_str("| Capability | Layer | Status | Repos | Anchors |\n|---|---|---|---|---|\n");
+    for capability in &model.capabilities {
+        out.push_str(&format!(
+            "| `{}` | `{}` | {} | {} | {} |\n",
+            capability.name,
+            capability.layer,
+            capability.status,
+            capability.repos.join(", "),
+            capability.anchors.join(", ")
+        ));
+    }
+
+    out.push_str("\n## Edges\n\n");
+    out.push_str("| Source | Kind | Target |\n|---|---|---|\n");
+    for edge in &model.edges {
+        out.push_str(&format!(
+            "| `{}` | {} | `{}` |\n",
+            edge.source, edge.kind, edge.target
+        ));
+    }
+
+    out.push_str("\n## Findings\n\n");
+    if model.findings.is_empty() {
+        out.push_str("No findings.\n");
+    } else {
+        for finding in &model.findings {
+            out.push_str(&format!("- {finding}\n"));
+        }
+    }
+    out
+}
+
 fn graph_planning_context(
     workspace: &Path,
     options: PlanContextOptions,
@@ -2689,14 +3305,31 @@ fn graph_planning_context(
     } else {
         None
     };
+    let operating_path = options
+        .operating_model_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/operating-model.json"));
+    let operating_model = if operating_path.exists() {
+        Some(read_json_file::<SystemOperatingModel>(&operating_path)?)
+    } else {
+        None
+    };
 
     let focus_components = select_focus_components(&architecture, options.goal.as_deref());
     let (system_roles, system_repos, mut findings) =
         select_system_context(system.as_ref(), options.goal.as_deref());
+    let (operating_layers, operating_capabilities, operating_findings) =
+        select_operating_context(operating_model.as_ref(), options.goal.as_deref());
+    findings.extend(operating_findings);
     if system.is_none() {
         findings.push(format!(
             "system architecture graph unavailable at {}",
             system_path.display()
+        ));
+    }
+    if operating_model.is_none() {
+        findings.push(format!(
+            "operating model graph unavailable at {}",
+            operating_path.display()
         ));
     }
 
@@ -2730,6 +3363,8 @@ fn graph_planning_context(
         focus_components,
         system_roles,
         system_repos,
+        operating_layers,
+        operating_capabilities,
         guidance,
         findings,
     })
@@ -2854,6 +3489,82 @@ fn select_system_context(
     (system_roles, system_repos, findings)
 }
 
+fn select_operating_context(
+    operating_model: Option<&SystemOperatingModel>,
+    goal: Option<&str>,
+) -> (
+    Vec<OperatingModelLayer>,
+    Vec<OperatingCapability>,
+    Vec<String>,
+) {
+    let Some(operating_model) = operating_model else {
+        return (Vec::new(), Vec::new(), Vec::new());
+    };
+    let goal_terms = goal_terms(goal);
+    let mut scored_capabilities = operating_model
+        .capabilities
+        .iter()
+        .cloned()
+        .map(|capability| {
+            let mut score = capability.repos.len() * 100 + capability.anchors.len() * 25;
+            let haystack = [
+                capability.id.as_str(),
+                capability.name.as_str(),
+                capability.layer.as_str(),
+                capability.purpose.as_str(),
+                &capability.repos.join(" "),
+                &capability.anchors.join(" "),
+            ]
+            .join(" ")
+            .to_ascii_lowercase();
+            for term in &goal_terms {
+                if haystack.contains(term) {
+                    score += 1_000;
+                }
+            }
+            if matches!(
+                capability.id.as_str(),
+                "capability:idd-spec-engine"
+                    | "capability:fleet-handoff"
+                    | "capability:agent-communication"
+                    | "capability:env-vault-relay"
+                    | "capability:prompt-front-door"
+                    | "capability:vector-runtime"
+                    | "capability:parser-runtime"
+                    | "capability:rtk-ai-foundation"
+                    | "capability:github-agent-run-upgrades"
+            ) {
+                score += 500;
+            }
+            (score, capability)
+        })
+        .collect::<Vec<_>>();
+    scored_capabilities.sort_by(|a, b| b.0.cmp(&a.0).then(a.1.id.cmp(&b.1.id)));
+    let operating_capabilities = scored_capabilities
+        .into_iter()
+        .take(18)
+        .map(|(_, capability)| capability)
+        .collect::<Vec<_>>();
+    let layer_ids = operating_capabilities
+        .iter()
+        .map(|capability| capability.layer.clone())
+        .collect::<BTreeSet<_>>();
+    let operating_layers = operating_model
+        .layers
+        .iter()
+        .filter(|layer| layer_ids.contains(&layer.id))
+        .cloned()
+        .collect::<Vec<_>>();
+
+    let findings = vec![format!(
+        "operating context selected {} layers and {} capabilities from {} generated capabilities",
+        operating_layers.len(),
+        operating_capabilities.len(),
+        operating_model.capabilities.len()
+    )];
+    (operating_layers, operating_capabilities, findings)
+}
+
 fn goal_terms(goal: Option<&str>) -> BTreeSet<String> {
     goal.unwrap_or_default()
         .split(|ch: char| !ch.is_ascii_alphanumeric())
@@ -2945,6 +3656,38 @@ fn render_graph_planning_context_markdown(context: &GraphPlanningContext) -> Str
                 repo.dirty,
                 repo.roles.join(", "),
                 peer_architecture_summary_cell(repo.local_architecture.as_ref())
+            ));
+        }
+    }
+
+    out.push_str("\n## Operating Layers\n\n");
+    if context.operating_layers.is_empty() {
+        out.push_str("No operating layers included.\n");
+    } else {
+        for layer in &context.operating_layers {
+            out.push_str(&format!(
+                "- `{}`: {} ({} capabilities, {} repos)\n",
+                layer.name,
+                layer.purpose,
+                layer.capabilities.len(),
+                layer.repos.len()
+            ));
+        }
+    }
+
+    out.push_str("\n## Operating Capabilities\n\n");
+    if context.operating_capabilities.is_empty() {
+        out.push_str("No operating capabilities included.\n");
+    } else {
+        out.push_str("| Capability | Layer | Status | Repos | Anchors |\n|---|---|---|---|---|\n");
+        for capability in &context.operating_capabilities {
+            out.push_str(&format!(
+                "| `{}` | `{}` | {} | {} | {} |\n",
+                capability.name,
+                capability.layer,
+                capability.status,
+                capability.repos.join(", "),
+                capability.anchors.join(", ")
             ));
         }
     }
@@ -3628,6 +4371,123 @@ mod tests {
     }
 
     #[test]
+    fn system_operating_model_maps_agentic_company_capabilities() {
+        let system = tempfile::tempdir().unwrap();
+        let repo_names = [
+            "rusty-idd",
+            "handoff",
+            "weave",
+            "envctl",
+            "prompt_hub",
+            "ruvector",
+            "lifeos",
+            "teri",
+            "lane",
+            "network-control",
+            "vault_hub",
+            "yazelix",
+        ];
+        for name in repo_names {
+            let repo = system.path().join(name);
+            fs::create_dir_all(&repo).unwrap();
+            init_git(&repo);
+            fs::write(
+                repo.join("Cargo.toml"),
+                format!("[package]\nname = \"{name}\"\nversion = \"0.1.0\"\nedition = \"2021\"\n"),
+            )
+            .unwrap();
+        }
+        let rusty = system.path().join("rusty-idd");
+        fs::create_dir_all(rusty.join(".idd/knowledge")).unwrap();
+        let system_architecture = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/system-architecture.json"),
+            system_architecture,
+        )
+        .unwrap();
+
+        let model_json = build_system_operating_model(OperatingModelOptions::new(
+            &rusty,
+            PlanContextFormat::Json,
+        ))
+        .unwrap();
+        let model: SystemOperatingModel = serde_json::from_str(&model_json).unwrap();
+
+        let idd = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:idd-spec-engine")
+            .expect("idd capability");
+        assert!(idd.repos.contains(&"repo:rusty-idd".to_string()));
+        assert!(idd.repos.contains(&"repo:handoff".to_string()));
+
+        let communication = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:agent-communication")
+            .expect("communication capability");
+        assert!(communication.repos.contains(&"repo:weave".to_string()));
+
+        let vault = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:env-vault-relay")
+            .expect("vault relay capability");
+        assert!(vault
+            .anchors
+            .iter()
+            .any(|anchor| anchor.contains("COGNITUM")));
+
+        let simulation = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:digital-twin-simulation")
+            .expect("simulation capability");
+        assert!(simulation.repos.contains(&"repo:teri".to_string()));
+
+        let interface = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:lua-ar-interface")
+            .expect("lua interface capability");
+        assert!(interface
+            .anchors
+            .iter()
+            .any(|anchor| anchor.contains("Lua")));
+
+        let rtk = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:rtk-ai-foundation")
+            .expect("rtk-ai capability");
+        assert!(rtk.anchors.iter().any(|anchor| anchor.contains("ICM")));
+
+        let beads = model
+            .capabilities
+            .iter()
+            .find(|capability| capability.id == "capability:github-agent-run-upgrades")
+            .expect("github agent-run capability");
+        assert!(beads
+            .anchors
+            .iter()
+            .any(|anchor| anchor.contains("beads-rs@d98da231")));
+
+        let markdown = build_system_operating_model(OperatingModelOptions::new(
+            &rusty,
+            PlanContextFormat::Markdown,
+        ))
+        .unwrap();
+        assert!(markdown.contains("# System Operating Model"));
+        assert!(markdown.contains("Digital twin simulation"));
+        assert!(markdown.contains("Lua and AR interface automation"));
+    }
+
+    #[test]
     fn graph_planning_context_preserves_peer_architecture_summary() {
         let system = tempfile::tempdir().unwrap();
         let rusty = system.path().join("rusty-idd");
@@ -3681,6 +4541,16 @@ mod tests {
             system_architecture,
         )
         .unwrap();
+        let operating_model = build_system_operating_model(OperatingModelOptions::new(
+            &rusty,
+            PlanContextFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/operating-model.json"),
+            operating_model,
+        )
+        .unwrap();
 
         let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Json);
         options.goal = Some("weave handoff architecture integration".to_string());
@@ -3692,12 +4562,17 @@ mod tests {
             .find(|repo| repo.name == "weave")
             .expect("weave repo");
         assert!(peer.local_architecture.is_some());
+        assert!(context
+            .operating_capabilities
+            .iter()
+            .any(|capability| capability.id == "capability:fleet-handoff"));
 
         let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Markdown);
         options.goal = Some("weave handoff architecture integration".to_string());
         let markdown = build_graph_planning_context(options).unwrap();
         assert!(markdown.contains("Architecture"));
         assert!(markdown.contains("top:"));
+        assert!(markdown.contains("## Operating Capabilities"));
     }
 
     fn init_git(path: &Path) {

@@ -1,0 +1,2034 @@
+{
+  "schema_version": 1,
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "system_root": "/home/drdave/Desktop/meta",
+  "source_graph": ".idd/knowledge/system-architecture.json",
+  "layers": [
+    {
+      "id": "layer:agent-runtime",
+      "name": "Agent runtime",
+      "purpose": "Agent harnesses, execution workers, and automation runtimes",
+      "capabilities": [
+        "capability:agent-harness",
+        "capability:github-agent-run-upgrades"
+      ],
+      "repos": [
+        "repo:agent",
+        "repo:agent-skills",
+        "repo:archon",
+        "repo:atc",
+        "repo:claude-code",
+        "repo:claude-plugin",
+        "repo:claude-plugins",
+        "repo:codex",
+        "repo:copilot-plugin",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:grit",
+        "repo:harness-hub",
+        "repo:hermes-agent",
+        "repo:icm",
+        "repo:kasetto",
+        "repo:n8n",
+        "repo:oh-my-claudecode",
+        "repo:oh-my-pi",
+        "repo:prompt-hub",
+        "repo:rtk-tokenkill",
+        "repo:ruflo",
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:weave",
+        "repo:yazelix"
+      ]
+    },
+    {
+      "id": "layer:coordination-communication",
+      "name": "Coordination and communication",
+      "purpose": "Agent communication, orchestration, and cross-agent continuity",
+      "capabilities": [
+        "capability:fleet-handoff",
+        "capability:agent-communication",
+        "capability:domain-upgrade"
+      ],
+      "repos": [
+        "repo:agent",
+        "repo:atc",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:mcp-hub",
+        "repo:network-control",
+        "repo:obscura",
+        "repo:prompt-hub",
+        "repo:rusty-idd",
+        "repo:weave"
+      ]
+    },
+    {
+      "id": "layer:environment-security",
+      "name": "Environment and security",
+      "purpose": "Vault, key relay, certificates, and parent-managed toolchains",
+      "capabilities": [
+        "capability:env-vault-relay"
+      ],
+      "repos": [
+        "repo:envctl",
+        "repo:vault-hub",
+        "repo:yazelix"
+      ]
+    },
+    {
+      "id": "layer:executive-control-plane",
+      "name": "Executive control plane",
+      "purpose": "Company-level command, OpenSpec, handoff, and repo governance",
+      "capabilities": [
+        "capability:idd-spec-engine",
+        "capability:meta-peer-control"
+      ],
+      "repos": [
+        "repo:handoff",
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli",
+        "repo:rusty-idd"
+      ]
+    },
+    {
+      "id": "layer:front-door-experience",
+      "name": "Front door experience",
+      "purpose": "Prompt, chat, LifeOS, and operator-facing user experience surfaces",
+      "capabilities": [
+        "capability:prompt-front-door",
+        "capability:user-front-door"
+      ],
+      "repos": [
+        "repo:lifeos",
+        "repo:prompt-hub",
+        "repo:ruvector"
+      ]
+    },
+    {
+      "id": "layer:governance-reasoning",
+      "name": "Governance and reasoning",
+      "purpose": "Board-style reasoning, strategy, and policy without direct execution",
+      "capabilities": [
+        "capability:board-reasoning"
+      ],
+      "repos": [
+        "repo:flexnetos-brain",
+        "repo:flexnetos-wiki",
+        "repo:icm",
+        "repo:my-wiki",
+        "repo:obsidian-mind"
+      ]
+    },
+    {
+      "id": "layer:infrastructure-device-fabric",
+      "name": "Infrastructure and device fabric",
+      "purpose": "Network control plus distributed device compute, storage, inference, and memory",
+      "capabilities": [
+        "capability:network-engineering",
+        "capability:distributed-device-fabric"
+      ],
+      "repos": [
+        "repo:envctl",
+        "repo:lane",
+        "repo:network-control",
+        "repo:network-hub",
+        "repo:oh-my-pi"
+      ]
+    },
+    {
+      "id": "layer:interface-automation",
+      "name": "Interface automation",
+      "purpose": "AR-glasses workflow, local automation, media, and home interfaces",
+      "capabilities": [
+        "capability:lua-ar-interface",
+        "capability:personal-automation"
+      ],
+      "repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi",
+        "repo:yazelix"
+      ]
+    },
+    {
+      "id": "layer:knowledge-runtime",
+      "name": "Knowledge and runtime",
+      "purpose": "Memory, vector/progress databases, inference, training, and runtime state",
+      "capabilities": [
+        "capability:vector-runtime"
+      ],
+      "repos": [
+        "repo:database-hub",
+        "repo:icm",
+        "repo:obsidian-mind",
+        "repo:ruvector"
+      ]
+    },
+    {
+      "id": "layer:simulation-validation",
+      "name": "Simulation and validation",
+      "purpose": "Digital twin simulation and high-fidelity failure space for agents",
+      "capabilities": [
+        "capability:digital-twin-simulation"
+      ],
+      "repos": [
+        "repo:teri"
+      ]
+    },
+    {
+      "id": "layer:toolchain-parser-runtime",
+      "name": "Toolchain and parser runtime",
+      "purpose": "Tree-sitter, Lua, terminal/runtime, parser, and toolchain surfaces",
+      "capabilities": [
+        "capability:parser-runtime",
+        "capability:rtk-ai-foundation"
+      ],
+      "repos": [
+        "repo:grit",
+        "repo:icm",
+        "repo:rtk-tokenkill",
+        "repo:rusty-idd",
+        "repo:tool-hub",
+        "repo:vox",
+        "repo:yazelix"
+      ]
+    }
+  ],
+  "capabilities": [
+    {
+      "id": "capability:agent-communication",
+      "name": "Agent communication layer",
+      "layer": "layer:coordination-communication",
+      "purpose": "Provides agent communication and orchestration paths",
+      "status": "partial",
+      "repos": [
+        "repo:atc",
+        "repo:handoff",
+        "repo:mcp-hub",
+        "repo:weave"
+      ],
+      "anchors": [
+        "weave agent communication layer"
+      ],
+      "evidence": [
+        "repo-name:weave",
+        "repo-name:atc",
+        "repo-name:mcp_hub",
+        "system-role:role:coordination-domain-surface",
+        "anchor:weave agent communication layer"
+      ]
+    },
+    {
+      "id": "capability:agent-harness",
+      "name": "Agent harness runtime",
+      "layer": "layer:agent-runtime",
+      "purpose": "Builds and runs agent harnesses and automation workers",
+      "status": "partial",
+      "repos": [
+        "repo:agent",
+        "repo:agent-skills",
+        "repo:archon",
+        "repo:atc",
+        "repo:claude-code",
+        "repo:claude-plugin",
+        "repo:claude-plugins",
+        "repo:codex",
+        "repo:copilot-plugin",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:harness-hub",
+        "repo:hermes-agent",
+        "repo:icm",
+        "repo:kasetto",
+        "repo:n8n",
+        "repo:oh-my-claudecode",
+        "repo:oh-my-pi",
+        "repo:prompt-hub",
+        "repo:rtk-tokenkill",
+        "repo:ruflo",
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:weave"
+      ],
+      "anchors": [
+        "harness-agent-rs rust port"
+      ],
+      "evidence": [
+        "repo-name:harness_hub",
+        "repo-name:flexnetos_runner",
+        "repo-name:agent",
+        "repo-name:hermes_agent",
+        "repo-name:n8n",
+        "repo-name:ruflo",
+        "system-role:role:agent-environment",
+        "anchor:harness-agent-rs rust port"
+      ]
+    },
+    {
+      "id": "capability:board-reasoning",
+      "name": "Board reasoning layer",
+      "layer": "layer:governance-reasoning",
+      "purpose": "Non-executing strategic reasoning layer for company direction",
+      "status": "partial",
+      "repos": [
+        "repo:flexnetos-brain",
+        "repo:flexnetos-wiki",
+        "repo:icm",
+        "repo:my-wiki",
+        "repo:obsidian-mind"
+      ],
+      "anchors": [
+        "company hierarchy board layer"
+      ],
+      "evidence": [
+        "repo-name:flexnetos_brain",
+        "repo-name:flexnetos_wiki",
+        "repo-name:my_wiki",
+        "repo-name:obsidian_mind",
+        "system-role:role:documentation-knowledge",
+        "system-role:role:knowledge-memory",
+        "anchor:company hierarchy board layer"
+      ]
+    },
+    {
+      "id": "capability:digital-twin-simulation",
+      "name": "Digital twin simulation",
+      "layer": "layer:simulation-validation",
+      "purpose": "Simulates target environments so agents can test implementation behavior before real-world execution",
+      "status": "partial",
+      "repos": [
+        "repo:teri"
+      ],
+      "anchors": [
+        "Teri digital twin simulator"
+      ],
+      "evidence": [
+        "repo-name:teri",
+        "anchor:Teri digital twin simulator"
+      ]
+    },
+    {
+      "id": "capability:distributed-device-fabric",
+      "name": "Distributed device fabric",
+      "layer": "layer:infrastructure-device-fabric",
+      "purpose": "Uses user devices for distributed compute, storage, inference, and memory",
+      "status": "partial",
+      "repos": [
+        "repo:envctl",
+        "repo:network-control",
+        "repo:oh-my-pi"
+      ],
+      "anchors": [
+        "user devices for distributed compute storage inference memory"
+      ],
+      "evidence": [
+        "repo-name:oh_my_pi",
+        "repo-name:network_control",
+        "repo-name:envctl",
+        "anchor:user devices for distributed compute storage inference memory"
+      ]
+    },
+    {
+      "id": "capability:domain-upgrade",
+      "name": "Domain upgrade path",
+      "layer": "layer:coordination-communication",
+      "purpose": "Routes domain behavior through weave plus Obscura upgrades",
+      "status": "partial",
+      "repos": [
+        "repo:obscura",
+        "repo:weave"
+      ],
+      "anchors": [
+        "weave plus Obscura domain upgrades"
+      ],
+      "evidence": [
+        "repo-name:weave",
+        "repo-name:obscura",
+        "system-role:role:domain-upgrade-surface",
+        "anchor:weave plus Obscura domain upgrades"
+      ]
+    },
+    {
+      "id": "capability:env-vault-relay",
+      "name": "Environment and vault relay",
+      "layer": "layer:environment-security",
+      "purpose": "Mints relay credentials from long-running vault material through parent-managed env tooling",
+      "status": "partial",
+      "repos": [
+        "repo:envctl",
+        "repo:vault-hub",
+        "repo:yazelix"
+      ],
+      "anchors": [
+        "/run/media/drdave/COGNITUM",
+        "Cognitum vault on Pi Zero"
+      ],
+      "evidence": [
+        "repo-name:envctl",
+        "repo-name:vault_hub",
+        "system-role:role:toolchain-provider",
+        "anchor:/run/media/drdave/COGNITUM",
+        "anchor:Cognitum vault on Pi Zero"
+      ]
+    },
+    {
+      "id": "capability:fleet-handoff",
+      "name": "Central and fleet handoff",
+      "layer": "layer:coordination-communication",
+      "purpose": "Maintains central and fleet handoff state for cross-repo agents",
+      "status": "partial",
+      "repos": [
+        "repo:agent",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:network-control",
+        "repo:prompt-hub",
+        "repo:rusty-idd",
+        "repo:weave"
+      ],
+      "anchors": [
+        "handoff central and fleet design"
+      ],
+      "evidence": [
+        "repo-name:handoff",
+        "repo-name:rusty_idd",
+        "repo-name:weave",
+        "system-role:role:fleet-handoff",
+        "anchor:handoff central and fleet design"
+      ]
+    },
+    {
+      "id": "capability:github-agent-run-upgrades",
+      "name": "GitHub agent-run upgrades",
+      "layer": "layer:agent-runtime",
+      "purpose": "Provides GRIT and Beads foundations for GitHub-centered agent contribution runs",
+      "status": "partial",
+      "repos": [
+        "repo:grit",
+        "repo:yazelix"
+      ],
+      "anchors": [
+        "GRIT from rtk-ai",
+        "Beads mandatory for code contributors through Yazelix",
+        "github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
+        "github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b"
+      ],
+      "evidence": [
+        "repo-name:grit",
+        "repo-name:yazelix",
+        "anchor:GRIT from rtk-ai",
+        "anchor:Beads mandatory for code contributors through Yazelix",
+        "anchor:github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
+        "anchor:github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b"
+      ]
+    },
+    {
+      "id": "capability:idd-spec-engine",
+      "name": "IDD and spec engine",
+      "layer": "layer:executive-control-plane",
+      "purpose": "Turns goals into OpenSpec, ADR, tasks, implementation, validation, and merge evidence",
+      "status": "partial",
+      "repos": [
+        "repo:handoff",
+        "repo:rusty-idd"
+      ],
+      "anchors": [
+        "Rusty IDD built into handoff"
+      ],
+      "evidence": [
+        "repo-name:rusty_idd",
+        "repo-name:handoff",
+        "system-role:role:idd-control-plane",
+        "anchor:Rusty IDD built into handoff"
+      ]
+    },
+    {
+      "id": "capability:lua-ar-interface",
+      "name": "Lua and AR interface automation",
+      "layer": "layer:interface-automation",
+      "purpose": "Supports AR-glasses coding and local automation with Rust-native Lua surfaces",
+      "status": "partial",
+      "repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi",
+        "repo:yazelix"
+      ],
+      "anchors": [
+        "Lua required for AR glasses workflow",
+        "Brilliant Labs Noa style Rust-native agent UX"
+      ],
+      "evidence": [
+        "repo-name:lifeos",
+        "repo-name:oh_my_pi",
+        "repo-name:yazelix",
+        "anchor:Lua required for AR glasses workflow",
+        "anchor:Brilliant Labs Noa style Rust-native agent UX"
+      ]
+    },
+    {
+      "id": "capability:meta-peer-control",
+      "name": "Meta peer repo control",
+      "layer": "layer:executive-control-plane",
+      "purpose": "Controls the peer-repo environment and hosts full-system execution context",
+      "status": "partial",
+      "repos": [
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli"
+      ],
+      "anchors": [
+        "meta peer repo system"
+      ],
+      "evidence": [
+        "repo-name:meta_cli",
+        "repo-name:meta_core",
+        "repo-name:meta_git_cli",
+        "repo-name:meta_git_lib",
+        "repo-name:meta_project_cli",
+        "repo-name:meta_rust_cli",
+        "system-role:role:meta-control-plane",
+        "anchor:meta peer repo system"
+      ]
+    },
+    {
+      "id": "capability:network-engineering",
+      "name": "Network engineering and control",
+      "layer": "layer:infrastructure-device-fabric",
+      "purpose": "Owns network engineering, control, and lane-to-network-manager upgrade path",
+      "status": "partial",
+      "repos": [
+        "repo:lane",
+        "repo:network-control",
+        "repo:network-hub"
+      ],
+      "anchors": [
+        "lane merges into network-manager"
+      ],
+      "evidence": [
+        "repo-name:lane",
+        "repo-name:network_control",
+        "repo-name:network_hub",
+        "anchor:lane merges into network-manager"
+      ]
+    },
+    {
+      "id": "capability:parser-runtime",
+      "name": "Parser and terminal runtime",
+      "layer": "layer:toolchain-parser-runtime",
+      "purpose": "Carries tree-sitter, Yazelix terminal, parser, and runtime support",
+      "status": "partial",
+      "repos": [
+        "repo:rusty-idd",
+        "repo:tool-hub",
+        "repo:yazelix"
+      ],
+      "anchors": [
+        "tree-sitter via Yazelix",
+        "Yazelix default terminal",
+        "nushell",
+        "Lua",
+        "Ghostty",
+        "Zellij"
+      ],
+      "evidence": [
+        "repo-name:yazelix",
+        "repo-name:rusty_idd",
+        "repo-name:tool_hub",
+        "system-role:role:parser-runtime-surface",
+        "anchor:tree-sitter via Yazelix",
+        "anchor:Yazelix default terminal",
+        "anchor:nushell",
+        "anchor:Lua",
+        "anchor:Ghostty",
+        "anchor:Zellij"
+      ]
+    },
+    {
+      "id": "capability:personal-automation",
+      "name": "Personal media and home automation",
+      "layer": "layer:interface-automation",
+      "purpose": "Adds local personal life, media, TV, and home automation surfaces",
+      "status": "partial",
+      "repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi"
+      ],
+      "anchors": [
+        "personal life media TV home automation"
+      ],
+      "evidence": [
+        "repo-name:lifeos",
+        "repo-name:oh_my_pi",
+        "anchor:personal life media TV home automation"
+      ]
+    },
+    {
+      "id": "capability:prompt-front-door",
+      "name": "Prompt front door",
+      "layer": "layer:front-door-experience",
+      "purpose": "Routes prompts into handoff and Rusty IDD lifecycle automation",
+      "status": "partial",
+      "repos": [
+        "repo:prompt-hub"
+      ],
+      "anchors": [
+        "github.com/f/prompts.chat",
+        "github.com/f/ai-prompt",
+        "prompt_hub front door to handoff and rusty-idd"
+      ],
+      "evidence": [
+        "repo-name:prompt_hub",
+        "system-role:role:spec-producer",
+        "anchor:github.com/f/prompts.chat",
+        "anchor:github.com/f/ai-prompt",
+        "anchor:prompt_hub front door to handoff and rusty-idd"
+      ]
+    },
+    {
+      "id": "capability:rtk-ai-foundation",
+      "name": "RTK AI foundation",
+      "layer": "layer:toolchain-parser-runtime",
+      "purpose": "Provides foundational RTK, ICM, VOX, and GRIT surfaces from rtk-ai",
+      "status": "partial",
+      "repos": [
+        "repo:grit",
+        "repo:icm",
+        "repo:rtk-tokenkill",
+        "repo:vox"
+      ],
+      "anchors": [
+        "RTK from rtk-ai",
+        "ICM from rtk-ai",
+        "VOX from rtk-ai",
+        "GRIT from rtk-ai"
+      ],
+      "evidence": [
+        "repo-name:rtk_tokenkill",
+        "repo-name:icm",
+        "repo-name:vox",
+        "repo-name:grit",
+        "anchor:RTK from rtk-ai",
+        "anchor:ICM from rtk-ai",
+        "anchor:VOX from rtk-ai",
+        "anchor:GRIT from rtk-ai"
+      ]
+    },
+    {
+      "id": "capability:user-front-door",
+      "name": "User front door",
+      "layer": "layer:front-door-experience",
+      "purpose": "Operator chat, LifeOS, and UI entrypoint for the agentic system",
+      "status": "partial",
+      "repos": [
+        "repo:lifeos",
+        "repo:prompt-hub",
+        "repo:ruvector"
+      ],
+      "anchors": [
+        "goose-like chat integration",
+        "LifeOS front door"
+      ],
+      "evidence": [
+        "repo-name:lifeos",
+        "repo-name:ruvector",
+        "repo-name:prompt_hub",
+        "anchor:goose-like chat integration",
+        "anchor:LifeOS front door"
+      ]
+    },
+    {
+      "id": "capability:vector-runtime",
+      "name": "Vector and agentic runtime",
+      "layer": "layer:knowledge-runtime",
+      "purpose": "Provides vector DB, progress DB, agentic runtime, inference, and training surfaces",
+      "status": "partial",
+      "repos": [
+        "repo:database-hub",
+        "repo:icm",
+        "repo:obsidian-mind",
+        "repo:ruvector"
+      ],
+      "anchors": [
+        "meta-ruvector full agentic system"
+      ],
+      "evidence": [
+        "repo-name:ruvector",
+        "repo-name:database_hub",
+        "repo-name:icm",
+        "system-role:role:knowledge-memory",
+        "anchor:meta-ruvector full agentic system"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "capability:agent-communication",
+      "target": "anchor:weave-agent-communication-layer",
+      "kind": "records_anchor",
+      "evidence": [
+        "weave agent communication layer"
+      ]
+    },
+    {
+      "source": "capability:agent-communication",
+      "target": "repo:atc",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent communication layer"
+      ]
+    },
+    {
+      "source": "capability:agent-communication",
+      "target": "repo:handoff",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent communication layer"
+      ]
+    },
+    {
+      "source": "capability:agent-communication",
+      "target": "repo:mcp-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent communication layer"
+      ]
+    },
+    {
+      "source": "capability:agent-communication",
+      "target": "repo:weave",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent communication layer"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "anchor:harness-agent-rs-rust-port",
+      "kind": "records_anchor",
+      "evidence": [
+        "harness-agent-rs rust port"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:agent",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:agent-skills",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:archon",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:atc",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:claude-code",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:claude-plugin",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:claude-plugins",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:codex",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:copilot-plugin",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:ecc",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:envctl",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:flexnetos-runner",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:github-org",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:harness-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:hermes-agent",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:icm",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:kasetto",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:n8n",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:oh-my-claudecode",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:oh-my-pi",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:prompt-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:rtk-tokenkill",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:ruflo",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:rusty-idd",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:ruvector",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:weave",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:board-reasoning",
+      "target": "anchor:company-hierarchy-board-layer",
+      "kind": "records_anchor",
+      "evidence": [
+        "company hierarchy board layer"
+      ]
+    },
+    {
+      "source": "capability:board-reasoning",
+      "target": "repo:flexnetos-brain",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Board reasoning layer"
+      ]
+    },
+    {
+      "source": "capability:board-reasoning",
+      "target": "repo:flexnetos-wiki",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Board reasoning layer"
+      ]
+    },
+    {
+      "source": "capability:board-reasoning",
+      "target": "repo:icm",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Board reasoning layer"
+      ]
+    },
+    {
+      "source": "capability:board-reasoning",
+      "target": "repo:my-wiki",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Board reasoning layer"
+      ]
+    },
+    {
+      "source": "capability:board-reasoning",
+      "target": "repo:obsidian-mind",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Board reasoning layer"
+      ]
+    },
+    {
+      "source": "capability:digital-twin-simulation",
+      "target": "anchor:teri-digital-twin-simulator",
+      "kind": "records_anchor",
+      "evidence": [
+        "Teri digital twin simulator"
+      ]
+    },
+    {
+      "source": "capability:digital-twin-simulation",
+      "target": "repo:teri",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Digital twin simulation"
+      ]
+    },
+    {
+      "source": "capability:distributed-device-fabric",
+      "target": "anchor:user-devices-for-distributed-compute-storage-inference-memory",
+      "kind": "records_anchor",
+      "evidence": [
+        "user devices for distributed compute storage inference memory"
+      ]
+    },
+    {
+      "source": "capability:distributed-device-fabric",
+      "target": "repo:envctl",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Distributed device fabric"
+      ]
+    },
+    {
+      "source": "capability:distributed-device-fabric",
+      "target": "repo:network-control",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Distributed device fabric"
+      ]
+    },
+    {
+      "source": "capability:distributed-device-fabric",
+      "target": "repo:oh-my-pi",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Distributed device fabric"
+      ]
+    },
+    {
+      "source": "capability:domain-upgrade",
+      "target": "anchor:weave-plus-obscura-domain-upgrades",
+      "kind": "records_anchor",
+      "evidence": [
+        "weave plus Obscura domain upgrades"
+      ]
+    },
+    {
+      "source": "capability:domain-upgrade",
+      "target": "repo:obscura",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Domain upgrade path"
+      ]
+    },
+    {
+      "source": "capability:domain-upgrade",
+      "target": "repo:weave",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Domain upgrade path"
+      ]
+    },
+    {
+      "source": "capability:env-vault-relay",
+      "target": "anchor:cognitum-vault-on-pi-zero",
+      "kind": "records_anchor",
+      "evidence": [
+        "Cognitum vault on Pi Zero"
+      ]
+    },
+    {
+      "source": "capability:env-vault-relay",
+      "target": "anchor:run-media-drdave-cognitum",
+      "kind": "records_anchor",
+      "evidence": [
+        "/run/media/drdave/COGNITUM"
+      ]
+    },
+    {
+      "source": "capability:env-vault-relay",
+      "target": "repo:envctl",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Environment and vault relay"
+      ]
+    },
+    {
+      "source": "capability:env-vault-relay",
+      "target": "repo:vault-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Environment and vault relay"
+      ]
+    },
+    {
+      "source": "capability:env-vault-relay",
+      "target": "repo:yazelix",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Environment and vault relay"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "anchor:handoff-central-and-fleet-design",
+      "kind": "records_anchor",
+      "evidence": [
+        "handoff central and fleet design"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:agent",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:ecc",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:envctl",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:flexnetos-runner",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:github-org",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:handoff",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:harness-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:lane",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:lifeos",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:network-control",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:prompt-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:rusty-idd",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:weave",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:github-agent-run-upgrades",
+      "target": "anchor:beads-mandatory-for-code-contributors-through-yazelix",
+      "kind": "records_anchor",
+      "evidence": [
+        "Beads mandatory for code contributors through Yazelix"
+      ]
+    },
+    {
+      "source": "capability:github-agent-run-upgrades",
+      "target": "anchor:github-com-delightful-ai-beads-rs-d98da231d068acbadcdcd2262971c561de86132b",
+      "kind": "records_anchor",
+      "evidence": [
+        "github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b"
+      ]
+    },
+    {
+      "source": "capability:github-agent-run-upgrades",
+      "target": "anchor:github-com-dicklesworthstone-beads-rust-2d824a8deaa203d64326849d86f8e6d4a9c24eca",
+      "kind": "records_anchor",
+      "evidence": [
+        "github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca"
+      ]
+    },
+    {
+      "source": "capability:github-agent-run-upgrades",
+      "target": "anchor:grit-from-rtk-ai",
+      "kind": "records_anchor",
+      "evidence": [
+        "GRIT from rtk-ai"
+      ]
+    },
+    {
+      "source": "capability:github-agent-run-upgrades",
+      "target": "repo:grit",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "GitHub agent-run upgrades"
+      ]
+    },
+    {
+      "source": "capability:github-agent-run-upgrades",
+      "target": "repo:yazelix",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "GitHub agent-run upgrades"
+      ]
+    },
+    {
+      "source": "capability:idd-spec-engine",
+      "target": "anchor:rusty-idd-built-into-handoff",
+      "kind": "records_anchor",
+      "evidence": [
+        "Rusty IDD built into handoff"
+      ]
+    },
+    {
+      "source": "capability:idd-spec-engine",
+      "target": "repo:handoff",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "IDD and spec engine"
+      ]
+    },
+    {
+      "source": "capability:idd-spec-engine",
+      "target": "repo:rusty-idd",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "IDD and spec engine"
+      ]
+    },
+    {
+      "source": "capability:lua-ar-interface",
+      "target": "anchor:brilliant-labs-noa-style-rust-native-agent-ux",
+      "kind": "records_anchor",
+      "evidence": [
+        "Brilliant Labs Noa style Rust-native agent UX"
+      ]
+    },
+    {
+      "source": "capability:lua-ar-interface",
+      "target": "anchor:lua-required-for-ar-glasses-workflow",
+      "kind": "records_anchor",
+      "evidence": [
+        "Lua required for AR glasses workflow"
+      ]
+    },
+    {
+      "source": "capability:lua-ar-interface",
+      "target": "repo:lifeos",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Lua and AR interface automation"
+      ]
+    },
+    {
+      "source": "capability:lua-ar-interface",
+      "target": "repo:oh-my-pi",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Lua and AR interface automation"
+      ]
+    },
+    {
+      "source": "capability:lua-ar-interface",
+      "target": "repo:yazelix",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Lua and AR interface automation"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "anchor:meta-peer-repo-system",
+      "kind": "records_anchor",
+      "evidence": [
+        "meta peer repo system"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:loop-cli",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:loop-lib",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-cli",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-core",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-dashboard-cli",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-git-cli",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-git-lib",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-mcp",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-plugin-api",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-plugin-protocol",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-project-cli",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:meta-peer-control",
+      "target": "repo:meta-rust-cli",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Meta peer repo control"
+      ]
+    },
+    {
+      "source": "capability:network-engineering",
+      "target": "anchor:lane-merges-into-network-manager",
+      "kind": "records_anchor",
+      "evidence": [
+        "lane merges into network-manager"
+      ]
+    },
+    {
+      "source": "capability:network-engineering",
+      "target": "repo:lane",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Network engineering and control"
+      ]
+    },
+    {
+      "source": "capability:network-engineering",
+      "target": "repo:network-control",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Network engineering and control"
+      ]
+    },
+    {
+      "source": "capability:network-engineering",
+      "target": "repo:network-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Network engineering and control"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "anchor:ghostty",
+      "kind": "records_anchor",
+      "evidence": [
+        "Ghostty"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "anchor:lua",
+      "kind": "records_anchor",
+      "evidence": [
+        "Lua"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "anchor:nushell",
+      "kind": "records_anchor",
+      "evidence": [
+        "nushell"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "anchor:tree-sitter-via-yazelix",
+      "kind": "records_anchor",
+      "evidence": [
+        "tree-sitter via Yazelix"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "anchor:yazelix-default-terminal",
+      "kind": "records_anchor",
+      "evidence": [
+        "Yazelix default terminal"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "anchor:zellij",
+      "kind": "records_anchor",
+      "evidence": [
+        "Zellij"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "repo:rusty-idd",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Parser and terminal runtime"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "repo:tool-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Parser and terminal runtime"
+      ]
+    },
+    {
+      "source": "capability:parser-runtime",
+      "target": "repo:yazelix",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Parser and terminal runtime"
+      ]
+    },
+    {
+      "source": "capability:personal-automation",
+      "target": "anchor:personal-life-media-tv-home-automation",
+      "kind": "records_anchor",
+      "evidence": [
+        "personal life media TV home automation"
+      ]
+    },
+    {
+      "source": "capability:personal-automation",
+      "target": "repo:lifeos",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Personal media and home automation"
+      ]
+    },
+    {
+      "source": "capability:personal-automation",
+      "target": "repo:oh-my-pi",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Personal media and home automation"
+      ]
+    },
+    {
+      "source": "capability:prompt-front-door",
+      "target": "anchor:github-com-f-ai-prompt",
+      "kind": "records_anchor",
+      "evidence": [
+        "github.com/f/ai-prompt"
+      ]
+    },
+    {
+      "source": "capability:prompt-front-door",
+      "target": "anchor:github-com-f-prompts-chat",
+      "kind": "records_anchor",
+      "evidence": [
+        "github.com/f/prompts.chat"
+      ]
+    },
+    {
+      "source": "capability:prompt-front-door",
+      "target": "anchor:prompt-hub-front-door-to-handoff-and-rusty-idd",
+      "kind": "records_anchor",
+      "evidence": [
+        "prompt_hub front door to handoff and rusty-idd"
+      ]
+    },
+    {
+      "source": "capability:prompt-front-door",
+      "target": "repo:prompt-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Prompt front door"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "anchor:grit-from-rtk-ai",
+      "kind": "records_anchor",
+      "evidence": [
+        "GRIT from rtk-ai"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "anchor:icm-from-rtk-ai",
+      "kind": "records_anchor",
+      "evidence": [
+        "ICM from rtk-ai"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "anchor:rtk-from-rtk-ai",
+      "kind": "records_anchor",
+      "evidence": [
+        "RTK from rtk-ai"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "anchor:vox-from-rtk-ai",
+      "kind": "records_anchor",
+      "evidence": [
+        "VOX from rtk-ai"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "repo:grit",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "RTK AI foundation"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "repo:icm",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "RTK AI foundation"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "repo:rtk-tokenkill",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "RTK AI foundation"
+      ]
+    },
+    {
+      "source": "capability:rtk-ai-foundation",
+      "target": "repo:vox",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "RTK AI foundation"
+      ]
+    },
+    {
+      "source": "capability:user-front-door",
+      "target": "anchor:goose-like-chat-integration",
+      "kind": "records_anchor",
+      "evidence": [
+        "goose-like chat integration"
+      ]
+    },
+    {
+      "source": "capability:user-front-door",
+      "target": "anchor:lifeos-front-door",
+      "kind": "records_anchor",
+      "evidence": [
+        "LifeOS front door"
+      ]
+    },
+    {
+      "source": "capability:user-front-door",
+      "target": "repo:lifeos",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "User front door"
+      ]
+    },
+    {
+      "source": "capability:user-front-door",
+      "target": "repo:prompt-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "User front door"
+      ]
+    },
+    {
+      "source": "capability:user-front-door",
+      "target": "repo:ruvector",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "User front door"
+      ]
+    },
+    {
+      "source": "capability:vector-runtime",
+      "target": "anchor:meta-ruvector-full-agentic-system",
+      "kind": "records_anchor",
+      "evidence": [
+        "meta-ruvector full agentic system"
+      ]
+    },
+    {
+      "source": "capability:vector-runtime",
+      "target": "repo:database-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Vector and agentic runtime"
+      ]
+    },
+    {
+      "source": "capability:vector-runtime",
+      "target": "repo:icm",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Vector and agentic runtime"
+      ]
+    },
+    {
+      "source": "capability:vector-runtime",
+      "target": "repo:obsidian-mind",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Vector and agentic runtime"
+      ]
+    },
+    {
+      "source": "capability:vector-runtime",
+      "target": "repo:ruvector",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Vector and agentic runtime"
+      ]
+    },
+    {
+      "source": "layer:agent-runtime",
+      "target": "capability:agent-harness",
+      "kind": "contains_capability",
+      "evidence": [
+        "Builds and runs agent harnesses and automation workers"
+      ]
+    },
+    {
+      "source": "layer:agent-runtime",
+      "target": "capability:github-agent-run-upgrades",
+      "kind": "contains_capability",
+      "evidence": [
+        "Provides GRIT and Beads foundations for GitHub-centered agent contribution runs"
+      ]
+    },
+    {
+      "source": "layer:coordination-communication",
+      "target": "capability:agent-communication",
+      "kind": "contains_capability",
+      "evidence": [
+        "Provides agent communication and orchestration paths"
+      ]
+    },
+    {
+      "source": "layer:coordination-communication",
+      "target": "capability:domain-upgrade",
+      "kind": "contains_capability",
+      "evidence": [
+        "Routes domain behavior through weave plus Obscura upgrades"
+      ]
+    },
+    {
+      "source": "layer:coordination-communication",
+      "target": "capability:fleet-handoff",
+      "kind": "contains_capability",
+      "evidence": [
+        "Maintains central and fleet handoff state for cross-repo agents"
+      ]
+    },
+    {
+      "source": "layer:environment-security",
+      "target": "capability:env-vault-relay",
+      "kind": "contains_capability",
+      "evidence": [
+        "Mints relay credentials from long-running vault material through parent-managed env tooling"
+      ]
+    },
+    {
+      "source": "layer:executive-control-plane",
+      "target": "capability:idd-spec-engine",
+      "kind": "contains_capability",
+      "evidence": [
+        "Turns goals into OpenSpec, ADR, tasks, implementation, validation, and merge evidence"
+      ]
+    },
+    {
+      "source": "layer:executive-control-plane",
+      "target": "capability:meta-peer-control",
+      "kind": "contains_capability",
+      "evidence": [
+        "Controls the peer-repo environment and hosts full-system execution context"
+      ]
+    },
+    {
+      "source": "layer:front-door-experience",
+      "target": "capability:prompt-front-door",
+      "kind": "contains_capability",
+      "evidence": [
+        "Routes prompts into handoff and Rusty IDD lifecycle automation"
+      ]
+    },
+    {
+      "source": "layer:front-door-experience",
+      "target": "capability:user-front-door",
+      "kind": "contains_capability",
+      "evidence": [
+        "Operator chat, LifeOS, and UI entrypoint for the agentic system"
+      ]
+    },
+    {
+      "source": "layer:governance-reasoning",
+      "target": "capability:board-reasoning",
+      "kind": "contains_capability",
+      "evidence": [
+        "Non-executing strategic reasoning layer for company direction"
+      ]
+    },
+    {
+      "source": "layer:infrastructure-device-fabric",
+      "target": "capability:distributed-device-fabric",
+      "kind": "contains_capability",
+      "evidence": [
+        "Uses user devices for distributed compute, storage, inference, and memory"
+      ]
+    },
+    {
+      "source": "layer:infrastructure-device-fabric",
+      "target": "capability:network-engineering",
+      "kind": "contains_capability",
+      "evidence": [
+        "Owns network engineering, control, and lane-to-network-manager upgrade path"
+      ]
+    },
+    {
+      "source": "layer:interface-automation",
+      "target": "capability:lua-ar-interface",
+      "kind": "contains_capability",
+      "evidence": [
+        "Supports AR-glasses coding and local automation with Rust-native Lua surfaces"
+      ]
+    },
+    {
+      "source": "layer:interface-automation",
+      "target": "capability:personal-automation",
+      "kind": "contains_capability",
+      "evidence": [
+        "Adds local personal life, media, TV, and home automation surfaces"
+      ]
+    },
+    {
+      "source": "layer:knowledge-runtime",
+      "target": "capability:vector-runtime",
+      "kind": "contains_capability",
+      "evidence": [
+        "Provides vector DB, progress DB, agentic runtime, inference, and training surfaces"
+      ]
+    },
+    {
+      "source": "layer:simulation-validation",
+      "target": "capability:digital-twin-simulation",
+      "kind": "contains_capability",
+      "evidence": [
+        "Simulates target environments so agents can test implementation behavior before real-world execution"
+      ]
+    },
+    {
+      "source": "layer:toolchain-parser-runtime",
+      "target": "capability:parser-runtime",
+      "kind": "contains_capability",
+      "evidence": [
+        "Carries tree-sitter, Yazelix terminal, parser, and runtime support"
+      ]
+    },
+    {
+      "source": "layer:toolchain-parser-runtime",
+      "target": "capability:rtk-ai-foundation",
+      "kind": "contains_capability",
+      "evidence": [
+        "Provides foundational RTK, ICM, VOX, and GRIT surfaces from rtk-ai"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:agent-runtime",
+      "kind": "contains_layer",
+      "evidence": [
+        "Agent harnesses, execution workers, and automation runtimes"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:coordination-communication",
+      "kind": "contains_layer",
+      "evidence": [
+        "Agent communication, orchestration, and cross-agent continuity"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:environment-security",
+      "kind": "contains_layer",
+      "evidence": [
+        "Vault, key relay, certificates, and parent-managed toolchains"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:executive-control-plane",
+      "kind": "contains_layer",
+      "evidence": [
+        "Company-level command, OpenSpec, handoff, and repo governance"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:front-door-experience",
+      "kind": "contains_layer",
+      "evidence": [
+        "Prompt, chat, LifeOS, and operator-facing user experience surfaces"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:governance-reasoning",
+      "kind": "contains_layer",
+      "evidence": [
+        "Board-style reasoning, strategy, and policy without direct execution"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:infrastructure-device-fabric",
+      "kind": "contains_layer",
+      "evidence": [
+        "Network control plus distributed device compute, storage, inference, and memory"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:interface-automation",
+      "kind": "contains_layer",
+      "evidence": [
+        "AR-glasses workflow, local automation, media, and home interfaces"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:knowledge-runtime",
+      "kind": "contains_layer",
+      "evidence": [
+        "Memory, vector/progress databases, inference, training, and runtime state"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:simulation-validation",
+      "kind": "contains_layer",
+      "evidence": [
+        "Digital twin simulation and high-fidelity failure space for agents"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "layer:toolchain-parser-runtime",
+      "kind": "contains_layer",
+      "evidence": [
+        "Tree-sitter, Lua, terminal/runtime, parser, and toolchain surfaces"
+      ]
+    },
+    {
+      "source": "system:agentic-company",
+      "target": "repo:rusty-idd",
+      "kind": "planned_by",
+      "evidence": [
+        "Rusty IDD graph/spec workflow"
+      ]
+    }
+  ],
+  "findings": [
+    "Agent communication layer records external or future anchor: weave agent communication layer",
+    "Agent harness runtime records external or future anchor: harness-agent-rs rust port",
+    "Board reasoning layer records external or future anchor: company hierarchy board layer",
+    "Central and fleet handoff records external or future anchor: handoff central and fleet design",
+    "Digital twin simulation records external or future anchor: Teri digital twin simulator",
+    "Distributed device fabric records external or future anchor: user devices for distributed compute storage inference memory",
+    "Domain upgrade path records external or future anchor: weave plus Obscura domain upgrades",
+    "Environment and vault relay records external or future anchor: /run/media/drdave/COGNITUM",
+    "Environment and vault relay records external or future anchor: Cognitum vault on Pi Zero",
+    "GitHub agent-run upgrades records external or future anchor: Beads mandatory for code contributors through Yazelix",
+    "GitHub agent-run upgrades records external or future anchor: GRIT from rtk-ai",
+    "GitHub agent-run upgrades records external or future anchor: github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
+    "GitHub agent-run upgrades records external or future anchor: github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b",
+    "IDD and spec engine records external or future anchor: Rusty IDD built into handoff",
+    "Lua and AR interface automation records external or future anchor: Brilliant Labs Noa style Rust-native agent UX",
+    "Lua and AR interface automation records external or future anchor: Lua required for AR glasses workflow",
+    "Meta peer repo control records external or future anchor: meta peer repo system",
+    "Network engineering and control records external or future anchor: lane merges into network-manager",
+    "Parser and terminal runtime records external or future anchor: Ghostty",
+    "Parser and terminal runtime records external or future anchor: Lua",
+    "Parser and terminal runtime records external or future anchor: Yazelix default terminal",
+    "Parser and terminal runtime records external or future anchor: Zellij",
+    "Parser and terminal runtime records external or future anchor: nushell",
+    "Parser and terminal runtime records external or future anchor: tree-sitter via Yazelix",
+    "Personal media and home automation records external or future anchor: personal life media TV home automation",
+    "Prompt front door records external or future anchor: github.com/f/ai-prompt",
+    "Prompt front door records external or future anchor: github.com/f/prompts.chat",
+    "Prompt front door records external or future anchor: prompt_hub front door to handoff and rusty-idd",
+    "RTK AI foundation records external or future anchor: GRIT from rtk-ai",
+    "RTK AI foundation records external or future anchor: ICM from rtk-ai",
+    "RTK AI foundation records external or future anchor: RTK from rtk-ai",
+    "RTK AI foundation records external or future anchor: VOX from rtk-ai",
+    "User front door records external or future anchor: LifeOS front door",
+    "User front door records external or future anchor: goose-like chat integration",
+    "Vector and agentic runtime records external or future anchor: meta-ruvector full agentic system",
+    "operating model derived from 65 repos and 13 roles in .idd/knowledge/system-architecture.json"
+  ]
+}
