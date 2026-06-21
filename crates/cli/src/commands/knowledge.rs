@@ -4,10 +4,11 @@ use std::path::PathBuf;
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
     build_architecture_graph, build_graph_planning_context, build_knowledge_report,
-    build_system_architecture_graph, index_workspace, load_index, pack_workspace,
-    query_knowledge_index, refresh_workspace, ArchitectureFormat, ArchitectureOptions,
-    IndexOptions, KnowledgeQuery, PackStyle, PackWorkspaceOptions, PlanContextFormat,
-    PlanContextOptions, ReportFormat, ReportOptions, SystemArchitectureOptions,
+    build_system_architecture_graph, build_system_operating_model, index_workspace, load_index,
+    pack_workspace, query_knowledge_index, refresh_workspace, ArchitectureFormat,
+    ArchitectureOptions, IndexOptions, KnowledgeQuery, OperatingModelOptions, PackStyle,
+    PackWorkspaceOptions, PlanContextFormat, PlanContextOptions, ReportFormat, ReportOptions,
+    SystemArchitectureOptions,
 };
 
 #[derive(Subcommand)]
@@ -22,6 +23,8 @@ pub enum KnowledgeCommand {
     Architecture(ArchitectureArgs),
     /// Generate a cross-repo system graph from a parent meta workspace.
     SystemArchitecture(SystemArchitectureArgs),
+    /// Generate a full-system operating model from the system graph.
+    OperatingModel(OperatingModelArgs),
     /// Generate a graph-backed planning packet for OpenSpec work.
     PlanContext(PlanContextArgs),
     /// Answer local graph questions from an existing index.
@@ -105,6 +108,16 @@ pub struct SystemArchitectureArgs {
 }
 
 #[derive(Args)]
+pub struct OperatingModelArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+    #[arg(long)]
+    pub system_architecture: Option<PathBuf>,
+}
+
+#[derive(Args)]
 pub struct PlanContextArgs {
     #[arg(long)]
     pub workspace: PathBuf,
@@ -120,6 +133,8 @@ pub struct PlanContextArgs {
     pub architecture: Option<PathBuf>,
     #[arg(long)]
     pub system_architecture: Option<PathBuf>,
+    #[arg(long)]
+    pub operating_model: Option<PathBuf>,
 }
 
 #[derive(Args)]
@@ -240,6 +255,27 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             }
             println!("wrote system architecture graph to {}", args.out.display());
         }
+        KnowledgeCommand::OperatingModel(args) => {
+            let format = if args
+                .out
+                .extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("json"))
+            {
+                PlanContextFormat::Json
+            } else {
+                PlanContextFormat::Markdown
+            };
+            let mut options = OperatingModelOptions::new(args.workspace, format);
+            options.system_architecture_path = args.system_architecture;
+            let model = build_system_operating_model(options)?;
+            if matches!(format, PlanContextFormat::Json) {
+                write_text(&args.out, &(model + "\n"))?;
+            } else {
+                write_text(&args.out, &model)?;
+            }
+            println!("wrote system operating model to {}", args.out.display());
+        }
         KnowledgeCommand::PlanContext(args) => {
             let format = if args
                 .out
@@ -257,6 +293,7 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             options.change = args.change;
             options.architecture_path = args.architecture;
             options.system_architecture_path = args.system_architecture;
+            options.operating_model_path = args.operating_model;
             let context = build_graph_planning_context(options)?;
             if matches!(format, PlanContextFormat::Json) {
                 write_text(&args.out, &(context + "\n"))?;

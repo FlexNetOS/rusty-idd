@@ -206,6 +206,24 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     assert!(graph.contains("role:fleet-handoff"));
     assert!(graph.contains("\"local_architecture\""));
     assert!(graph.contains("\"top_components\""));
+
+    run_ok(
+        &[
+            "knowledge",
+            "operating-model",
+            "--workspace",
+            ".",
+            "--system-architecture",
+            "system-architecture.json",
+            "--out",
+            "operating-model.json",
+        ],
+        &rusty,
+    );
+    let model = fs::read_to_string(rusty.join("operating-model.json")).unwrap();
+    assert!(model.contains("\"capability:idd-spec-engine\""));
+    assert!(model.contains("\"capability:fleet-handoff\""));
+    assert!(model.contains("\"capability:agent-communication\""));
 }
 
 fn run_git(args: &[&str], cwd: &Path) {

@@ -422,8 +422,8 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "research/repo-state-vs-meta-arch",
-      "head": "04bf1f134637ced1a266b979664503a1a069b042",
+      "branch": "feat/policy-drift-token-rotation",
+      "head": "3f39793a138033408773569936b3fd2357919db6",
       "dirty": false,
       "tags": [
         "ci",
@@ -1269,8 +1269,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 134,
-          "nodes": 8059,
-          "edges": 32075,
+          "nodes": 8130,
+          "edges": 32496,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 137,
-          "tokens": 101158,
+          "files": 142,
+          "tokens": 105115,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1292,12 +1292,12 @@
               7741
             ],
             [
-              "AI_MERGE/11_integration_research_audit_roadmap.md",
-              5761
+              "crates/knowledge/src/lib.rs",
+              6033
             ],
             [
-              "crates/knowledge/src/lib.rs",
-              5360
+              "AI_MERGE/11_integration_research_audit_roadmap.md",
+              5761
             ],
             [
               "docs/rusty-idd/spec-engine-design.md",
@@ -1376,12 +1376,12 @@
               1150
             ],
             [
-              "docs/rusty-idd/dependency-duplication.md",
-              1095
+              "Justfile",
+              1099
             ],
             [
-              "docs/rusty-idd/parity-matrix.md",
-              1042
+              "docs/rusty-idd/dependency-duplication.md",
+              1095
             ]
           ],
           "suspicious_files": 0,
@@ -1396,7 +1396,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9041,
+            "edges": 9048,
             "languages": [
               "Rust",
               "rust"
@@ -1439,24 +1439,24 @@
             ]
           },
           {
-            "id": "crate:cli",
-            "name": "cli",
+            "id": "crate:knowledge",
+            "name": "knowledge",
             "kind": "crate",
-            "files": 21,
-            "nodes": 610,
-            "edges": 2450,
+            "files": 1,
+            "nodes": 423,
+            "edges": 3087,
             "languages": [
               "Rust",
               "rust"
             ]
           },
           {
-            "id": "crate:knowledge",
-            "name": "knowledge",
+            "id": "crate:cli",
+            "name": "cli",
             "kind": "crate",
-            "files": 1,
-            "nodes": 361,
-            "edges": 2691,
+            "files": 21,
+            "nodes": 616,
+            "edges": 2477,
             "languages": [
               "Rust",
               "rust"
@@ -1480,7 +1480,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1891,
+            "edges": 1896,
             "languages": [
               "Rust",
               "rust"

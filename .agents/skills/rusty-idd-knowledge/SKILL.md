@@ -67,22 +67,41 @@ artifacts or when preparing compact context for an agent.
    - JSON for automation:
      `rusty-idd knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.json --goal "describe the task"`
    - The planning context consumes `.idd/knowledge/architecture.json` and, when
-     present, `.idd/knowledge/system-architecture.json`; use it to choose
-     proposal/spec/design/ADR/task scope and integration boundaries before edits.
+     present, `.idd/knowledge/system-architecture.json` and
+     `.idd/knowledge/operating-model.json`; use it to choose
+     proposal/spec/design/ADR/task scope, system capability owners, and
+     integration boundaries before edits.
    - Selected system repos preserve their peer architecture summaries, so
      OpenSpec proposals and task plans can map cross-repo components without
      rescanning or mutating peer repos.
 
-7. Read compactly.
+7. Generate the operating model when the task touches the wider agentic company system.
+   - Markdown for humans/agents:
+     `rusty-idd knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.md`
+   - JSON for automation:
+     `rusty-idd knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.json`
+   - The operating model consumes `.idd/knowledge/system-architecture.json` and
+     maps discovered repos to agentic-company layers and capabilities: board
+     reasoning, Rusty IDD/handoff control plane, weave communication, envctl and
+     vault relay, prompt front door, ruvector runtime, LifeOS/front-door UX, Teri
+     simulation, network control, Yazelix terminal/parser/runtime, RTK AI
+     foundation, GRIT/Beads agent-run upgrades, Lua/AR, and distributed device
+     fabric.
+   - External or future anchors such as Cognitum, upstream prompt repos, Lua/AR,
+     Beads upstreams, and distributed device fabric are recorded as findings
+     unless repo evidence exists.
+
+8. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
      `.idd/knowledge/system-architecture.json`, and
      `.idd/knowledge/system-architecture.md`, `.idd/knowledge/plan-context.json`,
-     and `.idd/knowledge/plan-context.md`
+     `.idd/knowledge/plan-context.md`, `.idd/knowledge/operating-model.json`,
+     and `.idd/knowledge/operating-model.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-8. Stay in-process.
+9. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
@@ -96,6 +115,7 @@ After changing source or control-plane files, refresh artifacts and run:
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
 cargo run --bin rusty-idd -- knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md
 cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md
+cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.md
 cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"
 cargo run --bin rusty-idd -- validate --workspace .
 ```
