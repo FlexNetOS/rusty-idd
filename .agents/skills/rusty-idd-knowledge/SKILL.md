@@ -18,10 +18,11 @@ artifacts or when preparing compact context for an agent.
      `rusty-idd knowledge refresh --workspace .`
 
 2. Query the graph index before rescanning source manually.
-   - The index uses the vendored CodeGraph tree-sitter registry for supported
-     Rust, TypeScript/JavaScript, Python, Go, Java, C/C++, Swift, Ruby, and PHP
-     files. Treat missing languages as explicit parser-surface gaps, not proof
-     that tree-sitter is absent from the system.
+   - The local Rusty IDD index uses the vendored CodeGraph tree-sitter registry
+     for supported Rust, TypeScript/JavaScript, Python, Go, Java, C/C++, Swift,
+     Ruby, and PHP files. Treat missing local parser coverage as a Rusty IDD
+     adapter gap, not proof that tree-sitter is absent from the system; the
+     current system parser/runtime direction is Yazelix-backed.
    - Symbol lookup:
      `rusty-idd knowledge query --index .idd/knowledge/index.json --symbol NAME`
    - File lookup:
@@ -115,8 +116,8 @@ artifacts or when preparing compact context for an agent.
      to identify the next planned work item.
 
 10. Scaffold integration work before implementation.
-   - To create the next OpenSpec change from the highest-priority integration
-     work item:
+   - To create the next OpenSpec change from the highest-priority planned
+     integration work item:
      `rusty-idd spec plan-integration --base .`
    - To select a specific work item:
      `rusty-idd spec plan-integration --base . --change integrate-fleet-handoff`
@@ -126,6 +127,8 @@ artifacts or when preparing compact context for an agent.
      proposal, design, tasks, and spec delta artifacts, preserves owner repos,
      adopt-first inputs, validation gates, and rollback, and refuses to
      overwrite existing files unless `--force` is passed.
+   - With no selector, it skips work items that already have active or archived
+     OpenSpec changes, so repeated runs advance the queue.
    - This is the handoff from graph planning into the normal Rusty IDD
      OpenSpec lifecycle; implementation still follows adopt-first TDD.
 
