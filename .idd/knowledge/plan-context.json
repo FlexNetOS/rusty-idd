@@ -5,9 +5,9 @@
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_graph": {
     "provider": "codegraph-rust",
-    "files": 134,
-    "nodes": 8178,
-    "edges": 32790,
+    "files": 135,
+    "nodes": 8239,
+    "edges": 33116,
     "languages": [
       "rust"
     ],
@@ -16,8 +16,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 147,
-    "tokens": 108303,
+    "files": 153,
+    "tokens": 110800,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -297,7 +297,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 3522,
+          "node_id": 3582,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/rust.rs",
           "line_start": 97,
@@ -312,7 +312,7 @@
           ]
         },
         {
-          "node_id": 3374,
+          "node_id": 3434,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/java.rs",
           "line_start": 109,
@@ -327,7 +327,7 @@
           ]
         },
         {
-          "node_id": 3447,
+          "node_id": 3507,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/php.rs",
           "line_start": 130,
@@ -342,7 +342,7 @@
           ]
         },
         {
-          "node_id": 3292,
+          "node_id": 3352,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
           "line_start": 105,
@@ -357,7 +357,7 @@
           ]
         },
         {
-          "node_id": 3498,
+          "node_id": 3558,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
           "line_start": 122,
@@ -372,7 +372,7 @@
           ]
         },
         {
-          "node_id": 3316,
+          "node_id": 3376,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
           "line_start": 109,
@@ -387,7 +387,7 @@
           ]
         },
         {
-          "node_id": 3589,
+          "node_id": 3649,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/swift.rs",
           "line_start": 108,
@@ -402,7 +402,7 @@
           ]
         },
         {
-          "node_id": 3349,
+          "node_id": 3409,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/go.rs",
           "line_start": 104,
@@ -417,7 +417,7 @@
           ]
         },
         {
-          "node_id": 3672,
+          "node_id": 3732,
           "name": "parse_content_with_recovery",
           "file": "crates/external/codegraph-parser/src/parser.rs",
           "line_start": 422,
@@ -448,6 +448,33 @@
       ]
     },
     {
+      "id": "crate:cli",
+      "name": "cli",
+      "kind": "crate",
+      "files": 22,
+      "nodes": 681,
+      "edges": 2829,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/cli/src/commands/codex.rs",
+        "crates/cli/src/commands/core.rs",
+        "crates/cli/src/commands/knowledge.rs",
+        "crates/cli/src/commands/mod.rs",
+        "crates/cli/src/commands/run.rs",
+        "crates/cli/src/commands/spec.rs",
+        "crates/cli/src/commands/spec_adr.rs",
+        "crates/cli/src/commands/spec_archive.rs",
+        "crates/cli/src/commands/spec_plan_integration.rs",
+        "crates/cli/src/commands/spec_scaffold.rs",
+        "crates/cli/src/commands/spec_status.rs",
+        "crates/cli/src/commands/tui.rs"
+      ]
+    },
+    {
       "id": "crate:core",
       "name": "core",
       "kind": "crate",
@@ -460,7 +487,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 845,
+          "node_id": 905,
           "name": "generate_workspace",
           "file": "crates/core/src/planner.rs",
           "line_start": 73,
@@ -494,14 +521,14 @@
       "kind": "crate",
       "files": 24,
       "nodes": 461,
-      "edges": 1908,
+      "edges": 1909,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 5450,
+          "node_id": 5510,
           "name": "contains",
           "file": "crates/spec/src/model/spec.rs",
           "line_start": 30,
@@ -534,14 +561,14 @@
       "kind": "external_crate",
       "files": 39,
       "nodes": 1918,
-      "edges": 9054,
+      "edges": 9058,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 2775,
+          "node_id": 2835,
           "name": "visit_dir",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 247,
@@ -555,7 +582,7 @@
           ]
         },
         {
-          "node_id": 2777,
+          "node_id": 2837,
           "name": "process_path_event",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 526,
@@ -570,7 +597,7 @@
           ]
         },
         {
-          "node_id": 1459,
+          "node_id": 1519,
           "name": "apply_env_overrides",
           "file": "crates/external/codegraph-core/src/config_manager.rs",
           "line_start": 674,
@@ -585,7 +612,7 @@
           ]
         },
         {
-          "node_id": 2799,
+          "node_id": 2859,
           "name": "extract_symbols",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 989,
@@ -628,7 +655,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 5735,
+          "node_id": 5795,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
@@ -642,7 +669,7 @@
           ]
         },
         {
-          "node_id": 5750,
+          "node_id": 5810,
           "name": "handle_config_input",
           "file": "crates/tui/src/app.rs",
           "line_start": 702,
@@ -657,7 +684,7 @@
           ]
         },
         {
-          "node_id": 6452,
+          "node_id": 6512,
           "name": "draw_config_screen",
           "file": "crates/tui/src/ui.rs",
           "line_start": 330,
@@ -691,7 +718,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 5013,
+          "node_id": 5073,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
@@ -706,7 +733,7 @@
           ]
         },
         {
-          "node_id": 4972,
+          "node_id": 5032,
           "name": "new",
           "file": "crates/runner/src/runner.rs",
           "line_start": 54,
@@ -731,7 +758,7 @@
       "kind": "crate",
       "files": 1,
       "nodes": 463,
-      "edges": 3357,
+      "edges": 3367,
       "languages": [
         "Rust",
         "rust"
@@ -739,33 +766,6 @@
       "hotspots": [],
       "evidence_paths": [
         "crates/knowledge/src/lib.rs"
-      ]
-    },
-    {
-      "id": "crate:cli",
-      "name": "cli",
-      "kind": "crate",
-      "files": 21,
-      "nodes": 621,
-      "edges": 2503,
-      "languages": [
-        "Rust",
-        "rust"
-      ],
-      "hotspots": [],
-      "evidence_paths": [
-        "crates/cli/src/commands/codex.rs",
-        "crates/cli/src/commands/core.rs",
-        "crates/cli/src/commands/knowledge.rs",
-        "crates/cli/src/commands/mod.rs",
-        "crates/cli/src/commands/run.rs",
-        "crates/cli/src/commands/spec.rs",
-        "crates/cli/src/commands/spec_adr.rs",
-        "crates/cli/src/commands/spec_archive.rs",
-        "crates/cli/src/commands/spec_scaffold.rs",
-        "crates/cli/src/commands/spec_status.rs",
-        "crates/cli/src/commands/tui.rs",
-        "crates/cli/src/lib.rs"
       ]
     },
     {
@@ -1180,9 +1180,9 @@
         "schema_version": 1,
         "source_graph": {
           "provider": "codegraph-rust",
-          "files": 134,
-          "nodes": 8178,
-          "edges": 32790,
+          "files": 135,
+          "nodes": 8239,
+          "edges": 33116,
           "languages": [
             "rust"
           ],
@@ -1191,8 +1191,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 147,
-          "tokens": 108303,
+          "files": 153,
+          "tokens": 110800,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1308,7 +1308,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9054,
+            "edges": 9058,
             "languages": [
               "Rust",
               "rust"
@@ -1356,7 +1356,7 @@
             "kind": "crate",
             "files": 1,
             "nodes": 463,
-            "edges": 3357,
+            "edges": 3367,
             "languages": [
               "Rust",
               "rust"
@@ -1366,9 +1366,9 @@
             "id": "crate:cli",
             "name": "cli",
             "kind": "crate",
-            "files": 21,
-            "nodes": 621,
-            "edges": 2503,
+            "files": 22,
+            "nodes": 681,
+            "edges": 2829,
             "languages": [
               "Rust",
               "rust"
@@ -1392,7 +1392,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1908,
+            "edges": 1909,
             "languages": [
               "Rust",
               "rust"
@@ -1648,8 +1648,8 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "feat/policy-drift-token-expiry-precheck",
-      "head": "1ca1927febf0b4d108e4295ec49b39ca92f598bc",
+      "branch": "chore/wrap-up-2026-06-21-002",
+      "head": "831d3cd957c96b42f5169ac768e2eb43fd31e159",
       "dirty": true,
       "tags": [
         "ci",

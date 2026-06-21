@@ -104,7 +104,22 @@ artifacts or when preparing compact context for an agent.
      and to keep upstream/adopt-first anchors such as Beads, Cognitum, prompt
      sources, goose-like chat, or vault/toolchain surfaces explicit.
 
-9. Read compactly.
+9. Scaffold integration work before implementation.
+   - To create the next OpenSpec change from the highest-priority integration
+     work item:
+     `rusty-idd spec plan-integration --base .`
+   - To select a specific work item:
+     `rusty-idd spec plan-integration --base . --change integrate-fleet-handoff`
+     or
+     `rusty-idd spec plan-integration --base . --capability fleet-handoff`
+   - The command consumes `.idd/knowledge/integration-plan.json`, writes
+     proposal, design, tasks, and spec delta artifacts, preserves owner repos,
+     adopt-first inputs, validation gates, and rollback, and refuses to
+     overwrite existing files unless `--force` is passed.
+   - This is the handoff from graph planning into the normal Rusty IDD
+     OpenSpec lifecycle; implementation still follows adopt-first TDD.
+
+10. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
@@ -115,7 +130,7 @@ artifacts or when preparing compact context for an agent.
      and `.idd/knowledge/integration-plan.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-10. Stay in-process.
+11. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
