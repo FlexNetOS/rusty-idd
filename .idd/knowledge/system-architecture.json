@@ -25,7 +25,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:ecc",
@@ -50,7 +51,8 @@
         "role:agent-environment",
         "role:fleet-handoff"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:agent",
@@ -75,7 +77,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:agent-skills",
@@ -93,7 +96,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:assets",
@@ -108,7 +112,8 @@
       ],
       "markers": [],
       "roles": [],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:atc",
@@ -135,7 +140,8 @@
         "role:coordination-domain-surface",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:claude-code",
@@ -156,7 +162,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:claude-plugin",
@@ -174,7 +181,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:claude-plugins",
@@ -191,7 +199,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:codex",
@@ -212,7 +221,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:commands",
@@ -232,7 +242,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:copilot-plugin",
@@ -250,7 +261,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:database-hub",
@@ -270,7 +282,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:envctl",
@@ -297,7 +310,8 @@
         "role:rust-code-surface",
         "role:toolchain-provider"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:flexnetos-brain",
@@ -315,7 +329,8 @@
       "roles": [
         "role:documentation-knowledge"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:flexnetos-github-app",
@@ -336,7 +351,8 @@
       "roles": [
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:flexnetos-runner",
@@ -359,7 +375,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:flexnetos-wiki",
@@ -376,7 +393,8 @@
       "roles": [
         "role:documentation-knowledge"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:flow-hub",
@@ -396,7 +414,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:github-org",
@@ -421,7 +440,8 @@
         "role:agent-environment",
         "role:fleet-handoff"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:grit",
@@ -441,7 +461,8 @@
       "roles": [
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:handoff",
@@ -467,7 +488,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:harness-hub",
@@ -489,7 +511,8 @@
         "role:capability-hub",
         "role:fleet-handoff"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:hermes-agent",
@@ -511,7 +534,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:hooks-hub",
@@ -531,7 +555,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:icm",
@@ -555,7 +580,8 @@
         "role:knowledge-memory",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:kasetto",
@@ -578,7 +604,8 @@
         "role:agent-environment",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:lane",
@@ -602,7 +629,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:lifeos",
@@ -626,7 +654,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:loop-cli",
@@ -647,7 +676,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:loop-lib",
@@ -668,7 +698,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:mcp-hub",
@@ -690,7 +721,8 @@
         "role:capability-hub",
         "role:coordination-domain-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-plugins",
@@ -707,7 +739,8 @@
         "github-actions"
       ],
       "roles": [],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-cli",
@@ -729,7 +762,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-core",
@@ -750,7 +784,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-dashboard-cli",
@@ -768,7 +803,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-git-cli",
@@ -789,7 +825,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-git-lib",
@@ -810,7 +847,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-mcp",
@@ -829,7 +867,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-plugin-api",
@@ -849,7 +888,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-plugin-protocol",
@@ -870,7 +910,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-project-cli",
@@ -891,7 +932,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:meta-rust-cli",
@@ -912,7 +954,8 @@
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:my-wiki",
@@ -930,7 +973,8 @@
       "roles": [
         "role:documentation-knowledge"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:n8n",
@@ -953,7 +997,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:network-control",
@@ -974,7 +1019,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:network-hub",
@@ -994,7 +1040,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:obscura",
@@ -1015,7 +1062,8 @@
         "role:domain-upgrade-surface",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:obsidian-mind",
@@ -1037,7 +1085,8 @@
         "role:documentation-knowledge",
         "role:knowledge-memory"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:oh-my-claudecode",
@@ -1058,7 +1107,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:oh-my-pi",
@@ -1081,7 +1131,8 @@
         "role:agent-environment",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:plugin-hub",
@@ -1101,7 +1152,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:prompt-hub",
@@ -1128,7 +1180,8 @@
         "role:rust-code-surface",
         "role:spec-producer"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:rtk-tokenkill",
@@ -1152,7 +1205,8 @@
         "role:agent-environment",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:ruflo",
@@ -1177,7 +1231,8 @@
       "roles": [
         "role:agent-environment"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:rusty-idd",
@@ -1208,7 +1263,280 @@
         "role:idd-control-plane",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": true
+      "has_local_architecture_graph": true,
+      "local_architecture": {
+        "schema_version": 1,
+        "source_graph": {
+          "provider": "codegraph-rust",
+          "files": 134,
+          "nodes": 8059,
+          "edges": 32075,
+          "languages": [
+            "rust"
+          ],
+          "hotspots": 20,
+          "parse_failures": 0
+        },
+        "context_package": {
+          "provider": "repomix-rs",
+          "files": 137,
+          "tokens": 101158,
+          "output_style": "markdown",
+          "top_files_by_tokens": [
+            [
+              "crates/tui/src/app.rs",
+              9464
+            ],
+            [
+              "docs/rusty-idd/architecture-diagrams.md",
+              7741
+            ],
+            [
+              "AI_MERGE/11_integration_research_audit_roadmap.md",
+              5761
+            ],
+            [
+              "crates/knowledge/src/lib.rs",
+              5360
+            ],
+            [
+              "docs/rusty-idd/spec-engine-design.md",
+              4132
+            ],
+            [
+              "docs/rusty-idd/lifecycle-contract.md",
+              3666
+            ],
+            [
+              "crates/core/src/templates.rs",
+              2820
+            ],
+            [
+              "docs/rusty-idd/production-readiness-audit.md",
+              2502
+            ],
+            [
+              "AI_MERGE/14_upstream_full_adoption.md",
+              2421
+            ],
+            [
+              "AI_MERGE/16_upstream_knowledge_revisit.md",
+              2397
+            ],
+            [
+              "docs/rusty-idd/codex-environment.md",
+              2304
+            ],
+            [
+              "crates/tui/src/ui.rs",
+              2097
+            ],
+            [
+              "AI_MERGE/15_system_handoff_research.md",
+              1963
+            ],
+            [
+              "crates/runner/src/data.rs",
+              1712
+            ],
+            [
+              "crates/runner/src/runner.rs",
+              1603
+            ],
+            [
+              "AI_MERGE/12_knowledge_deep_audit.md",
+              1573
+            ],
+            [
+              "AI_MERGE/13_codex_environment.md",
+              1520
+            ],
+            [
+              "docs/rusty-idd/design.md",
+              1452
+            ],
+            [
+              "adr/0004-knowledge-direct-crate-integration.md",
+              1366
+            ],
+            [
+              "crates/runner/src/config.rs",
+              1364
+            ],
+            [
+              "docs/rusty-idd/slice-sequence.md",
+              1356
+            ],
+            [
+              "crates/cli/src/commands/codex.rs",
+              1294
+            ],
+            [
+              "crates/core/src/model.rs",
+              1150
+            ],
+            [
+              "docs/rusty-idd/dependency-duplication.md",
+              1095
+            ],
+            [
+              "docs/rusty-idd/parity-matrix.md",
+              1042
+            ]
+          ],
+          "suspicious_files": 0,
+          "skipped_files": 0
+        },
+        "component_count": 9,
+        "integration_surface_count": 4,
+        "top_components": [
+          {
+            "id": "external:codegraph-core",
+            "name": "codegraph-core",
+            "kind": "external_crate",
+            "files": 39,
+            "nodes": 1918,
+            "edges": 9041,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "external:codegraph-parser",
+            "name": "codegraph-parser",
+            "kind": "external_crate",
+            "files": 29,
+            "nodes": 1060,
+            "edges": 7485,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:tui",
+            "name": "tui",
+            "kind": "crate",
+            "files": 3,
+            "nodes": 1006,
+            "edges": 3985,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:runner",
+            "name": "runner",
+            "kind": "crate",
+            "files": 4,
+            "nodes": 770,
+            "edges": 3136,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:cli",
+            "name": "cli",
+            "kind": "crate",
+            "files": 21,
+            "nodes": 610,
+            "edges": 2450,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:knowledge",
+            "name": "knowledge",
+            "kind": "crate",
+            "files": 1,
+            "nodes": 361,
+            "edges": 2691,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:core",
+            "name": "core",
+            "kind": "crate",
+            "files": 11,
+            "nodes": 415,
+            "edges": 2373,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:spec",
+            "name": "spec",
+            "kind": "crate",
+            "files": 24,
+            "nodes": 461,
+            "edges": 1891,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          }
+        ],
+        "integration_surfaces": [
+          {
+            "id": "surface:codegraph-rust",
+            "name": "CodeGraph Rust",
+            "kind": "architecture_graph",
+            "provider": "codegraph-rust",
+            "capabilities": [
+              "multi-language tree-sitter registry",
+              "symbol/import/call/type graph extraction",
+              "impact and hotspot evidence"
+            ]
+          },
+          {
+            "id": "surface:repomix-rs",
+            "name": "repomix-rs",
+            "kind": "context_package",
+            "provider": "repomix-rs",
+            "capabilities": [
+              "compressed context packs",
+              "token accounting and top-file metrics",
+              "security and suspicious-file signals",
+              "git-aware context options"
+            ]
+          },
+          {
+            "id": "surface:openspec",
+            "name": "Rusty IDD OpenSpec lifecycle",
+            "kind": "lifecycle_control_plane",
+            "provider": "rusty-idd",
+            "capabilities": [
+              "goal intake",
+              "spec delta tracking",
+              "ordered implementation tasks",
+              "validation and merge evidence"
+            ]
+          },
+          {
+            "id": "surface:audit-manifest",
+            "name": "Audit and manifest evidence",
+            "kind": "evidence_control_plane",
+            "provider": "rusty-idd",
+            "capabilities": [
+              "AI_MERGE audit records",
+              "ADR traceability",
+              ".idd manifest baseline",
+              "knowledge artifact freshness"
+            ]
+          }
+        ]
+      }
     },
     {
       "id": "repo:ruvector",
@@ -1234,7 +1562,8 @@
         "role:agent-environment",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:shimmy",
@@ -1256,7 +1585,8 @@
       "roles": [
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:template-hub",
@@ -1276,7 +1606,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:teri",
@@ -1297,7 +1628,8 @@
       "roles": [
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:tool-hub",
@@ -1317,7 +1649,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:vault-hub",
@@ -1335,7 +1668,8 @@
       "roles": [
         "role:capability-hub"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:vox",
@@ -1358,7 +1692,8 @@
       "roles": [
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:weave",
@@ -1385,7 +1720,8 @@
         "role:fleet-handoff",
         "role:rust-code-surface"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     },
     {
       "id": "repo:yazelix",
@@ -1408,7 +1744,8 @@
         "role:parser-runtime-surface",
         "role:toolchain-provider"
       ],
-      "has_local_architecture_graph": false
+      "has_local_architecture_graph": false,
+      "local_architecture": null
     }
   ],
   "roles": [
@@ -3286,6 +3623,7 @@
   "findings": [
     "discovered 65 peer repos from meta project list --json",
     "9 repos have local dirty state recorded as evidence",
-    "1 repos expose .idd/knowledge/architecture.json"
+    "1 repos expose .idd/knowledge/architecture.json",
+    "1 repos expose parsed architecture summaries"
   ]
 }

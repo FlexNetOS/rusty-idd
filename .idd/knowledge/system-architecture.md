@@ -95,6 +95,12 @@
 | `weave` | `develop` | false | mcp, orchestration | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, agents, claude, github-actions |
 | `yazelix` | `main` | false | env, forked, terminal | role:parser-runtime-surface, role:toolchain-provider | claude, github-actions |
 
+## Peer Architecture Summaries
+
+| Repo | Source Graph | Context Package | Surfaces | Top Components |
+|---|---|---|---:|---|
+| `rusty-idd` | 134 files, 8059 nodes, 32075 edges via `codegraph-rust` | 137 files, 101158 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, runner, cli |
+
 ## Edges
 
 | Source | Kind | Target |
@@ -301,3 +307,4 @@
 - discovered 65 peer repos from meta project list --json
 - 9 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
+- 1 repos expose parsed architecture summaries

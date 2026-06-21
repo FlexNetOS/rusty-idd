@@ -50,6 +50,11 @@ artifacts or when preparing compact context for an agent.
      `rusty-idd knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md`
    - The system graph prefers `meta project list --json` and falls back to immediate
      child git repo discovery.
+   - When a peer repo already publishes `.idd/knowledge/architecture.json`, the
+     system graph ingests a bounded architecture summary: CodeGraph metrics,
+     repomix package metrics, languages, top components, and integration surfaces.
+     Invalid peer architecture artifacts are recorded as findings and do not block
+     graph generation.
    - Use it to map Rusty IDD to handoff, weave, Obscura, Yazelix, envctl,
      prompt/meta producers, hubs, and agent environment repos before planning a
      cross-repo integration.
@@ -64,6 +69,9 @@ artifacts or when preparing compact context for an agent.
    - The planning context consumes `.idd/knowledge/architecture.json` and, when
      present, `.idd/knowledge/system-architecture.json`; use it to choose
      proposal/spec/design/ADR/task scope and integration boundaries before edits.
+   - Selected system repos preserve their peer architecture summaries, so
+     OpenSpec proposals and task plans can map cross-repo components without
+     rescanning or mutating peer repos.
 
 7. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
