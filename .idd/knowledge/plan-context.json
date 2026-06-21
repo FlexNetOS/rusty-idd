@@ -17,7 +17,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 147,
-    "tokens": 108159,
+    "tokens": 108303,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -49,16 +49,16 @@
         2820
       ],
       [
+        "AI_MERGE/16_upstream_knowledge_revisit.md",
+        2540
+      ],
+      [
         "docs/rusty-idd/production-readiness-audit.md",
         2502
       ],
       [
         "AI_MERGE/14_upstream_full_adoption.md",
         2421
-      ],
-      [
-        "AI_MERGE/16_upstream_knowledge_revisit.md",
-        2397
       ],
       [
         "docs/rusty-idd/codex-environment.md",
@@ -1192,7 +1192,7 @@
         "context_package": {
           "provider": "repomix-rs",
           "files": 147,
-          "tokens": 108159,
+          "tokens": 108303,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1224,16 +1224,16 @@
               2820
             ],
             [
+              "AI_MERGE/16_upstream_knowledge_revisit.md",
+              2540
+            ],
+            [
               "docs/rusty-idd/production-readiness-audit.md",
               2502
             ],
             [
               "AI_MERGE/14_upstream_full_adoption.md",
               2421
-            ],
-            [
-              "AI_MERGE/16_upstream_knowledge_revisit.md",
-              2397
             ],
             [
               "docs/rusty-idd/codex-environment.md",
@@ -1648,9 +1648,9 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "feat/policy-drift-token-rotation",
-      "head": "3f39793a138033408773569936b3fd2357919db6",
-      "dirty": false,
+      "branch": "feat/policy-drift-token-expiry-precheck",
+      "head": "1ca1927febf0b4d108e4295ec49b39ca92f598bc",
+      "dirty": true,
       "tags": [
         "ci",
         "org"

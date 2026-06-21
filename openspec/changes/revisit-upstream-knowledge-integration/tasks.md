@@ -45,5 +45,5 @@
   `cargo test --workspace --all-features --locked`, strict docs,
   `cargo audit --deny warnings`, and
   `rusty-idd validate --workspace .`.
-- [ ] 4.5 Commit, push, open PR, wait for checks, merge to `develop`, and clean
+- [x] 4.5 Commit, push, open PR, wait for checks, merge to `develop`, and clean
   branch/worktree state.
