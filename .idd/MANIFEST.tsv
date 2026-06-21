@@ -61,7 +61,7 @@ path	size_bytes	fnv1a64
 .github/pull_request_template.md	480	54305cbc01d5f172
 .github/workflows/ci.yml	3602	3d45574dbfdf3898
 .github/workflows/gemini-loop.yml	1422	281633c18d042dd2
-.github/workflows/on-push-main.yml	784	6193f7e26f303f08
+.github/workflows/on-push-main.yml	784	d7a98e7a2dab3283
 .github/workflows/promote-verify.yml	2267	a8a43ac38a892ec4
 .github/workflows/release.yml	1201	988c6fe601a291f3
 .github/workflows/semantic-pr-title.yml	751	0b324eb8f050906e
@@ -71,9 +71,9 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/architecture.json	32103	2bbe5b067b107bcf
-.idd/knowledge/architecture.md	6351	27c822bffef4374f
-.idd/knowledge/index.json	17274129	8bb6d02e3f8751ae
+.idd/knowledge/architecture.json	32103	1b47a1d6c862b4fa
+.idd/knowledge/architecture.md	6351	281088616e17b7d4
+.idd/knowledge/index.json	17274129	61b6d14b88a8edff
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29309	2c10624e57f3c96b
@@ -86,7 +86,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21412	209360f533813946
 .idd/knowledge/plan-context.json	81240	3265bafada16d233
 .idd/knowledge/plan-context.md	16529	70a6ef2f5d8aa095
-.idd/knowledge/report.md	4530	1b8e4c9f2406d3c0
+.idd/knowledge/report.md	4530	c47362b4670c3f79
 .idd/knowledge/system-architecture.json	83254	d6e5891337a66f26
 .idd/knowledge/system-architecture.md	23442	898709990124070b
 .release-please-manifest.json	19	f96b929db2fa1886
