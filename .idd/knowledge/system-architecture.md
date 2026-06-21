@@ -48,7 +48,7 @@
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | ops, runner | role:fleet-handoff, role:rust-code-surface | rust, handoff, github-actions |
 | `flexnetos_wiki` | `` | false | docs | role:documentation-knowledge |  |
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
-| `github_org` | `research/harness-upgrade-targets` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
+| `github_org` | `chore/claude-config-remove-dead-hooks` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
 | `handoff` | `fix/windows-ledger-path-and-promote-checkout` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `master` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 135 files, 8319 nodes, 33539 edges via `codegraph-rust` | 168 files, 118969 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, runner |
+| `rusty-idd` | 135 files, 8319 nodes, 33539 edges via `codegraph-rust` | 170 files, 119995 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, runner |
 
 ## Edges
 

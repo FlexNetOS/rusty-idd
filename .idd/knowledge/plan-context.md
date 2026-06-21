@@ -4,7 +4,7 @@
 - Goal: turn the full agentic company operating model into ordered integration automation work
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
 - Source graph: 135 files, 8319 nodes, 33539 edges via `codegraph-rust`
-- Context package: 168 files, 118969 tokens via `repomix-rs`
+- Context package: 170 files, 119995 tokens via `repomix-rs`
 
 ## Automation Order
 
@@ -62,7 +62,7 @@
 | `handoff` | `fix/windows-ledger-path-and-promote-checkout` | true | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `harness_hub` | `master` | false | role:capability-hub, role:fleet-handoff |  |
 | `mcp_hub` | `master` | false | role:capability-hub, role:coordination-domain-surface |  |
-| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 135 files, 8319 nodes, 33539 edges; 118969 tokens; surfaces 4; top: codegraph-core, codegraph-parser, tui |
+| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 135 files, 8319 nodes, 33539 edges; 119995 tokens; surfaces 4; top: codegraph-core, codegraph-parser, tui |
 | `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `yazelix` | `main` | false | role:parser-runtime-surface, role:toolchain-provider |  |
 | `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
@@ -71,7 +71,7 @@
 | `database_hub` | `master` | false | role:capability-hub |  |
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `flow_hub` | `master` | false | role:capability-hub |  |
-| `github_org` | `research/harness-upgrade-targets` | false | role:agent-environment, role:fleet-handoff |  |
+| `github_org` | `chore/claude-config-remove-dead-hooks` | false | role:agent-environment, role:fleet-handoff |  |
 
 ## Operating Layers
 

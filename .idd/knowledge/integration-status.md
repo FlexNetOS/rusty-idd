@@ -8,13 +8,13 @@
 
 | Total | Planned | Incomplete Scaffold | Scaffolded | Ready To Archive | Archived |
 |---:|---:|---:|---:|---:|---:|
-| 19 | 18 | 0 | 0 | 1 | 0 |
+| 19 | 18 | 0 | 0 | 0 | 1 |
 
 ## Work Items
 
 | Priority | Change | Status | Capability | OpenSpec | Missing | Unchecked Tasks |
 |---:|---|---|---|---|---|---:|
-| 10 | `integrate-idd-spec-engine` | ready-to-archive | `capability:idd-spec-engine` | `openspec/changes/integrate-idd-spec-engine` |  | 0 |
+| 10 | `integrate-idd-spec-engine` | archived | `capability:idd-spec-engine` | `openspec/changes/archive/integrate-idd-spec-engine` |  | 0 |
 | 20 | `integrate-fleet-handoff` | planned | `capability:fleet-handoff` |  |  | 0 |
 | 30 | `integrate-agent-communication` | planned | `capability:agent-communication` |  |  | 0 |
 | 40 | `integrate-env-vault-relay` | planned | `capability:env-vault-relay` |  |  | 0 |
