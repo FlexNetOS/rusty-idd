@@ -37,6 +37,13 @@ system-architecture:
     {{rusty_idd}} knowledge system-architecture --workspace . --system-root .. --out .idd/knowledge/system-architecture.json
     {{rusty_idd}} knowledge system-architecture --workspace . --system-root .. --out .idd/knowledge/system-architecture.md
 
+plan-context:
+    {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --change graph-context-planning --goal "upgrade the rusty-idd workflow to ensure full system and architecture detailed graphs and real automated integration of CodeGraph and repomix"
+    {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --change graph-context-planning --goal "upgrade the rusty-idd workflow to ensure full system and architecture detailed graphs and real automated integration of CodeGraph and repomix"
+
+plan-context-check:
+    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge plan-context --workspace . --out "$tmpdir/plan-context.json" --change graph-context-planning --goal "upgrade the rusty-idd workflow to ensure full system and architecture detailed graphs and real automated integration of CodeGraph and repomix" && {{rusty_idd}} knowledge plan-context --workspace . --out "$tmpdir/plan-context.md" --change graph-context-planning --goal "upgrade the rusty-idd workflow to ensure full system and architecture detailed graphs and real automated integration of CodeGraph and repomix" && cmp -s .idd/knowledge/plan-context.json "$tmpdir/plan-context.json" && cmp -s .idd/knowledge/plan-context.md "$tmpdir/plan-context.md" || { echo ".idd/knowledge plan-context artifacts are stale; run just plan-context" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
+
 knowledge-check:
     tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge index --workspace . --out "$tmpdir/index.json" && {{rusty_idd}} knowledge report --workspace . --out "$tmpdir/report.md" && {{rusty_idd}} knowledge architecture --workspace . --out "$tmpdir/architecture.json" && {{rusty_idd}} knowledge architecture --workspace . --out "$tmpdir/architecture.md" && cmp -s .idd/knowledge/index.json "$tmpdir/index.json" && cmp -s .idd/knowledge/report.md "$tmpdir/report.md" && cmp -s .idd/knowledge/architecture.json "$tmpdir/architecture.json" && cmp -s .idd/knowledge/architecture.md "$tmpdir/architecture.md" || { echo ".idd/knowledge artifacts are stale; run just knowledge" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
@@ -52,4 +59,4 @@ codex-runtime-audit:
 codex-system-audit:
     {{rusty_idd}} codex system-audit
 
-ci: build test validate manifest-check knowledge-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check knowledge-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
