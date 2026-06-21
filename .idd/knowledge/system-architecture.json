@@ -1269,8 +1269,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 134,
-          "nodes": 8130,
-          "edges": 32496,
+          "nodes": 8178,
+          "edges": 32790,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 142,
-          "tokens": 105115,
+          "files": 147,
+          "tokens": 108159,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1293,7 +1293,7 @@
             ],
             [
               "crates/knowledge/src/lib.rs",
-              6033
+              6510
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1372,12 +1372,12 @@
               1294
             ],
             [
-              "crates/core/src/model.rs",
-              1150
+              "Justfile",
+              1276
             ],
             [
-              "Justfile",
-              1099
+              "crates/core/src/model.rs",
+              1150
             ],
             [
               "docs/rusty-idd/dependency-duplication.md",
@@ -1396,7 +1396,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9048,
+            "edges": 9054,
             "languages": [
               "Rust",
               "rust"
@@ -1443,8 +1443,8 @@
             "name": "knowledge",
             "kind": "crate",
             "files": 1,
-            "nodes": 423,
-            "edges": 3087,
+            "nodes": 463,
+            "edges": 3357,
             "languages": [
               "Rust",
               "rust"
@@ -1455,8 +1455,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 21,
-            "nodes": 616,
-            "edges": 2477,
+            "nodes": 621,
+            "edges": 2503,
             "languages": [
               "Rust",
               "rust"
@@ -1480,7 +1480,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1896,
+            "edges": 1908,
             "languages": [
               "Rust",
               "rust"

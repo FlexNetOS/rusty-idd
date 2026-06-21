@@ -91,17 +91,31 @@ artifacts or when preparing compact context for an agent.
      Beads upstreams, and distributed device fabric are recorded as findings
      unless repo evidence exists.
 
-8. Read compactly.
+8. Generate the integration plan when the task needs ordered cross-repo execution.
+   - Markdown for humans/agents:
+     `rusty-idd knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.md`
+   - JSON for automation:
+     `rusty-idd knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.json`
+   - The integration plan consumes `.idd/knowledge/operating-model.json` and
+     turns partial, external, or missing capabilities into OpenSpec-ready work
+     items with owner repos, unresolved anchors, adopt-first inputs, validation
+     gates, and rollback guidance.
+   - Use this before cross-repo implementation to choose the next vertical slice
+     and to keep upstream/adopt-first anchors such as Beads, Cognitum, prompt
+     sources, goose-like chat, or vault/toolchain surfaces explicit.
+
+9. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
      `.idd/knowledge/system-architecture.json`, and
      `.idd/knowledge/system-architecture.md`, `.idd/knowledge/plan-context.json`,
      `.idd/knowledge/plan-context.md`, `.idd/knowledge/operating-model.json`,
-     and `.idd/knowledge/operating-model.md`
+     `.idd/knowledge/operating-model.md`, `.idd/knowledge/integration-plan.json`,
+     and `.idd/knowledge/integration-plan.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-9. Stay in-process.
+10. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
@@ -116,6 +130,7 @@ cargo run --bin rusty-idd -- knowledge refresh --workspace .
 cargo run --bin rusty-idd -- knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md
 cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md
 cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.md
+cargo run --bin rusty-idd -- knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.md
 cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"
 cargo run --bin rusty-idd -- validate --workspace .
 ```

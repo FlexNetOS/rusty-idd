@@ -1,7 +1,7 @@
 CARGO ?= cargo
 RUSTY_IDD ?= $(CARGO) run --bin rusty-idd --
 
-.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check operating-model operating-model-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
+.PHONY: build test fmt fmt-check lint audit validate manifest manifest-check knowledge knowledge-check operating-model operating-model-check integration-plan integration-plan-check codex-env-check codex-runtime-audit codex-system-audit codex-model-loop ci install-hooks clean
 
 build:
 	$(CARGO) build --workspace --locked
@@ -43,6 +43,13 @@ operating-model:
 operating-model-check:
 	tmpdir=$$(mktemp -d) && $(RUSTY_IDD) knowledge operating-model --workspace . --out "$$tmpdir/operating-model.json" && $(RUSTY_IDD) knowledge operating-model --workspace . --out "$$tmpdir/operating-model.md" && cmp -s .idd/knowledge/operating-model.json "$$tmpdir/operating-model.json" && cmp -s .idd/knowledge/operating-model.md "$$tmpdir/operating-model.md" || (echo ".idd/knowledge operating-model artifacts are stale; run make operating-model" >&2; rm -rf "$$tmpdir"; exit 1); rm -rf "$$tmpdir"
 
+integration-plan:
+	$(RUSTY_IDD) knowledge integration-plan --workspace . --out .idd/knowledge/integration-plan.json
+	$(RUSTY_IDD) knowledge integration-plan --workspace . --out .idd/knowledge/integration-plan.md
+
+integration-plan-check:
+	tmpdir=$$(mktemp -d) && $(RUSTY_IDD) knowledge integration-plan --workspace . --out "$$tmpdir/integration-plan.json" && $(RUSTY_IDD) knowledge integration-plan --workspace . --out "$$tmpdir/integration-plan.md" && cmp -s .idd/knowledge/integration-plan.json "$$tmpdir/integration-plan.json" && cmp -s .idd/knowledge/integration-plan.md "$$tmpdir/integration-plan.md" || (echo ".idd/knowledge integration-plan artifacts are stale; run make integration-plan" >&2; rm -rf "$$tmpdir"; exit 1); rm -rf "$$tmpdir"
+
 codex-env-check:
 	$(RUSTY_IDD) codex env-check
 
@@ -55,7 +62,7 @@ codex-runtime-audit:
 codex-system-audit:
 	$(RUSTY_IDD) codex system-audit
 
-ci: build test validate manifest-check knowledge-check operating-model-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
 
 install-hooks:
 	git config core.hooksPath .githooks

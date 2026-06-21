@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 134 files, 8130 nodes, 32496 edges via `codegraph-rust` | 142 files, 105115 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, runner, knowledge |
+| `rusty-idd` | 134 files, 8178 nodes, 32790 edges via `codegraph-rust` | 147 files, 108159 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, runner, knowledge |
 
 ## Edges
 

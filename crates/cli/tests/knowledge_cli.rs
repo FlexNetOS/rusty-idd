@@ -224,6 +224,23 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     assert!(model.contains("\"capability:idd-spec-engine\""));
     assert!(model.contains("\"capability:fleet-handoff\""));
     assert!(model.contains("\"capability:agent-communication\""));
+
+    run_ok(
+        &[
+            "knowledge",
+            "integration-plan",
+            "--workspace",
+            ".",
+            "--operating-model",
+            "operating-model.json",
+            "--out",
+            "integration-plan.json",
+        ],
+        &rusty,
+    );
+    let plan = fs::read_to_string(rusty.join("integration-plan.json")).unwrap();
+    assert!(plan.contains("\"work_items\""));
+    assert!(plan.contains("\"integrate-idd-spec-engine\""));
 }
 
 fn run_git(args: &[&str], cwd: &Path) {
