@@ -252,6 +252,112 @@ pub struct KnowledgeReport {
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArchitectureGraph {
+    pub schema_version: u32,
+    pub workspace_fingerprint: String,
+    pub workspace_root: String,
+    pub source_graph: ArchitectureSourceGraph,
+    pub context_package: ArchitectureContextPackage,
+    pub components: Vec<ArchitectureComponent>,
+    pub integration_surfaces: Vec<IntegrationSurface>,
+    pub automation_stages: Vec<AutomationStage>,
+    pub edges: Vec<ArchitectureEdge>,
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArchitectureSourceGraph {
+    pub provider: String,
+    pub files: usize,
+    pub nodes: usize,
+    pub edges: usize,
+    pub languages: Vec<String>,
+    pub hotspots: usize,
+    pub parse_failures: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArchitectureContextPackage {
+    pub provider: String,
+    pub files: usize,
+    pub tokens: usize,
+    pub output_style: PackStyle,
+    pub top_files_by_tokens: Vec<(String, usize)>,
+    pub suspicious_files: usize,
+    pub skipped_files: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArchitectureComponent {
+    pub id: String,
+    pub name: String,
+    pub kind: String,
+    pub files: usize,
+    pub nodes: usize,
+    pub edges: usize,
+    pub languages: Vec<String>,
+    pub hotspots: Vec<Hotspot>,
+    pub evidence_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationSurface {
+    pub id: String,
+    pub name: String,
+    pub kind: String,
+    pub provider: String,
+    pub default_scope: String,
+    pub capabilities: Vec<String>,
+    pub evidence_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct AutomationStage {
+    pub id: String,
+    pub name: String,
+    pub purpose: String,
+    pub surfaces: Vec<String>,
+    pub artifact_paths: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct ArchitectureEdge {
+    pub source: String,
+    pub target: String,
+    pub kind: String,
+    pub evidence: Vec<String>,
+}
+
+#[derive(Debug, Clone)]
+pub struct ArchitectureOptions {
+    pub workspace: PathBuf,
+    pub format: ArchitectureFormat,
+}
+
+impl ArchitectureOptions {
+    pub fn new(workspace: impl Into<PathBuf>, format: ArchitectureFormat) -> Self {
+        Self {
+            workspace: workspace.into(),
+            format,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum ArchitectureFormat {
+    Markdown,
+    Json,
+}
+
+#[derive(Debug, Clone)]
+pub struct RefreshArtifacts {
+    pub index: PathBuf,
+    pub report: PathBuf,
+    pub architecture_json: PathBuf,
+    pub architecture_markdown: PathBuf,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QueryResult {
     pub title: String,
     pub nodes: Vec<KnowledgeNode>,
@@ -433,12 +539,27 @@ pub fn build_knowledge_report(options: ReportOptions) -> Result<String> {
     pack_options
         .ignore_patterns
         .push("third_party/upstream/**".to_string());
+    pack_options
+        .ignore_patterns
+        .push("AI_MERGE/validation_report.md".to_string());
     let pack = pack_workspace(pack_options)?;
     let report = report_from_parts(&index, pack);
 
     match options.format {
         ReportFormat::Markdown => Ok(render_report_markdown(&report)),
         ReportFormat::Json => serde_json::to_string_pretty(&report).context("serialize report"),
+    }
+}
+
+pub fn build_architecture_graph(options: ArchitectureOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let index = index_workspace(IndexOptions::new(&workspace))?;
+    let pack = build_architecture_pack_summary(&workspace)?;
+    let graph = architecture_graph_from_parts(&workspace, &index, pack);
+
+    match options.format {
+        ArchitectureFormat::Markdown => Ok(render_architecture_markdown(&graph)),
+        ArchitectureFormat::Json => serde_json::to_string_pretty(&graph).context("serialize graph"),
     }
 }
 
@@ -470,7 +591,7 @@ pub fn query_knowledge_index(index: &KnowledgeIndex, query: KnowledgeQuery) -> Q
     }
 }
 
-pub fn refresh_workspace(workspace: impl AsRef<Path>) -> Result<(PathBuf, PathBuf)> {
+pub fn refresh_workspace(workspace: impl AsRef<Path>) -> Result<RefreshArtifacts> {
     let workspace = canonical_workspace(workspace.as_ref())?;
     let out_dir = workspace.join(".idd/knowledge");
     fs::create_dir_all(&out_dir).context("create .idd/knowledge")?;
@@ -483,7 +604,26 @@ pub fn refresh_workspace(workspace: impl AsRef<Path>) -> Result<(PathBuf, PathBu
     let report_path = out_dir.join("report.md");
     write_text(&report_path, &report)?;
 
-    Ok((index_path, report_path))
+    let architecture_json = build_architecture_graph(ArchitectureOptions::new(
+        &workspace,
+        ArchitectureFormat::Json,
+    ))?;
+    let architecture_json_path = out_dir.join("architecture.json");
+    write_text(&architecture_json_path, &(architecture_json + "\n"))?;
+
+    let architecture_markdown = build_architecture_graph(ArchitectureOptions::new(
+        &workspace,
+        ArchitectureFormat::Markdown,
+    ))?;
+    let architecture_markdown_path = out_dir.join("architecture.md");
+    write_text(&architecture_markdown_path, &architecture_markdown)?;
+
+    Ok(RefreshArtifacts {
+        index: index_path,
+        report: report_path,
+        architecture_json: architecture_json_path,
+        architecture_markdown: architecture_markdown_path,
+    })
 }
 
 pub fn load_index(path: impl AsRef<Path>) -> Result<KnowledgeIndex> {
@@ -1125,7 +1265,7 @@ fn report_from_parts(index: &KnowledgeIndex, pack: PackSummary) -> KnowledgeRepo
     let mut findings = Vec::new();
     if !index.failures.is_empty() {
         findings.push(format!(
-            "{} Rust files failed to parse",
+            "{} source files failed to parse",
             index.failures.len()
         ));
     }
@@ -1164,6 +1304,634 @@ fn report_from_parts(index: &KnowledgeIndex, pack: PackSummary) -> KnowledgeRepo
         hotspots: index.hotspots.clone(),
         findings,
     }
+}
+
+fn build_architecture_pack_summary(workspace: &Path) -> Result<PackSummary> {
+    let tmp = tempfile::tempdir().context("create temporary architecture pack directory")?;
+    let pack_out = tmp.path().join("architecture-pack.md");
+    let mut pack_options = PackWorkspaceOptions::new(workspace, &pack_out, PackStyle::Markdown);
+    pack_options.compress = true;
+    pack_options.remove_comments = true;
+    pack_options.remove_empty_lines = true;
+    pack_options.top_files_length = Some(25);
+    pack_options.include_patterns = architecture_include_patterns();
+    pack_options
+        .ignore_patterns
+        .push("third_party/upstream/**".to_string());
+    pack_options
+        .ignore_patterns
+        .push("crates/external/**".to_string());
+    pack_options
+        .ignore_patterns
+        .push("crates/tui/openspec/changes/archive/**".to_string());
+    pack_options
+        .ignore_patterns
+        .push("AI_MERGE/validation_report.md".to_string());
+    pack_workspace(pack_options)
+}
+
+fn architecture_include_patterns() -> Vec<String> {
+    [
+        "AGENTS.md",
+        "Cargo.toml",
+        "Justfile",
+        "Makefile",
+        "crates/**/*.rs",
+        "crates/**/Cargo.toml",
+        "openspec/**/*.md",
+        "adr/*.md",
+        "AI_MERGE/*.md",
+        "docs/**/*.md",
+        ".agents/skills/**/SKILL.md",
+        ".idd/MANIFEST.tsv",
+    ]
+    .into_iter()
+    .map(ToOwned::to_owned)
+    .collect()
+}
+
+fn architecture_graph_from_parts(
+    workspace: &Path,
+    index: &KnowledgeIndex,
+    pack: PackSummary,
+) -> ArchitectureGraph {
+    let components = architecture_components(index);
+    let integration_surfaces = integration_surfaces(workspace);
+    let automation_stages = automation_stages();
+    let mut edges = architecture_component_edges(index);
+    edges.extend(automation_stage_edges(&automation_stages));
+    edges.extend(integration_component_edges(
+        &integration_surfaces,
+        &components,
+    ));
+    edges.sort_by(|a, b| {
+        a.source
+            .cmp(&b.source)
+            .then(a.target.cmp(&b.target))
+            .then(a.kind.cmp(&b.kind))
+    });
+    edges.dedup_by(|a, b| a.source == b.source && a.target == b.target && a.kind == b.kind);
+
+    let mut findings = Vec::new();
+    if index.failures.is_empty() {
+        findings.push("CodeGraph-backed parsing completed without source failures".to_string());
+    } else {
+        findings.push(format!(
+            "CodeGraph-backed parsing recorded {} source failures",
+            index.failures.len()
+        ));
+    }
+    findings.push(format!(
+        "repomix context package measured {} files and {} tokens",
+        pack.total_files, pack.total_tokens
+    ));
+    if !pack.suspicious_files.is_empty() {
+        findings.push(format!(
+            "repomix security scan reported {} suspicious files",
+            pack.suspicious_files.len()
+        ));
+    }
+
+    ArchitectureGraph {
+        schema_version: 1,
+        workspace_fingerprint: index.workspace_fingerprint.clone(),
+        workspace_root: index.workspace_root.clone(),
+        source_graph: ArchitectureSourceGraph {
+            provider: "codegraph-rust".to_string(),
+            files: index.files.len(),
+            nodes: index.nodes.len(),
+            edges: index.edges.len(),
+            languages: indexed_languages(index),
+            hotspots: index.hotspots.len(),
+            parse_failures: index.failures.len(),
+        },
+        context_package: ArchitectureContextPackage {
+            provider: "repomix-rs".to_string(),
+            files: pack.total_files,
+            tokens: pack.total_tokens,
+            output_style: PackStyle::Markdown,
+            top_files_by_tokens: pack.top_files_by_tokens,
+            suspicious_files: pack.suspicious_files.len(),
+            skipped_files: pack.skipped_files.len(),
+        },
+        components,
+        integration_surfaces,
+        automation_stages,
+        edges,
+        findings,
+    }
+}
+
+fn indexed_languages(index: &KnowledgeIndex) -> Vec<String> {
+    index
+        .files
+        .iter()
+        .map(|file| file.language.clone())
+        .collect::<BTreeSet<_>>()
+        .into_iter()
+        .collect()
+}
+
+#[derive(Default)]
+struct ComponentAccumulator {
+    id: String,
+    name: String,
+    kind: String,
+    files: BTreeSet<String>,
+    nodes: BTreeSet<u64>,
+    edges: BTreeSet<u64>,
+    languages: BTreeSet<String>,
+    hotspots: Vec<Hotspot>,
+    evidence_paths: BTreeSet<String>,
+}
+
+fn architecture_components(index: &KnowledgeIndex) -> Vec<ArchitectureComponent> {
+    let mut components = BTreeMap::<String, ComponentAccumulator>::new();
+    let mut node_component = BTreeMap::<u64, String>::new();
+
+    for file in &index.files {
+        let info = component_info_for_path(&file.path);
+        let component = components
+            .entry(info.id.clone())
+            .or_insert_with(|| ComponentAccumulator {
+                id: info.id.clone(),
+                name: info.name.clone(),
+                kind: info.kind.clone(),
+                ..ComponentAccumulator::default()
+            });
+        component.files.insert(file.path.clone());
+        component.nodes.insert(file.node_id);
+        component.languages.insert(file.language.clone());
+        component.evidence_paths.insert(file.path.clone());
+        node_component.insert(file.node_id, info.id);
+    }
+
+    for node in &index.nodes {
+        let Some(file) = &node.file else {
+            continue;
+        };
+        let info = component_info_for_path(file);
+        let component = components
+            .entry(info.id.clone())
+            .or_insert_with(|| ComponentAccumulator {
+                id: info.id.clone(),
+                name: info.name.clone(),
+                kind: info.kind.clone(),
+                ..ComponentAccumulator::default()
+            });
+        component.nodes.insert(node.id);
+        component.evidence_paths.insert(file.clone());
+        if let Some(language) = node
+            .properties
+            .get("language")
+            .and_then(|value| value.as_str())
+        {
+            component.languages.insert(language.to_string());
+        }
+        node_component.insert(node.id, info.id);
+    }
+
+    for edge in &index.edges {
+        if let Some(component_id) = node_component.get(&edge.source) {
+            if let Some(component) = components.get_mut(component_id) {
+                component.edges.insert(edge.id);
+            }
+        }
+        if let Some(component_id) = node_component.get(&edge.target) {
+            if let Some(component) = components.get_mut(component_id) {
+                component.edges.insert(edge.id);
+            }
+        }
+    }
+
+    for hotspot in &index.hotspots {
+        if let Some(file) = &hotspot.file {
+            let info = component_info_for_path(file);
+            if let Some(component) = components.get_mut(&info.id) {
+                component.hotspots.push(hotspot.clone());
+            }
+        }
+    }
+
+    components
+        .into_values()
+        .map(|component| ArchitectureComponent {
+            id: component.id,
+            name: component.name,
+            kind: component.kind,
+            files: component.files.len(),
+            nodes: component.nodes.len(),
+            edges: component.edges.len(),
+            languages: component.languages.into_iter().collect(),
+            hotspots: component.hotspots.into_iter().take(10).collect(),
+            evidence_paths: component.evidence_paths.into_iter().take(12).collect(),
+        })
+        .collect()
+}
+
+struct ComponentInfo {
+    id: String,
+    name: String,
+    kind: String,
+}
+
+fn component_info_for_path(path: &str) -> ComponentInfo {
+    let parts = path.split('/').collect::<Vec<_>>();
+    match parts.as_slice() {
+        ["crates", "external", name, ..] => ComponentInfo {
+            id: format!("external:{name}"),
+            name: (*name).to_string(),
+            kind: "external_crate".to_string(),
+        },
+        ["crates", name, ..] => ComponentInfo {
+            id: format!("crate:{name}"),
+            name: (*name).to_string(),
+            kind: "crate".to_string(),
+        },
+        ["openspec", ..] => ComponentInfo {
+            id: "control:openspec".to_string(),
+            name: "OpenSpec lifecycle".to_string(),
+            kind: "control_plane".to_string(),
+        },
+        ["adr", ..] => ComponentInfo {
+            id: "control:adr".to_string(),
+            name: "Architecture decisions".to_string(),
+            kind: "control_plane".to_string(),
+        },
+        ["AI_MERGE", ..] => ComponentInfo {
+            id: "control:ai_merge".to_string(),
+            name: "AI merge evidence".to_string(),
+            kind: "control_plane".to_string(),
+        },
+        [".agents", ..] => ComponentInfo {
+            id: "control:agents".to_string(),
+            name: "Agent skills".to_string(),
+            kind: "control_plane".to_string(),
+        },
+        ["docs", ..] => ComponentInfo {
+            id: "control:docs".to_string(),
+            name: "Documentation".to_string(),
+            kind: "control_plane".to_string(),
+        },
+        [first, ..] => ComponentInfo {
+            id: format!("repo:{first}"),
+            name: (*first).to_string(),
+            kind: "repo_surface".to_string(),
+        },
+        [] => ComponentInfo {
+            id: "repo:root".to_string(),
+            name: "Repository root".to_string(),
+            kind: "repo_surface".to_string(),
+        },
+    }
+}
+
+fn architecture_component_edges(index: &KnowledgeIndex) -> Vec<ArchitectureEdge> {
+    let node_components = index
+        .nodes
+        .iter()
+        .filter_map(|node| {
+            node.file
+                .as_deref()
+                .map(component_info_for_path)
+                .map(|info| (node.id, info.id))
+        })
+        .collect::<BTreeMap<_, _>>();
+    let mut edges = Vec::new();
+    for edge in &index.edges {
+        let Some(source) = node_components.get(&edge.source) else {
+            continue;
+        };
+        let Some(target) = node_components.get(&edge.target) else {
+            continue;
+        };
+        if source == target {
+            continue;
+        }
+        edges.push(ArchitectureEdge {
+            source: source.clone(),
+            target: target.clone(),
+            kind: format!("codegraph:{}", edge.kind),
+            evidence: vec![format!("knowledge edge {}", edge.id)],
+        });
+    }
+    edges
+}
+
+fn integration_surfaces(workspace: &Path) -> Vec<IntegrationSurface> {
+    vec![
+        IntegrationSurface {
+            id: "surface:codegraph-rust".to_string(),
+            name: "CodeGraph Rust".to_string(),
+            kind: "architecture_graph".to_string(),
+            provider: "codegraph-rust".to_string(),
+            default_scope: "in-process knowledge indexing".to_string(),
+            capabilities: vec![
+                "multi-language tree-sitter registry".to_string(),
+                "symbol/import/call/type graph extraction".to_string(),
+                "impact and hotspot evidence".to_string(),
+            ],
+            evidence_paths: existing_paths(
+                workspace,
+                &[
+                    "crates/external/codegraph-core",
+                    "crates/external/codegraph-parser",
+                    "third_party/upstream/codegraph-rust",
+                    "adr/0005-full-feature-upstream-knowledge-integration.md",
+                    "AI_MERGE/16_upstream_knowledge_revisit.md",
+                ],
+            ),
+        },
+        IntegrationSurface {
+            id: "surface:repomix-rs".to_string(),
+            name: "repomix-rs".to_string(),
+            kind: "context_package".to_string(),
+            provider: "repomix-rs".to_string(),
+            default_scope: "bounded context packing and token policy".to_string(),
+            capabilities: vec![
+                "compressed context packs".to_string(),
+                "token accounting and top-file metrics".to_string(),
+                "security and suspicious-file signals".to_string(),
+                "git-aware context options".to_string(),
+            ],
+            evidence_paths: existing_paths(
+                workspace,
+                &[
+                    "third_party/upstream/repomix-rs",
+                    "Cargo.toml",
+                    "adr/0005-full-feature-upstream-knowledge-integration.md",
+                    "AI_MERGE/16_upstream_knowledge_revisit.md",
+                ],
+            ),
+        },
+        IntegrationSurface {
+            id: "surface:openspec".to_string(),
+            name: "Rusty IDD OpenSpec lifecycle".to_string(),
+            kind: "lifecycle_control_plane".to_string(),
+            provider: "rusty-idd".to_string(),
+            default_scope: "proposal, spec, design, ADR, task, validation, archive".to_string(),
+            capabilities: vec![
+                "goal intake".to_string(),
+                "spec delta tracking".to_string(),
+                "ordered implementation tasks".to_string(),
+                "validation and merge evidence".to_string(),
+            ],
+            evidence_paths: existing_paths(
+                workspace,
+                &[
+                    "openspec",
+                    "crates/spec",
+                    "crates/runner",
+                    "docs/rusty-idd/proposal.md",
+                ],
+            ),
+        },
+        IntegrationSurface {
+            id: "surface:audit-manifest".to_string(),
+            name: "Audit and manifest evidence".to_string(),
+            kind: "evidence_control_plane".to_string(),
+            provider: "rusty-idd".to_string(),
+            default_scope: "deterministic generated control-plane artifacts".to_string(),
+            capabilities: vec![
+                "AI_MERGE audit records".to_string(),
+                "ADR traceability".to_string(),
+                ".idd manifest baseline".to_string(),
+                "knowledge artifact freshness".to_string(),
+            ],
+            evidence_paths: existing_paths(workspace, &["AI_MERGE", "adr", ".idd/MANIFEST.tsv"]),
+        },
+    ]
+}
+
+fn existing_paths(workspace: &Path, paths: &[&str]) -> Vec<String> {
+    paths
+        .iter()
+        .filter(|path| workspace.join(path).exists())
+        .map(|path| (*path).to_string())
+        .collect()
+}
+
+fn automation_stages() -> Vec<AutomationStage> {
+    vec![
+        AutomationStage {
+            id: "stage:intake".to_string(),
+            name: "Goal intake and bounded context".to_string(),
+            purpose: "turn repo state and user goal into bounded agent context".to_string(),
+            surfaces: vec![
+                "surface:repomix-rs".to_string(),
+                "surface:openspec".to_string(),
+            ],
+            artifact_paths: vec!["openspec/changes/*/proposal.md".to_string()],
+        },
+        AutomationStage {
+            id: "stage:architecture-map".to_string(),
+            name: "Architecture mapping".to_string(),
+            purpose: "map source structure, integrations, and impact before implementation"
+                .to_string(),
+            surfaces: vec![
+                "surface:codegraph-rust".to_string(),
+                "surface:repomix-rs".to_string(),
+            ],
+            artifact_paths: vec![
+                ".idd/knowledge/index.json".to_string(),
+                ".idd/knowledge/architecture.json".to_string(),
+            ],
+        },
+        AutomationStage {
+            id: "stage:specification".to_string(),
+            name: "Specification and decisions".to_string(),
+            purpose: "convert architecture map into spec deltas, design, ADRs, and tasks"
+                .to_string(),
+            surfaces: vec![
+                "surface:openspec".to_string(),
+                "surface:audit-manifest".to_string(),
+            ],
+            artifact_paths: vec![
+                "openspec/changes/*/specs/**/*.md".to_string(),
+                "adr/*.md".to_string(),
+                "openspec/changes/*/tasks.md".to_string(),
+            ],
+        },
+        AutomationStage {
+            id: "stage:implementation".to_string(),
+            name: "Implementation".to_string(),
+            purpose: "apply graph-informed, spec-backed code changes".to_string(),
+            surfaces: vec![
+                "surface:codegraph-rust".to_string(),
+                "surface:openspec".to_string(),
+            ],
+            artifact_paths: vec![
+                "crates/**".to_string(),
+                "openspec/changes/*/tasks.md".to_string(),
+            ],
+        },
+        AutomationStage {
+            id: "stage:validation".to_string(),
+            name: "Validation and regeneration".to_string(),
+            purpose: "run gates and refresh deterministic control-plane artifacts".to_string(),
+            surfaces: vec![
+                "surface:codegraph-rust".to_string(),
+                "surface:repomix-rs".to_string(),
+                "surface:audit-manifest".to_string(),
+            ],
+            artifact_paths: vec![
+                ".idd/knowledge/report.md".to_string(),
+                ".idd/MANIFEST.tsv".to_string(),
+                "AI_MERGE/*.md".to_string(),
+            ],
+        },
+        AutomationStage {
+            id: "stage:handoff".to_string(),
+            name: "Handoff and merge evidence".to_string(),
+            purpose: "record evidence, rollback, and merge-ready traceability".to_string(),
+            surfaces: vec![
+                "surface:audit-manifest".to_string(),
+                "surface:openspec".to_string(),
+            ],
+            artifact_paths: vec![
+                "AI_MERGE/*.md".to_string(),
+                "openspec/changes/archive/**".to_string(),
+            ],
+        },
+    ]
+}
+
+fn automation_stage_edges(stages: &[AutomationStage]) -> Vec<ArchitectureEdge> {
+    let mut edges = Vec::new();
+    for stage in stages {
+        for surface in &stage.surfaces {
+            edges.push(ArchitectureEdge {
+                source: stage.id.clone(),
+                target: surface.clone(),
+                kind: "uses".to_string(),
+                evidence: stage.artifact_paths.clone(),
+            });
+        }
+    }
+    for window in stages.windows(2) {
+        edges.push(ArchitectureEdge {
+            source: window[0].id.clone(),
+            target: window[1].id.clone(),
+            kind: "precedes".to_string(),
+            evidence: Vec::new(),
+        });
+    }
+    edges
+}
+
+fn integration_component_edges(
+    surfaces: &[IntegrationSurface],
+    components: &[ArchitectureComponent],
+) -> Vec<ArchitectureEdge> {
+    let component_ids = components
+        .iter()
+        .map(|component| component.id.as_str())
+        .collect::<BTreeSet<_>>();
+    let mut edges = Vec::new();
+    for surface in surfaces {
+        let target = match surface.id.as_str() {
+            "surface:codegraph-rust" => "external:codegraph-parser",
+            "surface:openspec" => "crate:spec",
+            "surface:audit-manifest" => "control:ai_merge",
+            _ => "",
+        };
+        if !target.is_empty() && component_ids.contains(target) {
+            edges.push(ArchitectureEdge {
+                source: surface.id.clone(),
+                target: target.to_string(),
+                kind: "implemented_by".to_string(),
+                evidence: surface.evidence_paths.clone(),
+            });
+        }
+    }
+    edges
+}
+
+fn render_architecture_markdown(graph: &ArchitectureGraph) -> String {
+    let mut out = String::new();
+    out.push_str("# Architecture Graph\n\n");
+    out.push_str(&format!(
+        "- Workspace fingerprint: `{}`\n",
+        graph.workspace_fingerprint
+    ));
+    out.push_str(&format!(
+        "- Source graph provider: `{}`\n",
+        graph.source_graph.provider
+    ));
+    out.push_str(&format!(
+        "- Source graph: {} files, {} nodes, {} edges\n",
+        graph.source_graph.files, graph.source_graph.nodes, graph.source_graph.edges
+    ));
+    out.push_str(&format!(
+        "- Source languages: {}\n",
+        graph.source_graph.languages.join(", ")
+    ));
+    out.push_str(&format!(
+        "- Context provider: `{}`\n",
+        graph.context_package.provider
+    ));
+    out.push_str(&format!(
+        "- Context package: {} files, {} tokens\n\n",
+        graph.context_package.files, graph.context_package.tokens
+    ));
+
+    out.push_str("## Automation Stages\n\n");
+    out.push_str("| Stage | Purpose | Surfaces |\n|---|---|---|\n");
+    for stage in &graph.automation_stages {
+        out.push_str(&format!(
+            "| `{}` | {} | {} |\n",
+            stage.name,
+            stage.purpose,
+            stage.surfaces.join(", ")
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Integration Surfaces\n\n");
+    out.push_str("| Surface | Kind | Scope | Capabilities |\n|---|---|---|---|\n");
+    for surface in &graph.integration_surfaces {
+        out.push_str(&format!(
+            "| `{}` | {} | {} | {} |\n",
+            surface.name,
+            surface.kind,
+            surface.default_scope,
+            surface.capabilities.join(", ")
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Components\n\n");
+    out.push_str(
+        "| Component | Kind | Files | Nodes | Edges | Languages |\n|---|---|---:|---:|---:|---|\n",
+    );
+    for component in &graph.components {
+        out.push_str(&format!(
+            "| `{}` | {} | {} | {} | {} | {} |\n",
+            component.name,
+            component.kind,
+            component.files,
+            component.nodes,
+            component.edges,
+            component.languages.join(", ")
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Edges\n\n");
+    out.push_str("| Source | Kind | Target |\n|---|---|---|\n");
+    for edge in &graph.edges {
+        out.push_str(&format!(
+            "| `{}` | {} | `{}` |\n",
+            edge.source, edge.kind, edge.target
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Findings\n\n");
+    for finding in &graph.findings {
+        out.push_str(&format!("- {finding}\n"));
+    }
+    out
 }
 
 fn render_report_markdown(report: &KnowledgeReport) -> String {
@@ -1544,5 +2312,59 @@ mod tests {
 
         assert!(report.contains("# Knowledge Report"));
         assert!(report.contains("Workspace fingerprint"));
+    }
+
+    #[test]
+    fn architecture_graph_maps_tools_to_automation_stages() {
+        let tmp = tempfile::tempdir().unwrap();
+        fs::create_dir_all(tmp.path().join("crates/knowledge/src")).unwrap();
+        fs::create_dir_all(tmp.path().join("openspec/changes/demo/specs/demo")).unwrap();
+        fs::create_dir_all(tmp.path().join("AI_MERGE")).unwrap();
+        fs::create_dir_all(tmp.path().join("adr")).unwrap();
+        fs::write(
+            tmp.path().join("crates/knowledge/src/lib.rs"),
+            "pub fn build_architecture() {}\n",
+        )
+        .unwrap();
+        fs::write(
+            tmp.path().join("openspec/changes/demo/proposal.md"),
+            "# demo\n",
+        )
+        .unwrap();
+        fs::write(tmp.path().join("AI_MERGE/01.md"), "# Evidence\n").unwrap();
+        fs::write(tmp.path().join("adr/0001.md"), "# Decision\n").unwrap();
+
+        let graph_json = build_architecture_graph(ArchitectureOptions::new(
+            tmp.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        let graph: ArchitectureGraph = serde_json::from_str(&graph_json).unwrap();
+
+        assert_eq!(graph.source_graph.provider, "codegraph-rust");
+        assert_eq!(graph.context_package.provider, "repomix-rs");
+        assert!(graph
+            .automation_stages
+            .iter()
+            .any(|stage| stage.id == "stage:architecture-map"));
+        assert!(graph
+            .integration_surfaces
+            .iter()
+            .any(|surface| surface.id == "surface:codegraph-rust"));
+        assert!(graph
+            .integration_surfaces
+            .iter()
+            .any(|surface| surface.id == "surface:repomix-rs"));
+        assert!(graph.components.iter().any(|component| {
+            component.id == "crate:knowledge" && component.languages.contains(&"rust".to_string())
+        }));
+
+        let graph_markdown = build_architecture_graph(ArchitectureOptions::new(
+            tmp.path(),
+            ArchitectureFormat::Markdown,
+        ))
+        .unwrap();
+        assert!(graph_markdown.contains("# Architecture Graph"));
+        assert!(graph_markdown.contains("Architecture mapping"));
     }
 }
