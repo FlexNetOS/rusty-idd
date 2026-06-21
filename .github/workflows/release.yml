@@ -31,7 +31,7 @@ jobs:
             suffix: windows-x86_64
             exe: ".exe"
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@1.96.0
       - uses: Swatinem/rust-cache@v2
       - name: Build release binary
