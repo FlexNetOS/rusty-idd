@@ -143,6 +143,10 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
         "adr/0004-knowledge-direct-crate-integration.md",
         "AI_MERGE/12_knowledge_deep_audit.md",
         "AI_MERGE/13_codex_environment.md",
+        "AI_MERGE/14_upstream_full_adoption.md",
+        "third_party/upstream/UPSTREAMS.md",
+        "third_party/upstream/codegraph-rust/Cargo.toml",
+        "third_party/upstream/repomix-rs/Cargo.toml",
     ] {
         if !root.join(rel).exists() {
             failures.push(format!(
@@ -202,7 +206,11 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
         ),
         (
             "adr/0004-knowledge-direct-crate-integration.md",
-            &["adopt the upstream parser/core", "Cut audit-denied"][..],
+            &[
+                "full upstream snapshots",
+                "adopt the upstream parser/core",
+                "Cut audit-denied",
+            ][..],
         ),
         (
             "AI_MERGE/12_knowledge_deep_audit.md",
@@ -230,6 +238,25 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
                 "Codex owns its output quality",
                 "stale or orphaned work",
                 "Missing binaries needed for this repo",
+            ][..],
+        ),
+        (
+            "AI_MERGE/14_upstream_full_adoption.md",
+            &[
+                "ce5bf27a2978983a9089d177447f296e4c6521bb",
+                "946df10d48c669ca3a99f757ffd2c6fa35844e62",
+                "Native Upstream Diagnostics",
+                "Consolidation Cuts Kept",
+                "PR #50 Baseline Comparison",
+            ][..],
+        ),
+        (
+            "third_party/upstream/UPSTREAMS.md",
+            &[
+                "Jakedismo/codegraph-rust",
+                "sopaco/repomix-rs",
+                "ce5bf27a2978983a9089d177447f296e4c6521bb",
+                "946df10d48c669ca3a99f757ffd2c6fa35844e62",
             ][..],
         ),
     ] {

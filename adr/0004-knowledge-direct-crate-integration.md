@@ -7,8 +7,11 @@ Accepted
 ## Context
 
 `rusty-idd knowledge` needs in-process codebase knowledge without adding MCP
-servers, daemons, or long-running context transport. The useful upstream pieces
-are the `codegraph-rust` parser/core crates and the Repomix core/config crates.
+servers, daemons, or long-running context transport. The corrected integration
+strategy is to adopt the full upstream repositories first, run their native
+diagnostics, then consolidate only the evidenced default-path boundary. The
+useful default-path upstream pieces are the `codegraph-rust` parser/core crates
+and the Repomix core/config crates.
 
 The initial implementation tried to cut too early by introducing a local
 `codegraph` compatibility shim plus a Rust AST reconstruction pass. That made
@@ -17,6 +20,18 @@ local guesses. The corrected direction is to adopt the upstream parser/core
 crates whole first, then trim only concrete compile, audit, or runtime friction.
 
 ## Decision
+
+Preserve full upstream snapshots as tracked mirrors:
+
+- `third_party/upstream/codegraph-rust` at
+  `ce5bf27a2978983a9089d177447f296e4c6521bb`
+- `third_party/upstream/repomix-rs` at
+  `946df10d48c669ca3a99f757ffd2c6fa35844e62`
+
+The mirrors include upstream scripts, skills/docs, tests, fixtures, configs,
+examples, CI, workspace files, package metadata, and lockfiles. They are not
+Cargo workspace members; they are the audit baseline and rollback source for
+future consolidation.
 
 Vendor the useful upstream `codegraph-rust` crates as local workspace members:
 
@@ -56,6 +71,14 @@ dependencies that are not used by `repomix-core` in this integration and include
 an audited unmaintained transitive dependency (`number_prefix` through
 `indicatif`).
 
+The pinned `repomix-rs` upstream source is version `2.0.1`, but the compatible
+published crates.io surface available for this workspace is `2.0.0`. The full
+`2.0.1` mirror remains tracked so future upgrades can refresh from source rather
+than from memory. Default Rusty IDD workflows continue to use the latest
+published compatible Repomix crates plus the audited local DTO patch until the
+`2.0.1` source can be adopted without tree-sitter `links` conflicts or audit
+denials.
+
 Persistent graph storage remains out of the default path. Future persistent
 storage work must go behind the explicit `knowledge-surrealdb` feature or
 another reviewed feature gate.
@@ -64,6 +87,9 @@ another reviewed feature gate.
 
 - Default builds use upstream codegraph parser/core behavior instead of a local
   parser reconstruction.
+- The full upstream repositories are preserved as tracked mirrors before any
+  cut is accepted, so PR #50's selected-crate baseline is no longer the only
+  adoption evidence.
 - The adapter preserves upstream node metadata and symbolic edges while keeping
   the public `rusty-idd knowledge` index compact and deterministic.
 - Persistent graph storage, MCP servers, daemon surfaces, vector search, and
