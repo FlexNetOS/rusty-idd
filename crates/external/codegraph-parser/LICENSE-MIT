@@ -1,0 +1,6 @@
+MIT License
+
+This vendored codegraph-parser crate preserves the upstream codegraph-rust
+MIT license option.
+See ../../../adr/0004-knowledge-direct-crate-integration.md for the local
+vendoring rationale and audit cuts.

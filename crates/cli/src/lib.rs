@@ -7,6 +7,8 @@
 //! - **`spec`** is a new CLI over [`rusty_idd_spec`] (validate / archive / show).
 //! - **`run`** is a headless task runner over [`rusty_idd_runner`] (no ratatui).
 //! - **`tui`** launches the interactive TUI via [`rusty_idd_tui::run`].
+//! - **`knowledge`** builds compact codebase graph indexes and AI context packs.
+//! - **`codex`** verifies repo-local Codex environment invariants and model loops.
 //!
 //! Dependencies live at this crate (and the tui); the core crate stays zero-dep.
 
@@ -54,6 +56,14 @@ enum Command {
     /// Headless task runner for an OpenSpec change (no interactive UI).
     Run(commands::run::RunArgs),
 
+    /// In-process codebase knowledge: index / pack / report / query / refresh.
+    #[command(subcommand)]
+    Knowledge(commands::knowledge::KnowledgeCommand),
+
+    /// Repo-local Codex environment checks and dry-run-first model loops.
+    #[command(subcommand)]
+    Codex(commands::codex::CodexCommand),
+
     /// Launch the interactive OpenSpec TUI.
     Tui,
 }
@@ -84,6 +94,8 @@ fn dispatch(command: Command) -> i32 {
         Command::Github(a) => commands::core::delegate("github", &a.args),
         Command::Spec(cmd) => commands::spec::run(cmd),
         Command::Run(args) => commands::run::run(args),
+        Command::Knowledge(cmd) => commands::knowledge::run(cmd),
+        Command::Codex(cmd) => commands::codex::run(cmd),
         Command::Tui => commands::tui::run(),
     }
 }

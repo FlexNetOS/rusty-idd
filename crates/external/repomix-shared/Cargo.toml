@@ -1,0 +1,11 @@
+[package]
+name = "repomix-shared"
+version = "2.0.0"
+edition = "2024"
+license = "MIT"
+description = "Minimal Repomix shared DTO compatibility crate for rusty-idd knowledge integration"
+publish = false
+
+[lib]
+name = "repomix_shared"
+path = "src/lib.rs"

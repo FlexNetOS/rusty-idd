@@ -1,0 +1,14 @@
+# Rusty IDD project-local Codex configuration.
+# Project .codex layers load only after the repository is trusted.
+
+project_doc_max_bytes = 65536
+project_doc_fallback_filenames = ["CLAUDE.md", "GEMINI.md"]
+
+[features]
+hooks = true
+
+[agents]
+max_threads = 4
+max_depth = 1
+job_max_runtime_seconds = 1800
+

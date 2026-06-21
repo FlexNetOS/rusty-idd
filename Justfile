@@ -27,7 +27,19 @@ validate:
 manifest:
     {{rusty_idd}} manifest --workspace . --out .idd/MANIFEST.tsv
 
-manifest-check: manifest
-    git diff --exit-code -- .idd/MANIFEST.tsv
+manifest-check:
+    tmp=$(mktemp) && {{rusty_idd}} manifest --workspace . --out "$tmp" && cmp -s .idd/MANIFEST.tsv "$tmp" || { echo ".idd/MANIFEST.tsv is stale; run just manifest" >&2; rm -f "$tmp"; exit 1; }; rm -f "$tmp"
 
-ci: build test validate manifest-check fmt-check lint audit
+knowledge:
+    {{rusty_idd}} knowledge refresh --workspace .
+
+knowledge-check:
+    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge index --workspace . --out "$tmpdir/index.json" && {{rusty_idd}} knowledge report --workspace . --out "$tmpdir/report.md" && cmp -s .idd/knowledge/index.json "$tmpdir/index.json" && cmp -s .idd/knowledge/report.md "$tmpdir/report.md" || { echo ".idd/knowledge artifacts are stale; run just knowledge" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
+
+codex-env-check:
+    {{rusty_idd}} codex env-check
+
+codex-model-loop:
+    {{rusty_idd}} codex model-loop
+
+ci: build test validate manifest-check knowledge-check codex-env-check codex-model-loop fmt-check lint audit

@@ -25,7 +25,14 @@ resolver = "3"
 members = [
     "crates/cli",
     "crates/core",
+    "crates/external/codegraph-core",
+    "crates/external/codegraph-parser",
+    "crates/external/repomix-shared",
+    "crates/knowledge",
     "crates/runner",
     "crates/spec",
     "crates/tui",
 ]
+
+[patch.crates-io]
+repomix-shared = { path = "crates/external/repomix-shared" }

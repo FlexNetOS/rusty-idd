@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "cargo run --quiet --bin rusty-idd -- codex env-check",
+            "timeout": 30,
+            "statusMessage": "Checking Rusty IDD Codex invariants"
+          }
+        ]
+      }
+    ]
+  }
+}
