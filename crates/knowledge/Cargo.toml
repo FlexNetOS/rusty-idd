@@ -1,0 +1,38 @@
+[package]
+name        = "rusty-idd-knowledge"
+version.workspace = true
+authors.workspace = true
+repository.workspace = true
+homepage.workspace = true
+documentation.workspace = true
+license.workspace = true
+edition.workspace = true
+publish = false
+
+[lib]
+name = "rusty_idd_knowledge"
+path = "src/lib.rs"
+
+[dependencies]
+anyhow = "1"
+codegraph-core = { path = "../external/codegraph-core", default-features = false }
+codegraph-parser = { path = "../external/codegraph-parser" }
+ignore = "0.4"
+repomix-config = "=2.0.0"
+repomix-core = "=2.0.0"
+rusty-idd-core = { path = "../core" }
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+tempfile = "3"
+tokio = { version = "1", features = ["rt-multi-thread"] }
+tree-sitter = "0.24"
+tree-sitter-rust = "0.23"
+
+[dev-dependencies]
+tempfile = "3"
+
+[features]
+default = []
+knowledge-vector = []
+knowledge-surrealdb = []
+knowledge-cloud = []

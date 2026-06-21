@@ -1,0 +1,3630 @@
+{
+  "schema_version": 1,
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "system_root": "/home/drdave/Desktop/meta",
+  "discovery_source": "meta project list --json",
+  "repos": [
+    {
+      "id": "repo:archon",
+      "name": "Archon",
+      "path": "Archon",
+      "repo": "git@github.com:FlexNetOS/Archon.git",
+      "branch": "dev",
+      "head": "02cbe3454b6fc444e06f5f7c25b864d1f2375781",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "forked",
+        "harness"
+      ],
+      "markers": [
+        "node",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:ecc",
+      "name": "ECC",
+      "path": "ECC",
+      "repo": "git@github.com:FlexNetOS/ECC.git",
+      "branch": "main",
+      "head": "1dcfa4665f2fb34a81c9784adfff16b4e604c6b6",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "forked"
+      ],
+      "markers": [
+        "node",
+        "handoff",
+        "agents",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:fleet-handoff"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:agent",
+      "name": "agent",
+      "path": "agent",
+      "repo": "git@github.com:FlexNetOS/agent.git",
+      "branch": "main",
+      "head": "d4fd00ffa244dfbf40d9a571a60e9af84769237b",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "framework"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:agent-skills",
+      "name": "agent-skills",
+      "path": "agent-skills",
+      "repo": "git@github.com:FlexNetOS/agent-skills.git",
+      "branch": null,
+      "head": null,
+      "dirty": false,
+      "tags": [
+        "agent-env",
+        "ai"
+      ],
+      "markers": [],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:assets",
+      "name": "assets",
+      "path": "assets",
+      "repo": "git@github.com:FlexNetOS/assets.git",
+      "branch": null,
+      "head": null,
+      "dirty": false,
+      "tags": [
+        "assets"
+      ],
+      "markers": [],
+      "roles": [],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:atc",
+      "name": "atc",
+      "path": "atc",
+      "repo": "git@github.com:FlexNetOS/atc.git",
+      "branch": "main",
+      "head": "831d5943b0690f77b6306d99c6d09919f5a06a88",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "orchestration",
+        "rust"
+      ],
+      "markers": [
+        "rust",
+        "node",
+        "claude",
+        "github-actions",
+        "make"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:coordination-domain-surface",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:claude-code",
+      "name": "claude-code",
+      "path": "claude-code",
+      "repo": "git@github.com:FlexNetOS/claude-code.git",
+      "branch": "main",
+      "head": "625c04c3350378c3d74662505aae3e9dcf3fa1b4",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "forked"
+      ],
+      "markers": [
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:claude-plugin",
+      "name": "claude-plugin",
+      "path": "claude-plugin",
+      "repo": "git@github.com:FlexNetOS/meta.git",
+      "branch": "main",
+      "head": "ffccf72578e288ced27e8435baeed2d3391addc7",
+      "dirty": true,
+      "tags": [
+        "ai",
+        "plugin"
+      ],
+      "markers": [],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:claude-plugins",
+      "name": "claude-plugins",
+      "path": "claude-plugins",
+      "repo": "git@github.com:FlexNetOS/claude-plugins.git",
+      "branch": "main",
+      "head": "d38472720a8455817607ffa0adec3d5db00a849b",
+      "dirty": false,
+      "tags": [
+        "ai"
+      ],
+      "markers": [],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:codex",
+      "name": "codex",
+      "path": "codex",
+      "repo": "git@github.com:FlexNetOS/codex.git",
+      "branch": "main",
+      "head": "5c5639d287c325d5a40364eb0192a9c055193079",
+      "dirty": true,
+      "tags": [
+        "ai",
+        "forked"
+      ],
+      "markers": [
+        "node",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:commands",
+      "name": "commands",
+      "path": "commands",
+      "repo": "git@github.com:FlexNetOS/commands.git",
+      "branch": "feat/recall-remember-speak-commands",
+      "head": "ffe910e6c2f13359f98b51a6eb619e23c2be5ed5",
+      "dirty": false,
+      "tags": [
+        "commands",
+        "hub"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:copilot-plugin",
+      "name": "copilot-plugin",
+      "path": "copilot-plugin",
+      "repo": "git@github.com:FlexNetOS/meta.git",
+      "branch": "main",
+      "head": "ffccf72578e288ced27e8435baeed2d3391addc7",
+      "dirty": true,
+      "tags": [
+        "ai",
+        "plugin"
+      ],
+      "markers": [],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:database-hub",
+      "name": "database_hub",
+      "path": "database_hub",
+      "repo": "git@github.com:FlexNetOS/database_hub.git",
+      "branch": "master",
+      "head": "4cebb8d9ea02915d597c858ce4b934ddb225518c",
+      "dirty": false,
+      "tags": [
+        "database",
+        "hub"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:envctl",
+      "name": "envctl",
+      "path": "envctl",
+      "repo": "git@github.com:FlexNetOS/envctl.git",
+      "branch": "master",
+      "head": "3bc70b7a0830538cce199c44f425677dba6d97dc",
+      "dirty": true,
+      "tags": [
+        "env",
+        "tools"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:rust-code-surface",
+        "role:toolchain-provider"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:flexnetos-brain",
+      "name": "flexnetos_brain",
+      "path": "flexnetos_brain",
+      "repo": "git@github.com:FlexNetOS/flexnetos_brain.git",
+      "branch": null,
+      "head": null,
+      "dirty": false,
+      "tags": [
+        "data",
+        "docs"
+      ],
+      "markers": [],
+      "roles": [
+        "role:documentation-knowledge"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:flexnetos-github-app",
+      "name": "flexnetos_github_app",
+      "path": "flexnetos_github_app",
+      "repo": "git@github.com:FlexNetOS/flexnetos_github_app.git",
+      "branch": "main",
+      "head": "ffda321a638b864fe57b7d85247441908e870961",
+      "dirty": false,
+      "tags": [
+        "github-app",
+        "ops"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:flexnetos-runner",
+      "name": "flexnetos_runner",
+      "path": "flexnetos_runner",
+      "repo": "git@github.com:FlexNetOS/flexnetos_runner.git",
+      "branch": "chore/handoff-tier-a-pilot",
+      "head": "67942255f7acacdd50a5a2e1e8e052e1c051e8af",
+      "dirty": false,
+      "tags": [
+        "ops",
+        "runner"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "github-actions"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:flexnetos-wiki",
+      "name": "flexnetos_wiki",
+      "path": "flexnetos_wiki",
+      "repo": "git@github.com:FlexNetOS/flexnetos_wiki.git",
+      "branch": null,
+      "head": null,
+      "dirty": false,
+      "tags": [
+        "docs"
+      ],
+      "markers": [],
+      "roles": [
+        "role:documentation-knowledge"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:flow-hub",
+      "name": "flow_hub",
+      "path": "flow_hub",
+      "repo": "git@github.com:FlexNetOS/flow_hub.git",
+      "branch": "master",
+      "head": "3baccab908a2112ca418316928294ca249be43ae",
+      "dirty": false,
+      "tags": [
+        "flow",
+        "hub"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:github-org",
+      "name": "github_org",
+      "path": ".github_org",
+      "repo": "git@github.com:FlexNetOS/.github.git",
+      "branch": "fix/autonomous-feature-develop-approval",
+      "head": "c21f55125722a7649073fc2da7d9fe6cb7a23ea8",
+      "dirty": false,
+      "tags": [
+        "ci",
+        "org"
+      ],
+      "markers": [
+        "handoff",
+        "agents",
+        "claude",
+        "github-actions",
+        "make"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:fleet-handoff"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:grit",
+      "name": "grit",
+      "path": "grit",
+      "repo": "git@github.com:FlexNetOS/grit.git",
+      "branch": "master",
+      "head": "68b1b84a261b18edaefa47e2d229f4cc38d245da",
+      "dirty": false,
+      "tags": [
+        "untriaged"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:handoff",
+      "name": "handoff",
+      "path": "handoff",
+      "repo": "git@github.com:FlexNetOS/handoff.git",
+      "branch": "develop",
+      "head": "32224290828d3514dea00caa417bcd1259fb12a7",
+      "dirty": true,
+      "tags": [
+        "handoff",
+        "orchestration"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions",
+        "make"
+      ],
+      "roles": [
+        "role:coordination-domain-surface",
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:harness-hub",
+      "name": "harness_hub",
+      "path": "harness_hub",
+      "repo": "git@github.com:FlexNetOS/harness_hub.git",
+      "branch": "master",
+      "head": "e925339785e8c188541e6fb6e1cebed9aec82630",
+      "dirty": false,
+      "tags": [
+        "harness",
+        "hub"
+      ],
+      "markers": [
+        "handoff",
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub",
+        "role:fleet-handoff"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:hermes-agent",
+      "name": "hermes-agent",
+      "path": "hermes-agent",
+      "repo": "git@github.com:FlexNetOS/hermes-agent.git",
+      "branch": "main",
+      "head": "6928692cec3260b21e5574099c41034827c1c59e",
+      "dirty": false,
+      "tags": [
+        "agents",
+        "ai",
+        "untriaged"
+      ],
+      "markers": [
+        "node",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:hooks-hub",
+      "name": "hooks_hub",
+      "path": "hooks_hub",
+      "repo": "git@github.com:FlexNetOS/hooks_hub.git",
+      "branch": "master",
+      "head": "e1038c8facca7ed9f624300fd23439397cdcc7ec",
+      "dirty": false,
+      "tags": [
+        "hooks",
+        "hub"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:icm",
+      "name": "icm",
+      "path": "icm",
+      "repo": "git@github.com:FlexNetOS/icm.git",
+      "branch": "fix/containment-claude-p-recursion",
+      "head": "72f1050cba01b5f15e52e950f39185d8a9d55ba8",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "memory"
+      ],
+      "markers": [
+        "rust",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:knowledge-memory",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:kasetto",
+      "name": "kasetto",
+      "path": "kasetto",
+      "repo": "git@github.com:FlexNetOS/kasetto.git",
+      "branch": "main",
+      "head": "ec01ccaffad67e5fc57987f441a610682bac6290",
+      "dirty": false,
+      "tags": [
+        "agent-env",
+        "forked",
+        "tools"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:lane",
+      "name": "lane",
+      "path": "lane",
+      "repo": "git@github.com:FlexNetOS/lane.git",
+      "branch": "main",
+      "head": "a46b57ef56495cc5c64edc99df1eb55874f40327",
+      "dirty": false,
+      "tags": [
+        "tools",
+        "workflow"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:lifeos",
+      "name": "lifeos",
+      "path": "lifeos",
+      "repo": "git@github.com:FlexNetOS/lifeos.git",
+      "branch": "main",
+      "head": "d02f12477b84cddfb649d3ff71e68aa8bc401acb",
+      "dirty": false,
+      "tags": [
+        "untriaged"
+      ],
+      "markers": [
+        "rust",
+        "node",
+        "openspec",
+        "handoff",
+        "claude"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:loop-cli",
+      "name": "loop_cli",
+      "path": "loop_cli",
+      "repo": "git@github.com:FlexNetOS/loop_cli.git",
+      "branch": "main",
+      "head": "6390636cd5f0ba6abdacc772bb70a3fe55584563",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:loop-lib",
+      "name": "loop_lib",
+      "path": "loop_lib",
+      "repo": "git@github.com:FlexNetOS/loop_lib.git",
+      "branch": "main",
+      "head": "99201dea128bd969f70240212ab62d51858a6aa2",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:mcp-hub",
+      "name": "mcp_hub",
+      "path": "mcp_hub",
+      "repo": "git@github.com:FlexNetOS/mcp_hub.git",
+      "branch": "master",
+      "head": "4b4d3fe815a7795700e1acaa1ff34a19c7165764",
+      "dirty": false,
+      "tags": [
+        "hub",
+        "mcp",
+        "meta"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub",
+        "role:coordination-domain-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-plugins",
+      "name": "meta-plugins",
+      "path": "meta-plugins",
+      "repo": "git@github.com:FlexNetOS/meta-plugins.git",
+      "branch": "main",
+      "head": "9ef86c9c1d937826dc311bc79cee7959d8b75b1c",
+      "dirty": false,
+      "tags": [
+        "tools"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-cli",
+      "name": "meta_cli",
+      "path": "meta_cli",
+      "repo": "git@github.com:FlexNetOS/meta_cli.git",
+      "branch": "main",
+      "head": "ae75f21e0961e5ca003023fbc2fc02bf87c0c47a",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-core",
+      "name": "meta_core",
+      "path": "meta_core",
+      "repo": "git@github.com:FlexNetOS/meta_core.git",
+      "branch": "main",
+      "head": "fe1ca7751d276b390bc121a8372126437a7846ac",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-dashboard-cli",
+      "name": "meta_dashboard_cli",
+      "path": "meta_dashboard_cli",
+      "repo": "git@github.com:FlexNetOS/meta_dashboard_cli.git",
+      "branch": "master",
+      "head": "a1a74cc09b7a3cb296e4d81fa7a5d66bd5eff845",
+      "dirty": true,
+      "tags": [],
+      "markers": [
+        "rust"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-git-cli",
+      "name": "meta_git_cli",
+      "path": "meta_git_cli",
+      "repo": "git@github.com:FlexNetOS/meta_git_cli.git",
+      "branch": "feat/dep-upgrades",
+      "head": "dbe80637327b340894526d260adc74d485711df3",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-git-lib",
+      "name": "meta_git_lib",
+      "path": "meta_git_lib",
+      "repo": "git@github.com:FlexNetOS/meta_git_lib.git",
+      "branch": "feat/dep-upgrades",
+      "head": "dc5149b931f5b4a715853f96457bab117c4b03bb",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-mcp",
+      "name": "meta_mcp",
+      "path": "meta_mcp",
+      "repo": "git@github.com:FlexNetOS/meta_mcp.git",
+      "branch": "main",
+      "head": "6f207a38f6938af81c9d49e8c2b90a83e41af5d4",
+      "dirty": false,
+      "tags": [],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-plugin-api",
+      "name": "meta_plugin_api",
+      "path": "meta_plugin_api",
+      "repo": "git@github.com:FlexNetOS/meta_plugin_api.git",
+      "branch": "main",
+      "head": "30e5fde6ecce9d7e29c8443d4ad09cb064c83702",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-plugin-protocol",
+      "name": "meta_plugin_protocol",
+      "path": "meta_plugin_protocol",
+      "repo": "git@github.com:FlexNetOS/meta_plugin_protocol.git",
+      "branch": "main",
+      "head": "ace64c8f40bd7c32a8fac7325725489637e2e086",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-project-cli",
+      "name": "meta_project_cli",
+      "path": "meta_project_cli",
+      "repo": "git@github.com:FlexNetOS/meta_project_cli.git",
+      "branch": "main",
+      "head": "94781aa01a2942de2a64105564912f6a1ad61016",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-rust-cli",
+      "name": "meta_rust_cli",
+      "path": "meta_rust_cli",
+      "repo": "git@github.com:FlexNetOS/meta_rust_cli.git",
+      "branch": "main",
+      "head": "a46f6e3b25518b13ad5fa819f7db7f0d1eba5259",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:my-wiki",
+      "name": "my-wiki",
+      "path": "my-wiki",
+      "repo": "git@github.com:FlexNetOS/my-wiki.git",
+      "branch": null,
+      "head": null,
+      "dirty": false,
+      "tags": [
+        "docs",
+        "wiki"
+      ],
+      "markers": [],
+      "roles": [
+        "role:documentation-knowledge"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:n8n",
+      "name": "n8n",
+      "path": "n8n",
+      "repo": "git@github.com:FlexNetOS/n8n.git",
+      "branch": "develop",
+      "head": "6254a3141e2ad389e48b0d4fd7499d08e5a0b432",
+      "dirty": false,
+      "tags": [
+        "automation",
+        "forked"
+      ],
+      "markers": [
+        "node",
+        "agents",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:network-control",
+      "name": "network-control",
+      "path": "network-control",
+      "repo": "git@github.com:FlexNetOS/network-control.git",
+      "branch": "main",
+      "head": "2810195da25958bd18597adaf058fcb64faa3630",
+      "dirty": false,
+      "tags": [],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:network-hub",
+      "name": "network_hub",
+      "path": "network_hub",
+      "repo": "git@github.com:FlexNetOS/network_hub.git",
+      "branch": "master",
+      "head": "24d295df178bdba8bda7f0742d580616fb03a188",
+      "dirty": false,
+      "tags": [
+        "hub",
+        "network"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:obscura",
+      "name": "obscura",
+      "path": "obscura",
+      "repo": "git@github.com:FlexNetOS/obscura.git",
+      "branch": "main",
+      "head": "d8c8487ca324a9daa798e00ba8794b1c833fa806",
+      "dirty": false,
+      "tags": [
+        "untriaged"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:domain-upgrade-surface",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:obsidian-mind",
+      "name": "obsidian-mind",
+      "path": "obsidian-mind",
+      "repo": "git@github.com:FlexNetOS/obsidian-mind.git",
+      "branch": "main",
+      "head": "ccaa5f5f83428d3d548a3dd882bb8d115bf01d42",
+      "dirty": false,
+      "tags": [
+        "docs",
+        "knowledge"
+      ],
+      "markers": [
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:documentation-knowledge",
+        "role:knowledge-memory"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:oh-my-claudecode",
+      "name": "oh-my-claudecode",
+      "path": "oh-my-claudecode",
+      "repo": "git@github.com:FlexNetOS/oh-my-claudecode.git",
+      "branch": "main",
+      "head": "ed7800dd73b9ef1811b6f777b2017baabda9962a",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "forked"
+      ],
+      "markers": [
+        "node",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:oh-my-pi",
+      "name": "oh-my-pi",
+      "path": "oh-my-pi",
+      "repo": "git@github.com:FlexNetOS/oh-my-pi.git",
+      "branch": "main",
+      "head": "f967f9d789a57c3aa558fd875f0fb987e26e6168",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "forked"
+      ],
+      "markers": [
+        "rust",
+        "node",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:plugin-hub",
+      "name": "plugin_hub",
+      "path": "plugin_hub",
+      "repo": "git@github.com:FlexNetOS/plugin_hub.git",
+      "branch": "master",
+      "head": "7a97d527d6a2b6bb6707f6ecfd8dee75151ce6b4",
+      "dirty": false,
+      "tags": [
+        "hub",
+        "plugins"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:prompt-hub",
+      "name": "prompt_hub",
+      "path": "prompt_hub",
+      "repo": "git@github.com:FlexNetOS/prompt_hub.git",
+      "branch": "main",
+      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "dirty": true,
+      "tags": [
+        "ai",
+        "prompts"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:capability-hub",
+        "role:fleet-handoff",
+        "role:rust-code-surface",
+        "role:spec-producer"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:rtk-tokenkill",
+      "name": "rtk-tokenkill",
+      "path": "rtk-tokenkill",
+      "repo": "git@github.com:FlexNetOS/rtk-tokenkill.git",
+      "branch": "develop",
+      "head": "858e66770511dde4032151dd00c4121878afc14e",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "optimization",
+        "tools"
+      ],
+      "markers": [
+        "rust",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:ruflo",
+      "name": "ruflo",
+      "path": "ruflo",
+      "repo": "git@github.com:FlexNetOS/ruflo.git",
+      "branch": "main",
+      "head": "dfe1b9cf993c34571fa5f2d08f5772e0672c68ab",
+      "dirty": true,
+      "tags": [
+        "ai",
+        "forked",
+        "rust",
+        "wasm"
+      ],
+      "markers": [
+        "node",
+        "agents",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:rusty-idd",
+      "name": "rusty-idd",
+      "path": "rusty-idd",
+      "repo": "git@github.com:FlexNetOS/rusty-idd.git",
+      "branch": null,
+      "head": null,
+      "dirty": false,
+      "tags": [
+        "idd",
+        "tools"
+      ],
+      "markers": [
+        "rust",
+        "openspec",
+        "idd-knowledge",
+        "handoff",
+        "agents",
+        "claude",
+        "github-actions",
+        "make",
+        "just"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:fleet-handoff",
+        "role:idd-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": true,
+      "local_architecture": {
+        "schema_version": 1,
+        "source_graph": {
+          "provider": "codegraph-rust",
+          "files": 135,
+          "nodes": 8456,
+          "edges": 34504,
+          "languages": [
+            "rust"
+          ],
+          "hotspots": 20,
+          "parse_failures": 0
+        },
+        "context_package": {
+          "provider": "repomix-rs",
+          "files": 198,
+          "tokens": 138824,
+          "output_style": "markdown",
+          "top_files_by_tokens": [
+            [
+              "crates/tui/src/app.rs",
+              9464
+            ],
+            [
+              "crates/knowledge/src/lib.rs",
+              8507
+            ],
+            [
+              "docs/rusty-idd/architecture-diagrams.md",
+              7741
+            ],
+            [
+              "AI_MERGE/11_integration_research_audit_roadmap.md",
+              5761
+            ],
+            [
+              "docs/rusty-idd/spec-engine-design.md",
+              4132
+            ],
+            [
+              "docs/rusty-idd/lifecycle-contract.md",
+              3666
+            ],
+            [
+              "docs/rusty-idd/codex-environment.md",
+              2619
+            ],
+            [
+              "AI_MERGE/16_upstream_knowledge_revisit.md",
+              2540
+            ],
+            [
+              "docs/rusty-idd/production-readiness-audit.md",
+              2502
+            ],
+            [
+              "AI_MERGE/14_upstream_full_adoption.md",
+              2421
+            ],
+            [
+              "crates/core/src/templates.rs",
+              2276
+            ],
+            [
+              "crates/tui/src/ui.rs",
+              2097
+            ],
+            [
+              "Makefile",
+              1994
+            ],
+            [
+              "AI_MERGE/15_system_handoff_research.md",
+              1963
+            ],
+            [
+              "Justfile",
+              1941
+            ],
+            [
+              "crates/runner/src/data.rs",
+              1712
+            ],
+            [
+              "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
+              1679
+            ],
+            [
+              "crates/runner/src/runner.rs",
+              1603
+            ],
+            [
+              "AI_MERGE/13_codex_environment.md",
+              1594
+            ],
+            [
+              "AI_MERGE/12_knowledge_deep_audit.md",
+              1573
+            ],
+            [
+              "docs/rusty-idd/design.md",
+              1474
+            ],
+            [
+              "adr/0004-knowledge-direct-crate-integration.md",
+              1366
+            ],
+            [
+              "crates/runner/src/config.rs",
+              1364
+            ],
+            [
+              "docs/rusty-idd/slice-sequence.md",
+              1356
+            ],
+            [
+              "AI_MERGE/29_agent_communication_queue_owner_surfaces.md",
+              1352
+            ]
+          ],
+          "suspicious_files": 0,
+          "skipped_files": 0
+        },
+        "component_count": 9,
+        "integration_surface_count": 4,
+        "top_components": [
+          {
+            "id": "external:codegraph-core",
+            "name": "codegraph-core",
+            "kind": "external_crate",
+            "files": 39,
+            "nodes": 1918,
+            "edges": 9069,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "external:codegraph-parser",
+            "name": "codegraph-parser",
+            "kind": "external_crate",
+            "files": 29,
+            "nodes": 1060,
+            "edges": 7485,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:knowledge",
+            "name": "knowledge",
+            "kind": "crate",
+            "files": 1,
+            "nodes": 616,
+            "edges": 4509,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:tui",
+            "name": "tui",
+            "kind": "crate",
+            "files": 3,
+            "nodes": 1006,
+            "edges": 3985,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:cli",
+            "name": "cli",
+            "kind": "crate",
+            "files": 22,
+            "nodes": 734,
+            "edges": 3067,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:runner",
+            "name": "runner",
+            "kind": "crate",
+            "files": 4,
+            "nodes": 770,
+            "edges": 3135,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:core",
+            "name": "core",
+            "kind": "crate",
+            "files": 11,
+            "nodes": 415,
+            "edges": 2388,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:spec",
+            "name": "spec",
+            "kind": "crate",
+            "files": 24,
+            "nodes": 461,
+            "edges": 1936,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          }
+        ],
+        "integration_surfaces": [
+          {
+            "id": "surface:codegraph-rust",
+            "name": "CodeGraph Rust",
+            "kind": "architecture_graph",
+            "provider": "codegraph-rust",
+            "capabilities": [
+              "multi-language tree-sitter registry",
+              "symbol/import/call/type graph extraction",
+              "impact and hotspot evidence"
+            ]
+          },
+          {
+            "id": "surface:repomix-rs",
+            "name": "repomix-rs",
+            "kind": "context_package",
+            "provider": "repomix-rs",
+            "capabilities": [
+              "compressed context packs",
+              "token accounting and top-file metrics",
+              "security and suspicious-file signals",
+              "git-aware context options"
+            ]
+          },
+          {
+            "id": "surface:openspec",
+            "name": "Rusty IDD OpenSpec lifecycle",
+            "kind": "lifecycle_control_plane",
+            "provider": "rusty-idd",
+            "capabilities": [
+              "goal intake",
+              "spec delta tracking",
+              "ordered implementation tasks",
+              "validation and merge evidence"
+            ]
+          },
+          {
+            "id": "surface:audit-manifest",
+            "name": "Audit and manifest evidence",
+            "kind": "evidence_control_plane",
+            "provider": "rusty-idd",
+            "capabilities": [
+              "AI_MERGE audit records",
+              "ADR traceability",
+              ".idd manifest baseline",
+              "knowledge artifact freshness"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "id": "repo:ruvector",
+      "name": "ruvector",
+      "path": "RuVector",
+      "repo": "git@github.com:FlexNetOS/meta-ruvector.git",
+      "branch": "main",
+      "head": "325584eb152cf4da770c39412aef46f37836e1ec",
+      "dirty": false,
+      "tags": [
+        "ai",
+        "forked",
+        "rust",
+        "wasm"
+      ],
+      "markers": [
+        "rust",
+        "node",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:shimmy",
+      "name": "shimmy",
+      "path": "shimmy",
+      "repo": "git@github.com:FlexNetOS/shimmy.git",
+      "branch": "feat/openai-embeddings-endpoint",
+      "head": "905f49b091d9f6c62b6b89e7940f696b0700baf3",
+      "dirty": false,
+      "tags": [
+        "forked",
+        "untriaged"
+      ],
+      "markers": [
+        "rust",
+        "github-actions",
+        "make"
+      ],
+      "roles": [
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:template-hub",
+      "name": "template_hub",
+      "path": "template_hub",
+      "repo": "git@github.com:FlexNetOS/template_hub.git",
+      "branch": "master",
+      "head": "e31a720a68d860f7a1d2a29cfa6faddef58801e4",
+      "dirty": false,
+      "tags": [
+        "hub",
+        "templates"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:teri",
+      "name": "teri",
+      "path": "teri",
+      "repo": "git@github.com:FlexNetOS/teri.git",
+      "branch": "verify/main-embeddings-ruvllm",
+      "head": "3f961c2ca71fa2cdbcf05eefdde264ff60859be0",
+      "dirty": true,
+      "tags": [
+        "forked",
+        "untriaged"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:tool-hub",
+      "name": "tool_hub",
+      "path": "tool_hub",
+      "repo": "git@github.com:FlexNetOS/tool_hub.git",
+      "branch": "feat/stage-github-org-tool-pins",
+      "head": "9cfc431f39f3303653e0ebe6360efdfdeb408176",
+      "dirty": true,
+      "tags": [
+        "hub",
+        "tools"
+      ],
+      "markers": [
+        "github-actions"
+      ],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:vault-hub",
+      "name": "vault_hub",
+      "path": "vault_hub",
+      "repo": "git@github.com:FlexNetOS/vault_hub.git",
+      "branch": "main",
+      "head": "a358e1b39a65c761ade76508f57c056e480a722c",
+      "dirty": false,
+      "tags": [
+        "hub",
+        "vault"
+      ],
+      "markers": [],
+      "roles": [
+        "role:capability-hub"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:vox",
+      "name": "vox",
+      "path": "vox",
+      "repo": "git@github.com:FlexNetOS/vox.git",
+      "branch": "main",
+      "head": "e0be5c4fe8c6d8d69d71fa7c661cb552153fe70d",
+      "dirty": false,
+      "tags": [
+        "forked",
+        "tools",
+        "voice"
+      ],
+      "markers": [
+        "rust",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:weave",
+      "name": "weave",
+      "path": "weave",
+      "repo": "git@github.com:FlexNetOS/weave.git",
+      "branch": "develop",
+      "head": "bcec297eb90c31aba332753f9e668f1f5fe9ae2d",
+      "dirty": false,
+      "tags": [
+        "mcp",
+        "orchestration"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "agents",
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:agent-environment",
+        "role:coordination-domain-surface",
+        "role:fleet-handoff",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:yazelix",
+      "name": "yazelix",
+      "path": "yazelix",
+      "repo": "git@github.com:FlexNetOS/yazelix.git",
+      "branch": "main",
+      "head": "03352e0687ad275459dc261d5355234c46998f0a",
+      "dirty": false,
+      "tags": [
+        "env",
+        "forked",
+        "terminal"
+      ],
+      "markers": [
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:parser-runtime-surface",
+        "role:toolchain-provider"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    }
+  ],
+  "roles": [
+    {
+      "id": "role:agent-environment",
+      "name": "Agent environment",
+      "purpose": "Supports agent runtime, skills, prompts, or execution environment",
+      "repos": [
+        "repo:agent",
+        "repo:agent-skills",
+        "repo:archon",
+        "repo:atc",
+        "repo:claude-code",
+        "repo:claude-plugin",
+        "repo:claude-plugins",
+        "repo:codex",
+        "repo:copilot-plugin",
+        "repo:ecc",
+        "repo:github-org",
+        "repo:hermes-agent",
+        "repo:icm",
+        "repo:kasetto",
+        "repo:n8n",
+        "repo:oh-my-claudecode",
+        "repo:oh-my-pi",
+        "repo:prompt-hub",
+        "repo:rtk-tokenkill",
+        "repo:ruflo",
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:weave"
+      ]
+    },
+    {
+      "id": "role:capability-hub",
+      "name": "Capability hub",
+      "purpose": "Groups domain capability repos used by the wider system",
+      "repos": [
+        "repo:commands",
+        "repo:database-hub",
+        "repo:flow-hub",
+        "repo:harness-hub",
+        "repo:hooks-hub",
+        "repo:mcp-hub",
+        "repo:network-hub",
+        "repo:plugin-hub",
+        "repo:prompt-hub",
+        "repo:template-hub",
+        "repo:tool-hub",
+        "repo:vault-hub"
+      ]
+    },
+    {
+      "id": "role:coordination-domain-surface",
+      "name": "Coordination and domain surface",
+      "purpose": "Provides orchestration, MCP, and domain-adjacent system coordination surfaces",
+      "repos": [
+        "repo:atc",
+        "repo:handoff",
+        "repo:mcp-hub",
+        "repo:weave"
+      ]
+    },
+    {
+      "id": "role:documentation-knowledge",
+      "name": "Documentation and knowledge",
+      "purpose": "Stores documentation and wiki surfaces",
+      "repos": [
+        "repo:flexnetos-brain",
+        "repo:flexnetos-wiki",
+        "repo:my-wiki",
+        "repo:obsidian-mind"
+      ]
+    },
+    {
+      "id": "role:domain-upgrade-surface",
+      "name": "Domain upgrade surface",
+      "purpose": "Contributes domain behavior through weave plus Obscura upgrade paths",
+      "repos": [
+        "repo:obscura"
+      ]
+    },
+    {
+      "id": "role:fleet-handoff",
+      "name": "Fleet handoff",
+      "purpose": "Carries central and fleet handoff state for cross-repo agent continuity",
+      "repos": [
+        "repo:agent",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:network-control",
+        "repo:prompt-hub",
+        "repo:rusty-idd",
+        "repo:teri",
+        "repo:weave"
+      ]
+    },
+    {
+      "id": "role:idd-control-plane",
+      "name": "Rusty IDD control plane",
+      "purpose": "Owns OpenSpec, ADR, task, validation, manifest, and graph-driven implementation workflow",
+      "repos": [
+        "repo:rusty-idd"
+      ]
+    },
+    {
+      "id": "role:knowledge-memory",
+      "name": "Knowledge and memory",
+      "purpose": "Stores memory or knowledge surfaces used by agents",
+      "repos": [
+        "repo:icm",
+        "repo:obsidian-mind"
+      ]
+    },
+    {
+      "id": "role:meta-control-plane",
+      "name": "Meta control plane",
+      "purpose": "Provides parent meta workspace inventory and execution surfaces",
+      "repos": [
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli"
+      ]
+    },
+    {
+      "id": "role:parser-runtime-surface",
+      "name": "Parser/runtime surface",
+      "purpose": "Carries parser/runtime support such as tree-sitter through Yazelix",
+      "repos": [
+        "repo:yazelix"
+      ]
+    },
+    {
+      "id": "role:rust-code-surface",
+      "name": "Rust code surface",
+      "purpose": "Contains Rust source that can be indexed by CodeGraph-backed Rusty IDD knowledge",
+      "repos": [
+        "repo:agent",
+        "repo:atc",
+        "repo:envctl",
+        "repo:flexnetos-github-app",
+        "repo:flexnetos-runner",
+        "repo:grit",
+        "repo:handoff",
+        "repo:icm",
+        "repo:kasetto",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli",
+        "repo:network-control",
+        "repo:obscura",
+        "repo:oh-my-pi",
+        "repo:prompt-hub",
+        "repo:rtk-tokenkill",
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:shimmy",
+        "repo:teri",
+        "repo:vox",
+        "repo:weave"
+      ]
+    },
+    {
+      "id": "role:spec-producer",
+      "name": "Spec producer",
+      "purpose": "Produces intent or prompt artifacts that Rusty IDD can turn into OpenSpec",
+      "repos": [
+        "repo:prompt-hub"
+      ]
+    },
+    {
+      "id": "role:toolchain-provider",
+      "name": "Toolchain provider",
+      "purpose": "Provides parent-managed tools instead of user-global installs",
+      "repos": [
+        "repo:envctl",
+        "repo:yazelix"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "repo:agent",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "framework"
+      ]
+    },
+    {
+      "source": "repo:agent",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "framework"
+      ]
+    },
+    {
+      "source": "repo:agent",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "framework"
+      ]
+    },
+    {
+      "source": "repo:agent-skills",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "agent-env",
+        "ai"
+      ]
+    },
+    {
+      "source": "repo:archon",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked",
+        "harness"
+      ]
+    },
+    {
+      "source": "repo:atc",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "orchestration",
+        "rust"
+      ]
+    },
+    {
+      "source": "repo:atc",
+      "target": "role:coordination-domain-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "orchestration",
+        "rust"
+      ]
+    },
+    {
+      "source": "repo:atc",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "orchestration",
+        "rust"
+      ]
+    },
+    {
+      "source": "repo:claude-code",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:claude-plugin",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "plugin"
+      ]
+    },
+    {
+      "source": "repo:claude-plugins",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai"
+      ]
+    },
+    {
+      "source": "repo:codex",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:commands",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "commands",
+        "hub"
+      ]
+    },
+    {
+      "source": "repo:copilot-plugin",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "plugin"
+      ]
+    },
+    {
+      "source": "repo:database-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "database",
+        "hub"
+      ]
+    },
+    {
+      "source": "repo:ecc",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:ecc",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:envctl",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "env",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:envctl",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "env",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:envctl",
+      "target": "role:toolchain-provider",
+      "kind": "provides",
+      "evidence": [
+        "env",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:flexnetos-brain",
+      "target": "role:documentation-knowledge",
+      "kind": "provides",
+      "evidence": [
+        "data",
+        "docs"
+      ]
+    },
+    {
+      "source": "repo:flexnetos-github-app",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "github-app",
+        "ops"
+      ]
+    },
+    {
+      "source": "repo:flexnetos-runner",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "ops",
+        "runner"
+      ]
+    },
+    {
+      "source": "repo:flexnetos-runner",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ops",
+        "runner"
+      ]
+    },
+    {
+      "source": "repo:flexnetos-wiki",
+      "target": "role:documentation-knowledge",
+      "kind": "provides",
+      "evidence": [
+        "docs"
+      ]
+    },
+    {
+      "source": "repo:flow-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "flow",
+        "hub"
+      ]
+    },
+    {
+      "source": "repo:github-org",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ci",
+        "org"
+      ]
+    },
+    {
+      "source": "repo:github-org",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "ci",
+        "org"
+      ]
+    },
+    {
+      "source": "repo:grit",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:handoff",
+      "target": "role:coordination-domain-surface",
+      "kind": "provides",
+      "evidence": [
+        "handoff",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:handoff",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "handoff",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:handoff",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "handoff",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:harness-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "harness",
+        "hub"
+      ]
+    },
+    {
+      "source": "repo:harness-hub",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "harness",
+        "hub"
+      ]
+    },
+    {
+      "source": "repo:hermes-agent",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "agents",
+        "ai",
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:hooks-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hooks",
+        "hub"
+      ]
+    },
+    {
+      "source": "repo:icm",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "memory"
+      ]
+    },
+    {
+      "source": "repo:icm",
+      "target": "role:knowledge-memory",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "memory"
+      ]
+    },
+    {
+      "source": "repo:icm",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "memory"
+      ]
+    },
+    {
+      "source": "repo:kasetto",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "agent-env",
+        "forked",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:kasetto",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "agent-env",
+        "forked",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:lane",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "tools",
+        "workflow"
+      ]
+    },
+    {
+      "source": "repo:lane",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "tools",
+        "workflow"
+      ]
+    },
+    {
+      "source": "repo:lifeos",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:lifeos",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:loop-cli",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:loop-cli",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:loop-lib",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:loop-lib",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:mcp-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "mcp",
+        "meta"
+      ]
+    },
+    {
+      "source": "repo:mcp-hub",
+      "target": "role:coordination-domain-surface",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "mcp",
+        "meta"
+      ]
+    },
+    {
+      "source": "repo:meta-cli",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-cli",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-core",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-core",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-dashboard-cli",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": []
+    },
+    {
+      "source": "repo:meta-dashboard-cli",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": []
+    },
+    {
+      "source": "repo:meta-git-cli",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-git-cli",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-git-lib",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-git-lib",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-mcp",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": []
+    },
+    {
+      "source": "repo:meta-mcp",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": []
+    },
+    {
+      "source": "repo:meta-plugin-api",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-plugin-api",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-plugin-protocol",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-plugin-protocol",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-project-cli",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-project-cli",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-rust-cli",
+      "target": "role:meta-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-rust-cli",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:my-wiki",
+      "target": "role:documentation-knowledge",
+      "kind": "provides",
+      "evidence": [
+        "docs",
+        "wiki"
+      ]
+    },
+    {
+      "source": "repo:n8n",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "automation",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:network-control",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": []
+    },
+    {
+      "source": "repo:network-control",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": []
+    },
+    {
+      "source": "repo:network-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "network"
+      ]
+    },
+    {
+      "source": "repo:obscura",
+      "target": "role:domain-upgrade-surface",
+      "kind": "provides",
+      "evidence": [
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:obscura",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:obsidian-mind",
+      "target": "role:documentation-knowledge",
+      "kind": "provides",
+      "evidence": [
+        "docs",
+        "knowledge"
+      ]
+    },
+    {
+      "source": "repo:obsidian-mind",
+      "target": "role:knowledge-memory",
+      "kind": "provides",
+      "evidence": [
+        "docs",
+        "knowledge"
+      ]
+    },
+    {
+      "source": "repo:oh-my-claudecode",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:oh-my-pi",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:oh-my-pi",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked"
+      ]
+    },
+    {
+      "source": "repo:plugin-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "plugins"
+      ]
+    },
+    {
+      "source": "repo:prompt-hub",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "prompts"
+      ]
+    },
+    {
+      "source": "repo:prompt-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "prompts"
+      ]
+    },
+    {
+      "source": "repo:prompt-hub",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "prompts"
+      ]
+    },
+    {
+      "source": "repo:prompt-hub",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "prompts"
+      ]
+    },
+    {
+      "source": "repo:prompt-hub",
+      "target": "role:spec-producer",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "prompts"
+      ]
+    },
+    {
+      "source": "repo:rtk-tokenkill",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "optimization",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:rtk-tokenkill",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "optimization",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:ruflo",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked",
+        "rust",
+        "wasm"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "artifact:.idd/knowledge/architecture.json",
+      "kind": "publishes",
+      "evidence": [
+        "rusty-idd/.idd/knowledge/architecture.json"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:agent-environment",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "idd",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:capability-hub",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:coordination-domain-surface",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:coordination-domain-surface",
+      "kind": "scopes_as_feature_gated_surface",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:documentation-knowledge",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:domain-upgrade-surface",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:domain-upgrade-surface",
+      "kind": "scopes_as_feature_gated_surface",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:fleet-handoff",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "idd",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:fleet-handoff",
+      "kind": "uses_for_continuity",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:idd-control-plane",
+      "kind": "provides",
+      "evidence": [
+        "idd",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:knowledge-memory",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:meta-control-plane",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:meta-control-plane",
+      "kind": "uses_for_workspace_inventory",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:parser-runtime-surface",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:parser-runtime-surface",
+      "kind": "uses_as_parser_runtime_evidence",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:rust-code-surface",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "idd",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:spec-producer",
+      "kind": "consumes_spec_intent_from",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:spec-producer",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:toolchain-provider",
+      "kind": "maps_for_automation",
+      "evidence": [
+        ".idd/knowledge/system-architecture.json",
+        "openspec/changes/add-system-architecture-peer-graph"
+      ]
+    },
+    {
+      "source": "repo:rusty-idd",
+      "target": "role:toolchain-provider",
+      "kind": "uses_for_parent_managed_tools",
+      "evidence": [
+        "AI_MERGE/17_architecture_graph_workflow.md"
+      ]
+    },
+    {
+      "source": "repo:ruvector",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked",
+        "rust",
+        "wasm"
+      ]
+    },
+    {
+      "source": "repo:ruvector",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "ai",
+        "forked",
+        "rust",
+        "wasm"
+      ]
+    },
+    {
+      "source": "repo:shimmy",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "forked",
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:template-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "templates"
+      ]
+    },
+    {
+      "source": "repo:teri",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "forked",
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:teri",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "forked",
+        "untriaged"
+      ]
+    },
+    {
+      "source": "repo:tool-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "tools"
+      ]
+    },
+    {
+      "source": "repo:vault-hub",
+      "target": "role:capability-hub",
+      "kind": "provides",
+      "evidence": [
+        "hub",
+        "vault"
+      ]
+    },
+    {
+      "source": "repo:vox",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "forked",
+        "tools",
+        "voice"
+      ]
+    },
+    {
+      "source": "repo:weave",
+      "target": "role:agent-environment",
+      "kind": "provides",
+      "evidence": [
+        "mcp",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:weave",
+      "target": "role:coordination-domain-surface",
+      "kind": "provides",
+      "evidence": [
+        "mcp",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:weave",
+      "target": "role:fleet-handoff",
+      "kind": "provides",
+      "evidence": [
+        "mcp",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:weave",
+      "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "mcp",
+        "orchestration"
+      ]
+    },
+    {
+      "source": "repo:yazelix",
+      "target": "role:parser-runtime-surface",
+      "kind": "provides",
+      "evidence": [
+        "env",
+        "forked",
+        "terminal"
+      ]
+    },
+    {
+      "source": "repo:yazelix",
+      "target": "role:toolchain-provider",
+      "kind": "provides",
+      "evidence": [
+        "env",
+        "forked",
+        "terminal"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:agent",
+      "kind": "contains",
+      "evidence": [
+        "agent"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:agent-skills",
+      "kind": "contains",
+      "evidence": [
+        "agent-skills"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:archon",
+      "kind": "contains",
+      "evidence": [
+        "Archon"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:assets",
+      "kind": "contains",
+      "evidence": [
+        "assets"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:atc",
+      "kind": "contains",
+      "evidence": [
+        "atc"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:claude-code",
+      "kind": "contains",
+      "evidence": [
+        "claude-code"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:claude-plugin",
+      "kind": "contains",
+      "evidence": [
+        "claude-plugin"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:claude-plugins",
+      "kind": "contains",
+      "evidence": [
+        "claude-plugins"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:codex",
+      "kind": "contains",
+      "evidence": [
+        "codex"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:commands",
+      "kind": "contains",
+      "evidence": [
+        "commands"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:copilot-plugin",
+      "kind": "contains",
+      "evidence": [
+        "copilot-plugin"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:database-hub",
+      "kind": "contains",
+      "evidence": [
+        "database_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:ecc",
+      "kind": "contains",
+      "evidence": [
+        "ECC"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:envctl",
+      "kind": "contains",
+      "evidence": [
+        "envctl"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:flexnetos-brain",
+      "kind": "contains",
+      "evidence": [
+        "flexnetos_brain"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:flexnetos-github-app",
+      "kind": "contains",
+      "evidence": [
+        "flexnetos_github_app"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:flexnetos-runner",
+      "kind": "contains",
+      "evidence": [
+        "flexnetos_runner"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:flexnetos-wiki",
+      "kind": "contains",
+      "evidence": [
+        "flexnetos_wiki"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:flow-hub",
+      "kind": "contains",
+      "evidence": [
+        "flow_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:github-org",
+      "kind": "contains",
+      "evidence": [
+        ".github_org"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:grit",
+      "kind": "contains",
+      "evidence": [
+        "grit"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:handoff",
+      "kind": "contains",
+      "evidence": [
+        "handoff"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:harness-hub",
+      "kind": "contains",
+      "evidence": [
+        "harness_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:hermes-agent",
+      "kind": "contains",
+      "evidence": [
+        "hermes-agent"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:hooks-hub",
+      "kind": "contains",
+      "evidence": [
+        "hooks_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:icm",
+      "kind": "contains",
+      "evidence": [
+        "icm"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:kasetto",
+      "kind": "contains",
+      "evidence": [
+        "kasetto"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:lane",
+      "kind": "contains",
+      "evidence": [
+        "lane"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:lifeos",
+      "kind": "contains",
+      "evidence": [
+        "lifeos"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:loop-cli",
+      "kind": "contains",
+      "evidence": [
+        "loop_cli"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:loop-lib",
+      "kind": "contains",
+      "evidence": [
+        "loop_lib"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:mcp-hub",
+      "kind": "contains",
+      "evidence": [
+        "mcp_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-cli",
+      "kind": "contains",
+      "evidence": [
+        "meta_cli"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-core",
+      "kind": "contains",
+      "evidence": [
+        "meta_core"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-dashboard-cli",
+      "kind": "contains",
+      "evidence": [
+        "meta_dashboard_cli"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-git-cli",
+      "kind": "contains",
+      "evidence": [
+        "meta_git_cli"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-git-lib",
+      "kind": "contains",
+      "evidence": [
+        "meta_git_lib"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-mcp",
+      "kind": "contains",
+      "evidence": [
+        "meta_mcp"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-plugin-api",
+      "kind": "contains",
+      "evidence": [
+        "meta_plugin_api"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-plugin-protocol",
+      "kind": "contains",
+      "evidence": [
+        "meta_plugin_protocol"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-plugins",
+      "kind": "contains",
+      "evidence": [
+        "meta-plugins"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-project-cli",
+      "kind": "contains",
+      "evidence": [
+        "meta_project_cli"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:meta-rust-cli",
+      "kind": "contains",
+      "evidence": [
+        "meta_rust_cli"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:my-wiki",
+      "kind": "contains",
+      "evidence": [
+        "my-wiki"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:n8n",
+      "kind": "contains",
+      "evidence": [
+        "n8n"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:network-control",
+      "kind": "contains",
+      "evidence": [
+        "network-control"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:network-hub",
+      "kind": "contains",
+      "evidence": [
+        "network_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:obscura",
+      "kind": "contains",
+      "evidence": [
+        "obscura"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:obsidian-mind",
+      "kind": "contains",
+      "evidence": [
+        "obsidian-mind"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:oh-my-claudecode",
+      "kind": "contains",
+      "evidence": [
+        "oh-my-claudecode"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:oh-my-pi",
+      "kind": "contains",
+      "evidence": [
+        "oh-my-pi"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:plugin-hub",
+      "kind": "contains",
+      "evidence": [
+        "plugin_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:prompt-hub",
+      "kind": "contains",
+      "evidence": [
+        "prompt_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:rtk-tokenkill",
+      "kind": "contains",
+      "evidence": [
+        "rtk-tokenkill"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:ruflo",
+      "kind": "contains",
+      "evidence": [
+        "ruflo"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:rusty-idd",
+      "kind": "contains",
+      "evidence": [
+        "rusty-idd"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:ruvector",
+      "kind": "contains",
+      "evidence": [
+        "RuVector"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:shimmy",
+      "kind": "contains",
+      "evidence": [
+        "shimmy"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:template-hub",
+      "kind": "contains",
+      "evidence": [
+        "template_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:teri",
+      "kind": "contains",
+      "evidence": [
+        "teri"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:tool-hub",
+      "kind": "contains",
+      "evidence": [
+        "tool_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:vault-hub",
+      "kind": "contains",
+      "evidence": [
+        "vault_hub"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:vox",
+      "kind": "contains",
+      "evidence": [
+        "vox"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:weave",
+      "kind": "contains",
+      "evidence": [
+        "weave"
+      ]
+    },
+    {
+      "source": "system:meta-workspace",
+      "target": "repo:yazelix",
+      "kind": "contains",
+      "evidence": [
+        "yazelix"
+      ]
+    }
+  ],
+  "findings": [
+    "discovered 65 peer repos from meta project list --json",
+    "10 repos have local dirty state recorded as evidence",
+    "1 repos expose .idd/knowledge/architecture.json",
+    "1 repos expose parsed architecture summaries"
+  ]
+}

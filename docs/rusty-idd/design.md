@@ -18,7 +18,7 @@ A virtual-root **workspace** with member crates `crates/{core, spec, runner, tui
 - Sources: Cargo Book Workspaces; Rust 2024 resolver guide; ripgrep/uv/nushell `Cargo.toml`.
 
 ### D2 — Zero-dependency core preserved (confidence: high)
-`crates/core` keeps an **empty `[dependencies]`** (std-only, edition 2021); serde/ratatui/parsers live in adapter crates (hexagonal "pure core, impure shell"). **Why**: verified against the Cargo resolver reference — feature unification changes *features on already-declared deps* and **can never add a dependency edge to a crate that declares none**. So the workspace move does not endanger the core's purity. Enforced by `drift-check.sh` (parses the core manifest) + a CI `cargo tree`/`cargo-deny` gate. Keep serde *out* of core public types; serialization belongs at the edges.
+`crates/core` keeps an **empty `[dependencies]`** (std-only, edition 2021); serde/ratatui/parsers live in adapter crates (hexagonal "pure core, impure shell"). **Why**: verified against the Cargo resolver reference — feature unification changes *features on already-declared deps* and **can never add a dependency edge to a crate that declares none**. So the workspace move does not endanger the core's purity. Enforced by `rusty-idd merge-tools verify` in CI, which checks the core manifest and legacy merge-surface boundaries, plus `cargo audit` for supply-chain review. Keep serde *out* of core public types; serialization belongs at the edges.
 - Sources: Cargo resolver ref; RFC 3692; howtocodeit/Barrage hexagonal-Rust; eizinger (keep derives out of core).
 
 ### D3 — Lifecycle engine toolkit (confidence: high)
@@ -37,8 +37,10 @@ Author rusty-idd's own specs as hand-written Markdown now (no binary needed; for
 
 - **Lifecycle port complexity** → Mitigation: it is the *last* substantive slice (after low-risk structural moves); golden fixtures from the Node oracle make it test-driven; `oonid/OpenSpec-rs` is a tractability reference.
 - **Mixed-edition workspace build on old toolchains** → Mitigation: require Rust ≥ 1.85 (the 2024 edition baseline); document MSRV.
-- **Core purity regressing via a careless dep** → Mitigation: `drift-check.sh` + CI `cargo-deny` on the core crate; the harness's QA makes this priority-one.
-- **Two control planes (idd `AI_MERGE/` vs OpenSpec `openspec/changes/`)** → Open question below.
+- **Core purity regressing via a careless dep** → Mitigation: `rusty-idd merge-tools verify` checks the core manifest in CI, and `cargo audit` keeps the supply-chain gate fail-closed.
+- **Workflow ownership** → the active Codex harness ADR resolves the former
+  two-control-plane question: Rusty IDD/OpenSpec is the workflow, and
+  `AI_MERGE/` is an optional audit/evidence surface.
 
 ## Migration Plan
 
@@ -46,6 +48,9 @@ Per `slice-sequence.md`: workspace skeleton → fold in existing crates → port
 
 ## Open Questions
 
-- **Control-plane reconciliation**: does rusty-idd keep both idd's `AI_MERGE/` and OpenSpec's `openspec/changes/`, or unify them? (Candidate for an ADR.)
+- **Control-plane reconciliation**: resolved by the active Codex harness ADR.
+  Rusty IDD keeps
+  `AI_MERGE/` as an evidence tool while OpenSpec and `.idd/knowledge` carry the
+  active workflow.
 - **CLI namespace**: flat verbs (`rusty-idd propose|scan|run`) vs grouped (`rusty-idd spec …|merge …|run …`)? (Candidate for an ADR — D1 commits to one binary, not to the verb taxonomy.)
 - **TUI scope in v1**: ship the ratatui TUI in the first unified binary, or land it after the CLI is stable?

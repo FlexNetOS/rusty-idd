@@ -15,19 +15,22 @@ src/
   fs_utils.rs        # stable filesystem helpers and backup-on-overwrite writes
 ```
 
-## Control-plane model
+## Workflow model
 
-`idd` does not try to become the AI agent. It creates the material that AI agents need to operate safely:
+`idd` does not try to become the AI agent. In the unified Rusty IDD workflow, it
+creates or feeds the material that AI agents need to operate safely. AI_MERGE is
+one evidence output, not the primary intent model:
 
 ```mermaid
 flowchart TD
     A[Repo A] --> C[idd scan]
     B[Repo B] --> C
-    C --> D[AI_MERGE + JSON sidecars]
-    D --> E[GitHub Issue / Agent Task]
+    C --> D[.idd knowledge + OpenSpec]
+    D --> E[ADR + tasks]
     E --> F[Small PR]
-    F --> G[CI + idd validate + manifest]
-    G --> H[Integration Branch]
+    F --> G[CI + rusty-idd validate + manifest]
+    G --> H[Optional AI_MERGE evidence]
+    H --> I[Integration Branch]
 ```
 
 ## Why markdown plus JSON

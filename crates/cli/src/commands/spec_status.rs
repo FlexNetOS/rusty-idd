@@ -9,6 +9,7 @@ use std::collections::BTreeSet;
 use std::path::Path;
 
 use rusty_idd_spec::schema::{load_schema, Schema};
+use serde::Serialize;
 
 /// The canonical intent-driven schema, embedded as the default when a project
 /// has no `openspec/schemas/intent-driven/schema.yaml` of its own.
@@ -102,7 +103,7 @@ fn any_file_with_ext(dir: &Path, ext: Option<&str>, recurse: bool) -> bool {
 
 /// `spec status <change_dir>` — print each artifact's done/ready state plus the
 /// archivability verdict and the next ready artifact.
-pub fn run_status(change_dir: &Path) -> i32 {
+pub fn run_status(change_dir: &Path, json: bool) -> i32 {
     if !change_dir.is_dir() {
         eprintln!(
             "rusty-idd: change directory not found: {}",
@@ -117,62 +118,130 @@ pub fn run_status(change_dir: &Path) -> i32 {
             return 1;
         }
     };
-    let done = done_set(change_dir, &schema);
-
-    let name = change_dir
-        .file_name()
-        .map(|n| n.to_string_lossy().into_owned())
-        .unwrap_or_else(|| change_dir.display().to_string());
-    println!(
-        "Change: {name}  (schema: {} v{})",
-        schema.name, schema.version
-    );
-
-    let order = match schema.topo_order() {
-        Ok(o) => o,
-        Err(e) => {
-            eprintln!("rusty-idd: {e}");
+    let snapshot = match status_snapshot(change_dir, &schema) {
+        Ok(snapshot) => snapshot,
+        Err(error) => {
+            eprintln!("rusty-idd: {error}");
             return 1;
         }
     };
-    let next = schema.next_ready(&done).map(|a| a.id.clone());
-    for a in &order {
-        let is_done = done.contains(&a.id);
-        let mark = if is_done { "x" } else { " " };
-        let mut note = String::new();
-        if Some(&a.id) == next.as_ref() {
-            note = "  <- next".to_string();
-        } else if !is_done {
-            let blockers: Vec<&str> = a
-                .requires
-                .iter()
-                .filter(|r| !done.contains(*r))
-                .map(|r| r.as_str())
-                .collect();
-            if !blockers.is_empty() {
-                note = format!("  (blocked by: {})", blockers.join(", "));
+
+    if json {
+        match serde_json::to_string_pretty(&snapshot) {
+            Ok(text) => println!("{text}"),
+            Err(error) => {
+                eprintln!("rusty-idd: failed to serialize status JSON: {error}");
+                return 1;
             }
         }
-        println!("  [{mark}] {:<9} {}{}", a.id, a.generates, note);
+        return 0;
     }
 
-    let done_count = schema
-        .artifacts
-        .iter()
-        .filter(|a| done.contains(&a.id))
-        .count();
-    let total = schema.artifacts.len();
-    if schema.is_archivable(&done) {
-        println!("Archivable: yes ({done_count}/{total} artifacts done)");
-    } else {
-        println!("Archivable: no ({done_count}/{total} artifacts done)");
+    println!(
+        "Change: {}  (schema: {} v{})",
+        snapshot.change, snapshot.schema.name, snapshot.schema.version
+    );
+
+    for artifact in &snapshot.artifacts {
+        let mark = if artifact.done { "x" } else { " " };
+        let mut note = String::new();
+        if Some(&artifact.id) == snapshot.next.as_ref() {
+            note = "  <- next".to_string();
+        } else if !artifact.done && !artifact.blocked_by.is_empty() {
+            note = format!("  (blocked by: {})", artifact.blocked_by.join(", "));
+        }
+        println!(
+            "  [{mark}] {:<9} {}{}",
+            artifact.id, artifact.generates, note
+        );
     }
-    match &next {
+
+    if snapshot.archivable {
+        println!(
+            "Archivable: yes ({}/{} artifacts done)",
+            snapshot.done_count, snapshot.total
+        );
+    } else {
+        println!(
+            "Archivable: no ({}/{} artifacts done)",
+            snapshot.done_count, snapshot.total
+        );
+    }
+    match &snapshot.next {
         Some(id) => println!("Next: {id}"),
-        None if schema.is_archivable(&done) => println!("Next: (none — ready to archive)"),
+        None if snapshot.archivable => println!("Next: (none — ready to archive)"),
         None => println!("Next: (none ready — blocked)"),
     }
     0
+}
+
+#[derive(Debug, Serialize)]
+struct StatusSnapshot {
+    change: String,
+    change_dir: String,
+    schema: SchemaSummary,
+    artifacts: Vec<ArtifactStatus>,
+    done_count: usize,
+    total: usize,
+    archivable: bool,
+    next: Option<String>,
+}
+
+#[derive(Debug, Serialize)]
+struct SchemaSummary {
+    name: String,
+    version: u32,
+}
+
+#[derive(Debug, Serialize)]
+struct ArtifactStatus {
+    id: String,
+    generates: String,
+    done: bool,
+    ready: bool,
+    blocked_by: Vec<String>,
+}
+
+fn status_snapshot(change_dir: &Path, schema: &Schema) -> Result<StatusSnapshot, String> {
+    let done = done_set(change_dir, schema);
+    let order = schema.topo_order().map_err(|e| e.to_string())?;
+    let next = schema.next_ready(&done).map(|a| a.id.clone());
+    let artifacts: Vec<ArtifactStatus> = order
+        .iter()
+        .map(|artifact| {
+            let done_artifact = done.contains(&artifact.id);
+            let blocked_by: Vec<String> = artifact
+                .requires
+                .iter()
+                .filter(|required| !done.contains(*required))
+                .cloned()
+                .collect();
+            ArtifactStatus {
+                id: artifact.id.clone(),
+                generates: artifact.generates.clone(),
+                done: done_artifact,
+                ready: !done_artifact && blocked_by.is_empty(),
+                blocked_by,
+            }
+        })
+        .collect();
+    let done_count = artifacts.iter().filter(|artifact| artifact.done).count();
+    Ok(StatusSnapshot {
+        change: change_dir
+            .file_name()
+            .map(|n| n.to_string_lossy().into_owned())
+            .unwrap_or_else(|| change_dir.display().to_string()),
+        change_dir: change_dir.display().to_string(),
+        schema: SchemaSummary {
+            name: schema.name.clone(),
+            version: schema.version,
+        },
+        artifacts,
+        done_count,
+        total: schema.artifacts.len(),
+        archivable: schema.is_archivable(&done),
+        next,
+    })
 }
 
 /// `spec next <change_dir>` — print just the next ready artifact id (scriptable),

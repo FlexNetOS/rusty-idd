@@ -1,0 +1,394 @@
+{
+  "schema_version": 1,
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "source_plan": ".idd/knowledge/integration-plan.json",
+  "next_change_id": "integrate-rtk-ai-foundation",
+  "counts": {
+    "total": 19,
+    "planned": 14,
+    "incomplete_scaffold": 0,
+    "scaffolded": 0,
+    "ready_to_archive": 1,
+    "archived": 4
+  },
+  "work_items": [
+    {
+      "id": "work:integrate-idd-spec-engine",
+      "title": "Integrate IDD and spec engine",
+      "capability": "capability:idd-spec-engine",
+      "priority": 10,
+      "change_id": "integrate-idd-spec-engine",
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-idd-spec-engine",
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:handoff",
+        "repo:rusty-idd"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-fleet-handoff",
+      "title": "Integrate Central and fleet handoff",
+      "capability": "capability:fleet-handoff",
+      "priority": 20,
+      "change_id": "integrate-fleet-handoff",
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-fleet-handoff",
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:agent",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:network-control",
+        "repo:prompt-hub",
+        "repo:rusty-idd",
+        "repo:teri",
+        "repo:weave"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-agent-communication",
+      "title": "Integrate Agent communication layer",
+      "capability": "capability:agent-communication",
+      "priority": 30,
+      "change_id": "integrate-agent-communication",
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-agent-communication",
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:atc",
+        "repo:handoff",
+        "repo:mcp-hub",
+        "repo:weave"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-env-vault-relay",
+      "title": "Integrate Environment and vault relay",
+      "capability": "capability:env-vault-relay",
+      "priority": 40,
+      "change_id": "integrate-env-vault-relay",
+      "status": "archived",
+      "openspec_path": "openspec/changes/archive/integrate-env-vault-relay",
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:envctl",
+        "repo:vault-hub",
+        "repo:yazelix"
+      ],
+      "adopt_first_inputs": [
+        "/run/media/drdave/COGNITUM",
+        "Cognitum vault on Pi Zero"
+      ]
+    },
+    {
+      "id": "work:integrate-prompt-front-door",
+      "title": "Integrate Prompt front door",
+      "capability": "capability:prompt-front-door",
+      "priority": 50,
+      "change_id": "integrate-prompt-front-door",
+      "status": "ready-to-archive",
+      "openspec_path": "openspec/changes/integrate-prompt-front-door",
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:prompt-hub"
+      ],
+      "adopt_first_inputs": [
+        "github.com/f/prompts.chat",
+        "github.com/f/ai-prompt"
+      ]
+    },
+    {
+      "id": "work:integrate-rtk-ai-foundation",
+      "title": "Integrate RTK AI foundation",
+      "capability": "capability:rtk-ai-foundation",
+      "priority": 60,
+      "change_id": "integrate-rtk-ai-foundation",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:grit",
+        "repo:icm",
+        "repo:rtk-tokenkill",
+        "repo:vox"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-github-agent-run-upgrades",
+      "title": "Integrate GitHub agent-run upgrades",
+      "capability": "capability:github-agent-run-upgrades",
+      "priority": 70,
+      "change_id": "integrate-github-agent-run-upgrades",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:grit",
+        "repo:yazelix"
+      ],
+      "adopt_first_inputs": [
+        "Beads mandatory for code contributors through Yazelix",
+        "github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
+        "github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b"
+      ]
+    },
+    {
+      "id": "work:integrate-parser-runtime",
+      "title": "Integrate Parser and terminal runtime",
+      "capability": "capability:parser-runtime",
+      "priority": 80,
+      "change_id": "integrate-parser-runtime",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:rusty-idd",
+        "repo:tool-hub",
+        "repo:yazelix"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-vector-runtime",
+      "title": "Integrate Vector and agentic runtime",
+      "capability": "capability:vector-runtime",
+      "priority": 90,
+      "change_id": "integrate-vector-runtime",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:database-hub",
+        "repo:icm",
+        "repo:obsidian-mind",
+        "repo:ruvector"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-user-front-door",
+      "title": "Integrate User front door",
+      "capability": "capability:user-front-door",
+      "priority": 100,
+      "change_id": "integrate-user-front-door",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:lifeos",
+        "repo:prompt-hub",
+        "repo:ruvector"
+      ],
+      "adopt_first_inputs": [
+        "goose-like chat integration"
+      ]
+    },
+    {
+      "id": "work:integrate-digital-twin-simulation",
+      "title": "Integrate Digital twin simulation",
+      "capability": "capability:digital-twin-simulation",
+      "priority": 110,
+      "change_id": "integrate-digital-twin-simulation",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:teri"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-network-engineering",
+      "title": "Integrate Network engineering and control",
+      "capability": "capability:network-engineering",
+      "priority": 120,
+      "change_id": "integrate-network-engineering",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:lane",
+        "repo:network-control",
+        "repo:network-hub"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-distributed-device-fabric",
+      "title": "Integrate Distributed device fabric",
+      "capability": "capability:distributed-device-fabric",
+      "priority": 130,
+      "change_id": "integrate-distributed-device-fabric",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:envctl",
+        "repo:network-control",
+        "repo:oh-my-pi"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-lua-ar-interface",
+      "title": "Integrate Lua and AR interface automation",
+      "capability": "capability:lua-ar-interface",
+      "priority": 140,
+      "change_id": "integrate-lua-ar-interface",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi",
+        "repo:yazelix"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-personal-automation",
+      "title": "Integrate Personal media and home automation",
+      "capability": "capability:personal-automation",
+      "priority": 150,
+      "change_id": "integrate-personal-automation",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-agent-harness",
+      "title": "Integrate Agent harness runtime",
+      "capability": "capability:agent-harness",
+      "priority": 500,
+      "change_id": "integrate-agent-harness",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:agent",
+        "repo:agent-skills",
+        "repo:archon",
+        "repo:atc",
+        "repo:claude-code",
+        "repo:claude-plugin",
+        "repo:claude-plugins",
+        "repo:codex",
+        "repo:copilot-plugin",
+        "repo:ecc",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:harness-hub",
+        "repo:hermes-agent",
+        "repo:icm",
+        "repo:kasetto",
+        "repo:n8n",
+        "repo:oh-my-claudecode",
+        "repo:oh-my-pi",
+        "repo:prompt-hub",
+        "repo:rtk-tokenkill",
+        "repo:ruflo",
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:weave"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-board-reasoning",
+      "title": "Integrate Board reasoning layer",
+      "capability": "capability:board-reasoning",
+      "priority": 500,
+      "change_id": "integrate-board-reasoning",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:flexnetos-brain",
+        "repo:flexnetos-wiki",
+        "repo:icm",
+        "repo:my-wiki",
+        "repo:obsidian-mind"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-domain-upgrade",
+      "title": "Integrate Domain upgrade path",
+      "capability": "capability:domain-upgrade",
+      "priority": 500,
+      "change_id": "integrate-domain-upgrade",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:obscura",
+        "repo:weave"
+      ],
+      "adopt_first_inputs": []
+    },
+    {
+      "id": "work:integrate-meta-peer-control",
+      "title": "Integrate Meta peer repo control",
+      "capability": "capability:meta-peer-control",
+      "priority": 500,
+      "change_id": "integrate-meta-peer-control",
+      "status": "planned",
+      "openspec_path": null,
+      "missing_artifacts": [],
+      "unchecked_tasks": 0,
+      "owner_repos": [
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli"
+      ],
+      "adopt_first_inputs": []
+    }
+  ],
+  "findings": [
+    "integration status classified 19 work items from .idd/knowledge/integration-plan.json",
+    "next planned integration work item is integrate-rtk-ai-foundation"
+  ]
+}

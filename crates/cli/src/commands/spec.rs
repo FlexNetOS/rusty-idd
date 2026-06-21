@@ -65,6 +65,9 @@ pub enum SpecCommand {
     Status {
         /// The change directory (e.g. `openspec/changes/<change>`).
         change_dir: PathBuf,
+        /// Emit deterministic JSON for automation instead of human text.
+        #[arg(long)]
+        json: bool,
     },
     /// Print the next ready artifact for a change (scriptable), per the schema
     /// DAG.
@@ -102,6 +105,27 @@ pub enum SpecCommand {
         #[arg(long, default_value = ".")]
         base: PathBuf,
     },
+    /// Create an OpenSpec change from an integration-plan work item.
+    PlanIntegration {
+        /// Base directory containing `openspec/` and `.idd/knowledge`.
+        #[arg(long, default_value = ".")]
+        base: PathBuf,
+        /// Integration plan JSON path (defaults to `.idd/knowledge/integration-plan.json`).
+        #[arg(long)]
+        integration_plan: Option<PathBuf>,
+        /// Select a work item by OpenSpec change id.
+        #[arg(long)]
+        change: Option<String>,
+        /// Select a work item by capability id, with or without `capability:`.
+        #[arg(long)]
+        capability: Option<String>,
+        /// Select a work item by exact work item id.
+        #[arg(long)]
+        work_item: Option<String>,
+        /// Overwrite previously generated files.
+        #[arg(long)]
+        force: bool,
+    },
 }
 
 /// Dispatch a `spec` subcommand, returning a process exit code.
@@ -124,7 +148,9 @@ pub fn run(cmd: SpecCommand) -> i32 {
         } => crate::commands::spec_archive::run(&change_dir, skip_specs, no_validate, yes),
         SpecCommand::Show { file } => cmd_show(&file),
         SpecCommand::Sync { delta, base } => cmd_sync(&delta, &base),
-        SpecCommand::Status { change_dir } => crate::commands::spec_status::run_status(&change_dir),
+        SpecCommand::Status { change_dir, json } => {
+            crate::commands::spec_status::run_status(&change_dir, json)
+        }
         SpecCommand::Next { change_dir } => crate::commands::spec_status::run_next(&change_dir),
         SpecCommand::Adr { command } => crate::commands::spec_adr::run(command),
         SpecCommand::Scaffold {
@@ -137,6 +163,23 @@ pub fn run(cmd: SpecCommand) -> i32 {
         SpecCommand::New { change, base } => {
             crate::commands::spec_scaffold::run_new(&change, &base)
         }
+        SpecCommand::PlanIntegration {
+            base,
+            integration_plan,
+            change,
+            capability,
+            work_item,
+            force,
+        } => crate::commands::spec_plan_integration::run(
+            crate::commands::spec_plan_integration::PlanIntegrationArgs {
+                base,
+                integration_plan,
+                change,
+                capability,
+                work_item,
+                force,
+            },
+        ),
     }
 }
 

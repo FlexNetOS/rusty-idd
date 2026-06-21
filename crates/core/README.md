@@ -9,7 +9,7 @@ This crate is now unified into the **`rusty-idd`** CLI.
 The current safe pattern is not “tell one model to merge everything.” The safer pattern is:
 
 ```text
-repo map → feature matrix → env/secrets contract → agent queue → small issues → AI PRs → CI/secret gates → serialized integration
+intent → graph/context → OpenSpec proposal/spec/design/ADR/tasks → implementation gate → CI/secret gates → validation/evidence
 ```
 
 The hard problems are not text generation. They are:
@@ -60,7 +60,7 @@ rusty-idd plan \
   --out ./integration \
   --name env-secrets-unification
 
-# 2. Review generated control files
+# 2. Review generated evidence files
 ls ./integration/AI_MERGE
 
 # 3. Create a narrow task for an AI agent
@@ -110,12 +110,12 @@ AI_MERGE/
 
 ## Recommended GitHub usage
 
-Use GitHub Issues and PRs as the execution control plane:
+Use GitHub Issues and PRs as an execution surface after Rusty IDD artifacts are ready:
 
-1. Paste or link one generated task into one GitHub issue.
+1. Paste or link one OpenSpec task set into one GitHub issue.
 2. Assign the issue to the chosen AI agent.
-3. Require the PR to update relevant `AI_MERGE` docs.
-4. Require CI, tests, lint, `idd validate`, and secret scan before merge.
+3. Require the PR to update OpenSpec, `.idd/knowledge`, ADR, manifest, and AI_MERGE evidence only when required.
+4. Require CI, tests, lint, `rusty-idd validate`, and secret scan before merge.
 5. Keep only one integration branch with merge authority.
 6. If the agent needs two repositories, import or mirror the second repo into the integration repo first. Do not depend on a single cloud-agent run mutating two independent repos.
 

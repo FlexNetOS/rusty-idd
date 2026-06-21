@@ -1,0 +1,68 @@
+# Project-local Codex exec policy for Rusty IDD.
+#
+# Keep repository work inside repository boundaries. Host service/process
+# management belongs to the parent meta/envctl layer, not this repo.
+
+prefix_rule(
+    pattern = ["systemctl"],
+    decision = "forbidden",
+    justification = "Host service management is outside rusty-idd scope; use parent meta/envctl lifecycle commands or ask the owner.",
+    match = [
+        "systemctl --user restart secretd",
+        "systemctl status env-ctl.service",
+    ],
+)
+
+prefix_rule(
+    pattern = ["kill"],
+    decision = "forbidden",
+    justification = "Raw process management is outside rusty-idd scope; route daemon lifecycle through parent meta/envctl.",
+    match = [
+        "kill -TERM 1234",
+    ],
+)
+
+prefix_rule(
+    pattern = ["pkill"],
+    decision = "forbidden",
+    justification = "Raw process management is outside rusty-idd scope; route daemon lifecycle through parent meta/envctl.",
+    match = [
+        "pkill secretd",
+    ],
+)
+
+prefix_rule(
+    pattern = ["killall"],
+    decision = "forbidden",
+    justification = "Raw process management is outside rusty-idd scope; route daemon lifecycle through parent meta/envctl.",
+    match = [
+        "killall secretd",
+    ],
+)
+
+prefix_rule(
+    pattern = ["cargo", "install"],
+    decision = "prompt",
+    justification = "Tool installation must be tracked through parent meta/envctl, not user-global state from this repo.",
+    match = [
+        "cargo install just",
+    ],
+)
+
+prefix_rule(
+    pattern = ["npm", "install", "-g"],
+    decision = "prompt",
+    justification = "Global tool installation must be tracked through parent meta/envctl, not user-global state from this repo.",
+    match = [
+        "npm install -g just",
+    ],
+)
+
+prefix_rule(
+    pattern = ["pip", "install"],
+    decision = "prompt",
+    justification = "Python tool installation is not the default Codex toolchain path here; use tracked repo or parent meta/envctl tooling.",
+    match = [
+        "pip install just",
+    ],
+)

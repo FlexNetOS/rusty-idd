@@ -1,0 +1,4 @@
+MIT License
+
+This vendored compatibility crate preserves the upstream repomix-shared MIT license.
+See ../../../adr/0004-knowledge-direct-crate-integration.md for the local vendoring rationale.

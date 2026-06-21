@@ -15,6 +15,10 @@ pub fn generate_manifest(root: impl AsRef<Path>) -> Result<Vec<ManifestEntry>, S
 
     let mut entries = Vec::new();
     for abs in stable_walk(root).map_err(|e| format!("walk failed: {e}"))? {
+        let rel = relative_path(root, &abs);
+        if manifest_should_skip(&rel) {
+            continue;
+        }
         let metadata = match fs::metadata(&abs) {
             Ok(value) => value,
             Err(_) => continue,
@@ -25,7 +29,7 @@ pub fn generate_manifest(root: impl AsRef<Path>) -> Result<Vec<ManifestEntry>, S
         let digest =
             fnv1a64_file(&abs).map_err(|e| format!("hash failed for {}: {e}", abs.display()))?;
         entries.push(ManifestEntry {
-            path: relative_path(root, &abs),
+            path: rel,
             size_bytes: metadata.len(),
             fnv1a64: format!("{digest:016x}"),
         });
@@ -53,6 +57,54 @@ pub fn write_manifest(
     write_string_preserving_existing(out.as_ref(), &manifest_tsv(&entries))
         .map_err(|e| format!("failed to write manifest: {e}"))?;
     Ok(entries)
+}
+
+pub fn workspace_fingerprint(root: impl AsRef<Path>) -> Result<String, String> {
+    let root = root.as_ref();
+    if !root.exists() || !root.is_dir() {
+        return Err(format!(
+            "fingerprint root is not a directory: {}",
+            root.display()
+        ));
+    }
+
+    let mut hash: u64 = 0xcbf29ce484222325;
+    for abs in stable_walk(root).map_err(|e| format!("walk failed: {e}"))? {
+        let rel = relative_path(root, &abs);
+        if fingerprint_should_skip(&rel) {
+            continue;
+        }
+        for byte in rel.as_bytes() {
+            hash ^= u64::from(*byte);
+            hash = hash.wrapping_mul(0x100000001b3);
+        }
+        hash ^= 0xff;
+        hash = hash.wrapping_mul(0x100000001b3);
+        let file_hash =
+            fnv1a64_file(&abs).map_err(|e| format!("hash failed for {}: {e}", abs.display()))?;
+        for byte in file_hash.to_be_bytes() {
+            hash ^= u64::from(byte);
+            hash = hash.wrapping_mul(0x100000001b3);
+        }
+    }
+    Ok(format!("fnv1a64:{hash:016x}"))
+}
+
+fn fingerprint_should_skip(rel: &str) -> bool {
+    rel.starts_with(".idd/knowledge/")
+        || rel.starts_with(".idd/runs/")
+        || rel == ".idd/MANIFEST.tsv"
+        || rel == "AI_MERGE/validation_report.md"
+        || is_upstream_generated_local_artifact(rel)
+}
+
+fn manifest_should_skip(rel: &str) -> bool {
+    rel.starts_with(".idd/runs/") || is_upstream_generated_local_artifact(rel)
+}
+
+fn is_upstream_generated_local_artifact(rel: &str) -> bool {
+    rel.starts_with("third_party/upstream/codegraph-rust/docs/specifications/")
+        || rel == "third_party/upstream/repomix-rs/.mind-mesh/agent/repomix.md"
 }
 
 fn fnv1a64_file(path: &Path) -> io::Result<u64> {
@@ -89,6 +141,12 @@ mod tests {
         fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
         fs::create_dir(root.join(".idd")).unwrap();
         fs::write(root.join(".idd/MANIFEST.tsv"), "old self hash\n").unwrap();
+        fs::create_dir_all(root.join(".idd/runs/rusty-idd-codex-loop")).unwrap();
+        fs::write(
+            root.join(".idd/runs/rusty-idd-codex-loop/run-manifest.json"),
+            "{}\n",
+        )
+        .unwrap();
         fs::write(root.join("Cargo.toml.idd-bak-1"), "stale\n").unwrap();
         fs::create_dir(root.join("_workspace")).unwrap();
         fs::write(root.join("_workspace/HANDOFF.md"), "local\n").unwrap();
@@ -107,6 +165,42 @@ mod tests {
     }
 
     #[test]
+    fn manifest_excludes_ignored_upstream_generated_artifacts() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
+        fs::create_dir_all(root.join("third_party/upstream/codegraph-rust/docs/specifications"))
+            .unwrap();
+        fs::create_dir_all(root.join("third_party/upstream/repomix-rs/.mind-mesh/agent")).unwrap();
+        fs::write(
+            root.join("third_party/upstream/codegraph-rust/docs/specifications/local.spec.md"),
+            "generated\n",
+        )
+        .unwrap();
+        fs::write(
+            root.join("third_party/upstream/repomix-rs/.mind-mesh/agent/repomix.md"),
+            "generated\n",
+        )
+        .unwrap();
+        fs::write(
+            root.join("third_party/upstream/repomix-rs/Cargo.toml"),
+            "[workspace]\n",
+        )
+        .unwrap();
+
+        let paths = generate_manifest(root)
+            .unwrap()
+            .into_iter()
+            .map(|entry| entry.path)
+            .collect::<Vec<_>>();
+
+        assert_eq!(
+            paths,
+            vec!["Cargo.toml", "third_party/upstream/repomix-rs/Cargo.toml"]
+        );
+    }
+
+    #[test]
     fn write_manifest_is_idempotent() {
         let tmp = tempfile::tempdir().unwrap();
         let root = tmp.path();
@@ -121,5 +215,36 @@ mod tests {
 
         assert_eq!(first, second);
         assert!(!first.contains(".idd/MANIFEST.tsv"));
+    }
+
+    #[test]
+    fn workspace_fingerprint_ignores_generated_knowledge() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        fs::create_dir(root.join(".idd")).unwrap();
+        fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
+        let first = workspace_fingerprint(root).unwrap();
+
+        fs::create_dir(root.join(".idd/knowledge")).unwrap();
+        fs::write(root.join(".idd/knowledge/index.json"), "{}\n").unwrap();
+        fs::write(root.join(".idd/knowledge/report.md"), "# Report\n").unwrap();
+        fs::create_dir_all(root.join(".idd/runs/rusty-idd-codex-loop")).unwrap();
+        fs::write(
+            root.join(".idd/runs/rusty-idd-codex-loop/run-manifest.json"),
+            "{}\n",
+        )
+        .unwrap();
+        fs::create_dir(root.join("AI_MERGE")).unwrap();
+        fs::write(root.join("AI_MERGE/validation_report.md"), "# Validation\n").unwrap();
+        fs::create_dir_all(root.join("third_party/upstream/codegraph-rust/docs/specifications"))
+            .unwrap();
+        fs::write(
+            root.join("third_party/upstream/codegraph-rust/docs/specifications/local.spec.md"),
+            "generated\n",
+        )
+        .unwrap();
+        let second = workspace_fingerprint(root).unwrap();
+
+        assert_eq!(first, second);
     }
 }

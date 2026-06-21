@@ -1,0 +1,8 @@
+.DS_Store
+/target
+repomix-output.*
+npm/.staging
+sessions
+
+# MindMesh — repomix index (regenerated locally, not versioned)
+.mind-mesh/agent/repomix.md

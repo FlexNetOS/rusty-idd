@@ -437,7 +437,7 @@ imports/{b_name}/          # untouched Repo B import\n\
 crates/                    # canonical Rust crates\n\
 apps/                      # canonical runnable apps\n\
 docs/                      # user and operator docs\n\
-AI_MERGE/                  # agent-readable control plane\n\
+AI_MERGE/                  # agent-readable audit and evidence surface\n\
 .idd/                      # lock, manifest, local state\n\
 ```\n\n\
 ## Execution Phases\n\n\

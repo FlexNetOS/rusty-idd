@@ -22,12 +22,23 @@ path     = "src/lib.rs"
 [dependencies]
 # The unification seam: depend ON the existing crates, add deps only HERE
 # (the core crate stays std-only / zero-dep — the drift gate enforces this).
+anyhow = "1"
 clap = { version = "4", features = ["derive"] }
+serde = { version = "1", features = ["derive"] }
 serde_json = "1"
+toml = "0.9"
 rusty-idd-core = { path = "../core" }
+rusty-idd-knowledge = { path = "../knowledge" }
+rusty-idd-merge-tools = { path = "../merge-tools" }
 rusty-idd-spec = { path = "../spec" }
 rusty-idd-runner = { path = "../runner" }
 rusty-idd-tui = { path = "../tui" }
 
 [dev-dependencies]
 tempfile = "3"
+
+[features]
+default = []
+knowledge-vector = ["rusty-idd-knowledge/knowledge-vector"]
+knowledge-surrealdb = ["rusty-idd-knowledge/knowledge-surrealdb"]
+knowledge-cloud = ["rusty-idd-knowledge/knowledge-cloud"]

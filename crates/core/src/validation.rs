@@ -1,6 +1,7 @@
 use crate::fs_utils::{
     read_to_string_lossy, relative_path, stable_walk, write_string_preserving_existing,
 };
+use crate::manifest::workspace_fingerprint;
 use crate::model::{FindingSeverity, ValidationFinding};
 use std::collections::{BTreeMap, BTreeSet};
 use std::path::Path;
@@ -58,10 +59,35 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
     );
     require_file(root, "AI_MERGE/08_agent_queue.md", &mut findings);
     require_file(root, "AI_MERGE/10_parity_test_plan.md", &mut findings);
+    require_file(
+        root,
+        "crates/external/codegraph-core/LICENSE-MIT",
+        &mut findings,
+    );
+    require_file(
+        root,
+        "crates/external/codegraph-core/LICENSE-APACHE",
+        &mut findings,
+    );
+    require_file(
+        root,
+        "crates/external/codegraph-parser/LICENSE-MIT",
+        &mut findings,
+    );
+    require_file(
+        root,
+        "crates/external/codegraph-parser/LICENSE-APACHE",
+        &mut findings,
+    );
+    require_file(
+        root,
+        "crates/external/repomix-shared/LICENSE-MIT",
+        &mut findings,
+    );
 
     for abs in stable_walk(root).map_err(|e| format!("walk failed: {e}"))? {
         let rel = relative_path(root, &abs);
-        if rel.contains(".git/") || rel.starts_with("target/") {
+        if validation_scan_should_skip(&rel) {
             continue;
         }
         flag_committed_env_file(&rel, &mut findings);
@@ -78,6 +104,8 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
             scan_manifest_policy(&rel, &content, &mut findings);
         }
     }
+
+    scan_knowledge_staleness(root, &mut findings);
 
     findings.sort_by(|a, b| b.severity.cmp(&a.severity).then(a.file.cmp(&b.file)));
     Ok(findings)
@@ -113,6 +141,10 @@ fn require_file(root: &Path, rel: &str, findings: &mut Vec<ValidationFinding>) {
             message: "required IDD/GitHub control-plane file is missing".to_string(),
         });
     }
+}
+
+fn validation_scan_should_skip(rel: &str) -> bool {
+    rel.contains(".git/") || rel.starts_with("target/") || rel.starts_with("third_party/upstream/")
 }
 
 fn flag_committed_env_file(file: &str, findings: &mut Vec<ValidationFinding>) {
@@ -319,6 +351,13 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         require_workflow_contains(
             file,
             content,
+            "cargo run --bin rusty-idd -- merge-tools verify --workspace .",
+            "primary CI must run the merge-tools verification gate",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
             "cargo run --bin rusty-idd -- validate --workspace .",
             "primary CI must run rusty-idd validate",
             findings,
@@ -350,15 +389,8 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         require_workflow_contains(
             file,
             content,
-            "bash .gemini/skills/merge-verification/scripts/drift-check.sh .",
-            "promotion verification must run the Gemini drift gate",
-            findings,
-        );
-        require_workflow_contains(
-            file,
-            content,
-            "bash .claude/skills/merge-verification/scripts/drift-check.sh .",
-            "promotion verification must run the Claude drift gate",
+            "cargo run --bin rusty-idd -- merge-tools verify --workspace .",
+            "promotion verification must run the merge-tools verification gate",
             findings,
         );
         require_workflow_contains(
@@ -408,8 +440,60 @@ fn manifest_path_is_local_artifact(path: &str) -> bool {
         || path.starts_with("_workspace/")
         || path.starts_with(".devin/")
         || path.starts_with(".worktrees/")
+        || path.starts_with(".idd/runs/")
         || path.starts_with(".vscode/")
         || path == ".github/workflows/idd-ci.yml"
+}
+
+fn scan_knowledge_staleness(root: &Path, findings: &mut Vec<ValidationFinding>) {
+    let knowledge_dir = root.join(".idd/knowledge");
+    let index = knowledge_dir.join("index.json");
+    let report = knowledge_dir.join("report.md");
+    if !knowledge_dir.exists() && !index.exists() && !report.exists() {
+        return;
+    }
+
+    if !index.exists() {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: ".idd/knowledge/index.json".to_string(),
+            message: "knowledge index is missing; run `rusty-idd knowledge refresh --workspace .`"
+                .to_string(),
+        });
+        return;
+    }
+    if !report.exists() {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: ".idd/knowledge/report.md".to_string(),
+            message: "knowledge report is missing; run `rusty-idd knowledge refresh --workspace .`"
+                .to_string(),
+        });
+        return;
+    }
+
+    let Ok(fingerprint) = workspace_fingerprint(root) else {
+        return;
+    };
+    let index_content = std::fs::read_to_string(&index).unwrap_or_default();
+    let report_content = std::fs::read_to_string(&report).unwrap_or_default();
+
+    if !index_content.contains(&fingerprint) {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: ".idd/knowledge/index.json".to_string(),
+            message: "knowledge index is stale; run `rusty-idd knowledge refresh --workspace .`"
+                .to_string(),
+        });
+    }
+    if !report_content.contains(&fingerprint) {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: ".idd/knowledge/report.md".to_string(),
+            message: "knowledge report is stale; run `rusty-idd knowledge refresh --workspace .`"
+                .to_string(),
+        });
+    }
 }
 
 fn is_github_workflow(file: &str) -> bool {
@@ -474,5 +558,35 @@ jobs:
         scan_manifest_policy(".idd/MANIFEST.tsv", manifest, &mut findings);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, FindingSeverity::Critical);
+    }
+
+    #[test]
+    fn skips_full_upstream_mirror_policy_scan() {
+        assert!(validation_scan_should_skip(
+            "third_party/upstream/repomix-rs/crates/core/tests/integration_test.rs"
+        ));
+        assert!(!validation_scan_should_skip("crates/core/src/lib.rs"));
+    }
+
+    #[test]
+    fn flags_stale_knowledge_artifacts() {
+        let tmp = tempfile::tempdir().unwrap();
+        let root = tmp.path();
+        std::fs::create_dir_all(root.join(".idd/knowledge")).unwrap();
+        std::fs::write(root.join("Cargo.toml"), "[workspace]\n").unwrap();
+        std::fs::write(
+            root.join(".idd/knowledge/index.json"),
+            "{\"workspace_fingerprint\":\"old\"}\n",
+        )
+        .unwrap();
+        std::fs::write(root.join(".idd/knowledge/report.md"), "fingerprint: old\n").unwrap();
+
+        let mut findings = Vec::new();
+        scan_knowledge_staleness(root, &mut findings);
+
+        assert_eq!(findings.len(), 2);
+        assert!(findings
+            .iter()
+            .all(|finding| finding.severity == FindingSeverity::Critical));
     }
 }

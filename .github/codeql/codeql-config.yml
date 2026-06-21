@@ -1,0 +1,4 @@
+name: Rusty IDD CodeQL
+
+paths-ignore:
+  - third_party/upstream/**
