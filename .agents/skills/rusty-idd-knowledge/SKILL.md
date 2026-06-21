@@ -132,7 +132,16 @@ artifacts or when preparing compact context for an agent.
    - This is the handoff from graph planning into the normal Rusty IDD
      OpenSpec lifecycle; implementation still follows adopt-first TDD.
 
-11. Read compactly.
+11. Use machine-readable OpenSpec lifecycle status for automation.
+   - Human status:
+     `rusty-idd spec status openspec/changes/CHANGE_ID`
+   - JSON status for handoff, runners, and automation:
+     `rusty-idd spec status --json openspec/changes/CHANGE_ID`
+   - The JSON output preserves schema identity, ordered artifact status, done
+     count, total count, archivability, and next ready artifact. Prefer this
+     over scraping human status text.
+
+12. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
@@ -143,7 +152,7 @@ artifacts or when preparing compact context for an agent.
      and `.idd/knowledge/integration-plan.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-12. Stay in-process.
+13. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external

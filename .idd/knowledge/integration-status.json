@@ -2,13 +2,13 @@
   "schema_version": 1,
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_plan": ".idd/knowledge/integration-plan.json",
-  "next_change_id": "integrate-idd-spec-engine",
+  "next_change_id": "integrate-fleet-handoff",
   "counts": {
     "total": 19,
-    "planned": 19,
+    "planned": 18,
     "incomplete_scaffold": 0,
     "scaffolded": 0,
-    "ready_to_archive": 0,
+    "ready_to_archive": 1,
     "archived": 0
   },
   "work_items": [
@@ -18,8 +18,8 @@
       "capability": "capability:idd-spec-engine",
       "priority": 10,
       "change_id": "integrate-idd-spec-engine",
-      "status": "planned",
-      "openspec_path": null,
+      "status": "ready-to-archive",
+      "openspec_path": "openspec/changes/integrate-idd-spec-engine",
       "missing_artifacts": [],
       "unchecked_tasks": 0,
       "owner_repos": [
@@ -389,6 +389,6 @@
   ],
   "findings": [
     "integration status classified 19 work items from .idd/knowledge/integration-plan.json",
-    "next planned integration work item is integrate-idd-spec-engine"
+    "next planned integration work item is integrate-fleet-handoff"
   ]
 }

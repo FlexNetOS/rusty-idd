@@ -423,8 +423,8 @@
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
       "branch": "research/harness-upgrade-targets",
-      "head": "2a5647727a70a51606c7cc88d51804cfb4b3d210",
-      "dirty": true,
+      "head": "db1240da5ce237b0e6bd937e86ada5ba9ebee29f",
+      "dirty": false,
       "tags": [
         "ci",
         "org"
@@ -1269,8 +1269,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8296,
-          "edges": 33472,
+          "nodes": 8319,
+          "edges": 33539,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 163,
-          "tokens": 116033,
+          "files": 168,
+          "tokens": 118969,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1376,12 +1376,12 @@
               1294
             ],
             [
-              "Makefile",
-              1165
+              "AI_MERGE/26_idd_spec_engine_automation.md",
+              1176
             ],
             [
-              "crates/core/src/model.rs",
-              1150
+              "Makefile",
+              1165
             ]
           ],
           "suspicious_files": 0,
@@ -1444,7 +1444,7 @@
             "kind": "crate",
             "files": 4,
             "nodes": 770,
-            "edges": 3136,
+            "edges": 3135,
             "languages": [
               "Rust",
               "rust"
@@ -1455,8 +1455,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 22,
-            "nodes": 696,
-            "edges": 2918,
+            "nodes": 718,
+            "edges": 2985,
             "languages": [
               "Rust",
               "rust"
@@ -1480,7 +1480,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1911,
+            "edges": 1909,
             "languages": [
               "Rust",
               "rust"
@@ -3622,7 +3622,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "10 repos have local dirty state recorded as evidence",
+    "9 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]

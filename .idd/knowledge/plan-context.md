@@ -3,8 +3,8 @@
 - Change: `integration-automation-plan`
 - Goal: turn the full agentic company operating model into ordered integration automation work
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
-- Source graph: 135 files, 8296 nodes, 33472 edges via `codegraph-rust`
-- Context package: 163 files, 116033 tokens via `repomix-rs`
+- Source graph: 135 files, 8319 nodes, 33539 edges via `codegraph-rust`
+- Context package: 168 files, 118969 tokens via `repomix-rs`
 
 ## Automation Order
 
@@ -27,13 +27,13 @@
 | Component | Kind | Files | Nodes | Edges | Evidence |
 |---|---|---:|---:|---:|---|
 | `codegraph-parser` | external_crate | 29 | 1060 | 7485 | crates/external/codegraph-parser/src/complexity.rs, crates/external/codegraph-parser/src/diff.rs, crates/external/codegraph-parser/src/edge.rs, crates/external/codegraph-parser/src/fast_io.rs, crates/external/codegraph-parser/src/fast_ml/enhancer.rs, crates/external/codegraph-parser/src/fast_ml/mod.rs, crates/external/codegraph-parser/src/fast_ml/pattern_matcher.rs, crates/external/codegraph-parser/src/fast_ml/symbol_resolver.rs, crates/external/codegraph-parser/src/file_collect.rs, crates/external/codegraph-parser/src/integration_tests.rs, crates/external/codegraph-parser/src/language.rs, crates/external/codegraph-parser/src/languages/cpp.rs |
-| `cli` | crate | 22 | 696 | 2918 | crates/cli/src/commands/codex.rs, crates/cli/src/commands/core.rs, crates/cli/src/commands/knowledge.rs, crates/cli/src/commands/mod.rs, crates/cli/src/commands/run.rs, crates/cli/src/commands/spec.rs, crates/cli/src/commands/spec_adr.rs, crates/cli/src/commands/spec_archive.rs, crates/cli/src/commands/spec_plan_integration.rs, crates/cli/src/commands/spec_scaffold.rs, crates/cli/src/commands/spec_status.rs, crates/cli/src/commands/tui.rs |
+| `cli` | crate | 22 | 718 | 2985 | crates/cli/src/commands/codex.rs, crates/cli/src/commands/core.rs, crates/cli/src/commands/knowledge.rs, crates/cli/src/commands/mod.rs, crates/cli/src/commands/run.rs, crates/cli/src/commands/spec.rs, crates/cli/src/commands/spec_adr.rs, crates/cli/src/commands/spec_archive.rs, crates/cli/src/commands/spec_plan_integration.rs, crates/cli/src/commands/spec_scaffold.rs, crates/cli/src/commands/spec_status.rs, crates/cli/src/commands/tui.rs |
 | `core` | crate | 11 | 415 | 2373 | crates/core/src/cli.rs, crates/core/src/env_contract.rs, crates/core/src/fs_utils.rs, crates/core/src/lib.rs, crates/core/src/manifest.rs, crates/core/src/model.rs, crates/core/src/planner.rs, crates/core/src/scanner.rs, crates/core/src/templates.rs, crates/core/src/validation.rs, crates/core/tests/smoke.rs |
-| `spec` | crate | 24 | 461 | 1911 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
+| `spec` | crate | 24 | 461 | 1909 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
 | `codegraph-core` | external_crate | 39 | 1918 | 9061 | crates/external/codegraph-core/benches/core_micro.rs, crates/external/codegraph-core/src/advanced_config.rs, crates/external/codegraph-core/src/arena.rs, crates/external/codegraph-core/src/buffer_pool.rs, crates/external/codegraph-core/src/cli_config.rs, crates/external/codegraph-core/src/compression.rs, crates/external/codegraph-core/src/config.rs, crates/external/codegraph-core/src/config_manager.rs, crates/external/codegraph-core/src/embedding_config.rs, crates/external/codegraph-core/src/error.rs, crates/external/codegraph-core/src/incremental/mod.rs, crates/external/codegraph-core/src/incremental/updater.rs |
 | `tui` | crate | 3 | 1006 | 3985 | crates/tui/src/app.rs, crates/tui/src/lib.rs, crates/tui/src/ui.rs |
 | `knowledge` | crate | 1 | 502 | 3637 | crates/knowledge/src/lib.rs |
-| `runner` | crate | 4 | 770 | 3136 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
+| `runner` | crate | 4 | 770 | 3135 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | crates/external/repomix-shared/src/lib.rs, crates/external/repomix-shared/src/types.rs |
 
 ## System Roles
@@ -62,7 +62,7 @@
 | `handoff` | `fix/windows-ledger-path-and-promote-checkout` | true | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `harness_hub` | `master` | false | role:capability-hub, role:fleet-handoff |  |
 | `mcp_hub` | `master` | false | role:capability-hub, role:coordination-domain-surface |  |
-| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 135 files, 8296 nodes, 33472 edges; 116033 tokens; surfaces 4; top: codegraph-core, codegraph-parser, tui |
+| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 135 files, 8319 nodes, 33539 edges; 118969 tokens; surfaces 4; top: codegraph-core, codegraph-parser, tui |
 | `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `yazelix` | `main` | false | role:parser-runtime-surface, role:toolchain-provider |  |
 | `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
@@ -71,7 +71,7 @@
 | `database_hub` | `master` | false | role:capability-hub |  |
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `flow_hub` | `master` | false | role:capability-hub |  |
-| `github_org` | `research/harness-upgrade-targets` | true | role:agent-environment, role:fleet-handoff |  |
+| `github_org` | `research/harness-upgrade-targets` | false | role:agent-environment, role:fleet-handoff |  |
 
 ## Operating Layers
 
