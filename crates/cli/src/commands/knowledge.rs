@@ -161,6 +161,10 @@ pub struct IntegrationOwnersArgs {
     pub capability: Option<String>,
     #[arg(long)]
     pub work_item: Option<String>,
+    #[arg(long)]
+    pub next: bool,
+    #[arg(long)]
+    pub next_planned: bool,
 }
 
 #[derive(Args)]
@@ -386,6 +390,8 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             options.change = args.change;
             options.capability = args.capability;
             options.work_item = args.work_item;
+            options.next = args.next;
+            options.next_planned = args.next_planned;
             let report = build_integration_owner_surfaces(options)?;
             if matches!(format, PlanContextFormat::Json) {
                 write_text(&args.out, &(report + "\n"))?;

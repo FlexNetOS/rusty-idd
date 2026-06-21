@@ -438,6 +438,8 @@ pub struct IntegrationOwnersOptions {
     pub change: Option<String>,
     pub capability: Option<String>,
     pub work_item: Option<String>,
+    pub next: bool,
+    pub next_planned: bool,
     pub format: PlanContextFormat,
 }
 
@@ -450,6 +452,8 @@ impl IntegrationOwnersOptions {
             change: None,
             capability: None,
             work_item: None,
+            next: false,
+            next_planned: false,
             format,
         }
     }
@@ -655,6 +659,8 @@ pub struct IntegrationOwnerSelector {
     pub change: Option<String>,
     pub capability: Option<String>,
     pub work_item: Option<String>,
+    pub next: bool,
+    pub next_planned: bool,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -3918,8 +3924,10 @@ fn integration_owner_surfaces(
         change: options.change,
         capability: options.capability,
         work_item: options.work_item,
+        next: options.next,
+        next_planned: options.next_planned,
     };
-    let selected = select_owner_work_item(&plan, &selector)?;
+    let selected = select_owner_work_item(workspace, &plan, &selector)?;
     let repo_by_id = system
         .repos
         .iter()
@@ -3980,7 +3988,7 @@ fn integration_owner_surfaces(
         source_plan: display_path(workspace, plan_path),
         source_system_architecture: display_path(workspace, system_path),
         selector,
-        work_item: selected.clone(),
+        work_item: selected,
         owner_surfaces,
         missing_owner_repos,
         diagnostics,
@@ -3988,20 +3996,65 @@ fn integration_owner_surfaces(
     })
 }
 
-fn select_owner_work_item<'a>(
-    plan: &'a IntegrationAutomationPlan,
+fn select_owner_work_item(
+    workspace: &Path,
+    plan: &IntegrationAutomationPlan,
     selector: &IntegrationOwnerSelector,
-) -> Result<&'a IntegrationWorkItem> {
+) -> Result<IntegrationWorkItem> {
     let selected_count = [
         selector.change.as_ref().map(|_| ()),
         selector.capability.as_ref().map(|_| ()),
         selector.work_item.as_ref().map(|_| ()),
+        selector.next.then_some(()),
+        selector.next_planned.then_some(()),
     ]
     .into_iter()
     .flatten()
     .count();
     if selected_count != 1 {
-        bail!("select exactly one of --change, --capability, or --work-item");
+        bail!(
+            "select exactly one of --change, --capability, --work-item, --next, or --next-planned"
+        );
+    }
+
+    if selector.next {
+        return plan
+            .work_items
+            .iter()
+            .map(|item| integration_work_status(workspace, item))
+            .filter(|status| status.status != "archived")
+            .min_by(|a, b| {
+                a.priority
+                    .cmp(&b.priority)
+                    .then(a.change_id.cmp(&b.change_id))
+            })
+            .and_then(|status| {
+                plan.work_items
+                    .iter()
+                    .find(|item| item.change_id == status.change_id)
+                    .cloned()
+            })
+            .ok_or_else(|| anyhow::anyhow!("no non-archived integration work item remains"));
+    }
+
+    if selector.next_planned {
+        return plan
+            .work_items
+            .iter()
+            .map(|item| integration_work_status(workspace, item))
+            .filter(|status| status.status == "planned")
+            .min_by(|a, b| {
+                a.priority
+                    .cmp(&b.priority)
+                    .then(a.change_id.cmp(&b.change_id))
+            })
+            .and_then(|status| {
+                plan.work_items
+                    .iter()
+                    .find(|item| item.change_id == status.change_id)
+                    .cloned()
+            })
+            .ok_or_else(|| anyhow::anyhow!("no planned integration work item remains"));
     }
 
     let matches = plan
@@ -4024,7 +4077,7 @@ fn select_owner_work_item<'a>(
         .collect::<Vec<_>>();
 
     match matches.as_slice() {
-        [item] => Ok(item),
+        [item] => Ok((*item).clone()),
         [] => bail!("no integration work item matched the selected owner-surface selector"),
         _ => bail!("owner-surface selector matched multiple integration work items"),
     }
@@ -5736,14 +5789,32 @@ mod tests {
             workspace_root: rusty.display().to_string(),
             system_root: system.path().display().to_string(),
             source_model: ".idd/knowledge/operating-model.json".to_string(),
-            work_items: vec![IntegrationWorkItem {
-                owner_repos: vec![
-                    "repo:handoff".to_string(),
-                    "repo:rusty-idd".to_string(),
-                    "repo:missing".to_string(),
-                ],
-                ..test_work_item("integrate-fleet-handoff", "capability:fleet-handoff", 20)
-            }],
+            work_items: vec![
+                IntegrationWorkItem {
+                    owner_repos: vec![
+                        "repo:handoff".to_string(),
+                        "repo:rusty-idd".to_string(),
+                        "repo:missing".to_string(),
+                    ],
+                    ..test_work_item("integrate-fleet-handoff", "capability:fleet-handoff", 20)
+                },
+                IntegrationWorkItem {
+                    owner_repos: vec!["repo:handoff".to_string()],
+                    ..test_work_item(
+                        "integrate-agent-communication",
+                        "capability:agent-communication",
+                        30,
+                    )
+                },
+                IntegrationWorkItem {
+                    owner_repos: vec!["repo:handoff".to_string()],
+                    ..test_work_item(
+                        "integrate-env-vault-relay",
+                        "capability:env-vault-relay",
+                        40,
+                    )
+                },
+            ],
             gates: vec!["just ci".to_string()],
             findings: Vec::new(),
         };
@@ -5782,6 +5853,57 @@ mod tests {
         assert!(markdown.contains("# Integration Owner Surfaces"));
         assert!(markdown.contains("repo:handoff"));
         assert!(markdown.contains("repo:missing"));
+
+        fs::create_dir_all(
+            rusty.join("openspec/changes/archive/integrate-fleet-handoff/specs/fleet-handoff"),
+        )
+        .unwrap();
+        fs::create_dir_all(
+            rusty.join("openspec/changes/integrate-agent-communication/specs/agent-communication"),
+        )
+        .unwrap();
+        fs::write(
+            rusty.join("openspec/changes/integrate-agent-communication/proposal.md"),
+            "# integrate-agent-communication\n",
+        )
+        .unwrap();
+        fs::write(
+            rusty.join("openspec/changes/integrate-agent-communication/design.md"),
+            "# design\n",
+        )
+        .unwrap();
+        fs::write(
+            rusty.join("openspec/changes/integrate-agent-communication/tasks.md"),
+            "- [ ] record diagnostics\n",
+        )
+        .unwrap();
+        fs::write(
+            rusty.join(
+                "openspec/changes/integrate-agent-communication/specs/agent-communication/spec.md",
+            ),
+            "## ADDED Requirements\n",
+        )
+        .unwrap();
+        let mut next_options = IntegrationOwnersOptions::new(&rusty, PlanContextFormat::Json);
+        next_options.next = true;
+        let next_report_json = build_integration_owner_surfaces(next_options).unwrap();
+        let next_report: IntegrationOwnersReport = serde_json::from_str(&next_report_json).unwrap();
+        assert_eq!(
+            next_report.work_item.change_id,
+            "integrate-agent-communication"
+        );
+        assert!(next_report.selector.next);
+
+        let mut planned_options = IntegrationOwnersOptions::new(&rusty, PlanContextFormat::Json);
+        planned_options.next_planned = true;
+        let planned_report_json = build_integration_owner_surfaces(planned_options).unwrap();
+        let planned_report: IntegrationOwnersReport =
+            serde_json::from_str(&planned_report_json).unwrap();
+        assert_eq!(
+            planned_report.work_item.change_id,
+            "integrate-env-vault-relay"
+        );
+        assert!(planned_report.selector.next_planned);
     }
 
     #[test]

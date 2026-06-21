@@ -290,9 +290,9 @@
       "name": "envctl",
       "path": "envctl",
       "repo": "git@github.com:FlexNetOS/envctl.git",
-      "branch": "master",
-      "head": "1981d14acd297b22c9a7d7ae9710f7ff97a04aed",
-      "dirty": true,
+      "branch": "feat/bun-toolchain-path-and-tool-registrations",
+      "head": "5b6174097f1738aedb84860fa4a31ad0c3112620",
+      "dirty": false,
       "tags": [
         "env",
         "tools"
@@ -300,12 +300,10 @@
       "markers": [
         "rust",
         "handoff",
-        "agents",
         "claude",
         "github-actions"
       ],
       "roles": [
-        "role:agent-environment",
         "role:fleet-handoff",
         "role:rust-code-surface",
         "role:toolchain-provider"
@@ -469,8 +467,8 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "fix/windows-ledger-path-and-promote-checkout",
-      "head": "91d430b496602aea1dcc7149ce301a0be791d31c",
+      "branch": "feat/hftask-0058-durability-policy",
+      "head": "83de633516493ea7b532dfd3593c9e18327b84fe",
       "dirty": true,
       "tags": [
         "handoff",
@@ -1005,8 +1003,8 @@
       "name": "network-control",
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
-      "branch": "fix/handoff-remove-hand-rolled-cards",
-      "head": "0fdc5c5f6c0d9523889d60d847c322304217bba7",
+      "branch": "harness/adopt-rust-port",
+      "head": "a20f8a921c6c1c4bcd144d9507898a45e33169db",
       "dirty": false,
       "tags": [],
       "markers": [
@@ -1269,8 +1267,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8385,
-          "edges": 33931,
+          "nodes": 8395,
+          "edges": 34012,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1277,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 176,
-          "tokens": 124420,
+          "files": 182,
+          "tokens": 127831,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1293,7 +1291,7 @@
             ],
             [
               "crates/knowledge/src/lib.rs",
-              7654
+              7699
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1341,7 +1339,7 @@
             ],
             [
               "Justfile",
-              1707
+              1687
             ],
             [
               "crates/runner/src/runner.rs",
@@ -1361,7 +1359,7 @@
             ],
             [
               "Makefile",
-              1419
+              1399
             ],
             [
               "adr/0004-knowledge-direct-crate-integration.md",
@@ -1376,12 +1374,12 @@
               1356
             ],
             [
-              "crates/cli/src/commands/codex.rs",
-              1294
+              "AI_MERGE/29_agent_communication_queue_owner_surfaces.md",
+              1352
             ],
             [
-              "AI_MERGE/28_fleet_handoff_owner_surfaces.md",
-              1293
+              "crates/cli/src/commands/codex.rs",
+              1294
             ]
           ],
           "suspicious_files": 0,
@@ -1396,7 +1394,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9064,
+            "edges": 9068,
             "languages": [
               "Rust",
               "rust"
@@ -1431,8 +1429,8 @@
             "name": "knowledge",
             "kind": "crate",
             "files": 1,
-            "nodes": 559,
-            "edges": 3998,
+            "nodes": 565,
+            "edges": 4065,
             "languages": [
               "Rust",
               "rust"
@@ -1443,8 +1441,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 22,
-            "nodes": 724,
-            "edges": 3018,
+            "nodes": 728,
+            "edges": 3032,
             "languages": [
               "Rust",
               "rust"
@@ -1701,8 +1699,8 @@
       "path": "weave",
       "repo": "git@github.com:FlexNetOS/weave.git",
       "branch": "wl056-xmachine-push",
-      "head": "4de7f8d739f9e123f4424af72a751ea3913bf96f",
-      "dirty": true,
+      "head": "f78c776c7405554cbe0e288a4f393748e4e61baa",
+      "dirty": false,
       "tags": [
         "mcp",
         "orchestration"
@@ -1764,7 +1762,6 @@
         "repo:codex",
         "repo:copilot-plugin",
         "repo:ecc",
-        "repo:envctl",
         "repo:github-org",
         "repo:hermes-agent",
         "repo:icm",
@@ -2107,15 +2104,6 @@
       "evidence": [
         "ai",
         "forked"
-      ]
-    },
-    {
-      "source": "repo:envctl",
-      "target": "role:agent-environment",
-      "kind": "provides",
-      "evidence": [
-        "env",
-        "tools"
       ]
     },
     {
@@ -3622,7 +3610,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "10 repos have local dirty state recorded as evidence",
+    "8 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]
