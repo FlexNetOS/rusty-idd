@@ -71,9 +71,9 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/architecture.json	32103	b648e87106e35485
-.idd/knowledge/architecture.md	6351	0afde8fb42637631
-.idd/knowledge/index.json	17274129	6b2f12a6352f3644
+.idd/knowledge/architecture.json	32103	a34bf46a1c472ea1
+.idd/knowledge/architecture.md	6351	cbb28a3f378d97b5
+.idd/knowledge/index.json	17274129	304618621fd0ccec
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29309	2c10624e57f3c96b
@@ -86,7 +86,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21412	209360f533813946
 .idd/knowledge/plan-context.json	81240	3265bafada16d233
 .idd/knowledge/plan-context.md	16529	70a6ef2f5d8aa095
-.idd/knowledge/report.md	4530	9f5d767ea16a70aa
+.idd/knowledge/report.md	4530	5714bc3dfa7a36b2
 .idd/knowledge/system-architecture.json	83254	d6e5891337a66f26
 .idd/knowledge/system-architecture.md	23442	898709990124070b
 .release-please-manifest.json	19	f96b929db2fa1886
@@ -118,7 +118,7 @@ AI_MERGE/30_env_vault_relay_readiness.md	4230	c1bcfea56843c04a
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	17040	a1326db4e07ce73e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
-Cargo.lock	117621	a0b219204fcdad06
+Cargo.lock	119864	d246b25202e1a858
 Cargo.toml	1333	bb97f200b6b1c22f
 GEMINI.md	17022	7aa9ea970dad36a4
 Justfile	7516	0e287b0f93b1a72c
