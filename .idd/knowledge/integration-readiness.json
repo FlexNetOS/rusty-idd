@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "source_plan": ".idd/knowledge/integration-plan.json",
+  "source_system_architecture": ".idd/knowledge/system-architecture.json",
+  "selector": {
+    "change": null,
+    "capability": null,
+    "work_item": null,
+    "next": true,
+    "next_planned": false
+  },
+  "work_item": {
+    "id": "work:integrate-prompt-front-door",
+    "title": "Integrate Prompt front door",
+    "capability": "capability:prompt-front-door",
+    "layer": "layer:front-door-experience",
+    "priority": 50,
+    "status": "partial",
+    "change_id": "integrate-prompt-front-door",
+    "owner_repos": [
+      "repo:prompt-hub"
+    ],
+    "anchors": [
+      "github.com/f/prompts.chat",
+      "github.com/f/ai-prompt",
+      "prompt_hub front door to handoff and rusty-idd"
+    ],
+    "adopt_first_inputs": [
+      "github.com/f/prompts.chat",
+      "github.com/f/ai-prompt"
+    ],
+    "implementation_boundary": "Adopt upstream repo surface first, run native diagnostics, then add thin Rusty IDD mapping",
+    "validation": [
+      "cargo fmt --all -- --check",
+      "cargo test --workspace --all-features --locked",
+      "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+      "cargo audit --deny warnings",
+      "cargo run --bin rusty-idd -- validate --workspace .",
+      "cargo run --bin rusty-idd -- spec validate --all",
+      "just ci",
+      "make ci",
+      "affected CLI smoke tests"
+    ],
+    "rollback": [
+      "Revert the OpenSpec change and generated artifacts for this integration slice",
+      "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
+      "Re-run focused owner-repo tests plus Rusty IDD gates"
+    ]
+  },
+  "owner_states": [
+    {
+      "owner_repo": "repo:prompt-hub",
+      "repo_found": true,
+      "repo_name": "prompt_hub",
+      "path": "prompt_hub",
+      "branch": "main",
+      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "dirty": true,
+      "required_tool_ids": [
+        "cargo",
+        "git"
+      ]
+    }
+  ],
+  "tool_requirements": [
+    {
+      "id": "cargo",
+      "name": "Rust Cargo",
+      "required_by": [
+        "repo:prompt-hub"
+      ],
+      "provisioned_by": "parent meta/envctl Rust toolchain",
+      "default_path": true,
+      "evidence": [
+        "owner repo exposes Rust package metadata or cargo diagnostics"
+      ]
+    },
+    {
+      "id": "git",
+      "name": "Git",
+      "required_by": [
+        "integration-owner-state"
+      ],
+      "provisioned_by": "parent meta/envctl managed PATH",
+      "default_path": true,
+      "evidence": [
+        "native owner diagnostics include git state checks"
+      ]
+    }
+  ],
+  "native_diagnostics": [
+    {
+      "command": "cd prompt_hub && cargo metadata --locked --format-version 1",
+      "owner_repo": "repo:prompt-hub",
+      "required_tool_ids": [
+        "cargo"
+      ],
+      "mode": "read-only",
+      "mutates_repo": false
+    },
+    {
+      "command": "cd prompt_hub && cargo test --workspace --all-features --locked",
+      "owner_repo": "repo:prompt-hub",
+      "required_tool_ids": [
+        "cargo"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
+    {
+      "command": "git -C prompt_hub rev-parse HEAD",
+      "owner_repo": "repo:prompt-hub",
+      "required_tool_ids": [
+        "git"
+      ],
+      "mode": "read-only",
+      "mutates_repo": false
+    },
+    {
+      "command": "git -C prompt_hub status --short --branch",
+      "owner_repo": "repo:prompt-hub",
+      "required_tool_ids": [
+        "git"
+      ],
+      "mode": "read-only",
+      "mutates_repo": false
+    }
+  ],
+  "runtime_assumptions": [
+    "No host runtime probing is required for the default readiness artifact"
+  ],
+  "feature_gates": [
+    "Default Rusty IDD knowledge and planning commands remain read-only",
+    "Host vault probing, secret relay minting, and long-running service control require an explicit feature or CLI opt-in",
+    "Missing tools are provisioned through parent meta/envctl or tracked repo-local surfaces, not user-global installs",
+    "Peer repo writes and branch changes stay outside default Rusty IDD readiness generation"
+  ],
+  "validation": [
+    "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+    "affected CLI smoke tests",
+    "cargo audit --deny warnings",
+    "cargo fmt --all -- --check",
+    "cargo run --bin rusty-idd -- spec validate --all",
+    "cargo run --bin rusty-idd -- validate --workspace .",
+    "cargo test --workspace --all-features --locked",
+    "just ci",
+    "make ci",
+    "rusty-idd knowledge integration-readiness --workspace . --next --out .idd/knowledge/integration-readiness.json"
+  ],
+  "rollback": [
+    "Re-run focused owner-repo tests plus Rusty IDD gates",
+    "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
+    "Revert the OpenSpec change and generated artifacts for this integration slice",
+    "remove .idd/knowledge/integration-readiness.* and regenerate integration status/owner artifacts"
+  ],
+  "findings": [
+    "1 resolved owner repos report dirty state",
+    "all owner repos resolved in the system architecture graph",
+    "joined 1 owner repos against .idd/knowledge/system-architecture.json",
+    "readiness derived 2 tool requirements from 1 owner surfaces",
+    "readiness generation is deterministic and does not execute native diagnostics",
+    "selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json"
+  ]
+}
