@@ -1,0 +1,59 @@
+# Dry-run-first Codex model loop for Rusty IDD.
+#
+# This is a repo-local workflow definition. It does not configure providers or
+# credentials; those remain user/admin Codex configuration.
+
+name = "rusty-idd-model-loop"
+description = "Run read-heavy Codex passes across multiple model roles, then hand one writer a synthesized plan."
+output_dir = "/tmp/rusty-idd-codex-loop"
+
+[[passes]]
+name = "explore"
+agent = "rusty-idd-explorer"
+model = "gpt-5.4-mini"
+reasoning = "medium"
+sandbox = "read-only"
+prompt = """
+Inspect the current Rusty IDD repo state. Start from .idd/knowledge/report.md,
+AGENTS.md, AI_MERGE, ADRs, and the Codex environment docs. Return concise
+findings about repo shape, existing surfaces, and missing evidence. Do not edit.
+"""
+
+[[passes]]
+name = "gap-hunt"
+agent = "rusty-idd-gap-hunter"
+model = "gpt-5.5"
+reasoning = "high"
+sandbox = "read-only"
+prompt = """
+Audit the requested end state against current files. Look specifically for
+premature cuts, missing generated artifacts, weak verification, stale docs, and
+unimplemented Codex environment surfaces. Return actionable gaps with evidence.
+Do not edit.
+"""
+
+[[passes]]
+name = "verify"
+agent = "rusty-idd-verifier"
+model = "gpt-5.5"
+reasoning = "high"
+sandbox = "read-only"
+prompt = """
+Verify the current Rusty IDD Codex/Rust environment. Prefer Makefile, Justfile,
+AGENTS.md, AI_MERGE, and generated artifact checks. Return commands that should
+be run, the evidence they prove, and residual risks. Do not edit.
+"""
+
+[[passes]]
+name = "implement"
+agent = "rusty-idd-implementer"
+model = "gpt-5.5"
+reasoning = "high"
+sandbox = "workspace-write"
+prompt = """
+Using the exploration, gap-hunt, and verification summaries supplied as context,
+implement the next narrow Rusty IDD environment upgrade. Follow adopt-first:
+preserve current surfaces, build them, then cut only evidenced friction.
+Refresh generated artifacts and run relevant gates.
+"""
+

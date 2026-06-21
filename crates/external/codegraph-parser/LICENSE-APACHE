@@ -1,0 +1,7 @@
+Apache License
+Version 2.0
+
+This vendored codegraph-parser crate preserves the upstream codegraph-rust
+Apache-2.0 license option.
+See ../../../adr/0004-knowledge-direct-crate-integration.md for the local
+vendoring rationale and audit cuts.

@@ -1,6 +1,8 @@
 //! Subcommand implementations for the `rusty-idd` CLI.
 
+pub mod codex;
 pub mod core;
+pub mod knowledge;
 pub mod run;
 pub mod spec;
 pub mod spec_adr;
