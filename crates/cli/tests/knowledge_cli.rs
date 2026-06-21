@@ -281,6 +281,46 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     assert!(owners.contains("\"change_id\": \"integrate-fleet-handoff\""));
     assert!(owners.contains("\"owner_surfaces\""));
     assert!(owners.contains("\"repo:handoff\""));
+
+    run_ok(
+        &[
+            "knowledge",
+            "integration-owners",
+            "--workspace",
+            ".",
+            "--integration-plan",
+            "integration-plan.json",
+            "--system-architecture",
+            "system-architecture.json",
+            "--next",
+            "--out",
+            "integration-owners-queue-head.json",
+        ],
+        &rusty,
+    );
+    let queue_head = fs::read_to_string(rusty.join("integration-owners-queue-head.json")).unwrap();
+    assert!(queue_head.contains("\"next\": true"));
+    assert!(queue_head.contains("\"change_id\": \"integrate-idd-spec-engine\""));
+
+    run_ok(
+        &[
+            "knowledge",
+            "integration-owners",
+            "--workspace",
+            ".",
+            "--integration-plan",
+            "integration-plan.json",
+            "--system-architecture",
+            "system-architecture.json",
+            "--next-planned",
+            "--out",
+            "integration-owners-next.json",
+        ],
+        &rusty,
+    );
+    let next_owners = fs::read_to_string(rusty.join("integration-owners-next.json")).unwrap();
+    assert!(next_owners.contains("\"next_planned\": true"));
+    assert!(next_owners.contains("\"change_id\": \"integrate-idd-spec-engine\""));
 }
 
 fn run_git(args: &[&str], cwd: &Path) {

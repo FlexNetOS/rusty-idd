@@ -4,38 +4,34 @@
   "source_plan": ".idd/knowledge/integration-plan.json",
   "source_system_architecture": ".idd/knowledge/system-architecture.json",
   "selector": {
-    "change": "integrate-fleet-handoff",
+    "change": null,
     "capability": null,
-    "work_item": null
+    "work_item": null,
+    "next": true,
+    "next_planned": false
   },
   "work_item": {
-    "id": "work:integrate-fleet-handoff",
-    "title": "Integrate Central and fleet handoff",
-    "capability": "capability:fleet-handoff",
-    "layer": "layer:coordination-communication",
-    "priority": 20,
+    "id": "work:integrate-env-vault-relay",
+    "title": "Integrate Environment and vault relay",
+    "capability": "capability:env-vault-relay",
+    "layer": "layer:environment-security",
+    "priority": 40,
     "status": "partial",
-    "change_id": "integrate-fleet-handoff",
+    "change_id": "integrate-env-vault-relay",
     "owner_repos": [
-      "repo:agent",
-      "repo:ecc",
       "repo:envctl",
-      "repo:flexnetos-runner",
-      "repo:github-org",
-      "repo:handoff",
-      "repo:harness-hub",
-      "repo:lane",
-      "repo:lifeos",
-      "repo:network-control",
-      "repo:prompt-hub",
-      "repo:rusty-idd",
-      "repo:weave"
+      "repo:vault-hub",
+      "repo:yazelix"
     ],
     "anchors": [
-      "handoff central and fleet design"
+      "/run/media/drdave/COGNITUM",
+      "Cognitum vault on Pi Zero"
     ],
-    "adopt_first_inputs": [],
-    "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
+    "adopt_first_inputs": [
+      "/run/media/drdave/COGNITUM",
+      "Cognitum vault on Pi Zero"
+    ],
+    "implementation_boundary": "Feature-gate host/vault behavior; keep default Rusty IDD generation read-only",
     "validation": [
       "cargo fmt --all -- --check",
       "cargo test --workspace --all-features --locked",
@@ -55,95 +51,14 @@
   },
   "owner_surfaces": [
     {
-      "owner_repo": "repo:agent",
-      "repo_found": true,
-      "repo_name": "agent",
-      "path": "agent",
-      "remote": "git@github.com:FlexNetOS/agent.git",
-      "branch": "main",
-      "head": "d4fd00ffa244dfbf40d9a571a60e9af84769237b",
-      "dirty": false,
-      "tags": [
-        "ai",
-        "framework"
-      ],
-      "markers": [
-        "rust",
-        "handoff",
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:fleet-handoff",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "agent",
-        "agent/.claude",
-        "agent/.github/workflows",
-        "agent/.handoff",
-        "agent/Cargo.toml"
-      ],
-      "native_diagnostic_commands": [
-        "cd agent && cargo metadata --locked --format-version 1",
-        "cd agent && cargo test --workspace --all-features --locked",
-        "git -C agent rev-parse HEAD",
-        "git -C agent status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:ecc",
-      "repo_found": true,
-      "repo_name": "ECC",
-      "path": "ECC",
-      "remote": "git@github.com:FlexNetOS/ECC.git",
-      "branch": "main",
-      "head": "1dcfa4665f2fb34a81c9784adfff16b4e604c6b6",
-      "dirty": false,
-      "tags": [
-        "ai",
-        "forked"
-      ],
-      "markers": [
-        "node",
-        "handoff",
-        "agents",
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:fleet-handoff"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "ECC",
-        "ECC/.agents",
-        "ECC/.claude",
-        "ECC/.github/workflows",
-        "ECC/.handoff",
-        "ECC/package.json"
-      ],
-      "native_diagnostic_commands": [
-        "cd ECC && npm run",
-        "cd ECC && npm test",
-        "git -C ECC rev-parse HEAD",
-        "git -C ECC status --short --branch"
-      ]
-    },
-    {
       "owner_repo": "repo:envctl",
       "repo_found": true,
       "repo_name": "envctl",
       "path": "envctl",
       "remote": "git@github.com:FlexNetOS/envctl.git",
-      "branch": "master",
-      "head": "1981d14acd297b22c9a7d7ae9710f7ff97a04aed",
-      "dirty": true,
+      "branch": "feat/bun-toolchain-path-and-tool-registrations",
+      "head": "5b6174097f1738aedb84860fa4a31ad0c3112620",
+      "dirty": false,
       "tags": [
         "env",
         "tools"
@@ -151,12 +66,10 @@
       "markers": [
         "rust",
         "handoff",
-        "agents",
         "claude",
         "github-actions"
       ],
       "roles": [
-        "role:agent-environment",
         "role:fleet-handoff",
         "role:rust-code-surface",
         "role:toolchain-provider"
@@ -165,7 +78,6 @@
       "local_architecture": null,
       "evidence_paths": [
         "envctl",
-        "envctl/.agents",
         "envctl/.claude",
         "envctl/.github/workflows",
         "envctl/.handoff",
@@ -179,758 +91,82 @@
       ]
     },
     {
-      "owner_repo": "repo:flexnetos-runner",
+      "owner_repo": "repo:vault-hub",
       "repo_found": true,
-      "repo_name": "flexnetos_runner",
-      "path": "flexnetos_runner",
-      "remote": "git@github.com:FlexNetOS/flexnetos_runner.git",
-      "branch": "chore/handoff-tier-a-pilot",
-      "head": "67942255f7acacdd50a5a2e1e8e052e1c051e8af",
-      "dirty": false,
-      "tags": [
-        "ops",
-        "runner"
-      ],
-      "markers": [
-        "rust",
-        "handoff",
-        "github-actions"
-      ],
-      "roles": [
-        "role:fleet-handoff",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "flexnetos_runner",
-        "flexnetos_runner/.github/workflows",
-        "flexnetos_runner/.handoff",
-        "flexnetos_runner/Cargo.toml"
-      ],
-      "native_diagnostic_commands": [
-        "cd flexnetos_runner && cargo metadata --locked --format-version 1",
-        "cd flexnetos_runner && cargo test --workspace --all-features --locked",
-        "git -C flexnetos_runner rev-parse HEAD",
-        "git -C flexnetos_runner status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:github-org",
-      "repo_found": true,
-      "repo_name": "github_org",
-      "path": ".github_org",
-      "remote": "git@github.com:FlexNetOS/.github.git",
-      "branch": "fix/wrap-up-base-develop",
-      "head": "770573e4a4812cfc4b36b38d682f77faebdd72c9",
-      "dirty": false,
-      "tags": [
-        "ci",
-        "org"
-      ],
-      "markers": [
-        "handoff",
-        "agents",
-        "claude",
-        "github-actions",
-        "make"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:fleet-handoff"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        ".github_org",
-        ".github_org/.agents",
-        ".github_org/.claude",
-        ".github_org/.github/workflows",
-        ".github_org/.handoff",
-        ".github_org/Makefile"
-      ],
-      "native_diagnostic_commands": [
-        "cd .github_org && make -n ci",
-        "cd .github_org && make ci",
-        "git -C .github_org rev-parse HEAD",
-        "git -C .github_org status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:handoff",
-      "repo_found": true,
-      "repo_name": "handoff",
-      "path": "handoff",
-      "remote": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "fix/windows-ledger-path-and-promote-checkout",
-      "head": "91d430b496602aea1dcc7149ce301a0be791d31c",
-      "dirty": true,
-      "tags": [
-        "handoff",
-        "orchestration"
-      ],
-      "markers": [
-        "rust",
-        "handoff",
-        "claude",
-        "github-actions",
-        "make"
-      ],
-      "roles": [
-        "role:coordination-domain-surface",
-        "role:fleet-handoff",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "handoff",
-        "handoff/.claude",
-        "handoff/.github/workflows",
-        "handoff/.handoff",
-        "handoff/Cargo.toml",
-        "handoff/Makefile"
-      ],
-      "native_diagnostic_commands": [
-        "cd handoff && cargo metadata --locked --format-version 1",
-        "cd handoff && cargo test --workspace --all-features --locked",
-        "cd handoff && make -n ci",
-        "cd handoff && make ci",
-        "git -C handoff rev-parse HEAD",
-        "git -C handoff status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:harness-hub",
-      "repo_found": true,
-      "repo_name": "harness_hub",
-      "path": "harness_hub",
-      "remote": "git@github.com:FlexNetOS/harness_hub.git",
-      "branch": "master",
-      "head": "e925339785e8c188541e6fb6e1cebed9aec82630",
-      "dirty": false,
-      "tags": [
-        "harness",
-        "hub"
-      ],
-      "markers": [
-        "handoff",
-        "github-actions"
-      ],
-      "roles": [
-        "role:capability-hub",
-        "role:fleet-handoff"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "harness_hub",
-        "harness_hub/.github/workflows",
-        "harness_hub/.handoff"
-      ],
-      "native_diagnostic_commands": [
-        "git -C harness_hub rev-parse HEAD",
-        "git -C harness_hub status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:lane",
-      "repo_found": true,
-      "repo_name": "lane",
-      "path": "lane",
-      "remote": "git@github.com:FlexNetOS/lane.git",
+      "repo_name": "vault_hub",
+      "path": "vault_hub",
+      "remote": "git@github.com:FlexNetOS/vault_hub.git",
       "branch": "main",
-      "head": "122c80fddaf83fba33349914ab44b6608e8acfe8",
+      "head": "a358e1b39a65c761ade76508f57c056e480a722c",
       "dirty": false,
       "tags": [
-        "tools",
-        "workflow"
+        "hub",
+        "vault"
       ],
-      "markers": [
-        "rust",
-        "handoff",
-        "claude",
-        "github-actions"
-      ],
+      "markers": [],
       "roles": [
-        "role:fleet-handoff",
-        "role:rust-code-surface"
+        "role:capability-hub"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null,
       "evidence_paths": [
-        "lane",
-        "lane/.claude",
-        "lane/.github/workflows",
-        "lane/.handoff",
-        "lane/Cargo.toml"
+        "vault_hub"
       ],
       "native_diagnostic_commands": [
-        "cd lane && cargo metadata --locked --format-version 1",
-        "cd lane && cargo test --workspace --all-features --locked",
-        "git -C lane rev-parse HEAD",
-        "git -C lane status --short --branch"
+        "git -C vault_hub rev-parse HEAD",
+        "git -C vault_hub status --short --branch"
       ]
     },
     {
-      "owner_repo": "repo:lifeos",
+      "owner_repo": "repo:yazelix",
       "repo_found": true,
-      "repo_name": "lifeos",
-      "path": "lifeos",
-      "remote": "git@github.com:FlexNetOS/lifeos.git",
+      "repo_name": "yazelix",
+      "path": "yazelix",
+      "remote": "git@github.com:FlexNetOS/yazelix.git",
       "branch": "main",
-      "head": "d02f12477b84cddfb649d3ff71e68aa8bc401acb",
+      "head": "03352e0687ad275459dc261d5355234c46998f0a",
       "dirty": false,
       "tags": [
-        "untriaged"
+        "env",
+        "forked",
+        "terminal"
       ],
       "markers": [
-        "rust",
-        "node",
-        "openspec",
-        "handoff",
-        "claude"
-      ],
-      "roles": [
-        "role:fleet-handoff",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "lifeos",
-        "lifeos/.claude",
-        "lifeos/.handoff",
-        "lifeos/Cargo.toml",
-        "lifeos/openspec",
-        "lifeos/package.json"
-      ],
-      "native_diagnostic_commands": [
-        "cd lifeos && cargo metadata --locked --format-version 1",
-        "cd lifeos && cargo test --workspace --all-features --locked",
-        "cd lifeos && npm run",
-        "cd lifeos && npm test",
-        "git -C lifeos rev-parse HEAD",
-        "git -C lifeos status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:network-control",
-      "repo_found": true,
-      "repo_name": "network-control",
-      "path": "network-control",
-      "remote": "git@github.com:FlexNetOS/network-control.git",
-      "branch": "fix/handoff-remove-hand-rolled-cards",
-      "head": "0fdc5c5f6c0d9523889d60d847c322304217bba7",
-      "dirty": false,
-      "tags": [],
-      "markers": [
-        "rust",
-        "handoff",
         "claude",
         "github-actions"
       ],
       "roles": [
-        "role:fleet-handoff",
-        "role:rust-code-surface"
+        "role:parser-runtime-surface",
+        "role:toolchain-provider"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null,
       "evidence_paths": [
-        "network-control",
-        "network-control/.claude",
-        "network-control/.github/workflows",
-        "network-control/.handoff",
-        "network-control/Cargo.toml"
+        "yazelix",
+        "yazelix/.claude",
+        "yazelix/.github/workflows"
       ],
       "native_diagnostic_commands": [
-        "cd network-control && cargo metadata --locked --format-version 1",
-        "cd network-control && cargo test --workspace --all-features --locked",
-        "git -C network-control rev-parse HEAD",
-        "git -C network-control status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:prompt-hub",
-      "repo_found": true,
-      "repo_name": "prompt_hub",
-      "path": "prompt_hub",
-      "remote": "git@github.com:FlexNetOS/prompt_hub.git",
-      "branch": "main",
-      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
-      "dirty": true,
-      "tags": [
-        "ai",
-        "prompts"
-      ],
-      "markers": [
-        "rust",
-        "handoff",
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:capability-hub",
-        "role:fleet-handoff",
-        "role:rust-code-surface",
-        "role:spec-producer"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "prompt_hub",
-        "prompt_hub/.claude",
-        "prompt_hub/.github/workflows",
-        "prompt_hub/.handoff",
-        "prompt_hub/Cargo.toml"
-      ],
-      "native_diagnostic_commands": [
-        "cd prompt_hub && cargo metadata --locked --format-version 1",
-        "cd prompt_hub && cargo test --workspace --all-features --locked",
-        "git -C prompt_hub rev-parse HEAD",
-        "git -C prompt_hub status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:rusty-idd",
-      "repo_found": true,
-      "repo_name": "rusty-idd",
-      "path": "rusty-idd",
-      "remote": "git@github.com:FlexNetOS/rusty-idd.git",
-      "branch": null,
-      "head": null,
-      "dirty": false,
-      "tags": [
-        "idd",
-        "tools"
-      ],
-      "markers": [
-        "rust",
-        "openspec",
-        "idd-knowledge",
-        "handoff",
-        "agents",
-        "claude",
-        "github-actions",
-        "make",
-        "just"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:fleet-handoff",
-        "role:idd-control-plane",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": true,
-      "local_architecture": {
-        "schema_version": 1,
-        "source_graph": {
-          "provider": "codegraph-rust",
-          "files": 135,
-          "nodes": 8385,
-          "edges": 33931,
-          "languages": [
-            "rust"
-          ],
-          "hotspots": 20,
-          "parse_failures": 0
-        },
-        "context_package": {
-          "provider": "repomix-rs",
-          "files": 176,
-          "tokens": 124420,
-          "output_style": "markdown",
-          "top_files_by_tokens": [
-            [
-              "crates/tui/src/app.rs",
-              9464
-            ],
-            [
-              "docs/rusty-idd/architecture-diagrams.md",
-              7741
-            ],
-            [
-              "crates/knowledge/src/lib.rs",
-              7654
-            ],
-            [
-              "AI_MERGE/11_integration_research_audit_roadmap.md",
-              5761
-            ],
-            [
-              "docs/rusty-idd/spec-engine-design.md",
-              4132
-            ],
-            [
-              "docs/rusty-idd/lifecycle-contract.md",
-              3666
-            ],
-            [
-              "crates/core/src/templates.rs",
-              2820
-            ],
-            [
-              "AI_MERGE/16_upstream_knowledge_revisit.md",
-              2540
-            ],
-            [
-              "docs/rusty-idd/production-readiness-audit.md",
-              2502
-            ],
-            [
-              "AI_MERGE/14_upstream_full_adoption.md",
-              2421
-            ],
-            [
-              "docs/rusty-idd/codex-environment.md",
-              2304
-            ],
-            [
-              "crates/tui/src/ui.rs",
-              2097
-            ],
-            [
-              "AI_MERGE/15_system_handoff_research.md",
-              1963
-            ],
-            [
-              "crates/runner/src/data.rs",
-              1712
-            ],
-            [
-              "Justfile",
-              1707
-            ],
-            [
-              "crates/runner/src/runner.rs",
-              1603
-            ],
-            [
-              "AI_MERGE/12_knowledge_deep_audit.md",
-              1573
-            ],
-            [
-              "AI_MERGE/13_codex_environment.md",
-              1520
-            ],
-            [
-              "docs/rusty-idd/design.md",
-              1452
-            ],
-            [
-              "Makefile",
-              1419
-            ],
-            [
-              "adr/0004-knowledge-direct-crate-integration.md",
-              1366
-            ],
-            [
-              "crates/runner/src/config.rs",
-              1364
-            ],
-            [
-              "docs/rusty-idd/slice-sequence.md",
-              1356
-            ],
-            [
-              "crates/cli/src/commands/codex.rs",
-              1294
-            ],
-            [
-              "AI_MERGE/28_fleet_handoff_owner_surfaces.md",
-              1293
-            ]
-          ],
-          "suspicious_files": 0,
-          "skipped_files": 0
-        },
-        "component_count": 9,
-        "integration_surface_count": 4,
-        "top_components": [
-          {
-            "id": "external:codegraph-core",
-            "name": "codegraph-core",
-            "kind": "external_crate",
-            "files": 39,
-            "nodes": 1918,
-            "edges": 9064,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "external:codegraph-parser",
-            "name": "codegraph-parser",
-            "kind": "external_crate",
-            "files": 29,
-            "nodes": 1060,
-            "edges": 7485,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:tui",
-            "name": "tui",
-            "kind": "crate",
-            "files": 3,
-            "nodes": 1006,
-            "edges": 3985,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:knowledge",
-            "name": "knowledge",
-            "kind": "crate",
-            "files": 1,
-            "nodes": 559,
-            "edges": 3998,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:cli",
-            "name": "cli",
-            "kind": "crate",
-            "files": 22,
-            "nodes": 724,
-            "edges": 3018,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:runner",
-            "name": "runner",
-            "kind": "crate",
-            "files": 4,
-            "nodes": 770,
-            "edges": 3135,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:core",
-            "name": "core",
-            "kind": "crate",
-            "files": 11,
-            "nodes": 415,
-            "edges": 2373,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:spec",
-            "name": "spec",
-            "kind": "crate",
-            "files": 24,
-            "nodes": 461,
-            "edges": 1910,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          }
-        ],
-        "integration_surfaces": [
-          {
-            "id": "surface:codegraph-rust",
-            "name": "CodeGraph Rust",
-            "kind": "architecture_graph",
-            "provider": "codegraph-rust",
-            "capabilities": [
-              "multi-language tree-sitter registry",
-              "symbol/import/call/type graph extraction",
-              "impact and hotspot evidence"
-            ]
-          },
-          {
-            "id": "surface:repomix-rs",
-            "name": "repomix-rs",
-            "kind": "context_package",
-            "provider": "repomix-rs",
-            "capabilities": [
-              "compressed context packs",
-              "token accounting and top-file metrics",
-              "security and suspicious-file signals",
-              "git-aware context options"
-            ]
-          },
-          {
-            "id": "surface:openspec",
-            "name": "Rusty IDD OpenSpec lifecycle",
-            "kind": "lifecycle_control_plane",
-            "provider": "rusty-idd",
-            "capabilities": [
-              "goal intake",
-              "spec delta tracking",
-              "ordered implementation tasks",
-              "validation and merge evidence"
-            ]
-          },
-          {
-            "id": "surface:audit-manifest",
-            "name": "Audit and manifest evidence",
-            "kind": "evidence_control_plane",
-            "provider": "rusty-idd",
-            "capabilities": [
-              "AI_MERGE audit records",
-              "ADR traceability",
-              ".idd manifest baseline",
-              "knowledge artifact freshness"
-            ]
-          }
-        ]
-      },
-      "evidence_paths": [
-        "rusty-idd",
-        "rusty-idd/.agents",
-        "rusty-idd/.claude",
-        "rusty-idd/.github/workflows",
-        "rusty-idd/.handoff",
-        "rusty-idd/.idd/knowledge",
-        "rusty-idd/.idd/knowledge/architecture.json",
-        "rusty-idd/Cargo.toml",
-        "rusty-idd/Justfile",
-        "rusty-idd/Makefile",
-        "rusty-idd/openspec"
-      ],
-      "native_diagnostic_commands": [
-        "cd rusty-idd && cargo metadata --locked --format-version 1",
-        "cd rusty-idd && cargo test --workspace --all-features --locked",
-        "cd rusty-idd && just --list",
-        "cd rusty-idd && just ci",
-        "cd rusty-idd && make -n ci",
-        "cd rusty-idd && make ci",
-        "git -C rusty-idd rev-parse HEAD",
-        "git -C rusty-idd status --short --branch",
-        "test -f rusty-idd/.idd/knowledge/architecture.json"
-      ]
-    },
-    {
-      "owner_repo": "repo:weave",
-      "repo_found": true,
-      "repo_name": "weave",
-      "path": "weave",
-      "remote": "git@github.com:FlexNetOS/weave.git",
-      "branch": "wl056-xmachine-push",
-      "head": "4de7f8d739f9e123f4424af72a751ea3913bf96f",
-      "dirty": true,
-      "tags": [
-        "mcp",
-        "orchestration"
-      ],
-      "markers": [
-        "rust",
-        "handoff",
-        "agents",
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:coordination-domain-surface",
-        "role:fleet-handoff",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "weave",
-        "weave/.agents",
-        "weave/.claude",
-        "weave/.github/workflows",
-        "weave/.handoff",
-        "weave/Cargo.toml"
-      ],
-      "native_diagnostic_commands": [
-        "cd weave && cargo metadata --locked --format-version 1",
-        "cd weave && cargo test --workspace --all-features --locked",
-        "git -C weave rev-parse HEAD",
-        "git -C weave status --short --branch"
+        "git -C yazelix rev-parse HEAD",
+        "git -C yazelix status --short --branch"
       ]
     }
   ],
   "missing_owner_repos": [],
   "diagnostics": [
-    "cd .github_org && make -n ci",
-    "cd .github_org && make ci",
-    "cd ECC && npm run",
-    "cd ECC && npm test",
-    "cd agent && cargo metadata --locked --format-version 1",
-    "cd agent && cargo test --workspace --all-features --locked",
     "cd envctl && cargo metadata --locked --format-version 1",
     "cd envctl && cargo test --workspace --all-features --locked",
-    "cd flexnetos_runner && cargo metadata --locked --format-version 1",
-    "cd flexnetos_runner && cargo test --workspace --all-features --locked",
-    "cd handoff && cargo metadata --locked --format-version 1",
-    "cd handoff && cargo test --workspace --all-features --locked",
-    "cd handoff && make -n ci",
-    "cd handoff && make ci",
-    "cd lane && cargo metadata --locked --format-version 1",
-    "cd lane && cargo test --workspace --all-features --locked",
-    "cd lifeos && cargo metadata --locked --format-version 1",
-    "cd lifeos && cargo test --workspace --all-features --locked",
-    "cd lifeos && npm run",
-    "cd lifeos && npm test",
-    "cd network-control && cargo metadata --locked --format-version 1",
-    "cd network-control && cargo test --workspace --all-features --locked",
-    "cd prompt_hub && cargo metadata --locked --format-version 1",
-    "cd prompt_hub && cargo test --workspace --all-features --locked",
-    "cd rusty-idd && cargo metadata --locked --format-version 1",
-    "cd rusty-idd && cargo test --workspace --all-features --locked",
-    "cd rusty-idd && just --list",
-    "cd rusty-idd && just ci",
-    "cd rusty-idd && make -n ci",
-    "cd rusty-idd && make ci",
-    "cd weave && cargo metadata --locked --format-version 1",
-    "cd weave && cargo test --workspace --all-features --locked",
-    "git -C .github_org rev-parse HEAD",
-    "git -C .github_org status --short --branch",
-    "git -C ECC rev-parse HEAD",
-    "git -C ECC status --short --branch",
-    "git -C agent rev-parse HEAD",
-    "git -C agent status --short --branch",
     "git -C envctl rev-parse HEAD",
     "git -C envctl status --short --branch",
-    "git -C flexnetos_runner rev-parse HEAD",
-    "git -C flexnetos_runner status --short --branch",
-    "git -C handoff rev-parse HEAD",
-    "git -C handoff status --short --branch",
-    "git -C harness_hub rev-parse HEAD",
-    "git -C harness_hub status --short --branch",
-    "git -C lane rev-parse HEAD",
-    "git -C lane status --short --branch",
-    "git -C lifeos rev-parse HEAD",
-    "git -C lifeos status --short --branch",
-    "git -C network-control rev-parse HEAD",
-    "git -C network-control status --short --branch",
-    "git -C prompt_hub rev-parse HEAD",
-    "git -C prompt_hub status --short --branch",
-    "git -C rusty-idd rev-parse HEAD",
-    "git -C rusty-idd status --short --branch",
-    "git -C weave rev-parse HEAD",
-    "git -C weave status --short --branch",
-    "test -f rusty-idd/.idd/knowledge/architecture.json"
+    "git -C vault_hub rev-parse HEAD",
+    "git -C vault_hub status --short --branch",
+    "git -C yazelix rev-parse HEAD",
+    "git -C yazelix status --short --branch"
   ],
   "findings": [
-    "4 resolved owner repos report dirty state",
+    "0 resolved owner repos report dirty state",
     "all owner repos resolved in the system architecture graph",
-    "joined 13 owner repos against .idd/knowledge/system-architecture.json",
-    "selected integrate-fleet-handoff from .idd/knowledge/integration-plan.json"
+    "joined 3 owner repos against .idd/knowledge/system-architecture.json",
+    "selected integrate-env-vault-relay from .idd/knowledge/integration-plan.json"
   ]
 }

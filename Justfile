@@ -59,11 +59,11 @@ integration-status-check:
     tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge integration-status --workspace . --out "$tmpdir/integration-status.json" && {{rusty_idd}} knowledge integration-status --workspace . --out "$tmpdir/integration-status.md" && cmp -s .idd/knowledge/integration-status.json "$tmpdir/integration-status.json" && cmp -s .idd/knowledge/integration-status.md "$tmpdir/integration-status.md" || { echo ".idd/knowledge integration-status artifacts are stale; run just integration-status" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
 integration-owners:
-    {{rusty_idd}} knowledge integration-owners --workspace . --change integrate-fleet-handoff --out .idd/knowledge/integration-owners.json
-    {{rusty_idd}} knowledge integration-owners --workspace . --change integrate-fleet-handoff --out .idd/knowledge/integration-owners.md
+    {{rusty_idd}} knowledge integration-owners --workspace . --next --out .idd/knowledge/integration-owners.json
+    {{rusty_idd}} knowledge integration-owners --workspace . --next --out .idd/knowledge/integration-owners.md
 
 integration-owners-check:
-    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge integration-owners --workspace . --change integrate-fleet-handoff --out "$tmpdir/integration-owners.json" && {{rusty_idd}} knowledge integration-owners --workspace . --change integrate-fleet-handoff --out "$tmpdir/integration-owners.md" && cmp -s .idd/knowledge/integration-owners.json "$tmpdir/integration-owners.json" && cmp -s .idd/knowledge/integration-owners.md "$tmpdir/integration-owners.md" || { echo ".idd/knowledge integration-owners artifacts are stale; run just integration-owners" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
+    tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge integration-owners --workspace . --next --out "$tmpdir/integration-owners.json" && {{rusty_idd}} knowledge integration-owners --workspace . --next --out "$tmpdir/integration-owners.md" && cmp -s .idd/knowledge/integration-owners.json "$tmpdir/integration-owners.json" && cmp -s .idd/knowledge/integration-owners.md "$tmpdir/integration-owners.md" || { echo ".idd/knowledge integration-owners artifacts are stale; run just integration-owners" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
 plan-context:
     {{rusty_idd}} knowledge plan-context --workspace . --out .idd/knowledge/plan-context.json --change integration-automation-plan --goal "turn the full agentic company operating model into ordered integration automation work"

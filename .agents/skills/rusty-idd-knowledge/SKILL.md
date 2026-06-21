@@ -117,10 +117,15 @@ artifacts or when preparing compact context for an agent.
 
 10. Generate owner surfaces before implementing cross-repo work.
    - Markdown for humans/agents:
-     `rusty-idd knowledge integration-owners --workspace . --change integrate-fleet-handoff --out /tmp/rusty-idd-integration-owners.md`
+     `rusty-idd knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.md`
    - JSON for automation:
-     `rusty-idd knowledge integration-owners --workspace . --change integrate-fleet-handoff --out /tmp/rusty-idd-integration-owners.json`
-   - Select exactly one work item with `--change`, `--capability`, or `--work-item`.
+     `rusty-idd knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.json`
+   - Select exactly one work item with `--next`, `--next-planned`, `--change`,
+     `--capability`, or `--work-item`.
+   - Prefer `--next` for durable `.idd/knowledge/integration-owners.*`
+     artifacts so the report stays on the highest-priority non-archived work
+     item while a change is active, then advances after archive. Use
+     `--next-planned` only when active/scaffolded changes should be skipped.
    - The owner-surface report consumes `.idd/knowledge/integration-plan.json` and
      `.idd/knowledge/system-architecture.json`, joins owner repo ids to peer repo
      state, and emits branches, dirty flags, markers, roles, local architecture
@@ -183,7 +188,7 @@ cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --syste
 cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out /tmp/rusty-idd-operating-model.md
 cargo run --bin rusty-idd -- knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.md
 cargo run --bin rusty-idd -- knowledge integration-status --workspace . --out /tmp/rusty-idd-integration-status.md
-cargo run --bin rusty-idd -- knowledge integration-owners --workspace . --change integrate-fleet-handoff --out /tmp/rusty-idd-integration-owners.md
+cargo run --bin rusty-idd -- knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.md
 cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"
 cargo run --bin rusty-idd -- validate --workspace .
 ```
