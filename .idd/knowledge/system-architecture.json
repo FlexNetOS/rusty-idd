@@ -291,8 +291,8 @@
       "path": "envctl",
       "repo": "git@github.com:FlexNetOS/envctl.git",
       "branch": "master",
-      "head": "1981d14acd297b22c9a7d7ae9710f7ff97a04aed",
-      "dirty": true,
+      "head": "4a3b8ec71f97f2be56449fd7b489d07f57d0162a",
+      "dirty": false,
       "tags": [
         "env",
         "tools"
@@ -300,12 +300,10 @@
       "markers": [
         "rust",
         "handoff",
-        "agents",
         "claude",
         "github-actions"
       ],
       "roles": [
-        "role:agent-environment",
         "role:fleet-handoff",
         "role:rust-code-surface",
         "role:toolchain-provider"
@@ -422,9 +420,9 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "research/harness-upgrade-targets",
-      "head": "2a5647727a70a51606c7cc88d51804cfb4b3d210",
-      "dirty": true,
+      "branch": "ci/promote-trivy-reconcile-flags",
+      "head": "4c996555b8ae0f0cb72931aebd8845ece8c6ba0f",
+      "dirty": false,
       "tags": [
         "ci",
         "org"
@@ -469,9 +467,9 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "fix/windows-ledger-path-and-promote-checkout",
-      "head": "91d430b496602aea1dcc7149ce301a0be791d31c",
-      "dirty": true,
+      "branch": "feat/0014-schema-enrichment",
+      "head": "e656a09707cdf9a7720120a9ae90b3df049b49ff",
+      "dirty": false,
       "tags": [
         "handoff",
         "orchestration"
@@ -1005,8 +1003,8 @@
       "name": "network-control",
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
-      "branch": "fix/handoff-remove-hand-rolled-cards",
-      "head": "0fdc5c5f6c0d9523889d60d847c322304217bba7",
+      "branch": "main",
+      "head": "257f0278a84d3e45c2ef52c85c2572fd1ae73157",
       "dirty": false,
       "tags": [],
       "markers": [
@@ -1269,8 +1267,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8296,
-          "edges": 33472,
+          "nodes": 8440,
+          "edges": 34370,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1277,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 163,
-          "tokens": 116033,
+          "files": 188,
+          "tokens": 132590,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1288,12 +1286,12 @@
               9464
             ],
             [
-              "docs/rusty-idd/architecture-diagrams.md",
-              7741
+              "crates/knowledge/src/lib.rs",
+              8390
             ],
             [
-              "crates/knowledge/src/lib.rs",
-              7026
+              "docs/rusty-idd/architecture-diagrams.md",
+              7741
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1336,8 +1334,16 @@
               1963
             ],
             [
+              "Justfile",
+              1905
+            ],
+            [
               "crates/runner/src/data.rs",
               1712
+            ],
+            [
+              "Makefile",
+              1633
             ],
             [
               "crates/runner/src/runner.rs",
@@ -1350,10 +1356,6 @@
             [
               "AI_MERGE/13_codex_environment.md",
               1520
-            ],
-            [
-              "Justfile",
-              1469
             ],
             [
               "docs/rusty-idd/design.md",
@@ -1372,16 +1374,12 @@
               1356
             ],
             [
+              "AI_MERGE/29_agent_communication_queue_owner_surfaces.md",
+              1352
+            ],
+            [
               "crates/cli/src/commands/codex.rs",
               1294
-            ],
-            [
-              "Makefile",
-              1165
-            ],
-            [
-              "crates/core/src/model.rs",
-              1150
             ]
           ],
           "suspicious_files": 0,
@@ -1396,7 +1394,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9061,
+            "edges": 9069,
             "languages": [
               "Rust",
               "rust"
@@ -1431,8 +1429,20 @@
             "name": "knowledge",
             "kind": "crate",
             "files": 1,
-            "nodes": 502,
-            "edges": 3637,
+            "nodes": 600,
+            "edges": 4390,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:cli",
+            "name": "cli",
+            "kind": "crate",
+            "files": 22,
+            "nodes": 734,
+            "edges": 3067,
             "languages": [
               "Rust",
               "rust"
@@ -1444,19 +1454,7 @@
             "kind": "crate",
             "files": 4,
             "nodes": 770,
-            "edges": 3136,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:cli",
-            "name": "cli",
-            "kind": "crate",
-            "files": 22,
-            "nodes": 696,
-            "edges": 2918,
+            "edges": 3135,
             "languages": [
               "Rust",
               "rust"
@@ -1480,7 +1478,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1911,
+            "edges": 1931,
             "languages": [
               "Rust",
               "rust"
@@ -1701,7 +1699,7 @@
       "path": "weave",
       "repo": "git@github.com:FlexNetOS/weave.git",
       "branch": "develop",
-      "head": "eee19d9a1b5f9637d63ae17bcd8066ac6d4a3fcf",
+      "head": "bcec297eb90c31aba332753f9e668f1f5fe9ae2d",
       "dirty": false,
       "tags": [
         "mcp",
@@ -1764,7 +1762,6 @@
         "repo:codex",
         "repo:copilot-plugin",
         "repo:ecc",
-        "repo:envctl",
         "repo:github-org",
         "repo:hermes-agent",
         "repo:icm",
@@ -2107,15 +2104,6 @@
       "evidence": [
         "ai",
         "forked"
-      ]
-    },
-    {
-      "source": "repo:envctl",
-      "target": "role:agent-environment",
-      "kind": "provides",
-      "evidence": [
-        "env",
-        "tools"
       ]
     },
     {
@@ -3622,7 +3610,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "10 repos have local dirty state recorded as evidence",
+    "7 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]
