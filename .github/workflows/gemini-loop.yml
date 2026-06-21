@@ -23,7 +23,7 @@ jobs:
     name: idd-merge-loop
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
@@ -34,7 +34,7 @@ jobs:
 
       # The Gemini CLI is expected to be available or installable.
       # Since it's a global bun/npm tool, we ensure node/bun is present.
-      - uses: oven-sh/setup-bun@v1
+      - uses: oven-sh/setup-bun@v2
       - name: Install Gemini CLI
         run: bun install -g @google/gemini-cli
 

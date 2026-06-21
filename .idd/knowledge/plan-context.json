@@ -17,7 +17,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 193,
-    "tokens": 135745,
+    "tokens": 135919,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -89,6 +89,10 @@
         1603
       ],
       [
+        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
+        1601
+      ],
+      [
         "AI_MERGE/12_knowledge_deep_audit.md",
         1573
       ],
@@ -99,10 +103,6 @@
       [
         "docs/rusty-idd/design.md",
         1452
-      ],
-      [
-        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
-        1427
       ],
       [
         "adr/0004-knowledge-direct-crate-integration.md",

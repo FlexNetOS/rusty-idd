@@ -144,6 +144,21 @@ No prompt registry, plugin, MCP/server, Prisma, WordPress/Gutenberg, lint, test,
 or packaging feature was replaced with a local guess. Runtime activation remains
 feature-gated until the owning repo/spec makes it explicit.
 
+## Security Scan Boundary
+
+GitHub CodeQL default setup initially detected the adopted upstream
+`prompts.chat` JavaScript/TypeScript mirror as first-party Rusty IDD code and
+opened 19 PR alerts under `third_party/upstream/prompts.chat`. The alerts are
+real upstream findings in the mirrored source, but the mirror is an adopt-first
+audit/rollback surface and is not default Rusty IDD runtime code.
+
+The tracked repository boundary now marks `third_party/upstream/**` as
+vendored through `.gitattributes`. Repository CodeQL default setup should scan
+the first-party Rusty IDD boundary (`rust` and GitHub `actions`) while upstream
+JavaScript/TypeScript diagnostics stay recorded through the native upstream
+commands and npm audit results above. This preserves the upstream source
+without downgrading or locally rewriting it.
+
 Rollback:
 
 1. Revert `third_party/upstream/prompts.chat` and
