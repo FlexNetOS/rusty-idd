@@ -48,7 +48,7 @@
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | ops, runner | role:fleet-handoff, role:rust-code-surface | rust, handoff, github-actions |
 | `flexnetos_wiki` | `` | false | docs | role:documentation-knowledge |  |
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
-| `github_org` | `chore/claude-config-remove-dead-hooks` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
+| `github_org` | `fix/wrap-up-base-develop` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
 | `handoff` | `fix/windows-ledger-path-and-promote-checkout` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `master` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
@@ -92,14 +92,14 @@
 | `tool_hub` | `feat/stage-github-org-tool-pins` | true | hub, tools | role:capability-hub | github-actions |
 | `vault_hub` | `main` | false | hub, vault | role:capability-hub |  |
 | `vox` | `main` | false | forked, tools, voice | role:rust-code-surface | rust, claude, github-actions |
-| `weave` | `develop` | false | mcp, orchestration | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, agents, claude, github-actions |
+| `weave` | `wl056-xmachine-push` | true | mcp, orchestration | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, agents, claude, github-actions |
 | `yazelix` | `main` | false | env, forked, terminal | role:parser-runtime-surface, role:toolchain-provider | claude, github-actions |
 
 ## Peer Architecture Summaries
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 135 files, 8319 nodes, 33539 edges via `codegraph-rust` | 170 files, 119995 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, runner |
+| `rusty-idd` | 135 files, 8385 nodes, 33931 edges via `codegraph-rust` | 176 files, 124420 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, cli |
 
 ## Edges
 
@@ -305,6 +305,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 9 repos have local dirty state recorded as evidence
+- 10 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries

@@ -259,6 +259,28 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     assert!(status.contains("\"next_change_id\""));
     assert!(status.contains("\"integrate-idd-spec-engine\""));
     assert!(status.contains("\"planned\""));
+
+    run_ok(
+        &[
+            "knowledge",
+            "integration-owners",
+            "--workspace",
+            ".",
+            "--integration-plan",
+            "integration-plan.json",
+            "--system-architecture",
+            "system-architecture.json",
+            "--change",
+            "integrate-fleet-handoff",
+            "--out",
+            "integration-owners.json",
+        ],
+        &rusty,
+    );
+    let owners = fs::read_to_string(rusty.join("integration-owners.json")).unwrap();
+    assert!(owners.contains("\"change_id\": \"integrate-fleet-handoff\""));
+    assert!(owners.contains("\"owner_surfaces\""));
+    assert!(owners.contains("\"repo:handoff\""));
 }
 
 fn run_git(args: &[&str], cwd: &Path) {

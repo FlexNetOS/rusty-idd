@@ -422,8 +422,8 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "chore/claude-config-remove-dead-hooks",
-      "head": "b519d094eb08d9adc7162007929ca34ac8510d8e",
+      "branch": "fix/wrap-up-base-develop",
+      "head": "770573e4a4812cfc4b36b38d682f77faebdd72c9",
       "dirty": false,
       "tags": [
         "ci",
@@ -1269,8 +1269,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8319,
-          "edges": 33539,
+          "nodes": 8385,
+          "edges": 33931,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 170,
-          "tokens": 119995,
+          "files": 176,
+          "tokens": 124420,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1293,7 +1293,7 @@
             ],
             [
               "crates/knowledge/src/lib.rs",
-              7026
+              7654
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1340,6 +1340,10 @@
               1712
             ],
             [
+              "Justfile",
+              1707
+            ],
+            [
               "crates/runner/src/runner.rs",
               1603
             ],
@@ -1352,12 +1356,12 @@
               1520
             ],
             [
-              "Justfile",
-              1469
-            ],
-            [
               "docs/rusty-idd/design.md",
               1452
+            ],
+            [
+              "Makefile",
+              1419
             ],
             [
               "adr/0004-knowledge-direct-crate-integration.md",
@@ -1376,12 +1380,8 @@
               1294
             ],
             [
-              "AI_MERGE/26_idd_spec_engine_automation.md",
-              1176
-            ],
-            [
-              "Makefile",
-              1165
+              "AI_MERGE/28_fleet_handoff_owner_surfaces.md",
+              1293
             ]
           ],
           "suspicious_files": 0,
@@ -1396,7 +1396,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9061,
+            "edges": 9064,
             "languages": [
               "Rust",
               "rust"
@@ -1431,8 +1431,20 @@
             "name": "knowledge",
             "kind": "crate",
             "files": 1,
-            "nodes": 502,
-            "edges": 3637,
+            "nodes": 559,
+            "edges": 3998,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
+            "id": "crate:cli",
+            "name": "cli",
+            "kind": "crate",
+            "files": 22,
+            "nodes": 724,
+            "edges": 3018,
             "languages": [
               "Rust",
               "rust"
@@ -1445,18 +1457,6 @@
             "files": 4,
             "nodes": 770,
             "edges": 3135,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
-            "id": "crate:cli",
-            "name": "cli",
-            "kind": "crate",
-            "files": 22,
-            "nodes": 718,
-            "edges": 2985,
             "languages": [
               "Rust",
               "rust"
@@ -1480,7 +1480,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1909,
+            "edges": 1910,
             "languages": [
               "Rust",
               "rust"
@@ -1700,9 +1700,9 @@
       "name": "weave",
       "path": "weave",
       "repo": "git@github.com:FlexNetOS/weave.git",
-      "branch": "develop",
-      "head": "eee19d9a1b5f9637d63ae17bcd8066ac6d4a3fcf",
-      "dirty": false,
+      "branch": "wl056-xmachine-push",
+      "head": "4de7f8d739f9e123f4424af72a751ea3913bf96f",
+      "dirty": true,
       "tags": [
         "mcp",
         "orchestration"
@@ -3622,7 +3622,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "9 repos have local dirty state recorded as evidence",
+    "10 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]
