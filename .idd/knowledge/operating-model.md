@@ -5,13 +5,13 @@
 - Source graph: `.idd/knowledge/system-architecture.json`
 - Layers: 11
 - Capabilities: 19
-- Edges: 162
+- Edges: 161
 
 ## Layers
 
 | Layer | Purpose | Capabilities | Repos |
 |---|---|---:|---:|
-| `Agent runtime` | Agent harnesses, execution workers, and automation runtimes | 2 | 28 |
+| `Agent runtime` | Agent harnesses, execution workers, and automation runtimes | 2 | 27 |
 | `Coordination and communication` | Agent communication, orchestration, and cross-agent continuity | 3 | 16 |
 | `Environment and security` | Vault, key relay, certificates, and parent-managed toolchains | 1 | 3 |
 | `Executive control plane` | Company-level command, OpenSpec, handoff, and repo governance | 2 | 14 |
@@ -28,7 +28,7 @@
 | Capability | Layer | Status | Repos | Anchors |
 |---|---|---|---|---|
 | `Agent communication layer` | `layer:coordination-communication` | partial | repo:atc, repo:handoff, repo:mcp-hub, repo:weave | weave agent communication layer |
-| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
+| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
 | `Board reasoning layer` | `layer:governance-reasoning` | partial | repo:flexnetos-brain, repo:flexnetos-wiki, repo:icm, repo:my-wiki, repo:obsidian-mind | company hierarchy board layer |
 | `Digital twin simulation` | `layer:simulation-validation` | partial | repo:teri | Teri digital twin simulator |
 | `Distributed device fabric` | `layer:infrastructure-device-fabric` | partial | repo:envctl, repo:network-control, repo:oh-my-pi | user devices for distributed compute storage inference memory |
@@ -67,7 +67,6 @@
 | `capability:agent-harness` | mapped_to_repo | `repo:codex` |
 | `capability:agent-harness` | mapped_to_repo | `repo:copilot-plugin` |
 | `capability:agent-harness` | mapped_to_repo | `repo:ecc` |
-| `capability:agent-harness` | mapped_to_repo | `repo:envctl` |
 | `capability:agent-harness` | mapped_to_repo | `repo:flexnetos-runner` |
 | `capability:agent-harness` | mapped_to_repo | `repo:github-org` |
 | `capability:agent-harness` | mapped_to_repo | `repo:harness-hub` |

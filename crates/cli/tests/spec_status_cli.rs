@@ -65,6 +65,32 @@ fn status_reports_next_and_blockers() {
 }
 
 #[test]
+fn status_json_reports_deterministic_automation_snapshot() {
+    let (_root, change_dir) = make_change(&["proposal", "specs"]);
+    let out = Command::new(bin())
+        .args(["spec", "status", "--json"])
+        .arg(&change_dir)
+        .output()
+        .expect("run rusty-idd");
+    assert!(out.status.success());
+    let value: serde_json::Value = serde_json::from_slice(&out.stdout).unwrap();
+
+    assert_eq!(value["change"], "demo");
+    assert_eq!(value["schema"]["name"], "intent-driven");
+    assert_eq!(value["schema"]["version"], 1);
+    assert_eq!(value["done_count"], 2);
+    assert_eq!(value["total"], 5);
+    assert_eq!(value["archivable"], false);
+    assert_eq!(value["next"], "design");
+    assert_eq!(value["artifacts"][0]["id"], "proposal");
+    assert_eq!(value["artifacts"][0]["done"], true);
+    assert_eq!(value["artifacts"][2]["id"], "design");
+    assert_eq!(value["artifacts"][2]["ready"], true);
+    assert_eq!(value["artifacts"][3]["id"], "adr");
+    assert_eq!(value["artifacts"][3]["blocked_by"][0], "design");
+}
+
+#[test]
 fn next_prints_first_ready_artifact() {
     let (_root, change_dir) = make_change(&[]);
     let (code, out) = run(&["spec", "next"], &change_dir);
