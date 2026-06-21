@@ -3,12 +3,12 @@ use std::path::PathBuf;
 
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
-    build_architecture_graph, build_graph_planning_context, build_knowledge_report,
-    build_system_architecture_graph, build_system_operating_model, index_workspace, load_index,
-    pack_workspace, query_knowledge_index, refresh_workspace, ArchitectureFormat,
-    ArchitectureOptions, IndexOptions, KnowledgeQuery, OperatingModelOptions, PackStyle,
-    PackWorkspaceOptions, PlanContextFormat, PlanContextOptions, ReportFormat, ReportOptions,
-    SystemArchitectureOptions,
+    build_architecture_graph, build_graph_planning_context, build_integration_automation_plan,
+    build_knowledge_report, build_system_architecture_graph, build_system_operating_model,
+    index_workspace, load_index, pack_workspace, query_knowledge_index, refresh_workspace,
+    ArchitectureFormat, ArchitectureOptions, IndexOptions, IntegrationPlanOptions, KnowledgeQuery,
+    OperatingModelOptions, PackStyle, PackWorkspaceOptions, PlanContextFormat, PlanContextOptions,
+    ReportFormat, ReportOptions, SystemArchitectureOptions,
 };
 
 #[derive(Subcommand)]
@@ -25,6 +25,8 @@ pub enum KnowledgeCommand {
     SystemArchitecture(SystemArchitectureArgs),
     /// Generate a full-system operating model from the system graph.
     OperatingModel(OperatingModelArgs),
+    /// Generate an OpenSpec-ready integration backlog from the operating model.
+    IntegrationPlan(IntegrationPlanArgs),
     /// Generate a graph-backed planning packet for OpenSpec work.
     PlanContext(PlanContextArgs),
     /// Answer local graph questions from an existing index.
@@ -118,6 +120,16 @@ pub struct OperatingModelArgs {
 }
 
 #[derive(Args)]
+pub struct IntegrationPlanArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+    #[arg(long)]
+    pub operating_model: Option<PathBuf>,
+}
+
+#[derive(Args)]
 pub struct PlanContextArgs {
     #[arg(long)]
     pub workspace: PathBuf,
@@ -135,6 +147,8 @@ pub struct PlanContextArgs {
     pub system_architecture: Option<PathBuf>,
     #[arg(long)]
     pub operating_model: Option<PathBuf>,
+    #[arg(long)]
+    pub integration_plan: Option<PathBuf>,
 }
 
 #[derive(Args)]
@@ -276,6 +290,30 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             }
             println!("wrote system operating model to {}", args.out.display());
         }
+        KnowledgeCommand::IntegrationPlan(args) => {
+            let format = if args
+                .out
+                .extension()
+                .and_then(|value| value.to_str())
+                .is_some_and(|extension| extension.eq_ignore_ascii_case("json"))
+            {
+                PlanContextFormat::Json
+            } else {
+                PlanContextFormat::Markdown
+            };
+            let mut options = IntegrationPlanOptions::new(args.workspace, format);
+            options.operating_model_path = args.operating_model;
+            let plan = build_integration_automation_plan(options)?;
+            if matches!(format, PlanContextFormat::Json) {
+                write_text(&args.out, &(plan + "\n"))?;
+            } else {
+                write_text(&args.out, &plan)?;
+            }
+            println!(
+                "wrote integration automation plan to {}",
+                args.out.display()
+            );
+        }
         KnowledgeCommand::PlanContext(args) => {
             let format = if args
                 .out
@@ -294,6 +332,7 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
             options.architecture_path = args.architecture;
             options.system_architecture_path = args.system_architecture;
             options.operating_model_path = args.operating_model;
+            options.integration_plan_path = args.integration_plan;
             let context = build_graph_planning_context(options)?;
             if matches!(format, PlanContextFormat::Json) {
                 write_text(&args.out, &(context + "\n"))?;

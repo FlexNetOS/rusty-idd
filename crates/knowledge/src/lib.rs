@@ -396,6 +396,23 @@ impl OperatingModelOptions {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct IntegrationPlanOptions {
+    pub workspace: PathBuf,
+    pub operating_model_path: Option<PathBuf>,
+    pub format: PlanContextFormat,
+}
+
+impl IntegrationPlanOptions {
+    pub fn new(workspace: impl Into<PathBuf>, format: PlanContextFormat) -> Self {
+        Self {
+            workspace: workspace.into(),
+            operating_model_path: None,
+            format,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemArchitectureGraph {
     pub schema_version: u32,
@@ -513,6 +530,34 @@ pub struct OperatingModelEdge {
     pub evidence: Vec<String>,
 }
 
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationAutomationPlan {
+    pub schema_version: u32,
+    pub workspace_root: String,
+    pub system_root: String,
+    pub source_model: String,
+    pub work_items: Vec<IntegrationWorkItem>,
+    pub gates: Vec<String>,
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationWorkItem {
+    pub id: String,
+    pub title: String,
+    pub capability: String,
+    pub layer: String,
+    pub priority: u32,
+    pub status: String,
+    pub change_id: String,
+    pub owner_repos: Vec<String>,
+    pub anchors: Vec<String>,
+    pub adopt_first_inputs: Vec<String>,
+    pub implementation_boundary: String,
+    pub validation: Vec<String>,
+    pub rollback: Vec<String>,
+}
+
 #[derive(Debug, Clone)]
 pub struct PlanContextOptions {
     pub workspace: PathBuf,
@@ -522,6 +567,7 @@ pub struct PlanContextOptions {
     pub architecture_path: Option<PathBuf>,
     pub system_architecture_path: Option<PathBuf>,
     pub operating_model_path: Option<PathBuf>,
+    pub integration_plan_path: Option<PathBuf>,
 }
 
 impl PlanContextOptions {
@@ -534,6 +580,7 @@ impl PlanContextOptions {
             architecture_path: None,
             system_architecture_path: None,
             operating_model_path: None,
+            integration_plan_path: None,
         }
     }
 }
@@ -559,6 +606,7 @@ pub struct GraphPlanningContext {
     pub system_repos: Vec<SystemRepo>,
     pub operating_layers: Vec<OperatingModelLayer>,
     pub operating_capabilities: Vec<OperatingCapability>,
+    pub integration_work_items: Vec<IntegrationWorkItem>,
     pub guidance: Vec<String>,
     pub findings: Vec<String>,
 }
@@ -792,6 +840,22 @@ pub fn build_system_operating_model(options: OperatingModelOptions) -> Result<St
         PlanContextFormat::Markdown => Ok(render_system_operating_model_markdown(&model)),
         PlanContextFormat::Json => {
             serde_json::to_string_pretty(&model).context("serialize operating model")
+        }
+    }
+}
+
+pub fn build_integration_automation_plan(options: IntegrationPlanOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let operating_path = options
+        .operating_model_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/operating-model.json"));
+    let operating_model = read_json_file::<SystemOperatingModel>(&operating_path)?;
+    let plan = integration_automation_plan(&workspace, &operating_model, &operating_path);
+
+    match options.format {
+        PlanContextFormat::Markdown => Ok(render_integration_automation_plan_markdown(&plan)),
+        PlanContextFormat::Json => {
+            serde_json::to_string_pretty(&plan).context("serialize integration plan")
         }
     }
 }
@@ -3288,6 +3352,192 @@ fn render_system_operating_model_markdown(model: &SystemOperatingModel) -> Strin
     out
 }
 
+fn integration_automation_plan(
+    workspace: &Path,
+    operating_model: &SystemOperatingModel,
+    source_path: &Path,
+) -> IntegrationAutomationPlan {
+    let mut work_items = operating_model
+        .capabilities
+        .iter()
+        .filter(|capability| capability.status != "mapped")
+        .map(integration_work_item)
+        .collect::<Vec<_>>();
+    work_items.sort_by(|a, b| a.priority.cmp(&b.priority).then(a.id.cmp(&b.id)));
+
+    let gates = default_integration_gates();
+    let mut findings = vec![format!(
+        "integration plan derived {} work items from {} operating capabilities",
+        work_items.len(),
+        operating_model.capabilities.len()
+    )];
+    let external_anchor_count = work_items
+        .iter()
+        .map(|item| item.adopt_first_inputs.len())
+        .sum::<usize>();
+    findings.push(format!(
+        "{external_anchor_count} adopt-first inputs preserved from operating-model anchors"
+    ));
+    findings.sort();
+
+    IntegrationAutomationPlan {
+        schema_version: 1,
+        workspace_root: workspace.display().to_string(),
+        system_root: operating_model.system_root.clone(),
+        source_model: display_path(workspace, source_path),
+        work_items,
+        gates,
+        findings,
+    }
+}
+
+fn integration_work_item(capability: &OperatingCapability) -> IntegrationWorkItem {
+    let priority = integration_priority(capability);
+    let change_id = format!(
+        "integrate-{}",
+        capability
+            .id
+            .strip_prefix("capability:")
+            .unwrap_or(&capability.id)
+    );
+    let title = format!("Integrate {}", capability.name);
+    let adopt_first_inputs = capability
+        .anchors
+        .iter()
+        .filter(|anchor| is_adopt_first_anchor(anchor))
+        .cloned()
+        .collect::<Vec<_>>();
+    let implementation_boundary = if capability
+        .anchors
+        .iter()
+        .any(|anchor| anchor.contains("vault") || anchor.contains("COGNITUM"))
+    {
+        "Feature-gate host/vault behavior; keep default Rusty IDD generation read-only".to_string()
+    } else if capability
+        .anchors
+        .iter()
+        .any(|anchor| anchor.contains("Beads") || anchor.contains("github.com/"))
+    {
+        "Adopt upstream repo surface first, run native diagnostics, then add thin Rusty IDD mapping"
+            .to_string()
+    } else if capability.repos.is_empty() {
+        "Add repo ownership evidence before implementation".to_string()
+    } else {
+        "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input"
+            .to_string()
+    };
+
+    IntegrationWorkItem {
+        id: format!("work:{}", slug(&change_id)),
+        title,
+        capability: capability.id.clone(),
+        layer: capability.layer.clone(),
+        priority,
+        status: capability.status.clone(),
+        change_id,
+        owner_repos: capability.repos.clone(),
+        anchors: capability.anchors.clone(),
+        adopt_first_inputs,
+        implementation_boundary,
+        validation: default_integration_gates(),
+        rollback: vec![
+            "Revert the OpenSpec change and generated artifacts for this integration slice"
+                .to_string(),
+            "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest"
+                .to_string(),
+            "Re-run focused owner-repo tests plus Rusty IDD gates".to_string(),
+        ],
+    }
+}
+
+fn integration_priority(capability: &OperatingCapability) -> u32 {
+    match capability.id.as_str() {
+        "capability:idd-spec-engine" => 10,
+        "capability:fleet-handoff" => 20,
+        "capability:agent-communication" => 30,
+        "capability:env-vault-relay" => 40,
+        "capability:prompt-front-door" => 50,
+        "capability:rtk-ai-foundation" => 60,
+        "capability:github-agent-run-upgrades" => 70,
+        "capability:parser-runtime" => 80,
+        "capability:vector-runtime" => 90,
+        "capability:user-front-door" => 100,
+        "capability:digital-twin-simulation" => 110,
+        "capability:network-engineering" => 120,
+        "capability:distributed-device-fabric" => 130,
+        "capability:lua-ar-interface" => 140,
+        "capability:personal-automation" => 150,
+        _ => 500,
+    }
+}
+
+fn is_adopt_first_anchor(anchor: &str) -> bool {
+    anchor.contains("github.com/")
+        || anchor.contains("upstream")
+        || anchor.contains("Beads")
+        || anchor.contains("goose")
+        || anchor.contains("COGNITUM")
+        || anchor.contains("Cognitum")
+}
+
+fn default_integration_gates() -> Vec<String> {
+    vec![
+        "cargo fmt --all -- --check".to_string(),
+        "cargo test --workspace --all-features --locked".to_string(),
+        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked"
+            .to_string(),
+        "cargo audit --deny warnings".to_string(),
+        "cargo run --bin rusty-idd -- validate --workspace .".to_string(),
+        "cargo run --bin rusty-idd -- spec validate --all".to_string(),
+        "just ci".to_string(),
+        "make ci".to_string(),
+        "affected CLI smoke tests".to_string(),
+    ]
+}
+
+fn render_integration_automation_plan_markdown(plan: &IntegrationAutomationPlan) -> String {
+    let mut out = String::new();
+    out.push_str("# Integration Automation Plan\n\n");
+    out.push_str(&format!("- System root: `{}`\n", plan.system_root));
+    out.push_str(&format!("- Workspace root: `{}`\n", plan.workspace_root));
+    out.push_str(&format!("- Source model: `{}`\n", plan.source_model));
+    out.push_str(&format!("- Work items: {}\n\n", plan.work_items.len()));
+
+    out.push_str("## Work Items\n\n");
+    out.push_str("| Priority | Work Item | Capability | Status | Owners | Adopt First |\n|---:|---|---|---|---|---|\n");
+    for item in &plan.work_items {
+        out.push_str(&format!(
+            "| {} | `{}` | `{}` | {} | {} | {} |\n",
+            item.priority,
+            item.title,
+            item.capability,
+            item.status,
+            item.owner_repos.join(", "),
+            item.adopt_first_inputs.join(", ")
+        ));
+    }
+
+    out.push_str("\n## Gates\n\n");
+    for gate in &plan.gates {
+        out.push_str(&format!("- `{gate}`\n"));
+    }
+
+    out.push_str("\n## Rollback Pattern\n\n");
+    out.push_str("- Revert the integration slice commit or PR.\n");
+    out.push_str("- Regenerate `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.\n");
+    out.push_str("- Re-run focused tests plus full Rusty IDD gates.\n");
+
+    out.push_str("\n## Findings\n\n");
+    if plan.findings.is_empty() {
+        out.push_str("No findings.\n");
+    } else {
+        for finding in &plan.findings {
+            out.push_str(&format!("- {finding}\n"));
+        }
+    }
+    out
+}
+
 fn graph_planning_context(
     workspace: &Path,
     options: PlanContextOptions,
@@ -3313,13 +3563,26 @@ fn graph_planning_context(
     } else {
         None
     };
+    let integration_path = options
+        .integration_plan_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/integration-plan.json"));
+    let integration_plan = if integration_path.exists() {
+        Some(read_json_file::<IntegrationAutomationPlan>(
+            &integration_path,
+        )?)
+    } else {
+        None
+    };
 
     let focus_components = select_focus_components(&architecture, options.goal.as_deref());
     let (system_roles, system_repos, mut findings) =
         select_system_context(system.as_ref(), options.goal.as_deref());
     let (operating_layers, operating_capabilities, operating_findings) =
         select_operating_context(operating_model.as_ref(), options.goal.as_deref());
+    let (integration_work_items, integration_findings) =
+        select_integration_work(integration_plan.as_ref(), options.goal.as_deref());
     findings.extend(operating_findings);
+    findings.extend(integration_findings);
     if system.is_none() {
         findings.push(format!(
             "system architecture graph unavailable at {}",
@@ -3330,6 +3593,12 @@ fn graph_planning_context(
         findings.push(format!(
             "operating model graph unavailable at {}",
             operating_path.display()
+        ));
+    }
+    if integration_plan.is_none() {
+        findings.push(format!(
+            "integration automation plan unavailable at {}",
+            integration_path.display()
         ));
     }
 
@@ -3365,6 +3634,7 @@ fn graph_planning_context(
         system_repos,
         operating_layers,
         operating_capabilities,
+        integration_work_items,
         guidance,
         findings,
     })
@@ -3565,6 +3835,55 @@ fn select_operating_context(
     (operating_layers, operating_capabilities, findings)
 }
 
+fn select_integration_work(
+    integration_plan: Option<&IntegrationAutomationPlan>,
+    goal: Option<&str>,
+) -> (Vec<IntegrationWorkItem>, Vec<String>) {
+    let Some(integration_plan) = integration_plan else {
+        return (Vec::new(), Vec::new());
+    };
+    let goal_terms = goal_terms(goal);
+    let mut scored = integration_plan
+        .work_items
+        .iter()
+        .cloned()
+        .map(|item| {
+            let mut score = 10_000usize.saturating_sub(item.priority as usize);
+            let haystack = [
+                item.id.as_str(),
+                item.title.as_str(),
+                item.capability.as_str(),
+                item.layer.as_str(),
+                item.change_id.as_str(),
+                item.implementation_boundary.as_str(),
+                &item.owner_repos.join(" "),
+                &item.anchors.join(" "),
+            ]
+            .join(" ")
+            .to_ascii_lowercase();
+            for term in &goal_terms {
+                if haystack.contains(term) {
+                    score += 1_000;
+                }
+            }
+            (score, item)
+        })
+        .collect::<Vec<_>>();
+    scored.sort_by(|a, b| b.0.cmp(&a.0).then(a.1.priority.cmp(&b.1.priority)));
+    let mut work_items = scored
+        .into_iter()
+        .take(12)
+        .map(|(_, item)| item)
+        .collect::<Vec<_>>();
+    work_items.sort_by(|a, b| a.priority.cmp(&b.priority).then(a.id.cmp(&b.id)));
+    let findings = vec![format!(
+        "integration context selected {} work items from {} generated work items",
+        work_items.len(),
+        integration_plan.work_items.len()
+    )];
+    (work_items, findings)
+}
+
 fn goal_terms(goal: Option<&str>) -> BTreeSet<String> {
     goal.unwrap_or_default()
         .split(|ch: char| !ch.is_ascii_alphanumeric())
@@ -3688,6 +4007,25 @@ fn render_graph_planning_context_markdown(context: &GraphPlanningContext) -> Str
                 capability.status,
                 capability.repos.join(", "),
                 capability.anchors.join(", ")
+            ));
+        }
+    }
+
+    out.push_str("\n## Integration Work\n\n");
+    if context.integration_work_items.is_empty() {
+        out.push_str("No integration work items included.\n");
+    } else {
+        out.push_str(
+            "| Priority | Work Item | Change | Owners | Adopt First |\n|---:|---|---|---|---|\n",
+        );
+        for item in &context.integration_work_items {
+            out.push_str(&format!(
+                "| {} | `{}` | `{}` | {} | {} |\n",
+                item.priority,
+                item.title,
+                item.change_id,
+                item.owner_repos.join(", "),
+                item.adopt_first_inputs.join(", ")
             ));
         }
     }
@@ -4488,6 +4826,80 @@ mod tests {
     }
 
     #[test]
+    fn integration_automation_plan_orders_operating_capability_work() {
+        let system = tempfile::tempdir().unwrap();
+        let repo_names = [
+            "rusty-idd",
+            "handoff",
+            "weave",
+            "envctl",
+            "prompt_hub",
+            "grit",
+            "yazelix",
+        ];
+        for name in repo_names {
+            let repo = system.path().join(name);
+            fs::create_dir_all(&repo).unwrap();
+            init_git(&repo);
+            fs::write(
+                repo.join("Cargo.toml"),
+                format!("[package]\nname = \"{name}\"\nversion = \"0.1.0\"\nedition = \"2021\"\n"),
+            )
+            .unwrap();
+        }
+        let rusty = system.path().join("rusty-idd");
+        fs::create_dir_all(rusty.join(".idd/knowledge")).unwrap();
+        let system_architecture = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/system-architecture.json"),
+            system_architecture,
+        )
+        .unwrap();
+        let operating_model = build_system_operating_model(OperatingModelOptions::new(
+            &rusty,
+            PlanContextFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/operating-model.json"),
+            operating_model,
+        )
+        .unwrap();
+
+        let plan_json = build_integration_automation_plan(IntegrationPlanOptions::new(
+            &rusty,
+            PlanContextFormat::Json,
+        ))
+        .unwrap();
+        let plan: IntegrationAutomationPlan = serde_json::from_str(&plan_json).unwrap();
+        assert!(!plan.work_items.is_empty());
+        assert_eq!(plan.work_items[0].capability, "capability:idd-spec-engine");
+        assert!(plan.work_items.iter().any(|item| item.capability
+            == "capability:github-agent-run-upgrades"
+            && item
+                .adopt_first_inputs
+                .iter()
+                .any(|anchor| anchor.contains("beads-rs"))));
+        assert!(plan
+            .gates
+            .iter()
+            .any(|gate| gate == "cargo audit --deny warnings"));
+
+        let markdown = build_integration_automation_plan(IntegrationPlanOptions::new(
+            &rusty,
+            PlanContextFormat::Markdown,
+        ))
+        .unwrap();
+        assert!(markdown.contains("# Integration Automation Plan"));
+        assert!(markdown.contains("Integrate IDD and spec engine"));
+    }
+
+    #[test]
     fn graph_planning_context_preserves_peer_architecture_summary() {
         let system = tempfile::tempdir().unwrap();
         let rusty = system.path().join("rusty-idd");
@@ -4551,6 +4963,16 @@ mod tests {
             operating_model,
         )
         .unwrap();
+        let integration_plan = build_integration_automation_plan(IntegrationPlanOptions::new(
+            &rusty,
+            PlanContextFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/integration-plan.json"),
+            integration_plan,
+        )
+        .unwrap();
 
         let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Json);
         options.goal = Some("weave handoff architecture integration".to_string());
@@ -4566,6 +4988,10 @@ mod tests {
             .operating_capabilities
             .iter()
             .any(|capability| capability.id == "capability:fleet-handoff"));
+        assert!(context
+            .integration_work_items
+            .iter()
+            .any(|item| item.capability == "capability:fleet-handoff"));
 
         let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Markdown);
         options.goal = Some("weave handoff architecture integration".to_string());
@@ -4573,6 +4999,7 @@ mod tests {
         assert!(markdown.contains("Architecture"));
         assert!(markdown.contains("top:"));
         assert!(markdown.contains("## Operating Capabilities"));
+        assert!(markdown.contains("## Integration Work"));
     }
 
     fn init_git(path: &Path) {
