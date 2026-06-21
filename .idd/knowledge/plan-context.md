@@ -3,8 +3,8 @@
 - Change: `integration-automation-plan`
 - Goal: turn the full agentic company operating model into ordered integration automation work
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
-- Source graph: 135 files, 8296 nodes, 33472 edges via `codegraph-rust`
-- Context package: 163 files, 116033 tokens via `repomix-rs`
+- Source graph: 135 files, 8440 nodes, 34370 edges via `codegraph-rust`
+- Context package: 188 files, 132590 tokens via `repomix-rs`
 
 ## Automation Order
 
@@ -27,13 +27,13 @@
 | Component | Kind | Files | Nodes | Edges | Evidence |
 |---|---|---:|---:|---:|---|
 | `codegraph-parser` | external_crate | 29 | 1060 | 7485 | crates/external/codegraph-parser/src/complexity.rs, crates/external/codegraph-parser/src/diff.rs, crates/external/codegraph-parser/src/edge.rs, crates/external/codegraph-parser/src/fast_io.rs, crates/external/codegraph-parser/src/fast_ml/enhancer.rs, crates/external/codegraph-parser/src/fast_ml/mod.rs, crates/external/codegraph-parser/src/fast_ml/pattern_matcher.rs, crates/external/codegraph-parser/src/fast_ml/symbol_resolver.rs, crates/external/codegraph-parser/src/file_collect.rs, crates/external/codegraph-parser/src/integration_tests.rs, crates/external/codegraph-parser/src/language.rs, crates/external/codegraph-parser/src/languages/cpp.rs |
-| `cli` | crate | 22 | 696 | 2918 | crates/cli/src/commands/codex.rs, crates/cli/src/commands/core.rs, crates/cli/src/commands/knowledge.rs, crates/cli/src/commands/mod.rs, crates/cli/src/commands/run.rs, crates/cli/src/commands/spec.rs, crates/cli/src/commands/spec_adr.rs, crates/cli/src/commands/spec_archive.rs, crates/cli/src/commands/spec_plan_integration.rs, crates/cli/src/commands/spec_scaffold.rs, crates/cli/src/commands/spec_status.rs, crates/cli/src/commands/tui.rs |
+| `cli` | crate | 22 | 734 | 3067 | crates/cli/src/commands/codex.rs, crates/cli/src/commands/core.rs, crates/cli/src/commands/knowledge.rs, crates/cli/src/commands/mod.rs, crates/cli/src/commands/run.rs, crates/cli/src/commands/spec.rs, crates/cli/src/commands/spec_adr.rs, crates/cli/src/commands/spec_archive.rs, crates/cli/src/commands/spec_plan_integration.rs, crates/cli/src/commands/spec_scaffold.rs, crates/cli/src/commands/spec_status.rs, crates/cli/src/commands/tui.rs |
 | `core` | crate | 11 | 415 | 2373 | crates/core/src/cli.rs, crates/core/src/env_contract.rs, crates/core/src/fs_utils.rs, crates/core/src/lib.rs, crates/core/src/manifest.rs, crates/core/src/model.rs, crates/core/src/planner.rs, crates/core/src/scanner.rs, crates/core/src/templates.rs, crates/core/src/validation.rs, crates/core/tests/smoke.rs |
-| `spec` | crate | 24 | 461 | 1911 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
-| `codegraph-core` | external_crate | 39 | 1918 | 9061 | crates/external/codegraph-core/benches/core_micro.rs, crates/external/codegraph-core/src/advanced_config.rs, crates/external/codegraph-core/src/arena.rs, crates/external/codegraph-core/src/buffer_pool.rs, crates/external/codegraph-core/src/cli_config.rs, crates/external/codegraph-core/src/compression.rs, crates/external/codegraph-core/src/config.rs, crates/external/codegraph-core/src/config_manager.rs, crates/external/codegraph-core/src/embedding_config.rs, crates/external/codegraph-core/src/error.rs, crates/external/codegraph-core/src/incremental/mod.rs, crates/external/codegraph-core/src/incremental/updater.rs |
+| `spec` | crate | 24 | 461 | 1931 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
+| `codegraph-core` | external_crate | 39 | 1918 | 9069 | crates/external/codegraph-core/benches/core_micro.rs, crates/external/codegraph-core/src/advanced_config.rs, crates/external/codegraph-core/src/arena.rs, crates/external/codegraph-core/src/buffer_pool.rs, crates/external/codegraph-core/src/cli_config.rs, crates/external/codegraph-core/src/compression.rs, crates/external/codegraph-core/src/config.rs, crates/external/codegraph-core/src/config_manager.rs, crates/external/codegraph-core/src/embedding_config.rs, crates/external/codegraph-core/src/error.rs, crates/external/codegraph-core/src/incremental/mod.rs, crates/external/codegraph-core/src/incremental/updater.rs |
 | `tui` | crate | 3 | 1006 | 3985 | crates/tui/src/app.rs, crates/tui/src/lib.rs, crates/tui/src/ui.rs |
-| `knowledge` | crate | 1 | 502 | 3637 | crates/knowledge/src/lib.rs |
-| `runner` | crate | 4 | 770 | 3136 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
+| `knowledge` | crate | 1 | 600 | 4390 | crates/knowledge/src/lib.rs |
+| `runner` | crate | 4 | 770 | 3135 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | crates/external/repomix-shared/src/lib.rs, crates/external/repomix-shared/src/types.rs |
 
 ## System Roles
@@ -54,15 +54,15 @@
 |---|---|---|---|---|
 | `agent` | `main` | false | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
 | `lane` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `network-control` | `fix/handoff-remove-hand-rolled-cards` | false | role:fleet-handoff, role:rust-code-surface |  |
+| `network-control` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `network_hub` | `master` | false | role:capability-hub |  |
 | `n8n` | `harness/epic-d` | false | role:agent-environment |  |
 | `prompt_hub` | `main` | true | role:agent-environment, role:capability-hub, role:fleet-handoff, role:rust-code-surface, role:spec-producer |  |
-| `envctl` | `master` | true | role:agent-environment, role:fleet-handoff, role:rust-code-surface, role:toolchain-provider |  |
-| `handoff` | `fix/windows-ledger-path-and-promote-checkout` | true | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
+| `envctl` | `master` | false | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider |  |
+| `handoff` | `feat/0014-schema-enrichment` | false | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `harness_hub` | `master` | false | role:capability-hub, role:fleet-handoff |  |
 | `mcp_hub` | `master` | false | role:capability-hub, role:coordination-domain-surface |  |
-| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 135 files, 8296 nodes, 33472 edges; 116033 tokens; surfaces 4; top: codegraph-core, codegraph-parser, tui |
+| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 135 files, 8440 nodes, 34370 edges; 132590 tokens; surfaces 4; top: codegraph-core, codegraph-parser, tui |
 | `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `yazelix` | `main` | false | role:parser-runtime-surface, role:toolchain-provider |  |
 | `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
@@ -71,11 +71,11 @@
 | `database_hub` | `master` | false | role:capability-hub |  |
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `flow_hub` | `master` | false | role:capability-hub |  |
-| `github_org` | `research/harness-upgrade-targets` | true | role:agent-environment, role:fleet-handoff |  |
+| `github_org` | `ci/promote-trivy-reconcile-flags` | false | role:agent-environment, role:fleet-handoff |  |
 
 ## Operating Layers
 
-- `Agent runtime`: Agent harnesses, execution workers, and automation runtimes (2 capabilities, 28 repos)
+- `Agent runtime`: Agent harnesses, execution workers, and automation runtimes (2 capabilities, 27 repos)
 - `Coordination and communication`: Agent communication, orchestration, and cross-agent continuity (3 capabilities, 16 repos)
 - `Environment and security`: Vault, key relay, certificates, and parent-managed toolchains (1 capabilities, 3 repos)
 - `Executive control plane`: Company-level command, OpenSpec, handoff, and repo governance (2 capabilities, 14 repos)
@@ -90,7 +90,7 @@
 
 | Capability | Layer | Status | Repos | Anchors |
 |---|---|---|---|---|
-| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
+| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
 | `User front door` | `layer:front-door-experience` | partial | repo:lifeos, repo:prompt-hub, repo:ruvector | goose-like chat integration, LifeOS front door |
 | `Meta peer repo control` | `layer:executive-control-plane` | partial | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli | meta peer repo system |
 | `Vector and agentic runtime` | `layer:knowledge-runtime` | partial | repo:database-hub, repo:icm, repo:obsidian-mind, repo:ruvector | meta-ruvector full agentic system |
