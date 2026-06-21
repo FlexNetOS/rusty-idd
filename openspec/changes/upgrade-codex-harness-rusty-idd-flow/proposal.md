@@ -11,12 +11,16 @@ implementation or merge work.
 
 - Update the `.codex` harness, agents, loop prompts, invariant checks, and
   related instruction docs to follow the Rusty IDD workflow order.
+- Consolidate retired `idd-merge-idd` bridge contracts into a Rusty IDD
+  `merge-tools` package and CLI edge.
 - Treat `AI_MERGE/` as an optional tool and evidence surface that Rusty IDD may
   read or write, not as the main intent source or authoritative control plane.
 - Gate implementation behind graph/context artifacts and OpenSpec status rather
   than jumping from exploration directly to writes.
 - Supersede the prior ADR that made `AI_MERGE/` authoritative for all
   integration operations.
+- Clear the active ADR directory so only the Codex harness Rusty IDD flow
+  decision remains.
 
 ## Capabilities
 
@@ -37,5 +41,8 @@ implementation or merge work.
 - `.agents/skills/rusty-idd-codex-rust-env/SKILL.md`
 - `.agents/skills/rusty-idd-knowledge/SKILL.md`
 - `docs/rusty-idd/codex-environment.md`
+- `docs/rusty-idd/merge-tools-package.md`
+- `crates/merge-tools`
+- `rusty-idd merge-tools`
 - `AI_MERGE/13_codex_environment.md` as historical/evidence documentation only
-- `adr/0006-ai-merge-as-rusty-idd-tool.md`
+- `adr/0001-codex-harness-rusty-idd-flow.md`

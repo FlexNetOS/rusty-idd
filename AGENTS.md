@@ -24,8 +24,9 @@ Unify repositories by preserving working behavior, making contracts explicit, an
 3. Before implementation, create or refresh the relevant `.idd/knowledge/*` graph artifacts and bind the goal with `rusty-idd knowledge plan-context`.
 4. Before writes, create or select an OpenSpec change and verify readiness with `rusty-idd spec status` or `rusty-idd spec next`.
 5. ADR decisions live in repo-level `adr/`; accepted ADRs are immutable. Supersede with a new ADR instead of editing prior accepted decisions.
-6. Implementation follows tasks only after the OpenSpec artifacts are ready.
-7. Validation must refresh deterministic artifacts: `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, OpenSpec status, and Rusty IDD validation.
+6. Merge, migration, and repository-unification goals use `rusty-idd merge-tools show` for the reusable Rusty IDD merge package; retired `idd-merge-idd` bridge material is not the active workflow.
+7. Implementation follows tasks only after the OpenSpec artifacts are ready.
+8. Validation must refresh deterministic artifacts: `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, OpenSpec status, and Rusty IDD validation.
 
 ## Codex Environment Rules
 

@@ -3107,6 +3107,7 @@ dependencies = [
  "clap",
  "rusty-idd-core",
  "rusty-idd-knowledge",
+ "rusty-idd-merge-tools",
  "rusty-idd-runner",
  "rusty-idd-spec",
  "rusty-idd-tui",
@@ -3141,6 +3142,10 @@ dependencies = [
  "tree-sitter",
  "tree-sitter-rust",
 ]
+
+[[package]]
+name = "rusty-idd-merge-tools"
+version = "0.1.0"
 
 [[package]]
 name = "rusty-idd-runner"

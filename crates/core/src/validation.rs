@@ -351,6 +351,13 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         require_workflow_contains(
             file,
             content,
+            "cargo run --bin rusty-idd -- merge-tools verify --workspace .",
+            "primary CI must run the merge-tools verification gate",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
             "cargo run --bin rusty-idd -- validate --workspace .",
             "primary CI must run rusty-idd validate",
             findings,
@@ -382,15 +389,8 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         require_workflow_contains(
             file,
             content,
-            "bash .gemini/skills/merge-verification/scripts/drift-check.sh .",
-            "promotion verification must run the Gemini drift gate",
-            findings,
-        );
-        require_workflow_contains(
-            file,
-            content,
-            "bash .claude/skills/merge-verification/scripts/drift-check.sh .",
-            "promotion verification must run the Claude drift gate",
+            "cargo run --bin rusty-idd -- merge-tools verify --workspace .",
+            "promotion verification must run the merge-tools verification gate",
             findings,
         );
         require_workflow_contains(

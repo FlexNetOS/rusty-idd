@@ -4,7 +4,7 @@ name: ci
 # Relocated from intent-driven-development/.github/ (GitHub only runs workflows
 # under the repo-root .github/) and upgraded to run across the whole workspace.
 #
-# All gates are blocking: the Rust-native drift gate, build, test, fmt,
+# All gates are blocking: the merge-tools verification gate, build, test, fmt,
 # clippy (-D warnings), and a cargo-audit supply-chain gate. The fmt+clippy
 # cleanup slice formatted both crates and cleared all lints, so these are now
 # enforced. The audit gate fails on any NEW advisory (see .cargo/audit.toml).
@@ -35,8 +35,8 @@ jobs:
         with:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
-      - name: Rust-native drift gate
-        run: bash .gemini/skills/merge-verification/scripts/drift-check.sh .
+      - name: Merge-tools verification gate
+        run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Build (workspace)
         run: cargo build --workspace --locked
       - name: Test (workspace)

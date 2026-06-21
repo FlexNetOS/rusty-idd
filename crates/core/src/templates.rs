@@ -120,6 +120,8 @@ jobs:
         with:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
+      - name: Merge-tools verification
+        run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Format
         run: cargo fmt --all -- --check
       - name: Clippy

@@ -152,10 +152,13 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
         ".idd/knowledge/plan-context.json",
         ".idd/knowledge/plan-context.md",
         "docs/rusty-idd/codex-environment.md",
-        "adr/0004-knowledge-direct-crate-integration.md",
-        "adr/0006-ai-merge-as-rusty-idd-tool.md",
+        "docs/rusty-idd/merge-tools-package.md",
+        "adr/0001-codex-harness-rusty-idd-flow.md",
+        "crates/merge-tools/Cargo.toml",
+        "crates/merge-tools/src/lib.rs",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/proposal.md",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/specs/codex-harness-flow/spec.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/specs/merge-tool-package/spec.md",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/design.md",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/tasks.md",
         "third_party/upstream/UPSTREAMS.md",
@@ -221,18 +224,11 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
             ][..],
         ),
         (
-            "adr/0004-knowledge-direct-crate-integration.md",
-            &[
-                "full upstream snapshots",
-                "adopt the upstream parser/core",
-                "Cut audit-denied",
-            ][..],
-        ),
-        (
             "docs/rusty-idd/codex-environment.md",
             &[
                 "`AI_MERGE/` is a tool/evidence surface",
                 "The default harness order is",
+                "`rusty-idd merge-tools show`",
                 "Write-capable implementation is intentionally outside the default loop",
                 "Upgrade-Only Gap Handling",
                 "meta` / `envctl`",
@@ -240,6 +236,23 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
                 "envctl",
                 "toolchain",
                 ".codex/rules",
+            ][..],
+        ),
+        (
+            "docs/rusty-idd/merge-tools-package.md",
+            &[
+                "Rusty IDD Merge Tool Package",
+                "Deprecated merge content scan",
+                "Active bridge rule",
+                "single active ADR",
+            ][..],
+        ),
+        (
+            "adr/0001-codex-harness-rusty-idd-flow.md",
+            &[
+                "Codex harness follows Rusty IDD flow",
+                "single active ADR",
+                "merge-tools package",
             ][..],
         ),
         (
@@ -256,14 +269,6 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
             &[
                 "Before editing, verify the active OpenSpec change",
                 "Update AI_MERGE only when the workflow calls for",
-            ][..],
-        ),
-        (
-            "adr/0006-ai-merge-as-rusty-idd-tool.md",
-            &[
-                "AI_MERGE as Rusty IDD tool and evidence surface",
-                "supersedes ADR-0003",
-                "not the authoritative Rusty IDD control plane",
             ][..],
         ),
         (

@@ -30,6 +30,7 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
 | Runtime audit CLI | `rusty-idd codex runtime-audit` | Rust-native proof that repo-local Codex hooks, agents, loops, and targets do not depend on Python. |
 | System audit CLI | `rusty-idd codex system-audit` | Rust-native proof that the active Codex binary and parent-managed source-build path are Rust-first. |
 | Model loop CLI | `rusty-idd codex model-loop` | Rust-native command that emits or executes exact read-only `codex exec` commands for the default loop. |
+| Merge tool package | `rusty-idd merge-tools show` | Rusty IDD-owned package for merge-goal inventory, planning, implementation, verification, evidence, and legacy-surface disposition. |
 
 ## Intentional Exclusions
 
@@ -94,6 +95,18 @@ The default harness order is:
    explicitly authorized.
 8. Validate, regenerate deterministic artifacts, and record optional AI_MERGE
    evidence when audit or merge records are required.
+
+For merge, migration, or repository-unification goals, use the Rusty IDD-owned
+package before reading retired bridge material:
+
+```bash
+cargo run --bin rusty-idd -- merge-tools show
+```
+
+The package replaces the old active `idd-merge-idd` Claude/Gemini workflow with
+Rust-native phases: inventory, plan, decide, implement, verify, and evidence.
+Claude/Gemini files may exist only as thin bridge notes; they are not the source
+of truth for merge execution.
 
 ## Adopt-First Policy
 

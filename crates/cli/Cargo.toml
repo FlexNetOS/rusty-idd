@@ -29,6 +29,7 @@ serde_json = "1"
 toml = "0.9"
 rusty-idd-core = { path = "../core" }
 rusty-idd-knowledge = { path = "../knowledge" }
+rusty-idd-merge-tools = { path = "../merge-tools" }
 rusty-idd-spec = { path = "../spec" }
 rusty-idd-runner = { path = "../runner" }
 rusty-idd-tui = { path = "../tui" }

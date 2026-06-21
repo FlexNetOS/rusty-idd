@@ -2245,7 +2245,7 @@ fn integration_surfaces(workspace: &Path) -> Vec<IntegrationSurface> {
                     "crates/external/codegraph-core",
                     "crates/external/codegraph-parser",
                     "third_party/upstream/codegraph-rust",
-                    "adr/0005-full-feature-upstream-knowledge-integration.md",
+                    "docs/rusty-idd/merge-tools-package.md",
                     "AI_MERGE/16_upstream_knowledge_revisit.md",
                 ],
             ),
@@ -2267,7 +2267,7 @@ fn integration_surfaces(workspace: &Path) -> Vec<IntegrationSurface> {
                 &[
                     "third_party/upstream/repomix-rs",
                     "Cargo.toml",
-                    "adr/0005-full-feature-upstream-knowledge-integration.md",
+                    "docs/rusty-idd/merge-tools-package.md",
                     "AI_MERGE/16_upstream_knowledge_revisit.md",
                 ],
             ),

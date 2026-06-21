@@ -37,10 +37,8 @@ jobs:
           components: rustfmt, clippy
       - uses: Swatinem/rust-cache@v2
 
-      - name: Rust-native drift gate (Gemini)
-        run: bash .gemini/skills/merge-verification/scripts/drift-check.sh .
-      - name: Rust-native drift gate (Claude)
-        run: bash .claude/skills/merge-verification/scripts/drift-check.sh .
+      - name: Merge-tools verification gate
+        run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Build (workspace, locked)
         run: cargo build --workspace --locked
       - name: Test (workspace, locked)

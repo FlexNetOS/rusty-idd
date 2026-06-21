@@ -50,7 +50,7 @@
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
 | `github_org` | `fix/autonomous-feature-develop-approval` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
-| `handoff` | `develop` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
+| `handoff` | `develop` | false | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `master` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
 | `hermes-agent` | `main` | false | agents, ai, untriaged | role:agent-environment | node, github-actions |
 | `hooks_hub` | `master` | false | hooks, hub | role:capability-hub | github-actions |
@@ -74,7 +74,7 @@
 | `meta_rust_cli` | `main` | false | canon | role:meta-control-plane, role:rust-code-surface | rust, github-actions |
 | `my-wiki` | `` | false | docs, wiki | role:documentation-knowledge |  |
 | `n8n` | `develop` | false | automation, forked | role:agent-environment | node, agents, claude, github-actions |
-| `network-control` | `main` | false |  | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
+| `network-control` | `develop` | false |  | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
 | `network_hub` | `master` | false | hub, network | role:capability-hub | github-actions |
 | `obscura` | `main` | false | untriaged | role:domain-upgrade-surface, role:rust-code-surface | rust, github-actions |
 | `obsidian-mind` | `main` | false | docs, knowledge | role:documentation-knowledge, role:knowledge-memory | claude, github-actions |
@@ -88,7 +88,7 @@
 | `ruvector` | `main` | false | ai, forked, rust, wasm | role:agent-environment, role:rust-code-surface | rust, node, claude, github-actions |
 | `shimmy` | `feat/openai-embeddings-endpoint` | false | forked, untriaged | role:rust-code-surface | rust, github-actions, make |
 | `template_hub` | `master` | false | hub, templates | role:capability-hub | github-actions |
-| `teri` | `verify/main-embeddings-ruvllm` | true | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
+| `teri` | `main` | false | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
 | `tool_hub` | `feat/stage-github-org-tool-pins` | true | hub, tools | role:capability-hub | github-actions |
 | `vault_hub` | `main` | false | hub, vault | role:capability-hub |  |
 | `vox` | `main` | false | forked, tools, voice | role:rust-code-surface | rust, claude, github-actions |
@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 135 files, 8456 nodes, 34504 edges via `codegraph-rust` | 198 files, 138824 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
+| `rusty-idd` | 138 files, 8532 nodes, 34812 edges via `codegraph-rust` | 199 files, 138488 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
 
 ## Edges
 
@@ -305,6 +305,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 10 repos have local dirty state recorded as evidence
+- 8 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries

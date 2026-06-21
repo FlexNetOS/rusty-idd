@@ -97,10 +97,13 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
         ".idd/knowledge/plan-context.json",
         ".idd/knowledge/plan-context.md",
         "docs/rusty-idd/codex-environment.md",
-        "adr/0004-knowledge-direct-crate-integration.md",
-        "adr/0006-ai-merge-as-rusty-idd-tool.md",
+        "docs/rusty-idd/merge-tools-package.md",
+        "adr/0001-codex-harness-rusty-idd-flow.md",
+        "crates/merge-tools/Cargo.toml",
+        "crates/merge-tools/src/lib.rs",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/proposal.md",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/specs/codex-harness-flow/spec.md",
+        "openspec/changes/upgrade-codex-harness-rusty-idd-flow/specs/merge-tool-package/spec.md",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/design.md",
         "openspec/changes/upgrade-codex-harness-rusty-idd-flow/tasks.md",
         "third_party/upstream/UPSTREAMS.md",
@@ -114,14 +117,16 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
         "Rusty IDD is the intent-driven workflow engine\n`AI_MERGE/` is a Rusty IDD tool and evidence surface\nBefore writes, create or select an OpenSpec change\nAdopt first, cut after evidence\nUpgrade only\nTreat stale or orphaned work as unfinished\nTooling required to run this repo must be tracked\nHost service and process management is out of scope\n",
     );
     write(
-        &root
-            .path()
-            .join("adr/0004-knowledge-direct-crate-integration.md"),
-        "full upstream snapshots\nadopt the upstream parser/core\nCut audit-denied\n",
+        &root.path().join("docs/rusty-idd/codex-environment.md"),
+        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\n`rusty-idd merge-tools show`\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nenvctl\ntoolchain\n.codex/rules\n",
     );
     write(
-        &root.path().join("docs/rusty-idd/codex-environment.md"),
-        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nenvctl\ntoolchain\n.codex/rules\n",
+        &root.path().join("docs/rusty-idd/merge-tools-package.md"),
+        "Rusty IDD Merge Tool Package\nDeprecated merge content scan\nActive bridge rule\nsingle active ADR\n",
+    );
+    write(
+        &root.path().join("adr/0001-codex-harness-rusty-idd-flow.md"),
+        "Codex harness follows Rusty IDD flow\nsingle active ADR\nmerge-tools package\n",
     );
     write(
         &root.path().join(".codex/loops/rusty-idd-model-loop.toml"),
@@ -145,10 +150,6 @@ name = "rusty-idd-implementer"
 description = "Workspace-write implementer."
 developer_instructions = "Before editing, verify the active OpenSpec change. Update AI_MERGE only when the workflow calls for evidence."
 "#,
-    );
-    write(
-        &root.path().join("adr/0006-ai-merge-as-rusty-idd-tool.md"),
-        "AI_MERGE as Rusty IDD tool and evidence surface\nsupersedes ADR-0003\nnot the authoritative Rusty IDD control plane\n",
     );
     write(
         &root.path().join("third_party/upstream/UPSTREAMS.md"),
