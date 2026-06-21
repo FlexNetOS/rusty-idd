@@ -241,6 +241,24 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     let plan = fs::read_to_string(rusty.join("integration-plan.json")).unwrap();
     assert!(plan.contains("\"work_items\""));
     assert!(plan.contains("\"integrate-idd-spec-engine\""));
+
+    run_ok(
+        &[
+            "knowledge",
+            "integration-status",
+            "--workspace",
+            ".",
+            "--integration-plan",
+            "integration-plan.json",
+            "--out",
+            "integration-status.json",
+        ],
+        &rusty,
+    );
+    let status = fs::read_to_string(rusty.join("integration-status.json")).unwrap();
+    assert!(status.contains("\"next_change_id\""));
+    assert!(status.contains("\"integrate-idd-spec-engine\""));
+    assert!(status.contains("\"planned\""));
 }
 
 fn run_git(args: &[&str], cwd: &Path) {

@@ -423,8 +423,8 @@
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
       "branch": "chore/wrap-up-2026-06-21-002",
-      "head": "831d3cd957c96b42f5169ac768e2eb43fd31e159",
-      "dirty": true,
+      "head": "54bdad7023b649c58cf8a8d54e5fcd9c5062daa2",
+      "dirty": false,
       "tags": [
         "ci",
         "org"
@@ -1269,8 +1269,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8239,
-          "edges": 33116,
+          "nodes": 8287,
+          "edges": 33408,
           "languages": [
             "rust"
           ],
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 153,
-          "tokens": 110800,
+          "files": 158,
+          "tokens": 113941,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1293,7 +1293,7 @@
             ],
             [
               "crates/knowledge/src/lib.rs",
-              6510
+              7026
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1352,6 +1352,10 @@
               1520
             ],
             [
+              "Justfile",
+              1469
+            ],
+            [
               "docs/rusty-idd/design.md",
               1452
             ],
@@ -1372,16 +1376,12 @@
               1294
             ],
             [
-              "Justfile",
-              1276
+              "Makefile",
+              1165
             ],
             [
               "crates/core/src/model.rs",
               1150
-            ],
-            [
-              "docs/rusty-idd/dependency-duplication.md",
-              1095
             ]
           ],
           "suspicious_files": 0,
@@ -1396,7 +1396,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9058,
+            "edges": 9061,
             "languages": [
               "Rust",
               "rust"
@@ -1427,6 +1427,18 @@
             ]
           },
           {
+            "id": "crate:knowledge",
+            "name": "knowledge",
+            "kind": "crate",
+            "files": 1,
+            "nodes": 502,
+            "edges": 3636,
+            "languages": [
+              "Rust",
+              "rust"
+            ]
+          },
+          {
             "id": "crate:runner",
             "name": "runner",
             "kind": "crate",
@@ -1439,24 +1451,12 @@
             ]
           },
           {
-            "id": "crate:knowledge",
-            "name": "knowledge",
-            "kind": "crate",
-            "files": 1,
-            "nodes": 463,
-            "edges": 3367,
-            "languages": [
-              "Rust",
-              "rust"
-            ]
-          },
-          {
             "id": "crate:cli",
             "name": "cli",
             "kind": "crate",
             "files": 22,
-            "nodes": 681,
-            "edges": 2829,
+            "nodes": 687,
+            "edges": 2854,
             "languages": [
               "Rust",
               "rust"
@@ -1480,7 +1480,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1909,
+            "edges": 1911,
             "languages": [
               "Rust",
               "rust"
@@ -3622,7 +3622,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "10 repos have local dirty state recorded as evidence",
+    "9 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]

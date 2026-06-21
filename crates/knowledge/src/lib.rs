@@ -413,6 +413,23 @@ impl IntegrationPlanOptions {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct IntegrationStatusOptions {
+    pub workspace: PathBuf,
+    pub integration_plan_path: Option<PathBuf>,
+    pub format: PlanContextFormat,
+}
+
+impl IntegrationStatusOptions {
+    pub fn new(workspace: impl Into<PathBuf>, format: PlanContextFormat) -> Self {
+        Self {
+            workspace: workspace.into(),
+            integration_plan_path: None,
+            format,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemArchitectureGraph {
     pub schema_version: u32,
@@ -556,6 +573,42 @@ pub struct IntegrationWorkItem {
     pub implementation_boundary: String,
     pub validation: Vec<String>,
     pub rollback: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationStatusReport {
+    pub schema_version: u32,
+    pub workspace_root: String,
+    pub source_plan: String,
+    pub next_change_id: Option<String>,
+    pub counts: IntegrationStatusCounts,
+    pub work_items: Vec<IntegrationWorkStatus>,
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize, Default)]
+pub struct IntegrationStatusCounts {
+    pub total: usize,
+    pub planned: usize,
+    pub incomplete_scaffold: usize,
+    pub scaffolded: usize,
+    pub ready_to_archive: usize,
+    pub archived: usize,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationWorkStatus {
+    pub id: String,
+    pub title: String,
+    pub capability: String,
+    pub priority: u32,
+    pub change_id: String,
+    pub status: String,
+    pub openspec_path: Option<String>,
+    pub missing_artifacts: Vec<String>,
+    pub unchecked_tasks: usize,
+    pub owner_repos: Vec<String>,
+    pub adopt_first_inputs: Vec<String>,
 }
 
 #[derive(Debug, Clone)]
@@ -856,6 +909,22 @@ pub fn build_integration_automation_plan(options: IntegrationPlanOptions) -> Res
         PlanContextFormat::Markdown => Ok(render_integration_automation_plan_markdown(&plan)),
         PlanContextFormat::Json => {
             serde_json::to_string_pretty(&plan).context("serialize integration plan")
+        }
+    }
+}
+
+pub fn build_integration_status_report(options: IntegrationStatusOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let plan_path = options
+        .integration_plan_path
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/integration-plan.json"));
+    let plan = read_json_file::<IntegrationAutomationPlan>(&plan_path)?;
+    let report = integration_status_report(&workspace, &plan, &plan_path);
+
+    match options.format {
+        PlanContextFormat::Markdown => Ok(render_integration_status_markdown(&report)),
+        PlanContextFormat::Json => {
+            serde_json::to_string_pretty(&report).context("serialize integration status")
         }
     }
 }
@@ -3538,6 +3607,214 @@ fn render_integration_automation_plan_markdown(plan: &IntegrationAutomationPlan)
     out
 }
 
+fn integration_status_report(
+    workspace: &Path,
+    plan: &IntegrationAutomationPlan,
+    source_path: &Path,
+) -> IntegrationStatusReport {
+    let mut work_items = plan
+        .work_items
+        .iter()
+        .map(|item| integration_work_status(workspace, item))
+        .collect::<Vec<_>>();
+    work_items.sort_by(|a, b| {
+        a.priority
+            .cmp(&b.priority)
+            .then(a.change_id.cmp(&b.change_id))
+    });
+
+    let mut counts = IntegrationStatusCounts {
+        total: work_items.len(),
+        ..Default::default()
+    };
+    for item in &work_items {
+        match item.status.as_str() {
+            "planned" => counts.planned += 1,
+            "incomplete-scaffold" => counts.incomplete_scaffold += 1,
+            "scaffolded" => counts.scaffolded += 1,
+            "ready-to-archive" => counts.ready_to_archive += 1,
+            "archived" => counts.archived += 1,
+            _ => {}
+        }
+    }
+
+    let next_change_id = work_items
+        .iter()
+        .find(|item| item.status == "planned")
+        .map(|item| item.change_id.clone());
+    let mut findings = vec![format!(
+        "integration status classified {} work items from {}",
+        work_items.len(),
+        display_path(workspace, source_path)
+    )];
+    if let Some(next) = &next_change_id {
+        findings.push(format!("next planned integration work item is {next}"));
+    } else {
+        findings.push("no planned integration work items remain".to_string());
+    }
+    findings.sort();
+
+    IntegrationStatusReport {
+        schema_version: 1,
+        workspace_root: workspace.display().to_string(),
+        source_plan: display_path(workspace, source_path),
+        next_change_id,
+        counts,
+        work_items,
+        findings,
+    }
+}
+
+fn integration_work_status(workspace: &Path, item: &IntegrationWorkItem) -> IntegrationWorkStatus {
+    let changes_root = workspace.join("openspec/changes");
+    let active_dir = changes_root.join(&item.change_id);
+    let archive_dir = changes_root.join("archive").join(&item.change_id);
+
+    let (status, openspec_path, missing_artifacts, unchecked_tasks) = if archive_dir.is_dir() {
+        (
+            "archived".to_string(),
+            Some(display_path(workspace, &archive_dir)),
+            Vec::new(),
+            0,
+        )
+    } else if active_dir.is_dir() {
+        let missing = missing_integration_artifacts(&active_dir);
+        let unchecked = unchecked_task_count(&active_dir.join("tasks.md"));
+        let status = if !missing.is_empty() {
+            "incomplete-scaffold"
+        } else if unchecked == 0 {
+            "ready-to-archive"
+        } else {
+            "scaffolded"
+        }
+        .to_string();
+        (
+            status,
+            Some(display_path(workspace, &active_dir)),
+            missing,
+            unchecked,
+        )
+    } else {
+        ("planned".to_string(), None, Vec::new(), 0)
+    };
+
+    IntegrationWorkStatus {
+        id: item.id.clone(),
+        title: item.title.clone(),
+        capability: item.capability.clone(),
+        priority: item.priority,
+        change_id: item.change_id.clone(),
+        status,
+        openspec_path,
+        missing_artifacts,
+        unchecked_tasks,
+        owner_repos: item.owner_repos.clone(),
+        adopt_first_inputs: item.adopt_first_inputs.clone(),
+    }
+}
+
+fn missing_integration_artifacts(change_dir: &Path) -> Vec<String> {
+    let mut missing = Vec::new();
+    for artifact in ["proposal.md", "design.md", "tasks.md"] {
+        if !change_dir.join(artifact).is_file() {
+            missing.push(artifact.to_string());
+        }
+    }
+    if !has_spec_delta(change_dir) {
+        missing.push("specs/**/spec.md".to_string());
+    }
+    missing
+}
+
+fn has_spec_delta(change_dir: &Path) -> bool {
+    has_file_named(&change_dir.join("specs"), "spec.md")
+}
+
+fn has_file_named(dir: &Path, file_name: &str) -> bool {
+    let Ok(entries) = fs::read_dir(dir) else {
+        return false;
+    };
+    for entry in entries.flatten() {
+        let path = entry.path();
+        if path.is_dir() {
+            if has_file_named(&path, file_name) {
+                return true;
+            }
+        } else if path.file_name().and_then(|name| name.to_str()) == Some(file_name) {
+            return true;
+        }
+    }
+    false
+}
+
+fn unchecked_task_count(path: &Path) -> usize {
+    fs::read_to_string(path)
+        .map(|content| {
+            content
+                .lines()
+                .filter(|line| line.contains("- [ ]"))
+                .count()
+        })
+        .unwrap_or(0)
+}
+
+fn render_integration_status_markdown(report: &IntegrationStatusReport) -> String {
+    let mut out = String::new();
+    out.push_str("# Integration Status Queue\n\n");
+    out.push_str(&format!("- Workspace root: `{}`\n", report.workspace_root));
+    out.push_str(&format!("- Source plan: `{}`\n", report.source_plan));
+    match &report.next_change_id {
+        Some(next) => out.push_str(&format!("- Next planned work: `{next}`\n\n")),
+        None => out.push_str("- Next planned work: none\n\n"),
+    }
+
+    out.push_str("## Counts\n\n");
+    out.push_str(
+        "| Total | Planned | Incomplete Scaffold | Scaffolded | Ready To Archive | Archived |\n",
+    );
+    out.push_str("|---:|---:|---:|---:|---:|---:|\n");
+    out.push_str(&format!(
+        "| {} | {} | {} | {} | {} | {} |\n\n",
+        report.counts.total,
+        report.counts.planned,
+        report.counts.incomplete_scaffold,
+        report.counts.scaffolded,
+        report.counts.ready_to_archive,
+        report.counts.archived
+    ));
+
+    out.push_str("## Work Items\n\n");
+    out.push_str(
+        "| Priority | Change | Status | Capability | OpenSpec | Missing | Unchecked Tasks |\n",
+    );
+    out.push_str("|---:|---|---|---|---|---|---:|\n");
+    for item in &report.work_items {
+        out.push_str(&format!(
+            "| {} | `{}` | {} | `{}` | {} | {} | {} |\n",
+            item.priority,
+            item.change_id,
+            item.status,
+            item.capability,
+            item.openspec_path
+                .as_ref()
+                .map(|path| format!("`{path}`"))
+                .unwrap_or_else(String::new),
+            item.missing_artifacts.join(", "),
+            item.unchecked_tasks
+        ));
+    }
+
+    out.push_str("\n## Findings\n\n");
+    if report.findings.is_empty() {
+        out.push_str("No findings.\n");
+    } else {
+        for finding in &report.findings {
+            out.push_str(&format!("- {finding}\n"));
+        }
+    }
+    out
+}
+
 fn graph_planning_context(
     workspace: &Path,
     options: PlanContextOptions,
@@ -4900,6 +5177,120 @@ mod tests {
     }
 
     #[test]
+    fn integration_status_reports_queue_state_from_openspec_changes() {
+        let tmp = tempfile::tempdir().unwrap();
+        let workspace = tmp.path();
+        fs::create_dir_all(workspace.join(".idd/knowledge")).unwrap();
+        fs::create_dir_all(
+            workspace.join("openspec/changes/integrate-fleet-handoff/specs/fleet-handoff"),
+        )
+        .unwrap();
+        fs::create_dir_all(
+            workspace
+                .join("openspec/changes/integrate-agent-communication/specs/agent-communication"),
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-fleet-handoff/proposal.md"),
+            "# integrate-fleet-handoff\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-fleet-handoff/design.md"),
+            "# design\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-fleet-handoff/tasks.md"),
+            "- [ ] run diagnostics\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-fleet-handoff/specs/fleet-handoff/spec.md"),
+            "## ADDED Requirements\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-agent-communication/proposal.md"),
+            "# integrate-agent-communication\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-agent-communication/design.md"),
+            "# design\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join("openspec/changes/integrate-agent-communication/tasks.md"),
+            "- [x] run diagnostics\n",
+        )
+        .unwrap();
+        fs::write(
+            workspace.join(
+                "openspec/changes/integrate-agent-communication/specs/agent-communication/spec.md",
+            ),
+            "## ADDED Requirements\n",
+        )
+        .unwrap();
+
+        let plan = IntegrationAutomationPlan {
+            schema_version: 1,
+            workspace_root: workspace.display().to_string(),
+            system_root: tmp.path().display().to_string(),
+            source_model: ".idd/knowledge/operating-model.json".to_string(),
+            work_items: vec![
+                test_work_item(
+                    "integrate-idd-spec-engine",
+                    "capability:idd-spec-engine",
+                    10,
+                ),
+                test_work_item("integrate-fleet-handoff", "capability:fleet-handoff", 20),
+                test_work_item(
+                    "integrate-agent-communication",
+                    "capability:agent-communication",
+                    30,
+                ),
+            ],
+            gates: vec!["just ci".to_string()],
+            findings: Vec::new(),
+        };
+        fs::write(
+            workspace.join(".idd/knowledge/integration-plan.json"),
+            serde_json::to_string_pretty(&plan).unwrap(),
+        )
+        .unwrap();
+
+        let report_json = build_integration_status_report(IntegrationStatusOptions::new(
+            workspace,
+            PlanContextFormat::Json,
+        ))
+        .unwrap();
+        let report: IntegrationStatusReport = serde_json::from_str(&report_json).unwrap();
+        assert_eq!(
+            report.next_change_id.as_deref(),
+            Some("integrate-idd-spec-engine")
+        );
+        assert_eq!(report.counts.planned, 1);
+        assert_eq!(report.counts.scaffolded, 1);
+        assert_eq!(report.counts.ready_to_archive, 1);
+        assert!(report
+            .work_items
+            .iter()
+            .any(|item| item.change_id == "integrate-fleet-handoff"
+                && item.status == "scaffolded"
+                && item.unchecked_tasks == 1));
+
+        let markdown = build_integration_status_report(IntegrationStatusOptions::new(
+            workspace,
+            PlanContextFormat::Markdown,
+        ))
+        .unwrap();
+        assert!(markdown.contains("# Integration Status Queue"));
+        assert!(markdown.contains("integrate-idd-spec-engine"));
+        assert!(markdown.contains("ready-to-archive"));
+    }
+
+    #[test]
     fn graph_planning_context_preserves_peer_architecture_summary() {
         let system = tempfile::tempdir().unwrap();
         let rusty = system.path().join("rusty-idd");
@@ -5014,5 +5405,23 @@ mod tests {
             String::from_utf8_lossy(&out.stdout),
             String::from_utf8_lossy(&out.stderr)
         );
+    }
+
+    fn test_work_item(change_id: &str, capability: &str, priority: u32) -> IntegrationWorkItem {
+        IntegrationWorkItem {
+            id: format!("work:{change_id}"),
+            title: format!("Integrate {change_id}"),
+            capability: capability.to_string(),
+            layer: "layer:test".to_string(),
+            priority,
+            status: "partial".to_string(),
+            change_id: change_id.to_string(),
+            owner_repos: vec!["repo:rusty-idd".to_string()],
+            anchors: Vec::new(),
+            adopt_first_inputs: Vec::new(),
+            implementation_boundary: "test boundary".to_string(),
+            validation: vec!["just ci".to_string()],
+            rollback: vec!["revert".to_string()],
+        }
     }
 }
