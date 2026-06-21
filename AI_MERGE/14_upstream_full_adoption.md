@@ -123,6 +123,13 @@ These cuts remain deliberate:
   them would violate the as-is adoption requirement. Rollback path: add an
   upstream-audit-specific scanner that reports findings against the mirror
   without blocking default Rusty IDD validation.
+- Exclude `third_party/upstream/**` from repo-native drift-check crate and
+  foreign-manifest discovery while keeping the mirror tracked and in the
+  manifest. The mirrors contain upstream crate layouts, prompt markdown, Python
+  metadata, and tree-sitter query assets that are valid upstream source but not
+  first-party Rusty IDD drift. Rollback path: remove the drift-check exclusion
+  only if the mirrors are converted from audit input into first-party workspace
+  crates with their non-Rust assets ported or feature-gated.
 
 ## TDD Verification During Consolidation
 
@@ -132,6 +139,9 @@ These cuts remain deliberate:
   this audit note are checked with `rusty-idd codex env-check`.
 - Refreshed `.idd/knowledge/*` and `.idd/MANIFEST.tsv` after source and
   control-plane changes.
+- Updated both `.gemini` and `.claude` merge-verification drift gates so full
+  upstream mirrors remain adopted as-is without being misclassified as
+  first-party Rust-native drift.
 
 ## PR #50 Baseline Comparison
 

@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:4974bddb47b8816a`
+- Workspace fingerprint: `fnv1a64:a39ac02705fb61f1`
 - Indexed Rust files: 134
 - Graph nodes: 7824
 - Graph edges: 30419
 - Resolved call edges: 17071
 - Functions with complexity: 1976
 - Packed files: 105
-- Packed tokens: 79164
+- Packed tokens: 79317
 - Suspicious files: 0
 
 ## Hotspots
@@ -48,8 +48,8 @@
 | 2820 | `crates/core/src/templates.rs` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
 | 2243 | `docs/rusty-idd/codex-environment.md` |
+| 2102 | `AI_MERGE/14_upstream_full_adoption.md` |
 | 2097 | `crates/tui/src/ui.rs` |
-| 1949 | `AI_MERGE/14_upstream_full_adoption.md` |
 | 1712 | `crates/runner/src/data.rs` |
 | 1603 | `crates/runner/src/runner.rs` |
 | 1520 | `AI_MERGE/13_codex_environment.md` |
