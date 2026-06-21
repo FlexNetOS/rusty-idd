@@ -459,6 +459,35 @@ impl IntegrationOwnersOptions {
     }
 }
 
+#[derive(Debug, Clone)]
+pub struct IntegrationReadinessOptions {
+    pub workspace: PathBuf,
+    pub integration_plan_path: Option<PathBuf>,
+    pub system_architecture_path: Option<PathBuf>,
+    pub change: Option<String>,
+    pub capability: Option<String>,
+    pub work_item: Option<String>,
+    pub next: bool,
+    pub next_planned: bool,
+    pub format: PlanContextFormat,
+}
+
+impl IntegrationReadinessOptions {
+    pub fn new(workspace: impl Into<PathBuf>, format: PlanContextFormat) -> Self {
+        Self {
+            workspace: workspace.into(),
+            integration_plan_path: None,
+            system_architecture_path: None,
+            change: None,
+            capability: None,
+            work_item: None,
+            next: false,
+            next_planned: false,
+            format,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct SystemArchitectureGraph {
     pub schema_version: u32,
@@ -680,6 +709,55 @@ pub struct IntegrationOwnerSurface {
     pub local_architecture: Option<PeerArchitectureSummary>,
     pub evidence_paths: Vec<String>,
     pub native_diagnostic_commands: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationReadinessReport {
+    pub schema_version: u32,
+    pub workspace_root: String,
+    pub source_plan: String,
+    pub source_system_architecture: String,
+    pub selector: IntegrationOwnerSelector,
+    pub work_item: IntegrationWorkItem,
+    pub owner_states: Vec<IntegrationReadinessOwnerState>,
+    pub tool_requirements: Vec<IntegrationToolRequirement>,
+    pub native_diagnostics: Vec<IntegrationNativeDiagnostic>,
+    pub runtime_assumptions: Vec<String>,
+    pub feature_gates: Vec<String>,
+    pub validation: Vec<String>,
+    pub rollback: Vec<String>,
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationReadinessOwnerState {
+    pub owner_repo: String,
+    pub repo_found: bool,
+    pub repo_name: Option<String>,
+    pub path: Option<String>,
+    pub branch: Option<String>,
+    pub head: Option<String>,
+    pub dirty: bool,
+    pub required_tool_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationToolRequirement {
+    pub id: String,
+    pub name: String,
+    pub required_by: Vec<String>,
+    pub provisioned_by: String,
+    pub default_path: bool,
+    pub evidence: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationNativeDiagnostic {
+    pub command: String,
+    pub owner_repo: Option<String>,
+    pub required_tool_ids: Vec<String>,
+    pub mode: String,
+    pub mutates_repo: bool,
 }
 
 #[derive(Debug, Clone)]
@@ -1021,6 +1099,48 @@ pub fn build_integration_owner_surfaces(options: IntegrationOwnersOptions) -> Re
         PlanContextFormat::Markdown => Ok(render_integration_owner_surfaces_markdown(&report)),
         PlanContextFormat::Json => {
             serde_json::to_string_pretty(&report).context("serialize integration owner surfaces")
+        }
+    }
+}
+
+pub fn build_integration_readiness_report(options: IntegrationReadinessOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let format = options.format;
+    let plan_path = options
+        .integration_plan_path
+        .clone()
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/integration-plan.json"));
+    let system_path = options
+        .system_architecture_path
+        .clone()
+        .unwrap_or_else(|| workspace.join(".idd/knowledge/system-architecture.json"));
+    let plan = read_json_file::<IntegrationAutomationPlan>(&plan_path)?;
+    let system = read_json_file::<SystemArchitectureGraph>(&system_path)?;
+    let owner_options = IntegrationOwnersOptions {
+        workspace: options.workspace,
+        integration_plan_path: options.integration_plan_path,
+        system_architecture_path: options.system_architecture_path,
+        change: options.change,
+        capability: options.capability,
+        work_item: options.work_item,
+        next: options.next,
+        next_planned: options.next_planned,
+        format,
+    };
+    let owners = integration_owner_surfaces(
+        &workspace,
+        &plan_path,
+        &system_path,
+        plan,
+        system,
+        owner_options,
+    )?;
+    let report = integration_readiness_report(&workspace, &plan_path, &system_path, owners);
+
+    match format {
+        PlanContextFormat::Markdown => Ok(render_integration_readiness_markdown(&report)),
+        PlanContextFormat::Json => {
+            serde_json::to_string_pretty(&report).context("serialize integration readiness")
         }
     }
 }
@@ -4187,6 +4307,344 @@ fn native_owner_diagnostic_commands(repo: &SystemRepo) -> Vec<String> {
     commands
 }
 
+fn integration_readiness_report(
+    workspace: &Path,
+    plan_path: &Path,
+    system_path: &Path,
+    owners: IntegrationOwnersReport,
+) -> IntegrationReadinessReport {
+    let mut tools = BTreeMap::<String, IntegrationToolRequirement>::new();
+    let mut owner_states = Vec::new();
+    let mut native_diagnostics = Vec::new();
+    let mut runtime_assumptions = Vec::new();
+    let mut feature_gates = vec![
+        "Default Rusty IDD knowledge and planning commands remain read-only".to_string(),
+        "Host vault probing, secret relay minting, and long-running service control require an explicit feature or CLI opt-in".to_string(),
+        "Missing tools are provisioned through parent meta/envctl or tracked repo-local surfaces, not user-global installs".to_string(),
+        "Peer repo writes and branch changes stay outside default Rusty IDD readiness generation".to_string(),
+    ];
+
+    add_tool_requirement(
+        &mut tools,
+        "git",
+        "Git",
+        "integration-owner-state",
+        "parent meta/envctl managed PATH",
+        true,
+        "native owner diagnostics include git state checks",
+    );
+
+    for surface in &owners.owner_surfaces {
+        let mut required_tool_ids = BTreeSet::<String>::from(["git".to_string()]);
+        if surface.markers.iter().any(|marker| marker == "rust")
+            || surface
+                .native_diagnostic_commands
+                .iter()
+                .any(|command| command.contains("cargo "))
+        {
+            required_tool_ids.insert("cargo".to_string());
+            add_tool_requirement(
+                &mut tools,
+                "cargo",
+                "Rust Cargo",
+                &surface.owner_repo,
+                "parent meta/envctl Rust toolchain",
+                true,
+                "owner repo exposes Rust package metadata or cargo diagnostics",
+            );
+        }
+        for (id, name, marker, evidence) in [
+            (
+                "just",
+                "Just",
+                "just",
+                "owner repo exposes Justfile diagnostics",
+            ),
+            (
+                "make",
+                "Make",
+                "make",
+                "owner repo exposes Makefile diagnostics",
+            ),
+            (
+                "node",
+                "Node/npm",
+                "node",
+                "owner repo exposes package.json diagnostics",
+            ),
+        ] {
+            if surface.markers.iter().any(|value| value == marker)
+                || surface
+                    .native_diagnostic_commands
+                    .iter()
+                    .any(|command| command.contains(id) || command.contains("npm "))
+            {
+                required_tool_ids.insert(id.to_string());
+                add_tool_requirement(
+                    &mut tools,
+                    id,
+                    name,
+                    &surface.owner_repo,
+                    "parent meta/envctl managed toolchain",
+                    true,
+                    evidence,
+                );
+            }
+        }
+        if surface.owner_repo == "repo:envctl"
+            || surface
+                .roles
+                .iter()
+                .any(|role| role == "role:toolchain-provider")
+        {
+            required_tool_ids.insert("envctl".to_string());
+            add_tool_requirement(
+                &mut tools,
+                "envctl",
+                "envctl",
+                &surface.owner_repo,
+                "parent meta/envctl",
+                true,
+                "owner repo is the tracked toolchain provider for this capability",
+            );
+        }
+        if surface.owner_repo == "repo:vault-hub" {
+            required_tool_ids.insert("kasetto".to_string());
+            add_tool_requirement(
+                &mut tools,
+                "kasetto",
+                "Kasetto",
+                &surface.owner_repo,
+                "vault_hub/kasetto through parent meta/envctl",
+                false,
+                "vault_hub README identifies kasetto as its Rust capability manager",
+            );
+        }
+        if surface.owner_repo == "repo:yazelix" {
+            for (id, name, evidence) in [
+                (
+                    "nix",
+                    "Nix",
+                    "Yazelix publishes flake and Nix package/runtime surfaces",
+                ),
+                (
+                    "nushell",
+                    "Nushell",
+                    "Yazelix owns Nushell runtime configuration",
+                ),
+                ("lua", "Lua", "Yazelix ships Lua plugin/runtime surfaces"),
+                (
+                    "ghostty",
+                    "Ghostty",
+                    "Yazelix default terminal runtime includes Ghostty",
+                ),
+                (
+                    "zellij",
+                    "Zellij",
+                    "Yazelix workspace orchestration is Zellij-backed",
+                ),
+                (
+                    "beads",
+                    "Beads Rust",
+                    "Yazelix agent workflow makes Beads mandatory for contributors",
+                ),
+            ] {
+                required_tool_ids.insert(id.to_string());
+                add_tool_requirement(
+                    &mut tools,
+                    id,
+                    name,
+                    &surface.owner_repo,
+                    "Yazelix packaged runtime through parent meta/envctl",
+                    false,
+                    evidence,
+                );
+            }
+        }
+
+        owner_states.push(IntegrationReadinessOwnerState {
+            owner_repo: surface.owner_repo.clone(),
+            repo_found: surface.repo_found,
+            repo_name: surface.repo_name.clone(),
+            path: surface.path.clone(),
+            branch: surface.branch.clone(),
+            head: surface.head.clone(),
+            dirty: surface.dirty,
+            required_tool_ids: required_tool_ids.into_iter().collect(),
+        });
+
+        for command in &surface.native_diagnostic_commands {
+            native_diagnostics.push(IntegrationNativeDiagnostic {
+                command: command.clone(),
+                owner_repo: Some(surface.owner_repo.clone()),
+                required_tool_ids: diagnostic_tool_ids(command),
+                mode: if diagnostic_command_is_read_only(command) {
+                    "read-only".to_string()
+                } else {
+                    "native-build-or-test".to_string()
+                },
+                mutates_repo: diagnostic_command_mutates_repo(command),
+            });
+        }
+    }
+
+    for anchor in &owners.work_item.anchors {
+        if anchor.contains("COGNITUM") {
+            runtime_assumptions.push(
+                "Cognitum path `/run/media/drdave/COGNITUM` is an external host/vault anchor and is recorded without probing by default".to_string(),
+            );
+            add_tool_requirement(
+                &mut tools,
+                "cognitum-vault",
+                "Cognitum vault",
+                "work-item-anchor",
+                "external vault surfaced through envctl relay only",
+                false,
+                "integration work item records /run/media/drdave/COGNITUM",
+            );
+        }
+        if anchor.to_ascii_lowercase().contains("pi zero") {
+            runtime_assumptions.push(
+                "Cognitum on Pi Zero is a remote/edge runtime assumption; Rusty IDD readiness does not start or manage that host".to_string(),
+            );
+        }
+    }
+
+    if runtime_assumptions.is_empty() {
+        runtime_assumptions.push(
+            "No host runtime probing is required for the default readiness artifact".to_string(),
+        );
+    }
+    feature_gates.sort();
+    runtime_assumptions.sort();
+    runtime_assumptions.dedup();
+    native_diagnostics.sort_by(|a, b| a.command.cmp(&b.command));
+    native_diagnostics.dedup_by(|a, b| a.command == b.command && a.owner_repo == b.owner_repo);
+
+    let mut validation = owners.work_item.validation.clone();
+    validation.push(
+        "rusty-idd knowledge integration-readiness --workspace . --next --out .idd/knowledge/integration-readiness.json".to_string(),
+    );
+    validation.sort();
+    validation.dedup();
+
+    let mut rollback = owners.work_item.rollback.clone();
+    rollback.push(
+        "remove .idd/knowledge/integration-readiness.* and regenerate integration status/owner artifacts".to_string(),
+    );
+    rollback.sort();
+    rollback.dedup();
+
+    let mut findings = owners.findings.clone();
+    findings.push(format!(
+        "readiness derived {} tool requirements from {} owner surfaces",
+        tools.len(),
+        owners.owner_surfaces.len()
+    ));
+    findings.push(
+        "readiness generation is deterministic and does not execute native diagnostics".to_string(),
+    );
+    if owners
+        .work_item
+        .implementation_boundary
+        .contains("Feature-gate")
+    {
+        findings.push(
+            "selected work item requires feature-gated host/vault behavior outside default workflows"
+                .to_string(),
+        );
+    }
+    findings.sort();
+    findings.dedup();
+
+    IntegrationReadinessReport {
+        schema_version: 1,
+        workspace_root: workspace.display().to_string(),
+        source_plan: display_path(workspace, plan_path),
+        source_system_architecture: display_path(workspace, system_path),
+        selector: owners.selector,
+        work_item: owners.work_item,
+        owner_states,
+        tool_requirements: tools.into_values().collect(),
+        native_diagnostics,
+        runtime_assumptions,
+        feature_gates,
+        validation,
+        rollback,
+        findings,
+    }
+}
+
+fn add_tool_requirement(
+    tools: &mut BTreeMap<String, IntegrationToolRequirement>,
+    id: &str,
+    name: &str,
+    required_by: &str,
+    provisioned_by: &str,
+    default_path: bool,
+    evidence: &str,
+) {
+    let requirement = tools
+        .entry(id.to_string())
+        .or_insert_with(|| IntegrationToolRequirement {
+            id: id.to_string(),
+            name: name.to_string(),
+            required_by: Vec::new(),
+            provisioned_by: provisioned_by.to_string(),
+            default_path,
+            evidence: Vec::new(),
+        });
+    if !requirement
+        .required_by
+        .iter()
+        .any(|value| value == required_by)
+    {
+        requirement.required_by.push(required_by.to_string());
+    }
+    if !requirement.evidence.iter().any(|value| value == evidence) {
+        requirement.evidence.push(evidence.to_string());
+    }
+    requirement.required_by.sort();
+    requirement.evidence.sort();
+    requirement.default_path &= default_path;
+}
+
+fn diagnostic_tool_ids(command: &str) -> Vec<String> {
+    let mut ids = BTreeSet::new();
+    if command.contains("git ") || command.starts_with("git") {
+        ids.insert("git".to_string());
+    }
+    if command.contains("cargo ") {
+        ids.insert("cargo".to_string());
+    }
+    if command.contains("just ") || command.ends_with(" just") {
+        ids.insert("just".to_string());
+    }
+    if command.contains("make ") || command.ends_with(" make") {
+        ids.insert("make".to_string());
+    }
+    if command.contains("npm ") {
+        ids.insert("node".to_string());
+    }
+    ids.into_iter().collect()
+}
+
+fn diagnostic_command_is_read_only(command: &str) -> bool {
+    command.contains(" rev-parse ")
+        || command.contains(" status ")
+        || command.contains(" metadata ")
+        || command.contains(" --list")
+        || command.starts_with("test -f ")
+        || command.contains("make -n ")
+}
+
+fn diagnostic_command_mutates_repo(command: &str) -> bool {
+    command.contains(" npm install")
+        || command.contains(" pnpm install")
+        || command.contains(" cargo update")
+        || command.contains(" cargo install")
+}
+
 fn render_integration_owner_surfaces_markdown(report: &IntegrationOwnersReport) -> String {
     let mut out = String::new();
     out.push_str("# Integration Owner Surfaces\n\n");
@@ -4248,6 +4706,96 @@ fn render_integration_owner_surfaces_markdown(report: &IntegrationOwnersReport) 
         for command in &report.diagnostics {
             out.push_str(&format!("- `{command}`\n"));
         }
+    }
+
+    out.push_str("\n## Findings\n\n");
+    if report.findings.is_empty() {
+        out.push_str("No findings.\n");
+    } else {
+        for finding in &report.findings {
+            out.push_str(&format!("- {finding}\n"));
+        }
+    }
+    out
+}
+
+fn render_integration_readiness_markdown(report: &IntegrationReadinessReport) -> String {
+    let mut out = String::new();
+    out.push_str("# Integration Readiness\n\n");
+    out.push_str(&format!("- Workspace root: `{}`\n", report.workspace_root));
+    out.push_str(&format!("- Source plan: `{}`\n", report.source_plan));
+    out.push_str(&format!(
+        "- Source system architecture: `{}`\n",
+        report.source_system_architecture
+    ));
+    out.push_str(&format!("- Change: `{}`\n", report.work_item.change_id));
+    out.push_str(&format!(
+        "- Capability: `{}`\n\n",
+        report.work_item.capability
+    ));
+
+    out.push_str("## Owner States\n\n");
+    out.push_str(
+        "| Owner | Found | Repo | Branch | Dirty | Required Tools |\n|---|---|---|---|---:|---|\n",
+    );
+    for owner in &report.owner_states {
+        out.push_str(&format!(
+            "| `{}` | {} | `{}` | `{}` | {} | {} |\n",
+            owner.owner_repo,
+            owner.repo_found,
+            owner.repo_name.as_deref().unwrap_or(""),
+            owner.branch.as_deref().unwrap_or(""),
+            owner.dirty,
+            owner.required_tool_ids.join(", ")
+        ));
+    }
+
+    out.push_str("\n## Tool Requirements\n\n");
+    out.push_str(
+        "| Tool | Default | Provisioned By | Required By | Evidence |\n|---|---:|---|---|---|\n",
+    );
+    for tool in &report.tool_requirements {
+        out.push_str(&format!(
+            "| `{}` | {} | {} | {} | {} |\n",
+            tool.id,
+            tool.default_path,
+            tool.provisioned_by,
+            tool.required_by.join(", "),
+            tool.evidence.join("; ")
+        ));
+    }
+
+    out.push_str("\n## Native Diagnostics\n\n");
+    out.push_str("| Command | Owner | Mode | Mutates Repo | Tools |\n|---|---|---|---:|---|\n");
+    for diagnostic in &report.native_diagnostics {
+        out.push_str(&format!(
+            "| `{}` | `{}` | {} | {} | {} |\n",
+            diagnostic.command,
+            diagnostic.owner_repo.as_deref().unwrap_or(""),
+            diagnostic.mode,
+            diagnostic.mutates_repo,
+            diagnostic.required_tool_ids.join(", ")
+        ));
+    }
+
+    out.push_str("\n## Runtime Assumptions\n\n");
+    for assumption in &report.runtime_assumptions {
+        out.push_str(&format!("- {assumption}\n"));
+    }
+
+    out.push_str("\n## Feature Gates\n\n");
+    for gate in &report.feature_gates {
+        out.push_str(&format!("- {gate}\n"));
+    }
+
+    out.push_str("\n## Validation\n\n");
+    for gate in &report.validation {
+        out.push_str(&format!("- `{gate}`\n"));
+    }
+
+    out.push_str("\n## Rollback\n\n");
+    for rollback in &report.rollback {
+        out.push_str(&format!("- {rollback}\n"));
     }
 
     out.push_str("\n## Findings\n\n");
@@ -5904,6 +6452,33 @@ mod tests {
             "integrate-env-vault-relay"
         );
         assert!(planned_report.selector.next_planned);
+
+        let mut readiness_options =
+            IntegrationReadinessOptions::new(&rusty, PlanContextFormat::Json);
+        readiness_options.next_planned = true;
+        let readiness_json = build_integration_readiness_report(readiness_options).unwrap();
+        let readiness: IntegrationReadinessReport = serde_json::from_str(&readiness_json).unwrap();
+        assert_eq!(readiness.work_item.change_id, "integrate-env-vault-relay");
+        assert!(readiness
+            .tool_requirements
+            .iter()
+            .any(|tool| tool.id == "cargo" && tool.default_path));
+        assert!(readiness
+            .feature_gates
+            .iter()
+            .any(|gate| gate.contains("read-only")));
+        assert!(readiness
+            .native_diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic.command.contains("cargo test")));
+
+        let mut readiness_markdown_options =
+            IntegrationReadinessOptions::new(&rusty, PlanContextFormat::Markdown);
+        readiness_markdown_options.next_planned = true;
+        let readiness_markdown =
+            build_integration_readiness_report(readiness_markdown_options).unwrap();
+        assert!(readiness_markdown.contains("# Integration Readiness"));
+        assert!(readiness_markdown.contains("Tool Requirements"));
     }
 
     #[test]

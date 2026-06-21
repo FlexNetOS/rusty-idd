@@ -11,27 +11,26 @@
     "next_planned": false
   },
   "work_item": {
-    "id": "work:integrate-env-vault-relay",
-    "title": "Integrate Environment and vault relay",
-    "capability": "capability:env-vault-relay",
-    "layer": "layer:environment-security",
-    "priority": 40,
+    "id": "work:integrate-prompt-front-door",
+    "title": "Integrate Prompt front door",
+    "capability": "capability:prompt-front-door",
+    "layer": "layer:front-door-experience",
+    "priority": 50,
     "status": "partial",
-    "change_id": "integrate-env-vault-relay",
+    "change_id": "integrate-prompt-front-door",
     "owner_repos": [
-      "repo:envctl",
-      "repo:vault-hub",
-      "repo:yazelix"
+      "repo:prompt-hub"
     ],
     "anchors": [
-      "/run/media/drdave/COGNITUM",
-      "Cognitum vault on Pi Zero"
+      "github.com/f/prompts.chat",
+      "github.com/f/ai-prompt",
+      "prompt_hub front door to handoff and rusty-idd"
     ],
     "adopt_first_inputs": [
-      "/run/media/drdave/COGNITUM",
-      "Cognitum vault on Pi Zero"
+      "github.com/f/prompts.chat",
+      "github.com/f/ai-prompt"
     ],
-    "implementation_boundary": "Feature-gate host/vault behavior; keep default Rusty IDD generation read-only",
+    "implementation_boundary": "Adopt upstream repo surface first, run native diagnostics, then add thin Rusty IDD mapping",
     "validation": [
       "cargo fmt --all -- --check",
       "cargo test --workspace --all-features --locked",
@@ -51,17 +50,17 @@
   },
   "owner_surfaces": [
     {
-      "owner_repo": "repo:envctl",
+      "owner_repo": "repo:prompt-hub",
       "repo_found": true,
-      "repo_name": "envctl",
-      "path": "envctl",
-      "remote": "git@github.com:FlexNetOS/envctl.git",
-      "branch": "feat/bun-toolchain-path-and-tool-registrations",
-      "head": "5b6174097f1738aedb84860fa4a31ad0c3112620",
-      "dirty": false,
+      "repo_name": "prompt_hub",
+      "path": "prompt_hub",
+      "remote": "git@github.com:FlexNetOS/prompt_hub.git",
+      "branch": "main",
+      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "dirty": true,
       "tags": [
-        "env",
-        "tools"
+        "ai",
+        "prompts"
       ],
       "markers": [
         "rust",
@@ -70,103 +69,40 @@
         "github-actions"
       ],
       "roles": [
+        "role:agent-environment",
+        "role:capability-hub",
         "role:fleet-handoff",
         "role:rust-code-surface",
-        "role:toolchain-provider"
+        "role:spec-producer"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null,
       "evidence_paths": [
-        "envctl",
-        "envctl/.claude",
-        "envctl/.github/workflows",
-        "envctl/.handoff",
-        "envctl/Cargo.toml"
+        "prompt_hub",
+        "prompt_hub/.claude",
+        "prompt_hub/.github/workflows",
+        "prompt_hub/.handoff",
+        "prompt_hub/Cargo.toml"
       ],
       "native_diagnostic_commands": [
-        "cd envctl && cargo metadata --locked --format-version 1",
-        "cd envctl && cargo test --workspace --all-features --locked",
-        "git -C envctl rev-parse HEAD",
-        "git -C envctl status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:vault-hub",
-      "repo_found": true,
-      "repo_name": "vault_hub",
-      "path": "vault_hub",
-      "remote": "git@github.com:FlexNetOS/vault_hub.git",
-      "branch": "main",
-      "head": "a358e1b39a65c761ade76508f57c056e480a722c",
-      "dirty": false,
-      "tags": [
-        "hub",
-        "vault"
-      ],
-      "markers": [],
-      "roles": [
-        "role:capability-hub"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "vault_hub"
-      ],
-      "native_diagnostic_commands": [
-        "git -C vault_hub rev-parse HEAD",
-        "git -C vault_hub status --short --branch"
-      ]
-    },
-    {
-      "owner_repo": "repo:yazelix",
-      "repo_found": true,
-      "repo_name": "yazelix",
-      "path": "yazelix",
-      "remote": "git@github.com:FlexNetOS/yazelix.git",
-      "branch": "main",
-      "head": "03352e0687ad275459dc261d5355234c46998f0a",
-      "dirty": false,
-      "tags": [
-        "env",
-        "forked",
-        "terminal"
-      ],
-      "markers": [
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:parser-runtime-surface",
-        "role:toolchain-provider"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null,
-      "evidence_paths": [
-        "yazelix",
-        "yazelix/.claude",
-        "yazelix/.github/workflows"
-      ],
-      "native_diagnostic_commands": [
-        "git -C yazelix rev-parse HEAD",
-        "git -C yazelix status --short --branch"
+        "cd prompt_hub && cargo metadata --locked --format-version 1",
+        "cd prompt_hub && cargo test --workspace --all-features --locked",
+        "git -C prompt_hub rev-parse HEAD",
+        "git -C prompt_hub status --short --branch"
       ]
     }
   ],
   "missing_owner_repos": [],
   "diagnostics": [
-    "cd envctl && cargo metadata --locked --format-version 1",
-    "cd envctl && cargo test --workspace --all-features --locked",
-    "git -C envctl rev-parse HEAD",
-    "git -C envctl status --short --branch",
-    "git -C vault_hub rev-parse HEAD",
-    "git -C vault_hub status --short --branch",
-    "git -C yazelix rev-parse HEAD",
-    "git -C yazelix status --short --branch"
+    "cd prompt_hub && cargo metadata --locked --format-version 1",
+    "cd prompt_hub && cargo test --workspace --all-features --locked",
+    "git -C prompt_hub rev-parse HEAD",
+    "git -C prompt_hub status --short --branch"
   ],
   "findings": [
-    "0 resolved owner repos report dirty state",
+    "1 resolved owner repos report dirty state",
     "all owner repos resolved in the system architecture graph",
-    "joined 3 owner repos against .idd/knowledge/system-architecture.json",
-    "selected integrate-env-vault-relay from .idd/knowledge/integration-plan.json"
+    "joined 1 owner repos against .idd/knowledge/system-architecture.json",
+    "selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json"
   ]
 }

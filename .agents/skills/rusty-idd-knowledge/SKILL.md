@@ -133,7 +133,23 @@ artifacts or when preparing compact context for an agent.
    - Use it before native diagnostics and before any consolidation cut. The
      command is read-only and does not mutate peer repos or start services.
 
-11. Scaffold integration work before implementation.
+11. Generate integration readiness before crossing toolchain, host, or vault boundaries.
+   - Markdown for humans/agents:
+     `rusty-idd knowledge integration-readiness --workspace . --next --out /tmp/rusty-idd-integration-readiness.md`
+   - JSON for automation:
+     `rusty-idd knowledge integration-readiness --workspace . --next --out /tmp/rusty-idd-integration-readiness.json`
+   - The readiness report consumes the same selector and source artifacts as
+     `integration-owners`, then emits owner state, required tools, parent
+     `meta`/`envctl` provisioning boundaries, runtime assumptions, feature
+     gates, native diagnostic command expectations, validation, and rollback.
+   - The command is deterministic and read-only. It does not install missing
+     binaries, probe vault paths such as Cognitum, mint relay credentials,
+     mutate peer repos, or start services.
+   - Use it to decide whether a missing tool belongs in parent-managed
+     `meta`/`envctl`, a repo-local tracked surface, or a feature-gated runtime
+     path before implementation begins.
+
+12. Scaffold integration work before implementation.
    - To create the next OpenSpec change from the highest-priority planned
      integration work item:
      `rusty-idd spec plan-integration --base .`
@@ -150,7 +166,7 @@ artifacts or when preparing compact context for an agent.
    - This is the handoff from graph planning into the normal Rusty IDD
      OpenSpec lifecycle; implementation still follows adopt-first TDD.
 
-12. Use machine-readable OpenSpec lifecycle status for automation.
+13. Use machine-readable OpenSpec lifecycle status for automation.
    - Human status:
      `rusty-idd spec status openspec/changes/CHANGE_ID`
    - JSON status for handoff, runners, and automation:
@@ -159,7 +175,7 @@ artifacts or when preparing compact context for an agent.
      count, total count, archivability, and next ready artifact. Prefer this
      over scraping human status text.
 
-13. Read compactly.
+14. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
@@ -168,10 +184,12 @@ artifacts or when preparing compact context for an agent.
     `.idd/knowledge/plan-context.md`, `.idd/knowledge/operating-model.json`,
     `.idd/knowledge/operating-model.md`, `.idd/knowledge/integration-plan.json`,
     `.idd/knowledge/integration-plan.md`, `.idd/knowledge/integration-owners.json`,
-    and `.idd/knowledge/integration-owners.md`
+    `.idd/knowledge/integration-owners.md`,
+    `.idd/knowledge/integration-readiness.json`, and
+    `.idd/knowledge/integration-readiness.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-14. Stay in-process.
+15. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
@@ -189,6 +207,7 @@ cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out /tmp/
 cargo run --bin rusty-idd -- knowledge integration-plan --workspace . --out /tmp/rusty-idd-integration-plan.md
 cargo run --bin rusty-idd -- knowledge integration-status --workspace . --out /tmp/rusty-idd-integration-status.md
 cargo run --bin rusty-idd -- knowledge integration-owners --workspace . --next --out /tmp/rusty-idd-integration-owners.md
+cargo run --bin rusty-idd -- knowledge integration-readiness --workspace . --next --out /tmp/rusty-idd-integration-readiness.md
 cargo run --bin rusty-idd -- knowledge plan-context --workspace . --out /tmp/rusty-idd-plan-context.md --goal "describe the task"
 cargo run --bin rusty-idd -- validate --workspace .
 ```

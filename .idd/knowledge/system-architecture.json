@@ -290,8 +290,8 @@
       "name": "envctl",
       "path": "envctl",
       "repo": "git@github.com:FlexNetOS/envctl.git",
-      "branch": "feat/bun-toolchain-path-and-tool-registrations",
-      "head": "5b6174097f1738aedb84860fa4a31ad0c3112620",
+      "branch": "master",
+      "head": "4a3b8ec71f97f2be56449fd7b489d07f57d0162a",
       "dirty": false,
       "tags": [
         "env",
@@ -420,8 +420,8 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "fix/wrap-up-base-develop",
-      "head": "770573e4a4812cfc4b36b38d682f77faebdd72c9",
+      "branch": "ci/promote-trivy-reconcile-flags",
+      "head": "4c996555b8ae0f0cb72931aebd8845ece8c6ba0f",
       "dirty": false,
       "tags": [
         "ci",
@@ -467,9 +467,9 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "feat/hftask-0058-durability-policy",
-      "head": "83de633516493ea7b532dfd3593c9e18327b84fe",
-      "dirty": true,
+      "branch": "feat/0014-schema-enrichment",
+      "head": "e656a09707cdf9a7720120a9ae90b3df049b49ff",
+      "dirty": false,
       "tags": [
         "handoff",
         "orchestration"
@@ -1003,8 +1003,8 @@
       "name": "network-control",
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
-      "branch": "harness/adopt-rust-port",
-      "head": "a20f8a921c6c1c4bcd144d9507898a45e33169db",
+      "branch": "main",
+      "head": "257f0278a84d3e45c2ef52c85c2572fd1ae73157",
       "dirty": false,
       "tags": [],
       "markers": [
@@ -1267,8 +1267,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 135,
-          "nodes": 8395,
-          "edges": 34012,
+          "nodes": 8440,
+          "edges": 34370,
           "languages": [
             "rust"
           ],
@@ -1277,8 +1277,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 182,
-          "tokens": 127831,
+          "files": 188,
+          "tokens": 132590,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1286,12 +1286,12 @@
               9464
             ],
             [
-              "docs/rusty-idd/architecture-diagrams.md",
-              7741
+              "crates/knowledge/src/lib.rs",
+              8390
             ],
             [
-              "crates/knowledge/src/lib.rs",
-              7699
+              "docs/rusty-idd/architecture-diagrams.md",
+              7741
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1334,12 +1334,16 @@
               1963
             ],
             [
+              "Justfile",
+              1905
+            ],
+            [
               "crates/runner/src/data.rs",
               1712
             ],
             [
-              "Justfile",
-              1687
+              "Makefile",
+              1633
             ],
             [
               "crates/runner/src/runner.rs",
@@ -1356,10 +1360,6 @@
             [
               "docs/rusty-idd/design.md",
               1452
-            ],
-            [
-              "Makefile",
-              1399
             ],
             [
               "adr/0004-knowledge-direct-crate-integration.md",
@@ -1394,7 +1394,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9068,
+            "edges": 9069,
             "languages": [
               "Rust",
               "rust"
@@ -1429,8 +1429,8 @@
             "name": "knowledge",
             "kind": "crate",
             "files": 1,
-            "nodes": 565,
-            "edges": 4065,
+            "nodes": 600,
+            "edges": 4390,
             "languages": [
               "Rust",
               "rust"
@@ -1441,8 +1441,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 22,
-            "nodes": 728,
-            "edges": 3032,
+            "nodes": 734,
+            "edges": 3067,
             "languages": [
               "Rust",
               "rust"
@@ -1478,7 +1478,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1910,
+            "edges": 1931,
             "languages": [
               "Rust",
               "rust"
@@ -1698,8 +1698,8 @@
       "name": "weave",
       "path": "weave",
       "repo": "git@github.com:FlexNetOS/weave.git",
-      "branch": "wl056-xmachine-push",
-      "head": "f78c776c7405554cbe0e288a4f393748e4e61baa",
+      "branch": "develop",
+      "head": "bcec297eb90c31aba332753f9e668f1f5fe9ae2d",
       "dirty": false,
       "tags": [
         "mcp",
@@ -3610,7 +3610,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "8 repos have local dirty state recorded as evidence",
+    "7 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]
