@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:62c326758e3e9d64`
+- Workspace fingerprint: `fnv1a64:c6cba7e8aa31f25a`
 - Indexed source files: 135
 - Graph nodes: 8456
 - Graph edges: 34489
 - Resolved call edges: 19573
 - Functions with complexity: 2105
 - Packed files: 123
-- Packed tokens: 109400
+- Packed tokens: 109478
 - Suspicious files: 0
 
 ## Hotspots
@@ -54,9 +54,9 @@
 | 1963 | `AI_MERGE/15_system_handoff_research.md` |
 | 1905 | `Justfile` |
 | 1712 | `crates/runner/src/data.rs` |
+| 1679 | `AI_MERGE/31_prompt_front_door_upstream_adoption.md` |
 | 1633 | `Makefile` |
 | 1603 | `crates/runner/src/runner.rs` |
-| 1601 | `AI_MERGE/31_prompt_front_door_upstream_adoption.md` |
 | 1573 | `AI_MERGE/12_knowledge_deep_audit.md` |
 | 1520 | `AI_MERGE/13_codex_environment.md` |
 

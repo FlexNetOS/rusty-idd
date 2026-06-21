@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:62c326758e3e9d64",
+  "workspace_fingerprint": "fnv1a64:c6cba7e8aa31f25a",
   "workspace_root": "/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door",
   "source_graph": {
     "provider": "codegraph-rust",
@@ -16,7 +16,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 193,
-    "tokens": 135919,
+    "tokens": 135997,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -80,16 +80,16 @@
         1712
       ],
       [
+        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
+        1679
+      ],
+      [
         "Makefile",
         1633
       ],
       [
         "crates/runner/src/runner.rs",
         1603
-      ],
-      [
-        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
-        1601
       ],
       [
         "AI_MERGE/12_knowledge_deep_audit.md",
@@ -1275,6 +1275,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 193 files and 135919 tokens"
+    "repomix context package measured 193 files and 135997 tokens"
   ]
 }

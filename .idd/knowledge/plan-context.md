@@ -4,7 +4,7 @@
 - Goal: turn the full agentic company operating model into ordered integration automation work
 - Workspace root: `/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door`
 - Source graph: 135 files, 8456 nodes, 34489 edges via `codegraph-rust`
-- Context package: 193 files, 135919 tokens via `repomix-rs`
+- Context package: 193 files, 135997 tokens via `repomix-rs`
 
 ## Automation Order
 

@@ -159,6 +159,12 @@ JavaScript/TypeScript diagnostics stay recorded through the native upstream
 commands and npm audit results above. This preserves the upstream source
 without downgrading or locally rewriting it.
 
+Implementation note: the CodeQL default-setup API reported existing Rust
+coverage but rejected `rust` as an update value, so this branch adds a tracked
+advanced CodeQL workflow plus `.github/codeql/codeql-config.yml` instead of
+relying on mutable default setup. The workflow scans `actions` and `rust`, and
+the config excludes `third_party/upstream/**`.
+
 Rollback:
 
 1. Revert `third_party/upstream/prompts.chat` and

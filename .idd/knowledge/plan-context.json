@@ -17,7 +17,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 193,
-    "tokens": 135919,
+    "tokens": 135997,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -81,16 +81,16 @@
         1712
       ],
       [
+        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
+        1679
+      ],
+      [
         "Makefile",
         1633
       ],
       [
         "crates/runner/src/runner.rs",
         1603
-      ],
-      [
-        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
-        1601
       ],
       [
         "AI_MERGE/12_knowledge_deep_audit.md",
