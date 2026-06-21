@@ -1,5 +1,15 @@
 # Upstream Full Adoption Audit
 
+## Current Correction
+
+This audit records what PR #52 proved for the local `rusty-idd knowledge`
+default path. It must not be read as the current system architecture for
+tree-sitter, domains, daemons, or fleet coordination. Current owner direction:
+tree-sitter is active through the Yazelix surface, and domain/daemon-oriented
+coordination is active through weave + obscura upgrades. Future work must use
+Rusty IDD's full OpenSpec lifecycle to define system ADRs, per-repo designs,
+specs, tasks, and implementation for those surfaces.
+
 ## Scope
 
 This pass corrects the PR #50 baseline by adopting both upstream repositories
@@ -89,10 +99,13 @@ These cuts remain deliberate:
 
 - Keep `crates/core` std-only; no upstream knowledge dependency crosses into
   `crates/core`.
-- Keep MCP/server/daemon/vector/cloud/provider paths out of default Rusty IDD
-  workflows. Rollback path: wire from `third_party/upstream/codegraph-rust`
-  behind a reviewed feature such as `knowledge-vector`,
-  `knowledge-surrealdb`, or `knowledge-cloud`.
+- Keep MCP/server/daemon/vector/cloud/provider paths out of the PR #52 local
+  knowledge default path. This is a slice boundary, not a system-level
+  exclusion. Current weave + obscura work may promote domain/daemon
+  coordination through explicit system ADRs, specs, and feature gates. Rollback
+  path for this slice: wire from `third_party/upstream/codegraph-rust` behind a
+  reviewed feature such as `knowledge-vector`, `knowledge-surrealdb`, or
+  `knowledge-cloud`.
 - Keep the consolidated CodeGraph crates in `crates/external` as the default
   parser boundary. Rollback path: refresh from
   `third_party/upstream/codegraph-rust/crates/codegraph-core` and
@@ -103,10 +116,10 @@ These cuts remain deliberate:
 - Keep CodeGraph default jemalloc disabled and dotenv loading absent in the
   default path. Rollback path: feature-gate those upstream defaults and rerun
   audit.
-- Keep the tree-sitter line aligned in the default workspace. The pinned
-  CodeGraph and repomix-rs upstreams use incompatible newer tree-sitter lines
-  for direct simultaneous path dependency use, and Cargo permits only one
-  native `links = "tree-sitter"` package in this workspace.
+- PR #52 kept the tree-sitter line aligned to the then-current workspace
+  runtime. This is now stale as a forward-looking constraint: tree-sitter is
+  active through Yazelix, so future parser work must re-evaluate the live
+  Yazelix/tree-sitter contract and upgrade from evidence.
 - Keep the minimal local `repomix-shared` DTO crate while `repomix-core` and
   `repomix-config` remain on the latest published compatible crates. The
   pinned repomix-rs `2.0.1` source is mirrored, but the crates.io surface

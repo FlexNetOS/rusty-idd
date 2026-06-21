@@ -1,5 +1,14 @@
 # Knowledge Deep Audit
 
+## Current Correction
+
+This audit predates the current Yazelix and weave + obscura direction. Treat
+its exclusions as evidence for the PR #50/PR #52 local knowledge slice only.
+Tree-sitter is now an active current surface through Yazelix, and
+domain/daemon/fleet coordination is being driven through weave + obscura
+upgrades. Future work should use Rusty IDD's OpenSpec lifecycle to replace
+these older holds with system ADRs, per-repo specs, and implementation tasks.
+
 ## Scope
 
 Reviewed the direct knowledge integration against these upstream repositories:
@@ -87,13 +96,13 @@ cut deliberately:
 | Suspicious/security findings | Covered | Exposed from repomix results. |
 | Staleness validation | Covered | `validate` compares source/control-plane fingerprint to `.idd/knowledge/index.json`. |
 | Durable local skill | Covered | `.agents/skills/rusty-idd-knowledge/SKILL.md`. |
-| MCP servers/daemons | Intentionally excluded | Out of scope for direct in-process integration. |
+| MCP servers/daemons | Slice excluded | Excluded only from the old direct in-process knowledge slice; current weave + obscura work must re-evaluate this as a system coordination surface. |
 | Clipboard output | Intentionally excluded | Headless agent runs should write explicit files. |
 | Remote repo packing | Deferred | Current public interface is workspace-local. Use `/tmp` exploratory packs if added later. |
 | Vector/semantic search | Deferred | Keep behind future `knowledge-vector` feature. |
 | SurrealDB persistent graph | Deferred | Keep behind future `knowledge-surrealdb` feature. |
 | Cloud LLM/embedding providers | Deferred | Keep behind future `knowledge-cloud` feature. |
-| Broad multi-language graph parsing | Deferred | Candidate future work from upstream parser crates, but Rust is the default slice for this integration. |
+| Broad multi-language graph parsing | Re-evaluate | This was deferred in the old slice; current Yazelix-backed tree-sitter direction makes broad parser support an active research target. |
 | LSH/vector symbol resolution | Deferred | Removed from default path after audit; revisit behind `knowledge-vector` with clean dependencies. |
 | Dotenv loading | Intentionally excluded | Use process environment only; no new secret provider in the default integration. |
 

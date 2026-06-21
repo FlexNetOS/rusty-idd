@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:09b36beffbfe36db`
+- Workspace fingerprint: `fnv1a64:015056227cf01bf4`
 - Indexed Rust files: 134
 - Graph nodes: 7828
 - Graph edges: 30462
 - Resolved call edges: 17106
 - Functions with complexity: 1979
-- Packed files: 105
-- Packed tokens: 79518
+- Packed files: 106
+- Packed tokens: 82194
 - Suspicious files: 0
 
 ## Hotspots
@@ -41,24 +41,24 @@
 |---:|---|
 | 9464 | `crates/tui/src/app.rs` |
 | 7741 | `docs/rusty-idd/architecture-diagrams.md` |
-| 5626 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
+| 5761 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
 | 2851 | `crates/knowledge/src/lib.rs` |
 | 2820 | `crates/core/src/templates.rs` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
-| 2251 | `AI_MERGE/14_upstream_full_adoption.md` |
+| 2421 | `AI_MERGE/14_upstream_full_adoption.md` |
 | 2243 | `docs/rusty-idd/codex-environment.md` |
 | 2097 | `crates/tui/src/ui.rs` |
+| 1963 | `AI_MERGE/15_system_handoff_research.md` |
 | 1712 | `crates/runner/src/data.rs` |
 | 1603 | `crates/runner/src/runner.rs` |
+| 1522 | `AI_MERGE/12_knowledge_deep_audit.md` |
 | 1520 | `AI_MERGE/13_codex_environment.md` |
 | 1452 | `docs/rusty-idd/design.md` |
-| 1387 | `AI_MERGE/12_knowledge_deep_audit.md` |
+| 1366 | `adr/0004-knowledge-direct-crate-integration.md` |
 | 1364 | `crates/runner/src/config.rs` |
 | 1356 | `docs/rusty-idd/slice-sequence.md` |
-| 1294 | `crates/cli/src/commands/codex.rs` |
-| 1150 | `crates/core/src/model.rs` |
 
 ## Findings
 
