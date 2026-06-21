@@ -422,8 +422,8 @@
       "name": "github_org",
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "research/harness-upgrade-targets",
-      "head": "db1240da5ce237b0e6bd937e86ada5ba9ebee29f",
+      "branch": "chore/claude-config-remove-dead-hooks",
+      "head": "b519d094eb08d9adc7162007929ca34ac8510d8e",
       "dirty": false,
       "tags": [
         "ci",
@@ -1279,8 +1279,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 168,
-          "tokens": 118969,
+          "files": 170,
+          "tokens": 119995,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
