@@ -59,11 +59,11 @@ path	size_bytes	fnv1a64
 .github/copilot-instructions.md	550	94b51d9a70dac431
 .github/dependabot.yml	259	02585c0dbfca7494
 .github/pull_request_template.md	480	54305cbc01d5f172
-.github/workflows/ci.yml	3602	3d45574dbfdf3898
-.github/workflows/gemini-loop.yml	1422	281633c18d042dd2
-.github/workflows/on-push-main.yml	784	6193f7e26f303f08
-.github/workflows/promote-verify.yml	2267	a8a43ac38a892ec4
-.github/workflows/release.yml	1201	a56435f9151b55c6
+.github/workflows/ci.yml	3602	36dd84fba5f03b3e
+.github/workflows/gemini-loop.yml	1422	ba02927638d3c624
+.github/workflows/on-push-main.yml	784	8842c5840d212b6e
+.github/workflows/promote-verify.yml	2267	14c6bc477530e997
+.github/workflows/release.yml	1201	ce79d8e7ac3a26b6
 .github/workflows/semantic-pr-title.yml	751	0b324eb8f050906e
 .gitignore	185	0d77a604889324ec
 .handoff/README.md	729	d5cd430f0555a38d
@@ -71,9 +71,9 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/architecture.json	32103	e5890832abcb2cc4
-.idd/knowledge/architecture.md	6351	a348e8145e573e82
-.idd/knowledge/index.json	17274129	e1f5e0e1a7abadd5
+.idd/knowledge/architecture.json	32103	b648e87106e35485
+.idd/knowledge/architecture.md	6351	0afde8fb42637631
+.idd/knowledge/index.json	17274129	6b2f12a6352f3644
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29309	2c10624e57f3c96b
@@ -86,7 +86,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21412	209360f533813946
 .idd/knowledge/plan-context.json	81240	3265bafada16d233
 .idd/knowledge/plan-context.md	16529	70a6ef2f5d8aa095
-.idd/knowledge/report.md	4530	d5fc33e1e27094c3
+.idd/knowledge/report.md	4530	9f5d767ea16a70aa
 .idd/knowledge/system-architecture.json	83254	d6e5891337a66f26
 .idd/knowledge/system-architecture.md	23442	898709990124070b
 .release-please-manifest.json	19	f96b929db2fa1886
@@ -118,7 +118,7 @@ AI_MERGE/30_env_vault_relay_readiness.md	4230	c1bcfea56843c04a
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	17040	a1326db4e07ce73e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
-Cargo.lock	117624	c1308b0da94c375e
+Cargo.lock	117621	a0b219204fcdad06
 Cargo.toml	1333	bb97f200b6b1c22f
 GEMINI.md	17022	7aa9ea970dad36a4
 Justfile	7516	0e287b0f93b1a72c

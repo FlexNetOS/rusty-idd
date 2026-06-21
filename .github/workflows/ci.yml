@@ -28,7 +28,7 @@ jobs:
   rust:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       # Pinned stable (was @stable) so the full gate is reproducible and does not
       # silently drift when a new stable lands. Bump deliberately.
       - uses: dtolnay/rust-toolchain@1.96.0
@@ -72,7 +72,7 @@ jobs:
   msrv:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: dtolnay/rust-toolchain@1.88.0
       - uses: Swatinem/rust-cache@v2
       - name: Build on the MSRV floor (1.88.0, locked)
