@@ -126,3 +126,56 @@ fn knowledge_commands_cover_index_pack_report_query_and_refresh() {
         .exists());
     assert!(root.path().join(".idd/knowledge/architecture.md").exists());
 }
+
+#[test]
+fn system_architecture_cli_discovers_peer_repos_without_meta() {
+    let system = tempfile::tempdir().unwrap();
+    let rusty = system.path().join("rusty-idd");
+    let handoff = system.path().join("handoff");
+    fs::create_dir_all(&rusty).unwrap();
+    fs::create_dir_all(&handoff).unwrap();
+
+    run_git(&["init"], &rusty);
+    run_git(&["init"], &handoff);
+    fs::write(
+        rusty.join("Cargo.toml"),
+        "[package]\nname = \"rusty-idd\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+    )
+    .unwrap();
+    fs::create_dir_all(handoff.join(".handoff")).unwrap();
+
+    run_ok(
+        &[
+            "knowledge",
+            "system-architecture",
+            "--workspace",
+            ".",
+            "--system-root",
+            "..",
+            "--out",
+            "system-architecture.json",
+        ],
+        &rusty,
+    );
+    let graph = fs::read_to_string(rusty.join("system-architecture.json")).unwrap();
+    assert!(graph.contains("\"discovery_source\": \"filesystem git discovery\""));
+    assert!(graph.contains("\"name\": \"rusty-idd\""));
+    assert!(graph.contains("\"name\": \"handoff\""));
+    assert!(graph.contains("role:idd-control-plane"));
+    assert!(graph.contains("role:fleet-handoff"));
+}
+
+fn run_git(args: &[&str], cwd: &Path) {
+    let out = Command::new("git")
+        .args(args)
+        .current_dir(cwd)
+        .output()
+        .expect("run git");
+    assert!(
+        out.status.success(),
+        "git command should succeed: {:?}\nstdout={}\nstderr={}",
+        args,
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+}

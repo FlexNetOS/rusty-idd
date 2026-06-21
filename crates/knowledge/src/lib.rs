@@ -1,6 +1,7 @@
 use std::collections::{BTreeMap, BTreeSet};
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 use anyhow::{bail, Context, Result};
 use codegraph_core::{
@@ -357,6 +358,70 @@ pub struct RefreshArtifacts {
     pub architecture_markdown: PathBuf,
 }
 
+#[derive(Debug, Clone)]
+pub struct SystemArchitectureOptions {
+    pub workspace: PathBuf,
+    pub system_root: PathBuf,
+    pub format: ArchitectureFormat,
+}
+
+impl SystemArchitectureOptions {
+    pub fn new(
+        workspace: impl Into<PathBuf>,
+        system_root: impl Into<PathBuf>,
+        format: ArchitectureFormat,
+    ) -> Self {
+        Self {
+            workspace: workspace.into(),
+            system_root: system_root.into(),
+            format,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SystemArchitectureGraph {
+    pub schema_version: u32,
+    pub workspace_root: String,
+    pub system_root: String,
+    pub discovery_source: String,
+    pub repos: Vec<SystemRepo>,
+    pub roles: Vec<SystemRole>,
+    pub edges: Vec<SystemArchitectureEdge>,
+    pub findings: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SystemRepo {
+    pub id: String,
+    pub name: String,
+    pub path: String,
+    pub repo: Option<String>,
+    pub branch: Option<String>,
+    pub head: Option<String>,
+    pub dirty: bool,
+    pub tags: Vec<String>,
+    pub markers: Vec<String>,
+    pub roles: Vec<String>,
+    pub has_local_architecture_graph: bool,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SystemRole {
+    pub id: String,
+    pub name: String,
+    pub purpose: String,
+    pub repos: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct SystemArchitectureEdge {
+    pub source: String,
+    pub target: String,
+    pub kind: String,
+    pub evidence: Vec<String>,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct QueryResult {
     pub title: String,
@@ -559,6 +624,17 @@ pub fn build_architecture_graph(options: ArchitectureOptions) -> Result<String> 
 
     match options.format {
         ArchitectureFormat::Markdown => Ok(render_architecture_markdown(&graph)),
+        ArchitectureFormat::Json => serde_json::to_string_pretty(&graph).context("serialize graph"),
+    }
+}
+
+pub fn build_system_architecture_graph(options: SystemArchitectureOptions) -> Result<String> {
+    let workspace = canonical_workspace(&options.workspace)?;
+    let system_root = canonical_workspace(&options.system_root)?;
+    let graph = system_architecture_graph(&workspace, &system_root)?;
+
+    match options.format {
+        ArchitectureFormat::Markdown => Ok(render_system_architecture_markdown(&graph)),
         ArchitectureFormat::Json => serde_json::to_string_pretty(&graph).context("serialize graph"),
     }
 }
@@ -1934,6 +2010,489 @@ fn render_architecture_markdown(graph: &ArchitectureGraph) -> String {
     out
 }
 
+#[derive(Debug, Deserialize)]
+struct MetaProjectList {
+    projects: Vec<MetaProject>,
+}
+
+#[derive(Debug, Deserialize)]
+struct MetaProject {
+    name: String,
+    path: String,
+    repo: Option<String>,
+    #[serde(default)]
+    tags: Vec<String>,
+    #[serde(default)]
+    is_meta: bool,
+}
+
+fn system_architecture_graph(
+    workspace: &Path,
+    system_root: &Path,
+) -> Result<SystemArchitectureGraph> {
+    let (mut repos, discovery_source) = discover_system_repos(system_root)?;
+    for repo in &mut repos {
+        enrich_system_repo(workspace, system_root, repo);
+    }
+    repos.sort_by(|a, b| a.name.cmp(&b.name).then(a.path.cmp(&b.path)));
+
+    let roles = system_roles(&repos);
+    let mut edges = system_edges(workspace, system_root, &repos, &roles);
+    edges.sort_by(|a, b| {
+        a.source
+            .cmp(&b.source)
+            .then(a.target.cmp(&b.target))
+            .then(a.kind.cmp(&b.kind))
+    });
+    edges.dedup_by(|a, b| a.source == b.source && a.target == b.target && a.kind == b.kind);
+
+    let dirty_count = repos.iter().filter(|repo| repo.dirty).count();
+    let local_graph_count = repos
+        .iter()
+        .filter(|repo| repo.has_local_architecture_graph)
+        .count();
+    let findings = vec![
+        format!(
+            "discovered {} peer repos from {discovery_source}",
+            repos.len()
+        ),
+        format!("{dirty_count} repos have local dirty state recorded as evidence"),
+        format!("{local_graph_count} repos expose .idd/knowledge/architecture.json"),
+    ];
+
+    Ok(SystemArchitectureGraph {
+        schema_version: 1,
+        workspace_root: workspace.display().to_string(),
+        system_root: system_root.display().to_string(),
+        discovery_source,
+        repos,
+        roles,
+        edges,
+        findings,
+    })
+}
+
+fn discover_system_repos(system_root: &Path) -> Result<(Vec<SystemRepo>, String)> {
+    if let Ok(projects) = discover_meta_projects(system_root) {
+        if !projects.is_empty() {
+            return Ok((projects, "meta project list --json".to_string()));
+        }
+    }
+    discover_git_child_repos(system_root)
+        .map(|repos| (repos, "filesystem git discovery".to_string()))
+}
+
+fn discover_meta_projects(system_root: &Path) -> Result<Vec<SystemRepo>> {
+    let output = Command::new("meta")
+        .args(["project", "list", "--json"])
+        .current_dir(system_root)
+        .output()
+        .context("run meta project list --json")?;
+    if !output.status.success() {
+        bail!("meta project list --json failed");
+    }
+    let list: MetaProjectList =
+        serde_json::from_slice(&output.stdout).context("parse meta project list JSON")?;
+    let repos = list
+        .projects
+        .into_iter()
+        .map(|project| {
+            let mut tags = project.tags;
+            if project.is_meta && !tags.iter().any(|tag| tag == "meta") {
+                tags.push("meta".to_string());
+            }
+            tags.sort();
+            tags.dedup();
+            SystemRepo {
+                id: format!("repo:{}", slug(&project.name)),
+                name: project.name,
+                path: normalize_relative_path(&project.path),
+                repo: project.repo,
+                branch: None,
+                head: None,
+                dirty: false,
+                tags,
+                markers: Vec::new(),
+                roles: Vec::new(),
+                has_local_architecture_graph: false,
+            }
+        })
+        .collect();
+    Ok(repos)
+}
+
+fn discover_git_child_repos(system_root: &Path) -> Result<Vec<SystemRepo>> {
+    let mut repos = Vec::new();
+    for entry in fs::read_dir(system_root)
+        .with_context(|| format!("read system root {}", system_root.display()))?
+    {
+        let entry = entry?;
+        let path = entry.path();
+        if !path.is_dir() || !path.join(".git").exists() {
+            continue;
+        }
+        let Some(name) = path.file_name().and_then(|value| value.to_str()) else {
+            continue;
+        };
+        if matches!(
+            name,
+            ".git" | ".worktrees" | "_workspace" | "_workspace_prev"
+        ) {
+            continue;
+        }
+        repos.push(SystemRepo {
+            id: format!("repo:{}", slug(name)),
+            name: name.to_string(),
+            path: normalize_relative_path(name),
+            repo: git_output(&path, &["remote", "get-url", "origin"]),
+            branch: None,
+            head: None,
+            dirty: false,
+            tags: Vec::new(),
+            markers: Vec::new(),
+            roles: Vec::new(),
+            has_local_architecture_graph: false,
+        });
+    }
+    Ok(repos)
+}
+
+fn enrich_system_repo(workspace: &Path, system_root: &Path, repo: &mut SystemRepo) {
+    let repo_root = system_root.join(&repo.path);
+    let is_current_workspace = repo_root == workspace;
+    if is_current_workspace {
+        repo.branch = None;
+        repo.head = None;
+        repo.dirty = false;
+    } else {
+        repo.branch = git_output(&repo_root, &["rev-parse", "--abbrev-ref", "HEAD"]);
+        repo.head = git_output(&repo_root, &["rev-parse", "HEAD"]);
+        repo.dirty = git_dirty(&repo_root);
+    }
+    repo.markers = repo_markers(&repo_root);
+    repo.has_local_architecture_graph = repo_root.join(".idd/knowledge/architecture.json").exists();
+    repo.roles = classify_repo_roles(repo);
+}
+
+fn git_output(repo_root: &Path, args: &[&str]) -> Option<String> {
+    let output = Command::new("git")
+        .arg("-C")
+        .arg(repo_root)
+        .args(args)
+        .output()
+        .ok()?;
+    output
+        .status
+        .success()
+        .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
+        .filter(|value| !value.is_empty())
+}
+
+fn git_dirty(repo_root: &Path) -> bool {
+    let Some(status) = git_output(repo_root, &["status", "--porcelain"]) else {
+        return false;
+    };
+    !status.trim().is_empty()
+}
+
+fn repo_markers(repo_root: &Path) -> Vec<String> {
+    let checks = [
+        ("rust", "Cargo.toml"),
+        ("node", "package.json"),
+        ("openspec", "openspec"),
+        ("idd-knowledge", ".idd/knowledge"),
+        ("handoff", ".handoff"),
+        ("agents", ".agents"),
+        ("claude", ".claude"),
+        ("github-actions", ".github/workflows"),
+        ("make", "Makefile"),
+        ("just", "Justfile"),
+    ];
+    checks
+        .into_iter()
+        .filter(|(_, path)| repo_root.join(path).exists())
+        .map(|(marker, _)| marker.to_string())
+        .collect()
+}
+
+fn classify_repo_roles(repo: &SystemRepo) -> Vec<String> {
+    let name = repo.name.to_ascii_lowercase();
+    let tags = repo
+        .tags
+        .iter()
+        .map(|tag| tag.to_ascii_lowercase())
+        .collect::<BTreeSet<_>>();
+    let markers = repo
+        .markers
+        .iter()
+        .map(|marker| marker.to_ascii_lowercase())
+        .collect::<BTreeSet<_>>();
+    let mut roles = BTreeSet::new();
+
+    if name == "rusty-idd" {
+        roles.insert("role:idd-control-plane".to_string());
+    }
+    if name == "handoff" || tags.contains("handoff") || markers.contains("handoff") {
+        roles.insert("role:fleet-handoff".to_string());
+    }
+    if name == "weave" || tags.contains("mcp") || tags.contains("orchestration") {
+        roles.insert("role:coordination-domain-surface".to_string());
+    }
+    if name == "obscura" {
+        roles.insert("role:domain-upgrade-surface".to_string());
+    }
+    if name == "yazelix" {
+        roles.insert("role:parser-runtime-surface".to_string());
+    }
+    if name == "envctl" || tags.contains("env") {
+        roles.insert("role:toolchain-provider".to_string());
+    }
+    if name.contains("prompt") || tags.contains("prompts") {
+        roles.insert("role:spec-producer".to_string());
+    }
+    if name.starts_with("meta_") || name == "meta_cli" || tags.contains("canon") {
+        roles.insert("role:meta-control-plane".to_string());
+    }
+    if name.ends_with("_hub") || tags.contains("hub") {
+        roles.insert("role:capability-hub".to_string());
+    }
+    if tags.contains("ai") || tags.contains("agent-env") || markers.contains("agents") {
+        roles.insert("role:agent-environment".to_string());
+    }
+    if tags.contains("memory") || tags.contains("knowledge") {
+        roles.insert("role:knowledge-memory".to_string());
+    }
+    if tags.contains("docs") || tags.contains("wiki") {
+        roles.insert("role:documentation-knowledge".to_string());
+    }
+    if markers.contains("rust") {
+        roles.insert("role:rust-code-surface".to_string());
+    }
+
+    roles.into_iter().collect()
+}
+
+fn system_roles(repos: &[SystemRepo]) -> Vec<SystemRole> {
+    let mut role_repos = BTreeMap::<String, Vec<String>>::new();
+    for repo in repos {
+        for role in &repo.roles {
+            role_repos
+                .entry(role.clone())
+                .or_default()
+                .push(repo.id.clone());
+        }
+    }
+    role_repos
+        .into_iter()
+        .map(|(id, mut repos)| {
+            repos.sort();
+            SystemRole {
+                name: system_role_name(&id).to_string(),
+                purpose: system_role_purpose(&id).to_string(),
+                id,
+                repos,
+            }
+        })
+        .collect()
+}
+
+fn system_role_name(id: &str) -> &str {
+    match id {
+        "role:idd-control-plane" => "Rusty IDD control plane",
+        "role:fleet-handoff" => "Fleet handoff",
+        "role:coordination-domain-surface" => "Coordination and domain surface",
+        "role:domain-upgrade-surface" => "Domain upgrade surface",
+        "role:parser-runtime-surface" => "Parser/runtime surface",
+        "role:toolchain-provider" => "Toolchain provider",
+        "role:spec-producer" => "Spec producer",
+        "role:meta-control-plane" => "Meta control plane",
+        "role:capability-hub" => "Capability hub",
+        "role:agent-environment" => "Agent environment",
+        "role:knowledge-memory" => "Knowledge and memory",
+        "role:documentation-knowledge" => "Documentation and knowledge",
+        "role:rust-code-surface" => "Rust code surface",
+        _ => "System role",
+    }
+}
+
+fn system_role_purpose(id: &str) -> &str {
+    match id {
+        "role:idd-control-plane" => "Owns OpenSpec, ADR, task, validation, manifest, and graph-driven implementation workflow",
+        "role:fleet-handoff" => "Carries central and fleet handoff state for cross-repo agent continuity",
+        "role:coordination-domain-surface" => "Provides orchestration, MCP, and domain-adjacent system coordination surfaces",
+        "role:domain-upgrade-surface" => "Contributes domain behavior through weave plus Obscura upgrade paths",
+        "role:parser-runtime-surface" => "Carries parser/runtime support such as tree-sitter through Yazelix",
+        "role:toolchain-provider" => "Provides parent-managed tools instead of user-global installs",
+        "role:spec-producer" => "Produces intent or prompt artifacts that Rusty IDD can turn into OpenSpec",
+        "role:meta-control-plane" => "Provides parent meta workspace inventory and execution surfaces",
+        "role:capability-hub" => "Groups domain capability repos used by the wider system",
+        "role:agent-environment" => "Supports agent runtime, skills, prompts, or execution environment",
+        "role:knowledge-memory" => "Stores memory or knowledge surfaces used by agents",
+        "role:documentation-knowledge" => "Stores documentation and wiki surfaces",
+        "role:rust-code-surface" => "Contains Rust source that can be indexed by CodeGraph-backed Rusty IDD knowledge",
+        _ => "System role discovered from repo metadata",
+    }
+}
+
+fn system_edges(
+    workspace: &Path,
+    system_root: &Path,
+    repos: &[SystemRepo],
+    roles: &[SystemRole],
+) -> Vec<SystemArchitectureEdge> {
+    let current_repo = repos
+        .iter()
+        .find(|repo| system_root.join(&repo.path) == workspace)
+        .map(|repo| repo.id.clone())
+        .unwrap_or_else(|| "repo:rusty-idd".to_string());
+    let mut edges = Vec::new();
+
+    for repo in repos {
+        edges.push(SystemArchitectureEdge {
+            source: "system:meta-workspace".to_string(),
+            target: repo.id.clone(),
+            kind: "contains".to_string(),
+            evidence: vec![repo.path.clone()],
+        });
+        for role in &repo.roles {
+            edges.push(SystemArchitectureEdge {
+                source: repo.id.clone(),
+                target: role.clone(),
+                kind: "provides".to_string(),
+                evidence: repo.tags.clone(),
+            });
+        }
+        if repo.has_local_architecture_graph {
+            edges.push(SystemArchitectureEdge {
+                source: repo.id.clone(),
+                target: "artifact:.idd/knowledge/architecture.json".to_string(),
+                kind: "publishes".to_string(),
+                evidence: vec![format!("{}/.idd/knowledge/architecture.json", repo.path)],
+            });
+        }
+    }
+
+    for role in roles {
+        if role.id != "role:idd-control-plane" {
+            edges.push(SystemArchitectureEdge {
+                source: current_repo.clone(),
+                target: role.id.clone(),
+                kind: "maps_for_automation".to_string(),
+                evidence: vec![
+                    ".idd/knowledge/system-architecture.json".to_string(),
+                    "openspec/changes/add-system-architecture-peer-graph".to_string(),
+                ],
+            });
+        }
+    }
+
+    for (target, kind) in [
+        ("role:fleet-handoff", "uses_for_continuity"),
+        (
+            "role:coordination-domain-surface",
+            "scopes_as_feature_gated_surface",
+        ),
+        (
+            "role:domain-upgrade-surface",
+            "scopes_as_feature_gated_surface",
+        ),
+        (
+            "role:parser-runtime-surface",
+            "uses_as_parser_runtime_evidence",
+        ),
+        ("role:toolchain-provider", "uses_for_parent_managed_tools"),
+        ("role:spec-producer", "consumes_spec_intent_from"),
+        ("role:meta-control-plane", "uses_for_workspace_inventory"),
+    ] {
+        if roles.iter().any(|role| role.id == target) {
+            edges.push(SystemArchitectureEdge {
+                source: current_repo.clone(),
+                target: target.to_string(),
+                kind: kind.to_string(),
+                evidence: vec!["AI_MERGE/17_architecture_graph_workflow.md".to_string()],
+            });
+        }
+    }
+
+    edges
+}
+
+fn render_system_architecture_markdown(graph: &SystemArchitectureGraph) -> String {
+    let mut out = String::new();
+    out.push_str("# System Architecture Graph\n\n");
+    out.push_str(&format!("- System root: `{}`\n", graph.system_root));
+    out.push_str(&format!("- Workspace root: `{}`\n", graph.workspace_root));
+    out.push_str(&format!(
+        "- Discovery source: `{}`\n",
+        graph.discovery_source
+    ));
+    out.push_str(&format!("- Repos: {}\n", graph.repos.len()));
+    out.push_str(&format!("- Roles: {}\n", graph.roles.len()));
+    out.push_str(&format!("- Edges: {}\n\n", graph.edges.len()));
+
+    out.push_str("## Roles\n\n");
+    out.push_str("| Role | Purpose | Repos |\n|---|---|---|\n");
+    for role in &graph.roles {
+        out.push_str(&format!(
+            "| `{}` | {} | {} |\n",
+            role.name,
+            role.purpose,
+            role.repos.join(", ")
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Repos\n\n");
+    out.push_str("| Repo | Branch | Dirty | Tags | Roles | Markers |\n|---|---|---|---|---|---|\n");
+    for repo in &graph.repos {
+        out.push_str(&format!(
+            "| `{}` | `{}` | {} | {} | {} | {} |\n",
+            repo.name,
+            repo.branch.as_deref().unwrap_or(""),
+            repo.dirty,
+            repo.tags.join(", "),
+            repo.roles.join(", "),
+            repo.markers.join(", ")
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Edges\n\n");
+    out.push_str("| Source | Kind | Target |\n|---|---|---|\n");
+    for edge in &graph.edges {
+        out.push_str(&format!(
+            "| `{}` | {} | `{}` |\n",
+            edge.source, edge.kind, edge.target
+        ));
+    }
+    out.push('\n');
+
+    out.push_str("## Findings\n\n");
+    for finding in &graph.findings {
+        out.push_str(&format!("- {finding}\n"));
+    }
+    out
+}
+
+fn slug(value: &str) -> String {
+    value
+        .chars()
+        .map(|ch| {
+            if ch.is_ascii_alphanumeric() {
+                ch.to_ascii_lowercase()
+            } else {
+                '-'
+            }
+        })
+        .collect::<String>()
+        .trim_matches('-')
+        .to_string()
+}
+
+fn normalize_relative_path(path: &str) -> String {
+    path.trim_start_matches("./").replace('\\', "/")
+}
+
 fn render_report_markdown(report: &KnowledgeReport) -> String {
     let mut out = String::new();
     out.push_str("# Knowledge Report\n\n");
@@ -2366,5 +2925,75 @@ mod tests {
         .unwrap();
         assert!(graph_markdown.contains("# Architecture Graph"));
         assert!(graph_markdown.contains("Architecture mapping"));
+    }
+
+    #[test]
+    fn system_architecture_graph_maps_peer_repo_roles() {
+        let system = tempfile::tempdir().unwrap();
+        let rusty = system.path().join("rusty-idd");
+        let weave = system.path().join("weave");
+        let envctl = system.path().join("envctl");
+        fs::create_dir_all(&rusty).unwrap();
+        fs::create_dir_all(&weave).unwrap();
+        fs::create_dir_all(&envctl).unwrap();
+        init_git(&rusty);
+        init_git(&weave);
+        init_git(&envctl);
+        fs::write(
+            rusty.join("Cargo.toml"),
+            "[package]\nname = \"rusty-idd\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+        )
+        .unwrap();
+        fs::write(
+            weave.join("Cargo.toml"),
+            "[package]\nname = \"weave\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+        )
+        .unwrap();
+        fs::write(envctl.join("Makefile"), "ci:\n\ttrue\n").unwrap();
+
+        let graph_json = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        let graph: SystemArchitectureGraph = serde_json::from_str(&graph_json).unwrap();
+
+        assert_eq!(graph.discovery_source, "filesystem git discovery");
+        assert!(graph.repos.iter().any(|repo| repo.name == "rusty-idd"
+            && repo.roles.contains(&"role:idd-control-plane".to_string())));
+        assert!(graph.repos.iter().any(|repo| repo.name == "weave"
+            && repo
+                .roles
+                .contains(&"role:coordination-domain-surface".to_string())));
+        assert!(graph.repos.iter().any(|repo| repo.name == "envctl"
+            && repo.roles.contains(&"role:toolchain-provider".to_string())));
+        assert!(graph
+            .edges
+            .iter()
+            .any(|edge| edge.kind == "maps_for_automation"));
+
+        let graph_markdown = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Markdown,
+        ))
+        .unwrap();
+        assert!(graph_markdown.contains("# System Architecture Graph"));
+        assert!(graph_markdown.contains("Rusty IDD control plane"));
+    }
+
+    fn init_git(path: &Path) {
+        let out = Command::new("git")
+            .arg("init")
+            .current_dir(path)
+            .output()
+            .expect("run git init");
+        assert!(
+            out.status.success(),
+            "git init should succeed: stdout={} stderr={}",
+            String::from_utf8_lossy(&out.stdout),
+            String::from_utf8_lossy(&out.stderr)
+        );
     }
 }

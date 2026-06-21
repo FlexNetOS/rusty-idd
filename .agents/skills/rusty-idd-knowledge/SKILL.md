@@ -45,13 +45,26 @@ artifacts or when preparing compact context for an agent.
    - The graph combines CodeGraph-backed source structure with repomix-backed context
      package metrics and maps both to Rusty IDD automation stages.
 
-5. Read compactly.
+5. Generate a system graph when the task crosses repo boundaries.
+   - Use the parent meta workspace when working from this checkout:
+     `rusty-idd knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md`
+   - The system graph prefers `meta project list --json` and falls back to immediate
+     child git repo discovery.
+   - Use it to map Rusty IDD to handoff, weave, Obscura, Yazelix, envctl,
+     prompt/meta producers, hubs, and agent environment repos before planning a
+     cross-repo integration.
+   - The command is read-only: it records peer repo state but does not start
+     MCP servers, daemons, host services, or mutate peer repos.
+
+6. Read compactly.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
-     `.idd/knowledge/architecture.json`, and `.idd/knowledge/architecture.md`
+     `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
+     `.idd/knowledge/system-architecture.json`, and
+     `.idd/knowledge/system-architecture.md`
      as durable control-plane artifacts; keep them deterministic and bounded.
 
-6. Stay in-process.
+7. Stay in-process.
    - Do not start MCP servers, daemons, or host services for this workflow.
    - MCP, daemon, domain, vector, SurrealDB, and cloud/provider integrations may
      exist in the wider meta system, but they are feature-gated or external
@@ -64,5 +77,6 @@ After changing source or control-plane files, refresh artifacts and run:
 ```bash
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
 cargo run --bin rusty-idd -- knowledge architecture --workspace . --out /tmp/rusty-idd-architecture.md
+cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out /tmp/rusty-idd-system-architecture.md
 cargo run --bin rusty-idd -- validate --workspace .
 ```
