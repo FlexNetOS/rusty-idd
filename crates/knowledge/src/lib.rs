@@ -404,6 +404,39 @@ pub struct SystemRepo {
     pub markers: Vec<String>,
     pub roles: Vec<String>,
     pub has_local_architecture_graph: bool,
+    #[serde(default)]
+    pub local_architecture: Option<PeerArchitectureSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PeerArchitectureSummary {
+    pub schema_version: u32,
+    pub source_graph: ArchitectureSourceGraph,
+    pub context_package: ArchitectureContextPackage,
+    pub component_count: usize,
+    pub integration_surface_count: usize,
+    pub top_components: Vec<PeerArchitectureComponentSummary>,
+    pub integration_surfaces: Vec<PeerIntegrationSurfaceSummary>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PeerArchitectureComponentSummary {
+    pub id: String,
+    pub name: String,
+    pub kind: String,
+    pub files: usize,
+    pub nodes: usize,
+    pub edges: usize,
+    pub languages: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct PeerIntegrationSurfaceSummary {
+    pub id: String,
+    pub name: String,
+    pub kind: String,
+    pub provider: String,
+    pub capabilities: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -2089,8 +2122,9 @@ fn system_architecture_graph(
     system_root: &Path,
 ) -> Result<SystemArchitectureGraph> {
     let (mut repos, discovery_source) = discover_system_repos(system_root)?;
+    let mut enrichment_findings = Vec::new();
     for repo in &mut repos {
-        enrich_system_repo(workspace, system_root, repo);
+        enrichment_findings.extend(enrich_system_repo(workspace, system_root, repo));
     }
     repos.sort_by(|a, b| a.name.cmp(&b.name).then(a.path.cmp(&b.path)));
 
@@ -2109,14 +2143,20 @@ fn system_architecture_graph(
         .iter()
         .filter(|repo| repo.has_local_architecture_graph)
         .count();
-    let findings = vec![
+    let parsed_local_graph_count = repos
+        .iter()
+        .filter(|repo| repo.local_architecture.is_some())
+        .count();
+    let mut findings = vec![
         format!(
             "discovered {} peer repos from {discovery_source}",
             repos.len()
         ),
         format!("{dirty_count} repos have local dirty state recorded as evidence"),
         format!("{local_graph_count} repos expose .idd/knowledge/architecture.json"),
+        format!("{parsed_local_graph_count} repos expose parsed architecture summaries"),
     ];
+    findings.extend(enrichment_findings);
 
     Ok(SystemArchitectureGraph {
         schema_version: 1,
@@ -2173,6 +2213,7 @@ fn discover_meta_projects(system_root: &Path) -> Result<Vec<SystemRepo>> {
                 markers: Vec::new(),
                 roles: Vec::new(),
                 has_local_architecture_graph: false,
+                local_architecture: None,
             }
         })
         .collect();
@@ -2210,12 +2251,14 @@ fn discover_git_child_repos(system_root: &Path) -> Result<Vec<SystemRepo>> {
             markers: Vec::new(),
             roles: Vec::new(),
             has_local_architecture_graph: false,
+            local_architecture: None,
         });
     }
     Ok(repos)
 }
 
-fn enrich_system_repo(workspace: &Path, system_root: &Path, repo: &mut SystemRepo) {
+fn enrich_system_repo(workspace: &Path, system_root: &Path, repo: &mut SystemRepo) -> Vec<String> {
+    let mut findings = Vec::new();
     let repo_root = system_root.join(&repo.path);
     let is_current_workspace = repo_root == workspace;
     if is_current_workspace {
@@ -2228,8 +2271,69 @@ fn enrich_system_repo(workspace: &Path, system_root: &Path, repo: &mut SystemRep
         repo.dirty = git_dirty(&repo_root);
     }
     repo.markers = repo_markers(&repo_root);
-    repo.has_local_architecture_graph = repo_root.join(".idd/knowledge/architecture.json").exists();
+    let architecture_path = repo_root.join(".idd/knowledge/architecture.json");
+    repo.has_local_architecture_graph = architecture_path.exists();
+    repo.local_architecture = if repo.has_local_architecture_graph {
+        match read_json_file::<ArchitectureGraph>(&architecture_path) {
+            Ok(architecture) => Some(peer_architecture_summary(&architecture)),
+            Err(error) => {
+                findings.push(format!(
+                    "repo {} exposes unreadable architecture graph at {}: {error:#}",
+                    repo.name,
+                    display_path(system_root, &architecture_path)
+                ));
+                None
+            }
+        }
+    } else {
+        None
+    };
     repo.roles = classify_repo_roles(repo);
+    findings
+}
+
+fn peer_architecture_summary(architecture: &ArchitectureGraph) -> PeerArchitectureSummary {
+    let mut components = architecture.components.clone();
+    components.sort_by(|a, b| {
+        let a_score = a.nodes + a.edges + a.files * 10;
+        let b_score = b.nodes + b.edges + b.files * 10;
+        b_score.cmp(&a_score).then(a.id.cmp(&b.id))
+    });
+    let top_components = components
+        .into_iter()
+        .take(8)
+        .map(|component| PeerArchitectureComponentSummary {
+            id: component.id,
+            name: component.name,
+            kind: component.kind,
+            files: component.files,
+            nodes: component.nodes,
+            edges: component.edges,
+            languages: component.languages,
+        })
+        .collect();
+
+    let integration_surfaces = architecture
+        .integration_surfaces
+        .iter()
+        .map(|surface| PeerIntegrationSurfaceSummary {
+            id: surface.id.clone(),
+            name: surface.name.clone(),
+            kind: surface.kind.clone(),
+            provider: surface.provider.clone(),
+            capabilities: surface.capabilities.clone(),
+        })
+        .collect();
+
+    PeerArchitectureSummary {
+        schema_version: architecture.schema_version,
+        source_graph: architecture.source_graph.clone(),
+        context_package: architecture.context_package.clone(),
+        component_count: architecture.components.len(),
+        integration_surface_count: architecture.integration_surfaces.len(),
+        top_components,
+        integration_surfaces,
+    }
 }
 
 fn git_output(repo_root: &Path, args: &[&str]) -> Option<String> {
@@ -2515,6 +2619,42 @@ fn render_system_architecture_markdown(graph: &SystemArchitectureGraph) -> Strin
     }
     out.push('\n');
 
+    out.push_str("## Peer Architecture Summaries\n\n");
+    let architecture_repos = graph
+        .repos
+        .iter()
+        .filter(|repo| repo.local_architecture.is_some())
+        .collect::<Vec<_>>();
+    if architecture_repos.is_empty() {
+        out.push_str("No parsed peer architecture summaries.\n\n");
+    } else {
+        out.push_str("| Repo | Source Graph | Context Package | Surfaces | Top Components |\n|---|---|---|---:|---|\n");
+        for repo in architecture_repos {
+            let architecture = repo.local_architecture.as_ref().expect("filtered summary");
+            let top_components = architecture
+                .top_components
+                .iter()
+                .take(5)
+                .map(|component| component.name.as_str())
+                .collect::<Vec<_>>()
+                .join(", ");
+            out.push_str(&format!(
+                "| `{}` | {} files, {} nodes, {} edges via `{}` | {} files, {} tokens via `{}` | {} | {} |\n",
+                repo.name,
+                architecture.source_graph.files,
+                architecture.source_graph.nodes,
+                architecture.source_graph.edges,
+                architecture.source_graph.provider,
+                architecture.context_package.files,
+                architecture.context_package.tokens,
+                architecture.context_package.provider,
+                architecture.integration_surface_count,
+                top_components
+            ));
+        }
+        out.push('\n');
+    }
+
     out.push_str("## Edges\n\n");
     out.push_str("| Source | Kind | Target |\n|---|---|---|\n");
     for edge in &graph.edges {
@@ -2796,14 +2936,15 @@ fn render_graph_planning_context_markdown(context: &GraphPlanningContext) -> Str
     if context.system_repos.is_empty() {
         out.push_str("No system repos included.\n");
     } else {
-        out.push_str("| Repo | Branch | Dirty | Roles |\n|---|---|---|---|\n");
+        out.push_str("| Repo | Branch | Dirty | Roles | Architecture |\n|---|---|---|---|---|\n");
         for repo in &context.system_repos {
             out.push_str(&format!(
-                "| `{}` | `{}` | {} | {} |\n",
+                "| `{}` | `{}` | {} | {} | {} |\n",
                 repo.name,
                 repo.branch.as_deref().unwrap_or(""),
                 repo.dirty,
-                repo.roles.join(", ")
+                repo.roles.join(", "),
+                peer_architecture_summary_cell(repo.local_architecture.as_ref())
             ));
         }
     }
@@ -2822,6 +2963,28 @@ fn render_graph_planning_context_markdown(context: &GraphPlanningContext) -> Str
         }
     }
     out
+}
+
+fn peer_architecture_summary_cell(summary: Option<&PeerArchitectureSummary>) -> String {
+    let Some(summary) = summary else {
+        return String::new();
+    };
+    let top_components = summary
+        .top_components
+        .iter()
+        .take(3)
+        .map(|component| component.name.as_str())
+        .collect::<Vec<_>>()
+        .join(", ");
+    format!(
+        "{} files, {} nodes, {} edges; {} tokens; surfaces {}; top: {}",
+        summary.source_graph.files,
+        summary.source_graph.nodes,
+        summary.source_graph.edges,
+        summary.context_package.tokens,
+        summary.integration_surface_count,
+        top_components
+    )
 }
 
 fn slug(value: &str) -> String {
@@ -3334,6 +3497,90 @@ mod tests {
     }
 
     #[test]
+    fn system_architecture_graph_ingests_peer_architecture_summary() {
+        let system = tempfile::tempdir().unwrap();
+        let rusty = system.path().join("rusty-idd");
+        let weave = system.path().join("weave");
+        fs::create_dir_all(rusty.join("src")).unwrap();
+        fs::create_dir_all(weave.join("src")).unwrap();
+        fs::create_dir_all(weave.join(".idd/knowledge")).unwrap();
+        init_git(&rusty);
+        init_git(&weave);
+        fs::write(
+            rusty.join("Cargo.toml"),
+            "[package]\nname = \"rusty-idd\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+        )
+        .unwrap();
+        fs::write(
+            weave.join("Cargo.toml"),
+            "[package]\nname = \"weave\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+        )
+        .unwrap();
+        fs::write(
+            weave.join("src/lib.rs"),
+            "pub struct Handoff;\npub fn coordinate() -> Handoff { Handoff }\n",
+        )
+        .unwrap();
+        let peer_architecture =
+            build_architecture_graph(ArchitectureOptions::new(&weave, ArchitectureFormat::Json))
+                .unwrap();
+        fs::write(
+            weave.join(".idd/knowledge/architecture.json"),
+            peer_architecture,
+        )
+        .unwrap();
+
+        let graph_json = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        let graph: SystemArchitectureGraph = serde_json::from_str(&graph_json).unwrap();
+        let peer = graph
+            .repos
+            .iter()
+            .find(|repo| repo.name == "weave")
+            .expect("weave repo");
+        let architecture = peer
+            .local_architecture
+            .as_ref()
+            .expect("peer architecture summary");
+        assert!(peer.has_local_architecture_graph);
+        assert_eq!(architecture.source_graph.provider, "codegraph-rust");
+        assert_eq!(architecture.context_package.provider, "repomix-rs");
+        assert!(architecture.component_count > 0);
+        assert!(!architecture.top_components.is_empty());
+        assert!(graph
+            .findings
+            .iter()
+            .any(|finding| { finding.contains("repos expose parsed architecture summaries") }));
+
+        fs::write(
+            weave.join(".idd/knowledge/architecture.json"),
+            "{not valid json",
+        )
+        .unwrap();
+        let graph_json = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        let graph: SystemArchitectureGraph = serde_json::from_str(&graph_json).unwrap();
+        let peer = graph
+            .repos
+            .iter()
+            .find(|repo| repo.name == "weave")
+            .expect("weave repo");
+        assert!(peer.has_local_architecture_graph);
+        assert!(peer.local_architecture.is_none());
+        assert!(graph.findings.iter().any(|finding| {
+            finding.contains("repo weave exposes unreadable architecture graph")
+        }));
+    }
+
+    #[test]
     fn graph_planning_context_consumes_repo_graph_without_system_graph() {
         let tmp = tempfile::tempdir().unwrap();
         fs::create_dir_all(tmp.path().join("crates/knowledge/src")).unwrap();
@@ -3378,6 +3625,79 @@ mod tests {
         let markdown = build_graph_planning_context(options).unwrap();
         assert!(markdown.contains("# Graph Planning Context"));
         assert!(markdown.contains("## Planning Guidance"));
+    }
+
+    #[test]
+    fn graph_planning_context_preserves_peer_architecture_summary() {
+        let system = tempfile::tempdir().unwrap();
+        let rusty = system.path().join("rusty-idd");
+        let weave = system.path().join("weave");
+        fs::create_dir_all(rusty.join(".idd/knowledge")).unwrap();
+        fs::create_dir_all(rusty.join("src")).unwrap();
+        fs::create_dir_all(weave.join(".idd/knowledge")).unwrap();
+        fs::create_dir_all(weave.join("src")).unwrap();
+        init_git(&rusty);
+        init_git(&weave);
+        fs::write(
+            rusty.join("Cargo.toml"),
+            "[package]\nname = \"rusty-idd\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+        )
+        .unwrap();
+        fs::write(rusty.join("src/lib.rs"), "pub fn plan_context() {}\n").unwrap();
+        fs::write(
+            weave.join("Cargo.toml"),
+            "[package]\nname = \"weave\"\nversion = \"0.1.0\"\nedition = \"2021\"\n",
+        )
+        .unwrap();
+        fs::write(
+            weave.join("src/lib.rs"),
+            "pub struct Handoff;\npub fn coordinate() -> Handoff { Handoff }\n",
+        )
+        .unwrap();
+        let rusty_architecture =
+            build_architecture_graph(ArchitectureOptions::new(&rusty, ArchitectureFormat::Json))
+                .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/architecture.json"),
+            rusty_architecture,
+        )
+        .unwrap();
+        let weave_architecture =
+            build_architecture_graph(ArchitectureOptions::new(&weave, ArchitectureFormat::Json))
+                .unwrap();
+        fs::write(
+            weave.join(".idd/knowledge/architecture.json"),
+            weave_architecture,
+        )
+        .unwrap();
+        let system_architecture = build_system_architecture_graph(SystemArchitectureOptions::new(
+            &rusty,
+            system.path(),
+            ArchitectureFormat::Json,
+        ))
+        .unwrap();
+        fs::write(
+            rusty.join(".idd/knowledge/system-architecture.json"),
+            system_architecture,
+        )
+        .unwrap();
+
+        let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Json);
+        options.goal = Some("weave handoff architecture integration".to_string());
+        let context_json = build_graph_planning_context(options).unwrap();
+        let context: GraphPlanningContext = serde_json::from_str(&context_json).unwrap();
+        let peer = context
+            .system_repos
+            .iter()
+            .find(|repo| repo.name == "weave")
+            .expect("weave repo");
+        assert!(peer.local_architecture.is_some());
+
+        let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Markdown);
+        options.goal = Some("weave handoff architecture integration".to_string());
+        let markdown = build_graph_planning_context(options).unwrap();
+        assert!(markdown.contains("Architecture"));
+        assert!(markdown.contains("top:"));
     }
 
     fn init_git(path: &Path) {

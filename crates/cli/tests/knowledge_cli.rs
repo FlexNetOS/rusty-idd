@@ -165,6 +165,25 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     )
     .unwrap();
     fs::create_dir_all(handoff.join(".handoff")).unwrap();
+    fs::create_dir_all(handoff.join(".idd/knowledge")).unwrap();
+    fs::create_dir_all(handoff.join("src")).unwrap();
+    fs::write(
+        handoff.join("src/lib.rs"),
+        "pub struct FleetHandoff;\npub fn sync() -> FleetHandoff { FleetHandoff }\n",
+    )
+    .unwrap();
+
+    run_ok(
+        &[
+            "knowledge",
+            "architecture",
+            "--workspace",
+            "../handoff",
+            "--out",
+            "../handoff/.idd/knowledge/architecture.json",
+        ],
+        &rusty,
+    );
 
     run_ok(
         &[
@@ -185,6 +204,8 @@ fn system_architecture_cli_discovers_peer_repos_without_meta() {
     assert!(graph.contains("\"name\": \"handoff\""));
     assert!(graph.contains("role:idd-control-plane"));
     assert!(graph.contains("role:fleet-handoff"));
+    assert!(graph.contains("\"local_architecture\""));
+    assert!(graph.contains("\"top_components\""));
 }
 
 fn run_git(args: &[&str], cwd: &Path) {
