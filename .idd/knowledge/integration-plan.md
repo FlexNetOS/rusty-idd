@@ -1,7 +1,7 @@
 # Integration Automation Plan
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
+- Workspace root: `/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door`
 - Source model: `.idd/knowledge/operating-model.json`
 - Work items: 19
 
