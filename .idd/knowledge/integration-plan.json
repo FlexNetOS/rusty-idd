@@ -582,7 +582,6 @@
         "repo:codex",
         "repo:copilot-plugin",
         "repo:ecc",
-        "repo:envctl",
         "repo:flexnetos-runner",
         "repo:github-org",
         "repo:harness-hub",
