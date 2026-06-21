@@ -720,6 +720,8 @@ pub struct IntegrationReadinessReport {
     pub selector: IntegrationOwnerSelector,
     pub work_item: IntegrationWorkItem,
     pub owner_states: Vec<IntegrationReadinessOwnerState>,
+    #[serde(default)]
+    pub upstream_inputs: Vec<IntegrationUpstreamInput>,
     pub tool_requirements: Vec<IntegrationToolRequirement>,
     pub native_diagnostics: Vec<IntegrationNativeDiagnostic>,
     pub runtime_assumptions: Vec<String>,
@@ -739,6 +741,17 @@ pub struct IntegrationReadinessOwnerState {
     pub head: Option<String>,
     pub dirty: bool,
     pub required_tool_ids: Vec<String>,
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct IntegrationUpstreamInput {
+    pub source: String,
+    pub kind: String,
+    pub mirror_path: String,
+    pub required_tool_ids: Vec<String>,
+    pub native_diagnostic_commands: Vec<String>,
+    pub runtime_assumptions: Vec<String>,
+    pub feature_flags: Vec<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
@@ -4488,6 +4501,73 @@ fn integration_readiness_report(
         }
     }
 
+    let upstream_inputs = owners
+        .work_item
+        .adopt_first_inputs
+        .iter()
+        .map(|input| integration_upstream_input(input))
+        .collect::<Vec<_>>();
+    for upstream in &upstream_inputs {
+        for tool_id in &upstream.required_tool_ids {
+            let (name, provisioned_by, default_path, evidence) = match tool_id.as_str() {
+                "git" => (
+                    "Git",
+                    "parent meta/envctl managed PATH",
+                    true,
+                    "upstream adoption pins exact git revisions before consolidation",
+                ),
+                "node" => (
+                    "Node/npm",
+                    "parent meta/envctl managed Node/npm toolchain",
+                    true,
+                    "upstream package metadata exposes npm native diagnostics",
+                ),
+                "postgres" => (
+                    "PostgreSQL-compatible DATABASE_URL",
+                    "parent meta/envctl managed runtime or explicit external service",
+                    false,
+                    "upstream postinstall/build commands require DATABASE_URL for Prisma generation",
+                ),
+                "wordpress" => (
+                    "WordPress/Gutenberg toolchain",
+                    "parent meta/envctl managed frontend/tooling surface",
+                    false,
+                    "upstream WordPress plugin scripts are native diagnostic surfaces",
+                ),
+                _ => (
+                    tool_id.as_str(),
+                    "parent meta/envctl managed toolchain",
+                    false,
+                    "upstream adoption records this tool as a native requirement",
+                ),
+            };
+            add_tool_requirement(
+                &mut tools,
+                tool_id,
+                name,
+                &upstream.source,
+                provisioned_by,
+                default_path,
+                evidence,
+            );
+        }
+        runtime_assumptions.extend(upstream.runtime_assumptions.iter().cloned());
+        feature_gates.extend(upstream.feature_flags.iter().cloned());
+        for command in &upstream.native_diagnostic_commands {
+            native_diagnostics.push(IntegrationNativeDiagnostic {
+                command: command.clone(),
+                owner_repo: Some(upstream.source.clone()),
+                required_tool_ids: diagnostic_tool_ids(command),
+                mode: if diagnostic_command_is_read_only(command) {
+                    "read-only".to_string()
+                } else {
+                    "native-build-or-test".to_string()
+                },
+                mutates_repo: diagnostic_command_mutates_repo(command),
+            });
+        }
+    }
+
     for anchor in &owners.work_item.anchors {
         if anchor.contains("COGNITUM") {
             runtime_assumptions.push(
@@ -4516,6 +4596,7 @@ fn integration_readiness_report(
         );
     }
     feature_gates.sort();
+    feature_gates.dedup();
     runtime_assumptions.sort();
     runtime_assumptions.dedup();
     native_diagnostics.sort_by(|a, b| a.command.cmp(&b.command));
@@ -4565,6 +4646,7 @@ fn integration_readiness_report(
         selector: owners.selector,
         work_item: owners.work_item,
         owner_states,
+        upstream_inputs,
         tool_requirements: tools.into_values().collect(),
         native_diagnostics,
         runtime_assumptions,
@@ -4572,6 +4654,82 @@ fn integration_readiness_report(
         validation,
         rollback,
         findings,
+    }
+}
+
+fn integration_upstream_input(source: &str) -> IntegrationUpstreamInput {
+    let repo_name = source
+        .rsplit('/')
+        .next()
+        .filter(|value| !value.is_empty())
+        .unwrap_or(source)
+        .trim_end_matches(".git");
+    let mut required_tool_ids = BTreeSet::from(["git".to_string()]);
+    let mut native_diagnostic_commands = vec![
+        format!("git ls-remote {} HEAD", github_remote_url(source)),
+        format!("test -f third_party/upstream/{repo_name}/package.json"),
+    ];
+    let mut runtime_assumptions = vec![
+        "External upstream mirrors are tracked as source snapshots and are not workspace members by default".to_string(),
+    ];
+    let mut feature_flags = vec![
+        "External upstream servers, MCP transports, and host services stay out of default Rusty IDD workflows unless a later spec explicitly gates them".to_string(),
+    ];
+
+    if source.contains("github.com/f/prompts.chat") {
+        required_tool_ids.insert("node".to_string());
+        required_tool_ids.insert("postgres".to_string());
+        native_diagnostic_commands.extend([
+            "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm ci".to_string(),
+            "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm run lint".to_string(),
+            "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm test".to_string(),
+        ]);
+        runtime_assumptions.extend([
+            "prompts.chat package metadata requires Node 24.x".to_string(),
+            "prompts.chat Prisma generation requires DATABASE_URL; diagnostics may use a non-secret temporary PostgreSQL URL".to_string(),
+        ]);
+        feature_flags.push(
+            "prompts.chat MCP/server/web runtime surfaces are adoption evidence only until a prompt-front-door feature boundary enables them".to_string(),
+        );
+    } else if source.contains("github.com/f/ai-prompt") {
+        required_tool_ids.insert("node".to_string());
+        required_tool_ids.insert("wordpress".to_string());
+        native_diagnostic_commands.extend([
+            "cd third_party/upstream/ai-prompt && npm ci".to_string(),
+            "cd third_party/upstream/ai-prompt && npm run build".to_string(),
+            "cd third_party/upstream/ai-prompt && npm run lint:js".to_string(),
+            "cd third_party/upstream/ai-prompt && npm run lint:css".to_string(),
+        ]);
+        runtime_assumptions.push(
+            "ai-prompt CI uses Node 20 for its WordPress/Gutenberg plugin diagnostics".to_string(),
+        );
+        feature_flags.push(
+            "ai-prompt WordPress plugin UI remains an upstream prompt rendering surface until mapped through prompt_hub and Rusty IDD DTOs".to_string(),
+        );
+    }
+
+    IntegrationUpstreamInput {
+        source: source.to_string(),
+        kind: if source.contains("github.com/") {
+            "github-repository".to_string()
+        } else {
+            "external-anchor".to_string()
+        },
+        mirror_path: format!("third_party/upstream/{repo_name}"),
+        required_tool_ids: required_tool_ids.into_iter().collect(),
+        native_diagnostic_commands,
+        runtime_assumptions,
+        feature_flags,
+    }
+}
+
+fn github_remote_url(source: &str) -> String {
+    if source.starts_with("http://") || source.starts_with("https://") || source.ends_with(".git") {
+        source.to_string()
+    } else if let Some(path) = source.strip_prefix("github.com/") {
+        format!("https://github.com/{path}.git")
+    } else {
+        source.to_string()
     }
 }
 
@@ -4633,6 +4791,7 @@ fn diagnostic_command_is_read_only(command: &str) -> bool {
     command.contains(" rev-parse ")
         || command.contains(" status ")
         || command.contains(" metadata ")
+        || command.contains(" ls-remote ")
         || command.contains(" --list")
         || command.starts_with("test -f ")
         || command.contains("make -n ")
@@ -4640,6 +4799,7 @@ fn diagnostic_command_is_read_only(command: &str) -> bool {
 
 fn diagnostic_command_mutates_repo(command: &str) -> bool {
     command.contains(" npm install")
+        || command.contains(" npm ci")
         || command.contains(" pnpm install")
         || command.contains(" cargo update")
         || command.contains(" cargo install")
@@ -4748,6 +4908,25 @@ fn render_integration_readiness_markdown(report: &IntegrationReadinessReport) ->
             owner.dirty,
             owner.required_tool_ids.join(", ")
         ));
+    }
+
+    out.push_str("\n## Upstream Inputs\n\n");
+    if report.upstream_inputs.is_empty() {
+        out.push_str("No adopt-first upstream inputs recorded for this work item.\n");
+    } else {
+        out.push_str(
+            "| Source | Kind | Mirror | Required Tools | Runtime Assumptions |\n|---|---|---|---|---|\n",
+        );
+        for upstream in &report.upstream_inputs {
+            out.push_str(&format!(
+                "| `{}` | {} | `{}` | {} | {} |\n",
+                upstream.source,
+                upstream.kind,
+                upstream.mirror_path,
+                upstream.required_tool_ids.join(", "),
+                upstream.runtime_assumptions.join("; ")
+            ));
+        }
     }
 
     out.push_str("\n## Tool Requirements\n\n");
@@ -6362,6 +6541,25 @@ mod tests {
                         40,
                     )
                 },
+                IntegrationWorkItem {
+                    owner_repos: vec!["repo:handoff".to_string()],
+                    anchors: vec![
+                        "github.com/f/prompts.chat".to_string(),
+                        "github.com/f/ai-prompt".to_string(),
+                    ],
+                    adopt_first_inputs: vec![
+                        "github.com/f/prompts.chat".to_string(),
+                        "github.com/f/ai-prompt".to_string(),
+                    ],
+                    implementation_boundary:
+                        "Adopt upstream repo surface first, run native diagnostics, then add thin Rusty IDD mapping"
+                            .to_string(),
+                    ..test_work_item(
+                        "integrate-prompt-front-door",
+                        "capability:prompt-front-door",
+                        50,
+                    )
+                },
             ],
             gates: vec!["just ci".to_string()],
             findings: Vec::new(),
@@ -6472,12 +6670,49 @@ mod tests {
             .iter()
             .any(|diagnostic| diagnostic.command.contains("cargo test")));
 
+        let mut prompt_readiness_options =
+            IntegrationReadinessOptions::new(&rusty, PlanContextFormat::Json);
+        prompt_readiness_options.change = Some("integrate-prompt-front-door".to_string());
+        let prompt_readiness_json =
+            build_integration_readiness_report(prompt_readiness_options).unwrap();
+        let prompt_readiness: IntegrationReadinessReport =
+            serde_json::from_str(&prompt_readiness_json).unwrap();
+        assert_eq!(
+            prompt_readiness.work_item.change_id,
+            "integrate-prompt-front-door"
+        );
+        assert!(prompt_readiness
+            .upstream_inputs
+            .iter()
+            .any(|upstream| upstream.source == "github.com/f/prompts.chat"
+                && upstream.required_tool_ids.contains(&"postgres".to_string())));
+        assert!(prompt_readiness
+            .upstream_inputs
+            .iter()
+            .any(|upstream| upstream.source == "github.com/f/ai-prompt"
+                && upstream
+                    .required_tool_ids
+                    .contains(&"wordpress".to_string())));
+        assert!(prompt_readiness
+            .native_diagnostics
+            .iter()
+            .any(|diagnostic| diagnostic
+                .command
+                .contains("DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm ci")
+                && diagnostic.mutates_repo));
+        assert!(prompt_readiness
+            .tool_requirements
+            .iter()
+            .any(|tool| tool.id == "node" && tool.required_by.len() >= 2));
+
         let mut readiness_markdown_options =
             IntegrationReadinessOptions::new(&rusty, PlanContextFormat::Markdown);
-        readiness_markdown_options.next_planned = true;
+        readiness_markdown_options.change = Some("integrate-prompt-front-door".to_string());
         let readiness_markdown =
             build_integration_readiness_report(readiness_markdown_options).unwrap();
         assert!(readiness_markdown.contains("# Integration Readiness"));
+        assert!(readiness_markdown.contains("## Upstream Inputs"));
+        assert!(readiness_markdown.contains("github.com/f/prompts.chat"));
         assert!(readiness_markdown.contains("Tool Requirements"));
     }
 

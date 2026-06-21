@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "workspace_root": "/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door",
   "source_plan": ".idd/knowledge/integration-plan.json",
   "source_system_architecture": ".idd/knowledge/system-architecture.json",
   "selector": {
@@ -63,6 +63,60 @@
       ]
     }
   ],
+  "upstream_inputs": [
+    {
+      "source": "github.com/f/prompts.chat",
+      "kind": "github-repository",
+      "mirror_path": "third_party/upstream/prompts.chat",
+      "required_tool_ids": [
+        "git",
+        "node",
+        "postgres"
+      ],
+      "native_diagnostic_commands": [
+        "git ls-remote https://github.com/f/prompts.chat.git HEAD",
+        "test -f third_party/upstream/prompts.chat/package.json",
+        "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm ci",
+        "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm run lint",
+        "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm test"
+      ],
+      "runtime_assumptions": [
+        "External upstream mirrors are tracked as source snapshots and are not workspace members by default",
+        "prompts.chat package metadata requires Node 24.x",
+        "prompts.chat Prisma generation requires DATABASE_URL; diagnostics may use a non-secret temporary PostgreSQL URL"
+      ],
+      "feature_flags": [
+        "External upstream servers, MCP transports, and host services stay out of default Rusty IDD workflows unless a later spec explicitly gates them",
+        "prompts.chat MCP/server/web runtime surfaces are adoption evidence only until a prompt-front-door feature boundary enables them"
+      ]
+    },
+    {
+      "source": "github.com/f/ai-prompt",
+      "kind": "github-repository",
+      "mirror_path": "third_party/upstream/ai-prompt",
+      "required_tool_ids": [
+        "git",
+        "node",
+        "wordpress"
+      ],
+      "native_diagnostic_commands": [
+        "git ls-remote https://github.com/f/ai-prompt.git HEAD",
+        "test -f third_party/upstream/ai-prompt/package.json",
+        "cd third_party/upstream/ai-prompt && npm ci",
+        "cd third_party/upstream/ai-prompt && npm run build",
+        "cd third_party/upstream/ai-prompt && npm run lint:js",
+        "cd third_party/upstream/ai-prompt && npm run lint:css"
+      ],
+      "runtime_assumptions": [
+        "External upstream mirrors are tracked as source snapshots and are not workspace members by default",
+        "ai-prompt CI uses Node 20 for its WordPress/Gutenberg plugin diagnostics"
+      ],
+      "feature_flags": [
+        "External upstream servers, MCP transports, and host services stay out of default Rusty IDD workflows unless a later spec explicitly gates them",
+        "ai-prompt WordPress plugin UI remains an upstream prompt rendering surface until mapped through prompt_hub and Rusty IDD DTOs"
+      ]
+    }
+  ],
   "tool_requirements": [
     {
       "id": "cargo",
@@ -80,12 +134,52 @@
       "id": "git",
       "name": "Git",
       "required_by": [
+        "github.com/f/ai-prompt",
+        "github.com/f/prompts.chat",
         "integration-owner-state"
       ],
       "provisioned_by": "parent meta/envctl managed PATH",
       "default_path": true,
       "evidence": [
-        "native owner diagnostics include git state checks"
+        "native owner diagnostics include git state checks",
+        "upstream adoption pins exact git revisions before consolidation"
+      ]
+    },
+    {
+      "id": "node",
+      "name": "Node/npm",
+      "required_by": [
+        "github.com/f/ai-prompt",
+        "github.com/f/prompts.chat"
+      ],
+      "provisioned_by": "parent meta/envctl managed Node/npm toolchain",
+      "default_path": true,
+      "evidence": [
+        "upstream package metadata exposes npm native diagnostics"
+      ]
+    },
+    {
+      "id": "postgres",
+      "name": "PostgreSQL-compatible DATABASE_URL",
+      "required_by": [
+        "github.com/f/prompts.chat"
+      ],
+      "provisioned_by": "parent meta/envctl managed runtime or explicit external service",
+      "default_path": false,
+      "evidence": [
+        "upstream postinstall/build commands require DATABASE_URL for Prisma generation"
+      ]
+    },
+    {
+      "id": "wordpress",
+      "name": "WordPress/Gutenberg toolchain",
+      "required_by": [
+        "github.com/f/ai-prompt"
+      ],
+      "provisioned_by": "parent meta/envctl managed frontend/tooling surface",
+      "default_path": false,
+      "evidence": [
+        "upstream WordPress plugin scripts are native diagnostic surfaces"
       ]
     }
   ],
@@ -109,6 +203,69 @@
       "mutates_repo": false
     },
     {
+      "command": "cd third_party/upstream/ai-prompt && npm ci",
+      "owner_repo": "github.com/f/ai-prompt",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": true
+    },
+    {
+      "command": "cd third_party/upstream/ai-prompt && npm run build",
+      "owner_repo": "github.com/f/ai-prompt",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
+    {
+      "command": "cd third_party/upstream/ai-prompt && npm run lint:css",
+      "owner_repo": "github.com/f/ai-prompt",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
+    {
+      "command": "cd third_party/upstream/ai-prompt && npm run lint:js",
+      "owner_repo": "github.com/f/ai-prompt",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
+    {
+      "command": "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm ci",
+      "owner_repo": "github.com/f/prompts.chat",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": true
+    },
+    {
+      "command": "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm run lint",
+      "owner_repo": "github.com/f/prompts.chat",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
+    {
+      "command": "cd third_party/upstream/prompts.chat && DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm test",
+      "owner_repo": "github.com/f/prompts.chat",
+      "required_tool_ids": [
+        "node"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
+    {
       "command": "git -C prompt_hub rev-parse HEAD",
       "owner_repo": "repo:prompt-hub",
       "required_tool_ids": [
@@ -125,16 +282,54 @@
       ],
       "mode": "read-only",
       "mutates_repo": false
+    },
+    {
+      "command": "git ls-remote https://github.com/f/ai-prompt.git HEAD",
+      "owner_repo": "github.com/f/ai-prompt",
+      "required_tool_ids": [
+        "git"
+      ],
+      "mode": "read-only",
+      "mutates_repo": false
+    },
+    {
+      "command": "git ls-remote https://github.com/f/prompts.chat.git HEAD",
+      "owner_repo": "github.com/f/prompts.chat",
+      "required_tool_ids": [
+        "git"
+      ],
+      "mode": "read-only",
+      "mutates_repo": false
+    },
+    {
+      "command": "test -f third_party/upstream/ai-prompt/package.json",
+      "owner_repo": "github.com/f/ai-prompt",
+      "required_tool_ids": [],
+      "mode": "read-only",
+      "mutates_repo": false
+    },
+    {
+      "command": "test -f third_party/upstream/prompts.chat/package.json",
+      "owner_repo": "github.com/f/prompts.chat",
+      "required_tool_ids": [],
+      "mode": "read-only",
+      "mutates_repo": false
     }
   ],
   "runtime_assumptions": [
-    "No host runtime probing is required for the default readiness artifact"
+    "External upstream mirrors are tracked as source snapshots and are not workspace members by default",
+    "ai-prompt CI uses Node 20 for its WordPress/Gutenberg plugin diagnostics",
+    "prompts.chat Prisma generation requires DATABASE_URL; diagnostics may use a non-secret temporary PostgreSQL URL",
+    "prompts.chat package metadata requires Node 24.x"
   ],
   "feature_gates": [
     "Default Rusty IDD knowledge and planning commands remain read-only",
+    "External upstream servers, MCP transports, and host services stay out of default Rusty IDD workflows unless a later spec explicitly gates them",
     "Host vault probing, secret relay minting, and long-running service control require an explicit feature or CLI opt-in",
     "Missing tools are provisioned through parent meta/envctl or tracked repo-local surfaces, not user-global installs",
-    "Peer repo writes and branch changes stay outside default Rusty IDD readiness generation"
+    "Peer repo writes and branch changes stay outside default Rusty IDD readiness generation",
+    "ai-prompt WordPress plugin UI remains an upstream prompt rendering surface until mapped through prompt_hub and Rusty IDD DTOs",
+    "prompts.chat MCP/server/web runtime surfaces are adoption evidence only until a prompt-front-door feature boundary enables them"
   ],
   "validation": [
     "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
@@ -158,7 +353,7 @@
     "1 resolved owner repos report dirty state",
     "all owner repos resolved in the system architecture graph",
     "joined 1 owner repos against .idd/knowledge/system-architecture.json",
-    "readiness derived 2 tool requirements from 1 owner surfaces",
+    "readiness derived 5 tool requirements from 1 owner surfaces",
     "readiness generation is deterministic and does not execute native diagnostics",
     "selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json"
   ]

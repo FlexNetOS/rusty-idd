@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "workspace_root": "/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door",
   "system_root": "/home/drdave/Desktop/meta",
   "discovery_source": "meta project list --json",
   "repos": [
@@ -421,7 +421,7 @@
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
       "branch": "ci/promote-trivy-reconcile-flags",
-      "head": "4c996555b8ae0f0cb72931aebd8845ece8c6ba0f",
+      "head": "f847aa28ca95ff1b2258521352f44ed7367f1743",
       "dirty": false,
       "tags": [
         "ci",
@@ -467,9 +467,9 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "feat/0014-schema-enrichment",
-      "head": "e656a09707cdf9a7720120a9ae90b3df049b49ff",
-      "dirty": false,
+      "branch": "develop",
+      "head": "e361b9f90da7de9ee56ff52fbc75f071c09b2266",
+      "dirty": true,
       "tags": [
         "handoff",
         "orchestration"
@@ -1237,8 +1237,8 @@
       "name": "rusty-idd",
       "path": "rusty-idd",
       "repo": "git@github.com:FlexNetOS/rusty-idd.git",
-      "branch": null,
-      "head": null,
+      "branch": "develop",
+      "head": "1d26eb853785984838e15025a8a855f70e278e5f",
       "dirty": false,
       "tags": [
         "idd",
@@ -3610,7 +3610,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "7 repos have local dirty state recorded as evidence",
+    "8 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]

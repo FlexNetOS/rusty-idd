@@ -1,7 +1,7 @@
 # System Operating Model
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
+- Workspace root: `/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door`
 - Source graph: `.idd/knowledge/system-architecture.json`
 - Layers: 11
 - Capabilities: 19

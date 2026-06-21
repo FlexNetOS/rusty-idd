@@ -2,12 +2,12 @@
   "schema_version": 1,
   "change": "integration-automation-plan",
   "goal": "turn the full agentic company operating model into ordered integration automation work",
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "workspace_root": "/home/drdave/Desktop/meta/.worktrees/rusty-idd-prompt-front-door",
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 135,
-    "nodes": 8440,
-    "edges": 34370,
+    "nodes": 8456,
+    "edges": 34489,
     "languages": [
       "rust"
     ],
@@ -16,8 +16,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 188,
-    "tokens": 132590,
+    "files": 193,
+    "tokens": 135997,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -26,7 +26,7 @@
       ],
       [
         "crates/knowledge/src/lib.rs",
-        8390
+        8507
       ],
       [
         "docs/rusty-idd/architecture-diagrams.md",
@@ -81,6 +81,10 @@
         1712
       ],
       [
+        "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
+        1679
+      ],
+      [
         "Makefile",
         1633
       ],
@@ -115,10 +119,6 @@
       [
         "AI_MERGE/29_agent_communication_queue_owner_surfaces.md",
         1352
-      ],
-      [
-        "crates/cli/src/commands/codex.rs",
-        1294
       ]
     ],
     "suspicious_files": 0,
@@ -507,22 +507,22 @@
       "kind": "crate",
       "files": 24,
       "nodes": 461,
-      "edges": 1931,
+      "edges": 1936,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 5700,
+          "node_id": 5716,
           "name": "contains",
           "file": "crates/spec/src/model/spec.rs",
           "line_start": 30,
           "line_end": 32,
-          "score": 3056,
+          "score": 3106,
           "reasons": [
-            "307 graph links",
-            "304 call links"
+            "312 graph links",
+            "309 call links"
           ]
         }
       ],
@@ -614,6 +614,52 @@
       ]
     },
     {
+      "id": "crate:knowledge",
+      "name": "knowledge",
+      "kind": "crate",
+      "files": 1,
+      "nodes": 616,
+      "edges": 4509,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 4495,
+          "name": "integration_readiness_report",
+          "file": "crates/knowledge/src/lib.rs",
+          "line_start": 4323,
+          "line_end": 4658,
+          "score": 1649,
+          "reasons": [
+            "336 lines",
+            "123 graph links",
+            "117 call links",
+            "7 unresolved calls",
+            "cyclomatic complexity 26"
+          ]
+        },
+        {
+          "node_id": 4709,
+          "name": "integration_owner_surfaces_join_work_item_to_system_repos",
+          "file": "crates/knowledge/src/lib.rs",
+          "line_start": 6467,
+          "line_end": 6717,
+          "score": 1488,
+          "reasons": [
+            "251 lines",
+            "121 graph links",
+            "120 call links",
+            "10 unresolved calls"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/knowledge/src/lib.rs"
+      ]
+    },
+    {
       "id": "crate:tui",
       "name": "tui",
       "kind": "crate",
@@ -626,7 +672,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 5985,
+          "node_id": 6001,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
@@ -640,7 +686,7 @@
           ]
         },
         {
-          "node_id": 6000,
+          "node_id": 6016,
           "name": "handle_config_input",
           "file": "crates/tui/src/app.rs",
           "line_start": 702,
@@ -655,7 +701,7 @@
           ]
         },
         {
-          "node_id": 6702,
+          "node_id": 6718,
           "name": "draw_config_screen",
           "file": "crates/tui/src/ui.rs",
           "line_start": 330,
@@ -677,52 +723,6 @@
       ]
     },
     {
-      "id": "crate:knowledge",
-      "name": "knowledge",
-      "kind": "crate",
-      "files": 1,
-      "nodes": 600,
-      "edges": 4390,
-      "languages": [
-        "Rust",
-        "rust"
-      ],
-      "hotspots": [
-        {
-          "node_id": 4700,
-          "name": "integration_owner_surfaces_join_work_item_to_system_repos",
-          "file": "crates/knowledge/src/lib.rs",
-          "line_start": 6288,
-          "line_end": 6482,
-          "score": 1342,
-          "reasons": [
-            "195 lines",
-            "112 graph links",
-            "111 call links",
-            "10 unresolved calls"
-          ]
-        },
-        {
-          "node_id": 4494,
-          "name": "integration_readiness_report",
-          "file": "crates/knowledge/src/lib.rs",
-          "line_start": 4310,
-          "line_end": 4576,
-          "score": 1337,
-          "reasons": [
-            "267 lines",
-            "101 graph links",
-            "95 call links",
-            "6 unresolved calls",
-            "cyclomatic complexity 21"
-          ]
-        }
-      ],
-      "evidence_paths": [
-        "crates/knowledge/src/lib.rs"
-      ]
-    },
-    {
       "id": "crate:runner",
       "name": "runner",
       "kind": "crate",
@@ -735,7 +735,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 5263,
+          "node_id": 5279,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
@@ -750,7 +750,7 @@
           ]
         },
         {
-          "node_id": 5222,
+          "node_id": 5238,
           "name": "new",
           "file": "crates/runner/src/runner.rs",
           "line_start": 54,
@@ -1077,9 +1077,9 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "feat/0014-schema-enrichment",
-      "head": "e656a09707cdf9a7720120a9ae90b3df049b49ff",
-      "dirty": false,
+      "branch": "develop",
+      "head": "e361b9f90da7de9ee56ff52fbc75f071c09b2266",
+      "dirty": true,
       "tags": [
         "handoff",
         "orchestration"
@@ -1150,8 +1150,8 @@
       "name": "rusty-idd",
       "path": "rusty-idd",
       "repo": "git@github.com:FlexNetOS/rusty-idd.git",
-      "branch": null,
-      "head": null,
+      "branch": "develop",
+      "head": "1d26eb853785984838e15025a8a855f70e278e5f",
       "dirty": false,
       "tags": [
         "idd",
@@ -1648,7 +1648,7 @@
       "path": ".github_org",
       "repo": "git@github.com:FlexNetOS/.github.git",
       "branch": "ci/promote-trivy-reconcile-flags",
-      "head": "4c996555b8ae0f0cb72931aebd8845ece8c6ba0f",
+      "head": "f847aa28ca95ff1b2258521352f44ed7367f1743",
       "dirty": false,
       "tags": [
         "ci",
