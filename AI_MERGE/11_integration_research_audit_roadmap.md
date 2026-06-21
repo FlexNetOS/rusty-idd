@@ -6,6 +6,19 @@
 
 ---
 
+## Current Correction
+
+This roadmap is historical. It captured the integration picture before the
+current weave + obscura upgrade direction and before the owner clarified that
+Rusty IDD should be used as the full OpenSpec lifecycle engine for future work.
+Do not treat its "MCP only", "weave in construction", or daemon/domain holds as
+current architecture without re-researching `meta/handoff`, weave, obscura, and
+the current peer-repo system. The live direction is a central/fleet handoff
+model coordinated by `meta`, with Rusty IDD providing system ADRs plus per-repo
+design/spec/task/implementation flows.
+
+---
+
 ## 1. Executive Summary
 
 **The vision:** `user-request → prompt_hub → weave+rtk → rusty-idd → product`

@@ -4,6 +4,20 @@
 
 Accepted
 
+## Current Correction
+
+This ADR records the PR #52 local knowledge-integration boundary, not the full
+current system architecture. Two assumptions from that pass are stale:
+
+- Tree-sitter is now an active current dependency path through the Yazelix
+  surface. Future parser work must re-evaluate the live Yazelix-backed
+  tree-sitter contract instead of treating the PR #52 compatibility hold as
+  authoritative.
+- Domain, daemon, and cross-agent coordination surfaces are active through the
+  weave + obscura upgrade path. This ADR's default-path exclusions apply only to
+  the local `rusty-idd knowledge` slice that landed in PR #52; they are not a
+  blanket system rule against those surfaces.
+
 ## Context
 
 `rusty-idd knowledge` needs in-process codebase knowledge without adding MCP
@@ -49,9 +63,11 @@ metadata, and cyclomatic complexity. The `crates/knowledge` adapter adds only
 Rusty IDD DTO mapping, deterministic compact local IDs, synthetic file nodes,
 containment edges, and conservative symbolic edge resolution.
 
-Disable `codegraph-core`'s jemalloc global allocator by default. Align
-tree-sitter dependencies with Repomix's `tree-sitter` major/minor line to avoid
-native `links = "tree-sitter"` conflicts in the workspace.
+Disable `codegraph-core`'s jemalloc global allocator by default. In PR #52, the
+tree-sitter dependency line was held to the then-compatible workspace runtime.
+That hold is now superseded by the current Yazelix-backed tree-sitter
+direction; future parser work must re-check the active tree-sitter contract and
+upgrade forward from evidence.
 
 Cut audit-denied or incompatible default dependencies after adoption:
 
@@ -61,9 +77,11 @@ Cut audit-denied or incompatible default dependencies after adoption:
 - Remove `dotenv` loading from the vendored core default path because this
   integration reads normal process environment only and `dotenv` is
   unmaintained.
-- Filter the parser registry to expose only grammars compatible with the
-  workspace-pinned tree-sitter runtime. The incompatible extractor source stays
-  vendored for future compatible pins or explicit feature work.
+- In PR #52, filter the parser registry to expose only grammars compatible with
+  the then-pinned tree-sitter runtime. Treat that as a historical integration
+  cut. Current work should use the Yazelix-backed tree-sitter surface as the
+  live compatibility source and preserve/upgrade broad parser support where
+  evidence allows.
 
 Patch `repomix-shared` to a minimal local DTO crate at
 `crates/external/repomix-shared`. The published crate pulls logger/UI
@@ -76,8 +94,8 @@ published crates.io surface available for this workspace is `2.0.0`. The full
 `2.0.1` mirror remains tracked so future upgrades can refresh from source rather
 than from memory. Default Rusty IDD workflows continue to use the latest
 published compatible Repomix crates plus the audited local DTO patch until the
-`2.0.1` source can be adopted without tree-sitter `links` conflicts or audit
-denials.
+current Yazelix/tree-sitter and audit contracts are re-evaluated against the
+pinned upstream source.
 
 Persistent graph storage remains out of the default path. Future persistent
 storage work must go behind the explicit `knowledge-surrealdb` feature or
@@ -93,9 +111,13 @@ another reviewed feature gate.
 - The adapter preserves upstream node metadata and symbolic edges while keeping
   the public `rusty-idd knowledge` index compact and deterministic.
 - Persistent graph storage, MCP servers, daemon surfaces, vector search, and
-  cloud providers stay out of the default integration.
+  cloud providers stayed out of the PR #52 default knowledge slice. This is not
+  a system-level downgrade or exclusion; weave + obscura domain work may make
+  those surfaces first-class through explicit specs and feature boundaries.
 - The Repomix patch keeps the shared DTO contract but removes unused logger/UI
   dependencies from the default build.
 - Vendored upstream watcher tests that depend on filesystem notification timing
   are marked ignored; they are outside the `rusty-idd knowledge` boundary.
-- MCP crates remain excluded from the integration.
+- MCP crates remained excluded from the PR #52 local knowledge integration
+  slice. Future weave/obscura work must define the correct cross-repo contract
+  before deciding whether that remains true for the system path.
