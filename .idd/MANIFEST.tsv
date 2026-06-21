@@ -37,9 +37,9 @@ path	size_bytes	fnv1a64
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/knowledge/architecture.json	33060	15bfce1c4954da69
-.idd/knowledge/architecture.md	6633	87330849333f3889
-.idd/knowledge/index.json	17482149	5caad886e333d497
+.idd/knowledge/architecture.json	33060	3046d235c0760c57
+.idd/knowledge/architecture.md	6633	dd3d4753db42e1ff
+.idd/knowledge/index.json	17482541	dc7967b13422c967
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29330	2d92302864717d93
@@ -50,9 +50,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2678	c288ba0ce065945e
 .idd/knowledge/operating-model.json	57058	73a0f3d80898bd3b
 .idd/knowledge/operating-model.md	21485	9184500a9924cb45
-.idd/knowledge/plan-context.json	84934	f7f2f5b2ff54c733
-.idd/knowledge/plan-context.md	17001	55714615d7112c49
-.idd/knowledge/report.md	4557	0ef731347df7db2d
+.idd/knowledge/plan-context.json	83349	9a05e541be0b8c52
+.idd/knowledge/plan-context.md	17108	9342d1380a02440a
+.idd/knowledge/report.md	4557	2db8f70eb6b4087f
 .idd/knowledge/system-architecture.json	83518	f3dcf530bdf26fff
 .idd/knowledge/system-architecture.md	23505	bff2b9e616181d0c
 .release-please-manifest.json	19	f96b929db2fa1886
@@ -82,7 +82,7 @@ AI_MERGE/28_fleet_handoff_owner_surfaces.md	5447	1305c9a52baece78
 AI_MERGE/29_agent_communication_queue_owner_surfaces.md	5075	7aa21a980d87ddff
 AI_MERGE/30_env_vault_relay_readiness.md	4230	c1bcfea56843c04a
 AI_MERGE/31_prompt_front_door_upstream_adoption.md	6969	1d4b208628aec273
-AI_MERGE/validation_report.md	307	bd98455f6c4e7a78
+AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
 Cargo.lock	119952	528f62e5a8646e98
