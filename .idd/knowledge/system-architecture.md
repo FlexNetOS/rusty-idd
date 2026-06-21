@@ -42,15 +42,15 @@
 | `commands` | `feat/recall-remember-speak-commands` | false | commands, hub | role:capability-hub | github-actions |
 | `copilot-plugin` | `main` | true | ai, plugin | role:agent-environment |  |
 | `database_hub` | `master` | false | database, hub | role:capability-hub | github-actions |
-| `envctl` | `feat/bun-toolchain-path-and-tool-registrations` | false | env, tools | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider | rust, handoff, claude, github-actions |
+| `envctl` | `master` | false | env, tools | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider | rust, handoff, claude, github-actions |
 | `flexnetos_brain` | `` | false | data, docs | role:documentation-knowledge |  |
 | `flexnetos_github_app` | `main` | false | github-app, ops | role:rust-code-surface | rust, github-actions |
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | ops, runner | role:fleet-handoff, role:rust-code-surface | rust, handoff, github-actions |
 | `flexnetos_wiki` | `` | false | docs | role:documentation-knowledge |  |
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
-| `github_org` | `fix/wrap-up-base-develop` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
+| `github_org` | `ci/promote-trivy-reconcile-flags` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
-| `handoff` | `feat/hftask-0058-durability-policy` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
+| `handoff` | `feat/0014-schema-enrichment` | false | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `master` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
 | `hermes-agent` | `main` | false | agents, ai, untriaged | role:agent-environment | node, github-actions |
 | `hooks_hub` | `master` | false | hooks, hub | role:capability-hub | github-actions |
@@ -74,7 +74,7 @@
 | `meta_rust_cli` | `main` | false | canon | role:meta-control-plane, role:rust-code-surface | rust, github-actions |
 | `my-wiki` | `` | false | docs, wiki | role:documentation-knowledge |  |
 | `n8n` | `harness/epic-d` | false | automation, forked | role:agent-environment | node, agents, claude, github-actions |
-| `network-control` | `harness/adopt-rust-port` | false |  | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
+| `network-control` | `main` | false |  | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
 | `network_hub` | `master` | false | hub, network | role:capability-hub | github-actions |
 | `obscura` | `main` | false | untriaged | role:domain-upgrade-surface, role:rust-code-surface | rust, github-actions |
 | `obsidian-mind` | `main` | false | docs, knowledge | role:documentation-knowledge, role:knowledge-memory | claude, github-actions |
@@ -92,14 +92,14 @@
 | `tool_hub` | `feat/stage-github-org-tool-pins` | true | hub, tools | role:capability-hub | github-actions |
 | `vault_hub` | `main` | false | hub, vault | role:capability-hub |  |
 | `vox` | `main` | false | forked, tools, voice | role:rust-code-surface | rust, claude, github-actions |
-| `weave` | `wl056-xmachine-push` | false | mcp, orchestration | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, agents, claude, github-actions |
+| `weave` | `develop` | false | mcp, orchestration | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, agents, claude, github-actions |
 | `yazelix` | `main` | false | env, forked, terminal | role:parser-runtime-surface, role:toolchain-provider | claude, github-actions |
 
 ## Peer Architecture Summaries
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 135 files, 8395 nodes, 34012 edges via `codegraph-rust` | 182 files, 127831 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, cli |
+| `rusty-idd` | 135 files, 8440 nodes, 34370 edges via `codegraph-rust` | 188 files, 132590 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, tui, knowledge, cli |
 
 ## Edges
 
@@ -304,6 +304,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 8 repos have local dirty state recorded as evidence
+- 7 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries
