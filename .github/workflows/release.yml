@@ -32,7 +32,7 @@ jobs:
             exe: ".exe"
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.96.0
+      - uses: dtolnay/rust-toolchain@1.100.0
       - uses: Swatinem/rust-cache@v2
       - name: Build release binary
         run: cargo build --workspace --locked --release --bin rusty-idd
