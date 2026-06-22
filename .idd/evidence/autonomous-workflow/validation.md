@@ -1,24 +1,35 @@
-# Handoff KB Refresh Validation Evidence
+# Envctl-Owned Rust Toolchain Validation Evidence
 
-- Change: `refresh-handoff-kb-upstream`
-- Mirror verification: source handoff tracked file count is 550, mirror file
-  count is 550, file-list diff is clean, and `third_party/upstream/handoff/.git`
-  is absent.
-- Source dirty state: handoff working-tree edits are recorded in
-  `AI_MERGE/38_handoff_kb_refresh/handoff-source-state.md` and excluded from the
-  mirror because the mirror is built from committed HEAD.
-- Build: passed `RUSTY_IDD_CHANGE=refresh-handoff-kb-upstream RUSTY_IDD_GOAL_FILE=.idd/goals/refresh-handoff-kb-upstream.md rtk just ci`, including `cargo build --workspace --locked`.
-- Generated artifacts: `rtk just ci` passed freshness checks for `.idd/MANIFEST.tsv`, `.idd/knowledge/*`, `docs/rusty-idd/architecture-diagrams.md`, and goal-file plan context for `refresh-handoff-kb-upstream`.
-- Test: passed `cargo test --workspace --locked` through the same `rtk just ci` gate.
-- Lint: passed `cargo fmt --all -- --check` and `cargo clippy --workspace --all-targets --all-features -- -D warnings` through the same `rtk just ci` gate.
-- Audit: passed `cargo audit --deny warnings` through the same `rtk just ci` gate.
-- Secret scan: changed-file scan for private key, AWS, Google API, GitHub, and OpenAI token patterns returned no matches.
-- Manifest: refreshed `.idd/MANIFEST.tsv` after validation evidence updates and verified through the `rtk just ci` manifest freshness gate.
+- Change: `envctl-owned-rust-toolchain-cache`
+- Branch: `feature/envctl-owned-rust-toolchain-cache`
+- Build: passed `cargo check --workspace --locked`.
+- Generated artifacts: refreshed `.idd/knowledge/index.json`,
+  `.idd/knowledge/report.md`, `.idd/knowledge/architecture.json`,
+  `.idd/knowledge/architecture.md`, `.idd/knowledge/plan-context.json`,
+  `.idd/knowledge/plan-context.md`, `.idd/MANIFEST.tsv`,
+  `docs/rusty-idd/architecture-diagrams.md`, and
+  `AI_MERGE/validation_report.md` before final tests.
+- Test: passed `cargo test -p rusty-idd-cli --locked` after generated artifact
+  refresh; result was 59 passed.
+- Lint: passed `cargo fmt --all -- --check`,
+  `cargo clippy -p rusty-idd-cli --all-targets --locked -- -D warnings`, and
+  `git diff --check`.
+- Audit: passed `cargo audit --deny warnings` after refreshing the RustSec
+  advisory DB and upgrading `memmap2` from 0.9.10 to 0.9.11 for
+  RUSTSEC-2026-0186.
+- Secret scan: branch diff scan for AWS keys, private-key headers, GitHub PATs,
+  OpenAI-style keys, and Slack tokens returned no matches. Whole-tree scan only
+  reported known upstream repomix secretlint fixture strings under
+  `third_party/upstream/repomix-rs`.
+- Manifest: refreshed `.idd/MANIFEST.tsv` after deterministic artifact updates.
+- Rusty IDD validation: passed `rusty-idd validate --workspace .` with 0
+  critical and 0 warning.
+- Codex invariant check: passed `rusty-idd codex env-check --workspace .`.
 
 ## Rollback Path
 
-Revert ADR 0008, `openspec/changes/refresh-handoff-kb-upstream`,
-`.idd/goals/refresh-handoff-kb-upstream.md`,
-`AI_MERGE/38_handoff_kb_refresh/`, the refreshed handoff mirror and upstream
-registry pin, and regenerated `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, and
-`docs/rusty-idd/architecture-diagrams.md`.
+Revert ADR 0009, `openspec/changes/envctl-owned-rust-toolchain-cache`,
+`.idd/goals/envctl-owned-rust-toolchain-cache.md`, the `codex system-audit`
+Rust toolchain audit changes, the Codex environment documentation update, the
+focused tests, and regenerated `.idd/knowledge/*`, `.idd/MANIFEST.tsv`,
+`AI_MERGE/validation_report.md`, and `docs/rusty-idd/architecture-diagrams.md`.
