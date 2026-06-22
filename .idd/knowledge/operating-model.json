@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-review-upgrades",
-  "system_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff",
+  "system_root": "/home/drdave/Desktop/meta",
   "source_graph": ".idd/knowledge/system-architecture.json",
   "layers": [
     {
@@ -24,6 +24,7 @@
         "repo:copilot-plugin",
         "repo:ecc",
         "repo:flexnetos-runner",
+        "repo:github-org",
         "repo:grit",
         "repo:harness-hub",
         "repo:hermes-agent",
@@ -36,7 +37,9 @@
         "repo:prompt-hub",
         "repo:rtk-tokenkill",
         "repo:ruflo",
+        "repo:rusty-idd",
         "repo:ruvector",
+        "repo:weave",
         "repo:yazelix"
       ]
     },
@@ -50,11 +53,24 @@
         "capability:domain-upgrade"
       ],
       "repos": [
+        "repo:agent",
         "repo:atc",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
         "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
         "repo:mcp-hub",
+        "repo:meta-git-lib",
+        "repo:network-control",
         "repo:obscura",
+        "repo:prompt-hub",
         "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:teri",
         "repo:weave"
       ]
     },
@@ -241,6 +257,7 @@
         "repo:copilot-plugin",
         "repo:ecc",
         "repo:flexnetos-runner",
+        "repo:github-org",
         "repo:harness-hub",
         "repo:hermes-agent",
         "repo:icm",
@@ -252,7 +269,9 @@
         "repo:prompt-hub",
         "repo:rtk-tokenkill",
         "repo:ruflo",
-        "repo:ruvector"
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:weave"
       ],
       "anchors": [
         "harness-agent-rs rust port"
@@ -382,8 +401,21 @@
       "purpose": "Maintains central and fleet handoff state for cross-repo agents",
       "status": "partial",
       "repos": [
+        "repo:agent",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
         "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:meta-git-lib",
+        "repo:network-control",
+        "repo:prompt-hub",
         "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:teri",
         "repo:weave"
       ],
       "anchors": [
@@ -808,6 +840,14 @@
     },
     {
       "source": "capability:agent-harness",
+      "target": "repo:github-org",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
       "target": "repo:harness-hub",
       "kind": "mapped_to_repo",
       "evidence": [
@@ -896,7 +936,23 @@
     },
     {
       "source": "capability:agent-harness",
+      "target": "repo:rusty-idd",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
       "target": "repo:ruvector",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Agent harness runtime"
+      ]
+    },
+    {
+      "source": "capability:agent-harness",
+      "target": "repo:weave",
       "kind": "mapped_to_repo",
       "evidence": [
         "Agent harness runtime"
@@ -1072,6 +1128,46 @@
     },
     {
       "source": "capability:fleet-handoff",
+      "target": "repo:agent",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:ecc",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:envctl",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:flexnetos-runner",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:github-org",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
       "target": "repo:handoff",
       "kind": "mapped_to_repo",
       "evidence": [
@@ -1080,7 +1176,71 @@
     },
     {
       "source": "capability:fleet-handoff",
+      "target": "repo:harness-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:lane",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:lifeos",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:meta-git-lib",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:network-control",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:prompt-hub",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
       "target": "repo:rusty-idd",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:ruvector",
+      "kind": "mapped_to_repo",
+      "evidence": [
+        "Central and fleet handoff"
+      ]
+    },
+    {
+      "source": "capability:fleet-handoff",
+      "target": "repo:teri",
       "kind": "mapped_to_repo",
       "evidence": [
         "Central and fleet handoff"
@@ -1899,6 +2059,6 @@
     "User front door records external or future anchor: LifeOS front door",
     "User front door records external or future anchor: goose-like chat integration",
     "Vector and agentic runtime records external or future anchor: meta-ruvector full agentic system",
-    "operating model derived from 65 repos and 12 roles in .idd/knowledge/system-architecture.json"
+    "operating model derived from 65 repos and 13 roles in .idd/knowledge/system-architecture.json"
   ]
 }
