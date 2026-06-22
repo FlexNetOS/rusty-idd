@@ -120,6 +120,24 @@ fn knowledge_commands_cover_index_pack_report_query_and_refresh() {
     run_ok(
         &[
             "knowledge",
+            "diagrams",
+            "--workspace",
+            ".",
+            "--out",
+            "architecture-diagrams.md",
+        ],
+        root.path(),
+    );
+    let diagrams = fs::read_to_string(root.path().join("architecture-diagrams.md")).unwrap();
+    assert!(diagrams.contains("# rusty-idd Architecture Diagrams"));
+    assert!(diagrams.contains("```mermaid"));
+    assert!(diagrams.contains("## Autonomous Workflow"));
+    assert!(diagrams.contains("## Crate And Integration Boundaries"));
+    assert!(diagrams.contains("## Generated Artifact Flow"));
+
+    run_ok(
+        &[
+            "knowledge",
             "plan-context",
             "--workspace",
             ".",

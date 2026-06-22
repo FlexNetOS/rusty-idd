@@ -114,6 +114,7 @@ pub fn classify_file(path: &str, ext: Option<&str>) -> FileCategory {
 
     if lower.starts_with("ai_merge/")
         || lower.starts_with(".idd/")
+        || is_agent_control_path(&lower)
         || file_name == "agents.md"
         || lower == ".github/copilot-instructions.md"
     {
@@ -273,6 +274,17 @@ fn is_workflow(path: &str) -> bool {
     path.starts_with(".github/workflows/") && (path.ends_with(".yml") || path.ends_with(".yaml"))
 }
 
+fn is_agent_control_path(lower: &str) -> bool {
+    lower.starts_with(".agent/")
+        || lower.starts_with(".agents/")
+        || lower.starts_with(".opencode/commands/")
+        || lower.starts_with(".opencode/skills/")
+        || lower.contains("/.agent/")
+        || lower.contains("/.agents/")
+        || lower.contains("/.opencode/commands/")
+        || lower.contains("/.opencode/skills/")
+}
+
 fn is_dotenv_like(abs_path: &Path, rel: &str) -> bool {
     let name = abs_path.file_name().and_then(|s| s.to_str()).unwrap_or(rel);
     name.starts_with(".env") || name == "env.example" || name == ".env.example"
@@ -299,6 +311,27 @@ mod tests {
         assert_eq!(classify_file(".env", None), FileCategory::SecretCandidate);
         assert_eq!(
             classify_file("AGENTS.md", Some("md")),
+            FileCategory::AgentControl
+        );
+        assert_eq!(
+            classify_file(
+                "intent-driven-template/.agent/commands/create-c4-diagram.md",
+                Some("md"),
+            ),
+            FileCategory::AgentControl
+        );
+        assert_eq!(
+            classify_file(
+                "intent-driven-template/.agents/skills/c4-diagrams/SKILL.md",
+                Some("md"),
+            ),
+            FileCategory::AgentControl
+        );
+        assert_eq!(
+            classify_file(
+                "intent-driven-template/.opencode/commands/opsx-new.md",
+                Some("md")
+            ),
             FileCategory::AgentControl
         );
     }
