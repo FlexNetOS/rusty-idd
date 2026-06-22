@@ -1,13 +1,11 @@
-# Envctl-Owned Rust Toolchain Task Evidence
+# Codex Hook Base Ref Task Evidence
 
-- Task: `KBTASK-RUSTY-IDD-ENVCTL-OWNED-RUST-TOOLCHAIN`
-- Change: `envctl-owned-rust-toolchain-cache`
-- Goal file: `.idd/goals/envctl-owned-rust-toolchain-cache.md`
-- Branch: `feature/envctl-owned-rust-toolchain-cache`
+- Task: `KBTASK-RUSTY-IDD-CODEX-HOOK-BASE-REF`
+- Change: `fix-codex-hook-base-ref`
+- Goal file: `.idd/goals/fix-codex-hook-base-ref.md`
+- Branch: `fix/codex-hook-issues`
 - Claim: `claim recorded by this Rusty IDD worktree owner for the active implementation slice`
 
-This task adds a Rusty IDD audit contract for parent `meta` / `envctl` owned
-Rust toolchain state. The implementation reports the actual Cargo-executed
-compiler path, Cargo binary path, homes, wrapper, cache root, linker, toolchain,
-and backend policy, then rejects user-global or system-owned paths in strict
-audit mode.
+This task fixes Codex Stop hook delivery detection so a feature worktree created
+from `origin/develop` is not falsely treated as undelivered work when the local
+`develop` branch is stale.

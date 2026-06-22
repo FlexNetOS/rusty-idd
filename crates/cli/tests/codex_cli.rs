@@ -431,6 +431,32 @@ fn codex_workflow_check_stop_requires_delivery_evidence_for_dirty_work() {
 }
 
 #[test]
+fn codex_workflow_check_stop_prefers_origin_develop_for_delivery_base() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("base.txt"), "remote develop base\n");
+    git_ok(root.path(), &["add", "."]);
+    git_ok(root.path(), &["commit", "-m", "remote develop base"]);
+    git_ok(
+        root.path(),
+        &["update-ref", "refs/remotes/origin/develop", "HEAD"],
+    );
+
+    let out = run_ok(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(out.contains("autonomous workflow check passed"));
+}
+
+#[test]
 fn codex_workflow_check_rejects_test_before_generated_artifacts() {
     let root = setup_workflow_repo();
     write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
