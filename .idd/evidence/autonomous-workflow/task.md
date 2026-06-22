@@ -16,3 +16,8 @@ semantics, with negative workflow-check coverage for Stop, `git push`,
 `gh pr create`, `gh pr merge --auto`, and task completion. The review also
 closed the same stale-evidence gap for PR evidence by requiring the active
 change and current branch before dirty-work stop handoff passes.
+
+Completion evidence: PR #86 merged the main review upgrade to `develop`; PR #88
+merged the final parser-boundary and PR-evidence correction to `develop` after
+all required GitHub checks passed. The repo-local task card is marked done with
+both merged PR URLs.

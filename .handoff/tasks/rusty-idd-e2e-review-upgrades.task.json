@@ -2,7 +2,7 @@
   "id": "KBTASK-RUSTY-IDD-E2E-REVIEW-UPGRADES",
   "source": "tasks/rusty-idd-e2e-review-upgrades",
   "title": "Deep review and upgrade Rusty IDD E2E workflow tests",
-  "status": "claimed",
+  "status": "done",
   "priority": "high",
   "assignee": "codex",
   "claim": {
@@ -11,8 +11,17 @@
     "worktree": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-review-upgrades"
   },
   "checkpoint": {
-    "status": "in_progress",
-    "note": "Validation and PR evidence binding implemented; focused workflow-check tests and full post-refresh just ci passed before publication evidence."
+    "status": "complete",
+    "note": "Validation and PR evidence binding implemented, regenerated artifacts refreshed, local gates passed, and PRs #86/#88 merged to develop on green."
+  },
+  "completion": {
+    "completed_by": "codex",
+    "completed_at": "2026-06-22T04:29:16Z",
+    "merged_prs": [
+      "https://github.com/FlexNetOS/rusty-idd/pull/86",
+      "https://github.com/FlexNetOS/rusty-idd/pull/88"
+    ],
+    "result": "Professional-grade workflow evidence gates with success semantics, active-change binding, PR evidence binding, and trailing-bullet parser coverage are merged to develop."
   },
   "intent_lock": {
     "goal": "deep research code review loop over the comprehensive E2E workflow test suite",

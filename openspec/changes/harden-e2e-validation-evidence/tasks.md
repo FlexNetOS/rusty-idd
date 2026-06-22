@@ -30,4 +30,4 @@
 - [x] 4.3 Run focused Codex CLI tests.
 - [x] 4.4 Run `just ci` with the review goal file and active change.
 - [x] 4.5 Run OpenSpec status/validate, secret scan, and workflow-check gates.
-- [ ] 4.6 Record validation, rollback, PR, and completion evidence.
+- [x] 4.6 Record validation, rollback, PR, and completion evidence.
