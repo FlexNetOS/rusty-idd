@@ -378,6 +378,11 @@ fn workflow_check(args: WorkflowCheckArgs) -> anyhow::Result<()> {
 
     check_task_evidence(&root, &mut failures);
 
+    let requires_validation_before_action = hook_input_requires_validation(&hook_input);
+    if requires_validation_before_action {
+        check_validation_evidence(&root, &mut failures);
+    }
+
     if matches!(args.phase, WorkflowPhase::Stop) && has_work_requiring_delivery(&root) {
         check_delivery_evidence(&root, &mut failures);
     }
@@ -437,6 +442,12 @@ fn command_is_write_intent(command: &str) -> bool {
         "git add",
         "git commit",
         "git push",
+        "gh pr create",
+        "gh pr merge",
+        "hf done",
+        "handoff done",
+        "task complete",
+        "task done",
         "git merge",
         "git rebase",
         "git worktree add",
@@ -453,6 +464,36 @@ fn command_is_write_intent(command: &str) -> bool {
         "manifest",
     ];
     write_markers.iter().any(|marker| lower.contains(marker))
+}
+
+fn hook_input_requires_validation(input: &Option<Value>) -> bool {
+    let Some(value) = input else {
+        return false;
+    };
+    let command = value
+        .get("tool_input")
+        .and_then(|input| input.get("command"))
+        .and_then(Value::as_str)
+        .or_else(|| value.get("command").and_then(Value::as_str))
+        .unwrap_or_default()
+        .trim();
+    command_requires_validation(command)
+}
+
+fn command_requires_validation(command: &str) -> bool {
+    let lower = command.to_ascii_lowercase();
+    let validation_markers = [
+        "git push",
+        "gh pr create",
+        "gh pr merge",
+        "hf done",
+        "handoff done",
+        "task complete",
+        "task done",
+    ];
+    validation_markers
+        .iter()
+        .any(|marker| lower.contains(marker))
 }
 
 fn check_develop_worktree(root: &Path, failures: &mut Vec<String>) {
@@ -544,20 +585,7 @@ fn has_work_requiring_delivery(root: &Path) -> bool {
 }
 
 fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {
-    let validation = root.join(".idd/evidence/autonomous-workflow/validation.md");
-    match read_text(&validation) {
-        Ok(text)
-            if text.contains("Build:")
-                && text.contains("Test:")
-                && text.contains("Lint:")
-                && text.contains("Secret scan:")
-                && text.contains("Manifest:") => {}
-        Ok(_) => failures.push(
-            "validation evidence must include Build, Test, Lint, Secret scan, and Manifest results"
-                .to_string(),
-        ),
-        Err(_) => failures.push("missing validation evidence for autonomous workflow".to_string()),
-    }
+    check_validation_evidence(root, failures);
 
     let pr = root.join(".idd/evidence/autonomous-workflow/pr.md");
     match read_text(&pr) {
@@ -570,6 +598,39 @@ fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {
         Err(_) => {
             failures.push("missing PR/automerge evidence for autonomous workflow".to_string())
         }
+    }
+}
+
+fn check_validation_evidence(root: &Path, failures: &mut Vec<String>) {
+    let validation = root.join(".idd/evidence/autonomous-workflow/validation.md");
+    match read_text(&validation) {
+        Ok(text) if validation_evidence_is_complete(&text) => {}
+        Ok(_) => failures.push(
+            "validation evidence must include Build, Generated artifacts, Test, Lint, Secret scan, and Manifest results with Test after Generated artifacts"
+                .to_string(),
+        ),
+        Err(_) => failures.push("missing validation evidence for autonomous workflow".to_string()),
+    }
+}
+
+fn validation_evidence_is_complete(text: &str) -> bool {
+    let has_required = [
+        "Build:",
+        "Generated artifacts:",
+        "Test:",
+        "Lint:",
+        "Secret scan:",
+        "Manifest:",
+    ]
+    .iter()
+    .all(|marker| text.contains(marker));
+    has_required && marker_after(text, "Generated artifacts:", "Test:")
+}
+
+fn marker_after(text: &str, before: &str, after: &str) -> bool {
+    match (text.find(before), text.find(after)) {
+        (Some(before_idx), Some(after_idx)) => before_idx < after_idx,
+        _ => false,
     }
 }
 
