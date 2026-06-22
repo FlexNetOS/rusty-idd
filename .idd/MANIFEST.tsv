@@ -34,8 +34,6 @@ path	size_bytes	fnv1a64
 .gitignore	196	6141a63d4b7f3309
 .handoff/README.md	729	d5cd430f0555a38d
 .handoff/context/capsule.json	890	81711f6d6300466e
-.handoff/ledger.db	1056768	7f8950667d9a57d0
-.handoff/ledger.db.rvf	162	a5b09c0383d89535
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/rusty-idd-comprehensive-e2e-workflow-tests.task.json	818	234894891b4d63da
@@ -46,9 +44,9 @@ path	size_bytes	fnv1a64
 .idd/goals/comprehensive-e2e-test-suite.md	1638	3fd24a8b94c3f6fc
 .idd/goals/grit-full-integration.md	1079	7b79112fc741a993
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	33555	69868bc3b3e36d90
-.idd/knowledge/architecture.md	6633	6cc853afe897bccd
-.idd/knowledge/index.json	18713262	cc2ba5f60e7c04a2
+.idd/knowledge/architecture.json	33555	50820c2ef7ca7d86
+.idd/knowledge/architecture.md	6633	5565609497cbc413
+.idd/knowledge/index.json	18713262	b64bd88e57ee9e4c
 .idd/knowledge/integration-owners.json	3016	36e1aa4ed4a5cc6f
 .idd/knowledge/integration-owners.md	1028	99427561b4c11713
 .idd/knowledge/integration-plan.json	29049	2a0ab0e7f976b4e5
@@ -61,7 +59,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	20472	c77e81884cea033b
 .idd/knowledge/plan-context.json	74228	c1907378bf7c1601
 .idd/knowledge/plan-context.md	17756	05a3e13cafe2a73a
-.idd/knowledge/report.md	4979	7a54574ad2cdf223
+.idd/knowledge/report.md	4979	3a2ab23b913064d5
 .idd/knowledge/system-architecture.json	58449	32c18f3315470b91
 .idd/knowledge/system-architecture.md	16392	f2e94520494ee779
 .idd/workflow/active-change	38	1b3e012d3ff21a85
