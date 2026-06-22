@@ -40,7 +40,7 @@ path	size_bytes	fnv1a64
 .handoff/tasks/rusty-idd-e2e-review-upgrades.task.json	1470	3d899c1f0f951005
 .handoff/tasks/rusty-idd-prompt-hub-boundary-decision.task.json	1745	e9c9be153c724cc7
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/evidence/autonomous-workflow/pr.md	475	e4d1c4d0f2d377ce
+.idd/evidence/autonomous-workflow/pr.md	529	f0cfed1f630fc512
 .idd/evidence/autonomous-workflow/task.md	681	88d0e3273a3d62ac
 .idd/evidence/autonomous-workflow/validation.md	1780	2da70c71c70a0719
 .idd/evidence/prompt-hub-boundary/research.md	598	3318f818ef05fb2f
@@ -53,9 +53,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	33653	9e1e4e0cbf2700a8
-.idd/knowledge/architecture.md	6633	1bb137236833155f
-.idd/knowledge/index.json	19676878	3fd29a824bc29350
+.idd/knowledge/architecture.json	33653	9e456c148f9e6bfd
+.idd/knowledge/architecture.md	6633	7369fe5a2986abd4
+.idd/knowledge/index.json	19676878	b0d8be71f7d98a8f
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -68,7 +68,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	87500	6a5b516c6de67f25
 .idd/knowledge/plan-context.md	18600	a033763483d50fd4
-.idd/knowledge/report.md	5051	2c66ba0f8e72a967
+.idd/knowledge/report.md	5051	04664252c1debbd8
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	34	6e0f31283f8dcf6f

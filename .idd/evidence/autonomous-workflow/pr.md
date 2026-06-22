@@ -1,8 +1,8 @@
-# Handoff KB Refresh PR Evidence
+# Envctl-Owned Rust Toolchain PR Evidence
 
-- Change: `refresh-handoff-kb-upstream`
-- PR: #94 https://github.com/FlexNetOS/rusty-idd/pull/94
-- Branch: `fix/refresh-handoff-kb-mirror`
+- Change: `envctl-owned-rust-toolchain-cache`
+- PR: #96 https://github.com/FlexNetOS/rusty-idd/pull/96
+- Branch: `feature/envctl-owned-rust-toolchain-cache`
 - Base: develop
 - State: open
 - Draft: false
@@ -12,5 +12,5 @@
 GitHub verification command:
 
 ```bash
-rtk gh pr view 94 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup,createdAt,author,mergedAt,mergeCommit
+rtk gh pr view 96 --repo FlexNetOS/rusty-idd --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup,createdAt,author,mergedAt,mergeCommit
 ```
