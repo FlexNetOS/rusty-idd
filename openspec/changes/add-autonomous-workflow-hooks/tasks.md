@@ -29,5 +29,5 @@
 - [x] 4.3 Run `rusty-idd codex runtime-audit --workspace .`.
 - [x] 4.4 Refresh `.idd/MANIFEST.tsv` and required knowledge artifacts or record why unchanged.
 - [x] 4.5 Checkpoint the task card with validation evidence.
-- [ ] 4.6 Commit, push the feature branch, open a PR into `develop`, and enable auto-merge.
+- [x] 4.6 Commit, push the feature branch, open a PR into `develop`, and enable auto-merge.
 - [ ] 4.7 Record PR/automerge evidence and mark the tracked task done.

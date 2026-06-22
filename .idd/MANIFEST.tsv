@@ -34,11 +34,10 @@ path	size_bytes	fnv1a64
 .gitignore	196	6141a63d4b7f3309
 .handoff/README.md	729	d5cd430f0555a38d
 .handoff/context/capsule.json	890	81711f6d6300466e
-.handoff/ledger.db	1056768	8020e1db48ced0fc
-.handoff/ledger.db.rvf	162	97c9f1a0c3d4c495
 .handoff/packets/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .idd/LOCK.md	65	fd4e6132014f2489
+.idd/evidence/autonomous-workflow/pr.md	548	e1a7db940578d630
 .idd/evidence/autonomous-workflow/task.md	430	5ea6be206af72aa7
 .idd/evidence/autonomous-workflow/validation.md	3084	a421bb915cf31669
 .idd/knowledge/architecture.json	33097	827c80532d8b0645
@@ -87,7 +86,7 @@ AI_MERGE/28_fleet_handoff_owner_surfaces.md	5447	1305c9a52baece78
 AI_MERGE/29_agent_communication_queue_owner_surfaces.md	5075	7aa21a980d87ddff
 AI_MERGE/30_env_vault_relay_readiness.md	4230	c1bcfea56843c04a
 AI_MERGE/31_prompt_front_door_upstream_adoption.md	6969	1d4b208628aec273
-AI_MERGE/32_autonomous_workflow_hooks.md	1169	a45bcf743d1535ec
+AI_MERGE/32_autonomous_workflow_hooks.md	1310	d3a10dfe122ba068
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
@@ -520,7 +519,7 @@ intent-driven-template/skills-lock.json	278	f6935aad3f73973f
 openspec/changes/add-autonomous-workflow-hooks/design.md	3348	f85fde976a2213e4
 openspec/changes/add-autonomous-workflow-hooks/proposal.md	1479	7bb0c5d0d41c64f3
 openspec/changes/add-autonomous-workflow-hooks/specs/codex-harness-flow/spec.md	3255	883e886eb8489d1e
-openspec/changes/add-autonomous-workflow-hooks/tasks.md	1862	ea7c45f9146be4b8
+openspec/changes/add-autonomous-workflow-hooks/tasks.md	1862	aa469dcfc9c71b40
 openspec/changes/add-graph-context-planning/design.md	1893	5e61a0d79a0a0e18
 openspec/changes/add-graph-context-planning/proposal.md	1325	2e39b4c039e82fe6
 openspec/changes/add-graph-context-planning/specs/graph-context-planning/spec.md	1110	79d135d32bcc3af5

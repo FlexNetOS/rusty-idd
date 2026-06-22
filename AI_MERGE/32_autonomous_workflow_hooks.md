@@ -22,5 +22,9 @@
 
 ## PR Handoff
 
-Pending until the feature branch is pushed, a PR is opened against `develop`,
-and auto-merge is enabled.
+- PR: #75 https://github.com/FlexNetOS/rusty-idd/pull/75
+- Branch pushed: `feature/autonomous-workflow-hooks-v2`
+- Base: `develop`
+- Auto-merge: enabled
+- Merge method: squash
+- Merge state at evidence capture: blocked pending in-progress checks
