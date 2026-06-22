@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/autonomous-workflow-hooks",
   "source_plan": ".idd/knowledge/integration-plan.json",
   "next_change_id": "integrate-rtk-ai-foundation",
   "counts": {

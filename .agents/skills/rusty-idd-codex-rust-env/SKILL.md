@@ -22,6 +22,8 @@ Use this skill to operate the repo-local Codex environment.
 - `.codex/agents/*.toml`: project custom subagents.
 - `.codex/loops/*.toml`: dry-run-first multi-model loop definitions.
 - `rusty-idd codex env-check`: Rust-native invariant checker.
+- `rusty-idd codex workflow-check`: Rust-native autonomous workflow checker for
+  active change, task-card, validation, and PR handoff evidence.
 - `rusty-idd codex runtime-audit`: Rust-native audit proving the repo-local Codex runtime
   is not using Python hooks/scripts.
 - `rusty-idd codex system-audit`: Rust-native audit proving the active Codex binary and
@@ -40,6 +42,8 @@ Use this skill to operate the repo-local Codex environment.
 4. Query symbols/files/impact before rescanning source.
 5. Use `rusty-idd spec status` or `rusty-idd spec next` to verify the active
    OpenSpec change before any write-capable implementation.
+   Record the active change in `.idd/workflow/active-change` when hooks need a
+   deterministic change selector.
 6. Use subagents only when explicitly useful:
    - `rusty-idd-explorer` for read-heavy mapping.
    - `rusty-idd-gap-hunter` for omissions.
@@ -74,7 +78,9 @@ Use this skill to operate the repo-local Codex environment.
    write-capable pass only after explicit authorization and ready OpenSpec
    artifacts.
 13. Verify with focused gates, then broaden.
-14. Refresh generated artifacts and run the Codex invariant check.
+14. Record validation and PR handoff evidence under
+   `.idd/evidence/autonomous-workflow/` before final Stop handoff.
+15. Refresh generated artifacts and run the Codex invariant check.
 
 ## Verification
 
@@ -83,6 +89,8 @@ just codex-env-check
 just codex-runtime-audit
 cargo run --bin rusty-idd -- codex system-audit
 cargo run --bin rusty-idd -- codex model-loop
+cargo run --bin rusty-idd -- codex workflow-check --phase pre-tool
+cargo run --bin rusty-idd -- codex workflow-check --phase stop
 git diff --check
 rusty-idd spec status openspec/changes/<change>
 just knowledge

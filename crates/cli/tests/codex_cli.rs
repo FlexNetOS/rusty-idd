@@ -48,9 +48,60 @@ fn write(path: &Path, content: &str) {
     fs::write(path, content).unwrap();
 }
 
+fn git_ok(cwd: &Path, args: &[&str]) {
+    let out = Command::new("git")
+        .args(args)
+        .current_dir(cwd)
+        .output()
+        .expect("run git");
+    assert!(
+        out.status.success(),
+        "git {:?} should succeed\nstdout={}\nstderr={}",
+        args,
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+}
+
 const STOP_HOOK_JSON: &str = r#"{
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase pre-tool'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD workflow before tool use"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase post-tool'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD workflow after tool use"
+          }
+        ]
+      }
+    ],
     "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase stop'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD workflow handoff"
+          }
+        ]
+      },
       {
         "hooks": [
           {
@@ -61,10 +112,78 @@ const STOP_HOOK_JSON: &str = r#"{
           }
         ]
       }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase stop'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD subagent workflow handoff"
+          }
+        ]
+      }
     ]
   }
 }
 "#;
+
+fn setup_workflow_repo() -> tempfile::TempDir {
+    let root = tempfile::tempdir().unwrap();
+    git_ok(root.path(), &["init"]);
+    git_ok(root.path(), &["config", "user.email", "codex@example.com"]);
+    git_ok(root.path(), &["config", "user.name", "Codex Test"]);
+    write(&root.path().join("README.md"), "seed\n");
+    git_ok(root.path(), &["add", "README.md"]);
+    git_ok(root.path(), &["commit", "-m", "seed"]);
+    git_ok(root.path(), &["switch", "-c", "develop"]);
+    git_ok(root.path(), &["switch", "-c", "feature/workflow-hooks"]);
+
+    write(
+        &root.path().join(".idd/knowledge/plan-context.md"),
+        "# Plan Context\n",
+    );
+    write(
+        &root.path().join(".idd/workflow/active-change"),
+        "add-autonomous-workflow-hooks\n",
+    );
+    write(
+        &root
+            .path()
+            .join(".idd/evidence/autonomous-workflow/task.md"),
+        "Task: KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS\nclaim: hf claim KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS\n",
+    );
+    write(
+        &root
+            .path()
+            .join("openspec/changes/add-autonomous-workflow-hooks/proposal.md"),
+        "# proposal\n",
+    );
+    write(
+        &root
+            .path()
+            .join("openspec/changes/add-autonomous-workflow-hooks/design.md"),
+        "# design\n",
+    );
+    write(
+        &root
+            .path()
+            .join("openspec/changes/add-autonomous-workflow-hooks/tasks.md"),
+        "- [ ] task\n",
+    );
+    write(
+        &root.path().join(
+            "openspec/changes/add-autonomous-workflow-hooks/specs/codex-harness-flow/spec.md",
+        ),
+        "## ADDED Requirements\n\n### Requirement: Test\nThe system SHALL work.\n\n#### Scenario: Works\n- **WHEN** checked\n- **THEN** it passes\n",
+    );
+    write(
+        &root.path().join("adr/0001-test.md"),
+        "# 0001. Test\n\n- Status: accepted\n",
+    );
+    root
+}
 
 #[test]
 fn codex_env_check_passes_on_required_repo_artifacts() {
@@ -118,7 +237,7 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
     );
     write(
         &root.path().join("docs/rusty-idd/codex-environment.md"),
-        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\n`rusty-idd merge-tools show`\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nenvctl\ntoolchain\n.codex/rules\n",
+        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\n`rusty-idd merge-tools show`\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nAutonomous Workflow Hooks\ncodex workflow-check\nenvctl\ntoolchain\n.codex/rules\n",
     );
     write(
         &root.path().join("docs/rusty-idd/merge-tools-package.md"),
@@ -159,6 +278,94 @@ developer_instructions = "Before editing, verify the active OpenSpec change. Upd
 
     let out = run_ok(&["codex", "env-check", "--workspace", "."], root.path());
     assert!(out.contains("invariant check passed"));
+}
+
+#[test]
+fn codex_workflow_check_passes_for_ready_feature_worktree() {
+    let root = setup_workflow_repo();
+
+    let out = run_ok(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(out.contains("autonomous workflow check passed"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_missing_openspec_readiness() {
+    let root = setup_workflow_repo();
+    fs::remove_file(
+        root.path()
+            .join("openspec/changes/add-autonomous-workflow-hooks/tasks.md"),
+    )
+    .unwrap();
+
+    let (_stdout, stderr) = run_fail(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(stderr.contains("missing OpenSpec tasks"));
+}
+
+#[test]
+fn codex_workflow_check_stop_requires_delivery_evidence_for_dirty_work() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
+
+    let (_stdout, stderr) = run_fail(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(stderr.contains("missing validation evidence"));
+    assert!(stderr.contains("missing PR/automerge evidence"));
+
+    write(
+        &root
+            .path()
+            .join(".idd/evidence/autonomous-workflow/validation.md"),
+        "Build: pass\nTest: pass\nLint: pass\nSecret scan: pass\nManifest: refreshed\n",
+    );
+    write(
+        &root.path().join(".idd/evidence/autonomous-workflow/pr.md"),
+        "PR: #123\nBase: develop\nauto-merge: enabled\n",
+    );
+
+    let out = run_ok(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+    assert!(out.contains("autonomous workflow check passed"));
 }
 
 #[test]

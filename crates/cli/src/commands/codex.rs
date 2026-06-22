@@ -1,12 +1,14 @@
 use std::collections::BTreeMap;
 use std::fs;
+use std::io::{self, Read};
 use std::path::{Path, PathBuf};
 use std::process::Command;
 use std::time::{SystemTime, UNIX_EPOCH};
 
 use anyhow::{bail, Context};
-use clap::{Args, Subcommand};
+use clap::{Args, Subcommand, ValueEnum};
 use serde::{Deserialize, Serialize};
+use serde_json::Value;
 
 #[derive(Subcommand)]
 pub enum CodexCommand {
@@ -18,6 +20,8 @@ pub enum CodexCommand {
     RuntimeAudit(RuntimeAuditArgs),
     /// Audit the active Codex install and parent-managed source-build path.
     SystemAudit(SystemAuditArgs),
+    /// Check change-specific autonomous Rusty IDD workflow gates for hooks.
+    WorkflowCheck(WorkflowCheckArgs),
 }
 
 #[derive(Args)]
@@ -52,6 +56,23 @@ pub struct SystemAuditArgs {
     pub codex_source: Option<PathBuf>,
     #[arg(long)]
     pub envctl: Option<PathBuf>,
+}
+
+#[derive(Args)]
+pub struct WorkflowCheckArgs {
+    #[arg(long, default_value = ".")]
+    pub workspace: PathBuf,
+    #[arg(long, value_enum)]
+    pub phase: WorkflowPhase,
+    #[arg(long)]
+    pub change: Option<String>,
+}
+
+#[derive(Clone, Copy, Debug, Eq, PartialEq, ValueEnum)]
+pub enum WorkflowPhase {
+    PreTool,
+    PostTool,
+    Stop,
 }
 
 #[derive(Debug, Deserialize)]
@@ -117,6 +138,7 @@ fn try_run(command: CodexCommand) -> anyhow::Result<()> {
         CodexCommand::ModelLoop(args) => model_loop(args),
         CodexCommand::RuntimeAudit(args) => runtime_audit(&args.workspace),
         CodexCommand::SystemAudit(args) => system_audit(args),
+        CodexCommand::WorkflowCheck(args) => workflow_check(args),
     }
 }
 
@@ -205,8 +227,12 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
             &[
                 "git rev-parse --show-toplevel",
                 "--manifest-path",
+                "codex workflow-check",
                 "codex env-check",
                 "--workspace",
+                "PreToolUse",
+                "PostToolUse",
+                "SubagentStop",
                 "\"timeout\": 180",
             ][..],
         ),
@@ -233,6 +259,8 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
                 "Upgrade-Only Gap Handling",
                 "meta` / `envctl`",
                 "Multi-Model Loop",
+                "Autonomous Workflow Hooks",
+                "codex workflow-check",
                 "envctl",
                 "toolchain",
                 ".codex/rules",
@@ -319,6 +347,303 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
 
     println!("Rusty IDD Codex invariant check passed.");
     Ok(())
+}
+
+fn workflow_check(args: WorkflowCheckArgs) -> anyhow::Result<()> {
+    let root = canonical_workspace(&args.workspace)?;
+    let hook_input = read_hook_input();
+
+    if args.phase == WorkflowPhase::PreTool && !hook_input_is_write_intent(&hook_input) {
+        println!("Rusty IDD autonomous workflow check skipped for read-only tool input.");
+        return Ok(());
+    }
+
+    let mut failures = Vec::new();
+    check_develop_worktree(&root, &mut failures);
+    check_required_file(
+        &root,
+        ".idd/knowledge/plan-context.md",
+        "missing graph-backed plan context for the active goal",
+        &mut failures,
+    );
+
+    let change = args.change.or_else(|| active_change(&root));
+    match change.as_deref() {
+        Some(change) => check_openspec_change_ready(&root, change, &mut failures),
+        None => failures.push(
+            "missing active OpenSpec change; set RUSTY_IDD_CHANGE or .idd/workflow/active-change"
+                .to_string(),
+        ),
+    }
+
+    check_task_evidence(&root, &mut failures);
+
+    if matches!(args.phase, WorkflowPhase::Stop) && has_work_requiring_delivery(&root) {
+        check_delivery_evidence(&root, &mut failures);
+    }
+
+    if !failures.is_empty() {
+        eprintln!("Rusty IDD autonomous workflow check failed:");
+        for failure in &failures {
+            eprintln!("- {failure}");
+        }
+        bail!("{} autonomous workflow check(s) failed", failures.len());
+    }
+
+    println!(
+        "Rusty IDD autonomous workflow check passed for {:?}.",
+        args.phase
+    );
+    Ok(())
+}
+
+fn read_hook_input() -> Option<Value> {
+    let mut input = String::new();
+    if io::stdin().read_to_string(&mut input).is_err() || input.trim().is_empty() {
+        return None;
+    }
+    serde_json::from_str(input.trim()).ok()
+}
+
+fn hook_input_is_write_intent(input: &Option<Value>) -> bool {
+    let Some(value) = input else {
+        return true;
+    };
+    let tool_name = value
+        .get("tool_name")
+        .and_then(Value::as_str)
+        .unwrap_or_default();
+    if tool_name.eq_ignore_ascii_case("apply_patch") {
+        return true;
+    }
+    let command = value
+        .get("tool_input")
+        .and_then(|input| input.get("command"))
+        .and_then(Value::as_str)
+        .or_else(|| value.get("command").and_then(Value::as_str))
+        .unwrap_or_default()
+        .trim();
+    if command.is_empty() {
+        return true;
+    }
+    command_is_write_intent(command)
+}
+
+fn command_is_write_intent(command: &str) -> bool {
+    let lower = command.to_ascii_lowercase();
+    let write_markers = [
+        "apply_patch",
+        "cargo fmt",
+        "git add",
+        "git commit",
+        "git push",
+        "git merge",
+        "git rebase",
+        "git worktree add",
+        "mkdir",
+        "touch ",
+        "rm ",
+        "mv ",
+        "cp ",
+        "perl ",
+        "tee ",
+        " >",
+        ">>",
+        "knowledge plan-context",
+        "manifest",
+    ];
+    write_markers.iter().any(|marker| lower.contains(marker))
+}
+
+fn check_develop_worktree(root: &Path, failures: &mut Vec<String>) {
+    match git_output(root, &["branch", "--show-current"]) {
+        Ok(branch) => {
+            let branch = branch.trim();
+            if branch.is_empty() || matches!(branch, "main" | "master" | "develop") {
+                failures.push(format!(
+                    "implementation must run on a feature branch from develop, got '{branch}'"
+                ));
+            }
+        }
+        Err(error) => failures.push(format!("could not determine current branch: {error}")),
+    }
+
+    if let Err(error) = git_output(root, &["rev-parse", "--git-common-dir"]) {
+        failures.push(format!("could not verify git worktree metadata: {error}"));
+    }
+
+    if git_status(root, &["merge-base", "--is-ancestor", "develop", "HEAD"]).is_err() {
+        failures.push("current branch HEAD is not based on local develop".to_string());
+    }
+}
+
+fn active_change(root: &Path) -> Option<String> {
+    std::env::var("RUSTY_IDD_CHANGE")
+        .ok()
+        .filter(|value| !value.trim().is_empty())
+        .or_else(|| {
+            fs::read_to_string(root.join(".idd/workflow/active-change"))
+                .ok()
+                .map(|value| value.trim().to_string())
+                .filter(|value| !value.is_empty())
+        })
+}
+
+fn check_openspec_change_ready(root: &Path, change: &str, failures: &mut Vec<String>) {
+    let change_dir = root.join("openspec/changes").join(change);
+    for (rel, detail) in [
+        ("proposal.md", "missing OpenSpec proposal"),
+        ("design.md", "missing OpenSpec design"),
+        ("tasks.md", "missing OpenSpec tasks"),
+    ] {
+        if !change_dir.join(rel).exists() {
+            failures.push(format!("{detail}: openspec/changes/{change}/{rel}"));
+        }
+    }
+
+    let specs_dir = change_dir.join("specs");
+    if !contains_spec_file(&specs_dir) {
+        failures.push(format!(
+            "missing OpenSpec spec delta under openspec/changes/{change}/specs"
+        ));
+    }
+    if !root.join("adr").is_dir() || !contains_markdown_file(&root.join("adr")) {
+        failures.push("missing repo-level ADR artifact for OpenSpec change".to_string());
+    }
+}
+
+fn check_task_evidence(root: &Path, failures: &mut Vec<String>) {
+    let local_cards = root.join(".handoff/tasks");
+    if contains_task_card(&local_cards) {
+        return;
+    }
+    let evidence = root.join(".idd/evidence/autonomous-workflow/task.md");
+    match read_text(&evidence) {
+        Ok(text)
+            if (text.contains("KBTASK-") || text.contains("HFTASK-")) && text.contains("claim") => {
+        }
+        Ok(_) => failures.push(
+            ".idd/evidence/autonomous-workflow/task.md must name a claimed KBTASK/HFTASK"
+                .to_string(),
+        ),
+        Err(_) => failures.push(
+            "missing task-card evidence; create/claim a KBTASK/HFTASK before implementation"
+                .to_string(),
+        ),
+    }
+}
+
+fn has_work_requiring_delivery(root: &Path) -> bool {
+    git_output(root, &["status", "--porcelain", "--untracked-files=all"])
+        .map(|output| !output.trim().is_empty())
+        .unwrap_or(true)
+        || git_output(root, &["rev-list", "--count", "develop..HEAD"])
+            .map(|output| output.trim() != "0")
+            .unwrap_or(true)
+}
+
+fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {
+    let validation = root.join(".idd/evidence/autonomous-workflow/validation.md");
+    match read_text(&validation) {
+        Ok(text)
+            if text.contains("Build:")
+                && text.contains("Test:")
+                && text.contains("Lint:")
+                && text.contains("Secret scan:")
+                && text.contains("Manifest:") => {}
+        Ok(_) => failures.push(
+            "validation evidence must include Build, Test, Lint, Secret scan, and Manifest results"
+                .to_string(),
+        ),
+        Err(_) => failures.push("missing validation evidence for autonomous workflow".to_string()),
+    }
+
+    let pr = root.join(".idd/evidence/autonomous-workflow/pr.md");
+    match read_text(&pr) {
+        Ok(text)
+            if text.contains("PR:")
+                && text.contains("Base: develop")
+                && text.to_ascii_lowercase().contains("auto-merge") => {}
+        Ok(_) => failures
+            .push("PR evidence must include PR, Base: develop, and auto-merge status".to_string()),
+        Err(_) => {
+            failures.push("missing PR/automerge evidence for autonomous workflow".to_string())
+        }
+    }
+}
+
+fn check_required_file(root: &Path, rel: &str, detail: &str, failures: &mut Vec<String>) {
+    if !root.join(rel).exists() {
+        failures.push(format!("{detail}: {rel}"));
+    }
+}
+
+fn contains_spec_file(dir: &Path) -> bool {
+    contains_file_named(dir, "spec.md")
+}
+
+fn contains_markdown_file(dir: &Path) -> bool {
+    contains_file_with_extension(dir, "md")
+}
+
+fn contains_task_card(dir: &Path) -> bool {
+    contains_file_with_extension(dir, "json")
+}
+
+fn contains_file_named(dir: &Path, name: &str) -> bool {
+    let Ok(entries) = fs::read_dir(dir) else {
+        return false;
+    };
+    entries.filter_map(Result::ok).any(|entry| {
+        let path = entry.path();
+        if path.is_dir() {
+            contains_file_named(&path, name)
+        } else {
+            path.file_name().is_some_and(|file_name| file_name == name)
+        }
+    })
+}
+
+fn contains_file_with_extension(dir: &Path, extension: &str) -> bool {
+    let Ok(entries) = fs::read_dir(dir) else {
+        return false;
+    };
+    entries.filter_map(Result::ok).any(|entry| {
+        let path = entry.path();
+        if path.is_dir() {
+            contains_file_with_extension(&path, extension)
+        } else {
+            path.extension().is_some_and(|ext| ext == extension)
+        }
+    })
+}
+
+fn git_status(root: &Path, args: &[&str]) -> anyhow::Result<()> {
+    let status = Command::new("git")
+        .args(args)
+        .current_dir(root)
+        .status()
+        .with_context(|| format!("run git {}", args.join(" ")))?;
+    status
+        .success()
+        .then_some(())
+        .ok_or_else(|| anyhow::anyhow!("git {} exited with {}", args.join(" "), status))
+}
+
+fn git_output(root: &Path, args: &[&str]) -> anyhow::Result<String> {
+    let output = Command::new("git")
+        .args(args)
+        .current_dir(root)
+        .output()
+        .with_context(|| format!("run git {}", args.join(" ")))?;
+    if !output.status.success() {
+        bail!(
+            "git {} failed: {}",
+            args.join(" "),
+            String::from_utf8_lossy(&output.stderr).trim()
+        );
+    }
+    Ok(String::from_utf8_lossy(&output.stdout).to_string())
 }
 
 fn runtime_audit(workspace: &Path) -> anyhow::Result<()> {
