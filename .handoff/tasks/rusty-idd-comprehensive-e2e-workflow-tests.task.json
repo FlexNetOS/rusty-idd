@@ -1,0 +1,20 @@
+{
+  "id": "KBTASK-RUSTY-IDD-COMPREHENSIVE-E2E-WORKFLOW-TESTS",
+  "source": "tasks/rusty-idd-comprehensive-e2e-workflow-tests",
+  "title": "Add comprehensive Rusty IDD E2E workflow tests",
+  "status": "claimed",
+  "priority": "high",
+  "assignee": "codex",
+  "claim": {
+    "agent": "codex",
+    "branch": "feature/e2e-test-suite",
+    "worktree": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-test-suite"
+  },
+  "intent_lock": {
+    "goal": "comprehensive E2E test suite for the entire rusty-idd code base and workflow",
+    "change": "add-comprehensive-e2e-workflow-tests",
+    "validation": "tests mandatory after generated artifacts before task completion and push",
+    "rollback": "revert ADR 0005, workflow-check changes, tests, and generated artifacts",
+    "evidence": "AI_MERGE/35_e2e_test_suite"
+  }
+}

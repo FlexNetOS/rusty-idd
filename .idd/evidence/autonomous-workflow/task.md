@@ -1,14 +1,17 @@
 # Task Evidence
 
-- Task: `KBTASK-RUSTY-IDD-HANDOFF-SINGLE-REPO-ARCHITECTURE`
-- KB source: `tasks/rusty-idd-handoff-single-repo-architecture`
-- Claim: `rtk hf claim KBTASK-RUSTY-IDD-HANDOFF-SINGLE-REPO-ARCHITECTURE`
-- Change: `plan-handoff-single-repo-architecture`
+- Task: `KBTASK-RUSTY-IDD-COMPREHENSIVE-E2E-WORKFLOW-TESTS`
+- KB source: `tasks/rusty-idd-comprehensive-e2e-workflow-tests`
+- KB id: `019eed57-ab2a-7431-9e11-1c97dd1393fb`
+- Claim: repo-local task card
+  `.handoff/tasks/rusty-idd-comprehensive-e2e-workflow-tests.task.json`
+- Change: `add-comprehensive-e2e-workflow-tests`
 - Worktree:
-  `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
-- Branch: `feature/handoff-single-repo-architecture`
+  `/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-test-suite`
+- Branch: `feature/e2e-test-suite`
 
-The task was minted from the parent meta KB with the repo-local `handoff` build
-because the installed `rtk hf task mint` did not locate the sibling meta `.kb`
-from the Rusty IDD checkout. The resulting fleet task card was claimed before
-architecture planning and validation work started.
+The KB task was created before final validation. `rtk hf task mint --from-kb`
+could not resolve the parent meta `.kb` from either the Rusty IDD worktree or
+`/home/drdave/Desktop/meta`, so this change records a durable repo-local
+`.handoff/tasks/*.task.json` card and preserves the mint limitation in the E2E
+evidence package.

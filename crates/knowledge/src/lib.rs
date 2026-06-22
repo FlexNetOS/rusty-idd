@@ -18,7 +18,7 @@ use rusty_idd_core::manifest::workspace_fingerprint;
 use serde::{Deserialize, Serialize};
 
 const DEFAULT_MAX_PACK_TOKENS: usize = 120_000;
-const GENERATED_ARTIFACT_MAX_PACK_TOKENS: usize = 400_000;
+const GENERATED_ARTIFACT_MAX_PACK_TOKENS: usize = 800_000;
 const DEFAULT_MAX_FILE_BYTES: u64 = 512 * 1024;
 
 #[derive(Debug, Clone)]

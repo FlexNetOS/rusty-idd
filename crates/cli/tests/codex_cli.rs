@@ -1,6 +1,7 @@
 use std::fs;
+use std::io::Write;
 use std::path::Path;
-use std::process::Command;
+use std::process::{Command, Stdio};
 
 fn bin() -> &'static str {
     env!("CARGO_BIN_EXE_rusty-idd")
@@ -28,6 +29,35 @@ fn run_fail(args: &[&str], cwd: &Path) -> (String, String) {
         .current_dir(cwd)
         .output()
         .expect("run rusty-idd");
+    assert!(
+        !out.status.success(),
+        "command should fail: {:?}\nstdout={}\nstderr={}",
+        args,
+        String::from_utf8_lossy(&out.stdout),
+        String::from_utf8_lossy(&out.stderr)
+    );
+    (
+        String::from_utf8_lossy(&out.stdout).to_string(),
+        String::from_utf8_lossy(&out.stderr).to_string(),
+    )
+}
+
+fn run_fail_with_stdin(args: &[&str], cwd: &Path, stdin: &str) -> (String, String) {
+    let mut child = Command::new(bin())
+        .args(args)
+        .current_dir(cwd)
+        .stdin(Stdio::piped())
+        .stdout(Stdio::piped())
+        .stderr(Stdio::piped())
+        .spawn()
+        .expect("run rusty-idd");
+    child
+        .stdin
+        .as_mut()
+        .expect("open stdin")
+        .write_all(stdin.as_bytes())
+        .expect("write stdin");
+    let out = child.wait_with_output().expect("wait for rusty-idd");
     assert!(
         !out.status.success(),
         "command should fail: {:?}\nstdout={}\nstderr={}",
@@ -347,7 +377,7 @@ fn codex_workflow_check_stop_requires_delivery_evidence_for_dirty_work() {
         &root
             .path()
             .join(".idd/evidence/autonomous-workflow/validation.md"),
-        "Build: pass\nTest: pass\nLint: pass\nSecret scan: pass\nManifest: refreshed\n",
+        "Build: pass\nGenerated artifacts: refreshed\nTest: pass\nLint: pass\nSecret scan: pass\nManifest: refreshed\n",
     );
     write(
         &root.path().join(".idd/evidence/autonomous-workflow/pr.md"),
@@ -366,6 +396,79 @@ fn codex_workflow_check_stop_requires_delivery_evidence_for_dirty_work() {
         root.path(),
     );
     assert!(out.contains("autonomous workflow check passed"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_test_before_generated_artifacts() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
+    write(
+        &root
+            .path()
+            .join(".idd/evidence/autonomous-workflow/validation.md"),
+        "Build: pass\nTest: pass\nGenerated artifacts: refreshed\nLint: pass\nSecret scan: pass\nManifest: refreshed\n",
+    );
+    write(
+        &root.path().join(".idd/evidence/autonomous-workflow/pr.md"),
+        "PR: #123\nBase: develop\nauto-merge: enabled\n",
+    );
+
+    let (_stdout, stderr) = run_fail(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(stderr.contains("Test after Generated artifacts"));
+}
+
+#[test]
+fn codex_workflow_check_requires_validation_before_push() {
+    let root = setup_workflow_repo();
+    let hook_input =
+        r#"{"tool_name":"Bash","tool_input":{"command":"git push origin feature/workflow-hooks"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("missing validation evidence"));
+}
+
+#[test]
+fn codex_workflow_check_requires_validation_before_task_completion() {
+    let root = setup_workflow_repo();
+    let hook_input = r#"{"tool_name":"Bash","tool_input":{"command":"hf done --pr 123 KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("missing validation evidence"));
 }
 
 #[test]

@@ -1,18 +1,18 @@
 # System Operating Model
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs`
 - Source graph: `.idd/knowledge/system-architecture.json`
 - Layers: 11
 - Capabilities: 19
-- Edges: 164
+- Edges: 165
 
 ## Layers
 
 | Layer | Purpose | Capabilities | Repos |
 |---|---|---:|---:|
 | `Agent runtime` | Agent harnesses, execution workers, and automation runtimes | 2 | 28 |
-| `Coordination and communication` | Agent communication, orchestration, and cross-agent continuity | 3 | 18 |
+| `Coordination and communication` | Agent communication, orchestration, and cross-agent continuity | 3 | 19 |
 | `Environment and security` | Vault, key relay, certificates, and parent-managed toolchains | 1 | 3 |
 | `Executive control plane` | Company-level command, OpenSpec, handoff, and repo governance | 2 | 14 |
 | `Front door experience` | Prompt, chat, LifeOS, and operator-facing user experience surfaces | 2 | 3 |
@@ -34,7 +34,7 @@
 | `Distributed device fabric` | `layer:infrastructure-device-fabric` | partial | repo:envctl, repo:network-control, repo:oh-my-pi | user devices for distributed compute storage inference memory |
 | `Domain upgrade path` | `layer:coordination-communication` | partial | repo:obscura, repo:weave | weave plus Obscura domain upgrades |
 | `Environment and vault relay` | `layer:environment-security` | partial | repo:envctl, repo:vault-hub, repo:yazelix | /run/media/drdave/COGNITUM, Cognitum vault on Pi Zero |
-| `Central and fleet handoff` | `layer:coordination-communication` | partial | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:ruvector, repo:teri, repo:weave | handoff central and fleet design |
+| `Central and fleet handoff` | `layer:coordination-communication` | partial | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:meta-git-lib, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:ruvector, repo:teri, repo:weave | handoff central and fleet design |
 | `GitHub agent-run upgrades` | `layer:agent-runtime` | partial | repo:grit, repo:yazelix | GRIT from rtk-ai, Beads mandatory for code contributors through Yazelix, github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca, github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b |
 | `IDD and spec engine` | `layer:executive-control-plane` | partial | repo:handoff, repo:rusty-idd | Rusty IDD built into handoff |
 | `Lua and AR interface automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi, repo:yazelix | Lua required for AR glasses workflow, Brilliant Labs Noa style Rust-native agent UX |
@@ -113,6 +113,7 @@
 | `capability:fleet-handoff` | mapped_to_repo | `repo:harness-hub` |
 | `capability:fleet-handoff` | mapped_to_repo | `repo:lane` |
 | `capability:fleet-handoff` | mapped_to_repo | `repo:lifeos` |
+| `capability:fleet-handoff` | mapped_to_repo | `repo:meta-git-lib` |
 | `capability:fleet-handoff` | mapped_to_repo | `repo:network-control` |
 | `capability:fleet-handoff` | mapped_to_repo | `repo:prompt-hub` |
 | `capability:fleet-handoff` | mapped_to_repo | `repo:rusty-idd` |

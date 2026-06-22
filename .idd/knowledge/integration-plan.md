@@ -1,7 +1,7 @@
 # Integration Automation Plan
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs`
 - Source model: `.idd/knowledge/operating-model.json`
 - Work items: 19
 
@@ -10,7 +10,7 @@
 | Priority | Work Item | Capability | Status | Owners | Adopt First |
 |---:|---|---|---|---|---|
 | 10 | `Integrate IDD and spec engine` | `capability:idd-spec-engine` | partial | repo:handoff, repo:rusty-idd |  |
-| 20 | `Integrate Central and fleet handoff` | `capability:fleet-handoff` | partial | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:ruvector, repo:teri, repo:weave |  |
+| 20 | `Integrate Central and fleet handoff` | `capability:fleet-handoff` | partial | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:meta-git-lib, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:ruvector, repo:teri, repo:weave |  |
 | 30 | `Integrate Agent communication layer` | `capability:agent-communication` | partial | repo:atc, repo:handoff, repo:mcp-hub, repo:weave |  |
 | 40 | `Integrate Environment and vault relay` | `capability:env-vault-relay` | partial | repo:envctl, repo:vault-hub, repo:yazelix | /run/media/drdave/COGNITUM, Cognitum vault on Pi Zero |
 | 50 | `Integrate Prompt front door` | `capability:prompt-front-door` | partial | repo:prompt-hub | github.com/f/prompts.chat, github.com/f/ai-prompt |

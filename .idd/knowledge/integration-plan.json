@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs",
   "system_root": "/home/drdave/Desktop/meta",
   "source_model": ".idd/knowledge/operating-model.json",
   "work_items": [
@@ -56,6 +56,7 @@
         "repo:harness-hub",
         "repo:lane",
         "repo:lifeos",
+        "repo:meta-git-lib",
         "repo:network-control",
         "repo:prompt-hub",
         "repo:rusty-idd",

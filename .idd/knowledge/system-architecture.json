@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs",
   "system_root": "/home/drdave/Desktop/meta",
   "discovery_source": "meta project list --json",
   "repos": [
@@ -170,8 +170,8 @@
       "name": "claude-plugin",
       "path": "claude-plugin",
       "repo": "git@github.com:FlexNetOS/meta.git",
-      "branch": "chore/ruvector-meta-integration",
-      "head": "00440b979b97ddbb94bfd627af6c9d63a60fe749",
+      "branch": "chore/meta-security-dep-bumps",
+      "head": "e458b39abad0aa45cc9a7aa11dfd9a8a4a6c5b02",
       "dirty": true,
       "tags": [
         "ai",
@@ -250,8 +250,8 @@
       "name": "copilot-plugin",
       "path": "copilot-plugin",
       "repo": "git@github.com:FlexNetOS/meta.git",
-      "branch": "chore/ruvector-meta-integration",
-      "head": "00440b979b97ddbb94bfd627af6c9d63a60fe749",
+      "branch": "chore/meta-security-dep-bumps",
+      "head": "e458b39abad0aa45cc9a7aa11dfd9a8a4a6c5b02",
       "dirty": true,
       "tags": [
         "ai",
@@ -467,9 +467,9 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "feat/hftask-0078-differential-drive-workflow",
-      "head": "c27f2648aa6fb2440e7f769c69b8de9135c5f6de",
-      "dirty": true,
+      "branch": "develop",
+      "head": "ff85f8071fe36a467603d7e679b7e9af58208d30",
+      "dirty": false,
       "tags": [
         "handoff",
         "orchestration"
@@ -831,17 +831,19 @@
       "name": "meta_git_lib",
       "path": "meta_git_lib",
       "repo": "git@github.com:FlexNetOS/meta_git_lib.git",
-      "branch": "feat/dep-upgrades",
-      "head": "dc5149b931f5b4a715853f96457bab117c4b03bb",
+      "branch": "chore/indicatif-0.18-rustsec-2025-0119",
+      "head": "5e65ab23cd6d95e922475a69a0ee5a3371c50c87",
       "dirty": false,
       "tags": [
         "canon"
       ],
       "markers": [
         "rust",
+        "handoff",
         "github-actions"
       ],
       "roles": [
+        "role:fleet-handoff",
         "role:meta-control-plane",
         "role:rust-code-surface"
       ],
@@ -1004,7 +1006,7 @@
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
       "branch": "develop",
-      "head": "6e279721bedac592813b6f1bf8186f263c1c8bdf",
+      "head": "0356d599b2c73d753b18fbb00c235656ee62296f",
       "dirty": false,
       "tags": [
         "network",
@@ -1244,7 +1246,7 @@
       "path": "rusty-idd",
       "repo": "git@github.com:FlexNetOS/rusty-idd.git",
       "branch": "main",
-      "head": "f4df9a40468b5d60eb38b196a305010fbe9253ca",
+      "head": "28bf2e2ae94f717a7a72a06ec33e84b08e57c273",
       "dirty": false,
       "tags": [
         "idd",
@@ -1274,7 +1276,7 @@
           "provider": "codegraph-rust",
           "files": 139,
           "nodes": 8649,
-          "edges": 35402,
+          "edges": 35408,
           "languages": [
             "rust"
           ],
@@ -1283,10 +1285,18 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 216,
-          "tokens": 139041,
+          "files": 249,
+          "tokens": 358256,
           "output_style": "markdown",
           "top_files_by_tokens": [
+            [
+              "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/00_repo_a_inventory.md",
+              95914
+            ],
+            [
+              "AI_MERGE/34_grit_full_integration/01_rusty_idd_inventory_before_adoption.md",
+              95446
+            ],
             [
               "crates/tui/src/app.rs",
               9464
@@ -1294,6 +1304,10 @@
             [
               "crates/knowledge/src/lib.rs",
               8632
+            ],
+            [
+              "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md",
+              7088
             ],
             [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
@@ -1306,6 +1320,10 @@
             [
               "docs/rusty-idd/lifecycle-contract.md",
               3666
+            ],
+            [
+              "AI_MERGE/34_handoff_single_repo_architecture.md",
+              3140
             ],
             [
               "docs/rusty-idd/codex-environment.md",
@@ -1324,16 +1342,24 @@
               2421
             ],
             [
+              "Justfile",
+              2319
+            ],
+            [
               "crates/core/src/templates.rs",
               2301
             ],
             [
-              "crates/tui/src/ui.rs",
-              2097
+              "AI_MERGE/34_grit_full_integration/00_grit_inventory.md",
+              2098
             ],
             [
-              "Justfile",
-              2059
+              "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/01_repo_b_inventory.md",
+              2098
+            ],
+            [
+              "crates/tui/src/ui.rs",
+              2097
             ],
             [
               "Makefile",
@@ -1362,30 +1388,6 @@
             [
               "AI_MERGE/13_codex_environment.md",
               1594
-            ],
-            [
-              "AI_MERGE/12_knowledge_deep_audit.md",
-              1573
-            ],
-            [
-              "docs/rusty-idd/design.md",
-              1488
-            ],
-            [
-              "crates/runner/src/config.rs",
-              1364
-            ],
-            [
-              "docs/rusty-idd/slice-sequence.md",
-              1356
-            ],
-            [
-              "AI_MERGE/29_agent_communication_queue_owner_surfaces.md",
-              1352
-            ],
-            [
-              "crates/cli/src/commands/knowledge.rs",
-              1306
             ]
           ],
           "suspicious_files": 0,
@@ -1472,7 +1474,7 @@
             "kind": "crate",
             "files": 12,
             "nodes": 448,
-            "edges": 2464,
+            "edges": 2470,
             "languages": [
               "Rust",
               "rust"
@@ -1577,8 +1579,8 @@
       "name": "shimmy",
       "path": "shimmy",
       "repo": "git@github.com:FlexNetOS/shimmy.git",
-      "branch": "feat/openai-embeddings-endpoint",
-      "head": "905f49b091d9f6c62b6b89e7940f696b0700baf3",
+      "branch": "chore/remove-deceptive-stubs",
+      "head": "9ab59c34cfaf1617afe9468c7323a3d74a26a6e5",
       "dirty": false,
       "tags": [
         "forked",
@@ -1622,7 +1624,7 @@
       "path": "teri",
       "repo": "git@github.com:FlexNetOS/teri.git",
       "branch": "fix/mirofish-spine-and-llm",
-      "head": "8faa673d73af6b41af6bcd2a4f2cec2cf286c788",
+      "head": "2ec89c44b6f002dd82a9905b9440ab4dfc62f67a",
       "dirty": true,
       "tags": [
         "forked",
@@ -1853,6 +1855,7 @@
         "repo:harness-hub",
         "repo:lane",
         "repo:lifeos",
+        "repo:meta-git-lib",
         "repo:network-control",
         "repo:prompt-hub",
         "repo:rusty-idd",
@@ -2479,6 +2482,14 @@
     {
       "source": "repo:meta-git-cli",
       "target": "role:rust-code-surface",
+      "kind": "provides",
+      "evidence": [
+        "canon"
+      ]
+    },
+    {
+      "source": "repo:meta-git-lib",
+      "target": "role:fleet-handoff",
       "kind": "provides",
       "evidence": [
         "canon"
@@ -3668,7 +3679,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "11 repos have local dirty state recorded as evidence",
+    "10 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]
