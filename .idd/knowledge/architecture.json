@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:f36c79238bd76972",
+  "workspace_fingerprint": "fnv1a64:3781b31d57edfbea",
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/autonomous-workflow-hooks",
   "source_graph": {
     "provider": "codegraph-rust",
@@ -15,8 +15,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 204,
-    "tokens": 142013,
+    "files": 205,
+    "tokens": 142350,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -1323,6 +1323,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 204 files and 142013 tokens"
+    "repomix context package measured 205 files and 142350 tokens"
   ]
 }

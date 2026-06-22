@@ -40,9 +40,9 @@ path	size_bytes	fnv1a64
 .idd/evidence/autonomous-workflow/pr.md	548	e1a7db940578d630
 .idd/evidence/autonomous-workflow/task.md	430	5ea6be206af72aa7
 .idd/evidence/autonomous-workflow/validation.md	3084	a421bb915cf31669
-.idd/knowledge/architecture.json	33097	827c80532d8b0645
-.idd/knowledge/architecture.md	6633	10edd875435aa7a8
-.idd/knowledge/index.json	18922366	ff566570995a3923
+.idd/knowledge/architecture.json	33097	66817c480fdb1063
+.idd/knowledge/architecture.md	6633	20c1512e5fe1e5f2
+.idd/knowledge/index.json	18922366	a3c32f3fe850d623
 .idd/knowledge/integration-owners.json	3633	e6e2dae62050ad1d
 .idd/knowledge/integration-owners.md	1369	3a40da54dc631895
 .idd/knowledge/integration-plan.json	29367	810125b4b38c4bba
@@ -53,9 +53,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2715	24aafeb5238769d1
 .idd/knowledge/operating-model.json	57095	c6aaebd5beb5ddbe
 .idd/knowledge/operating-model.md	21522	a4ed9ac7dfaaf0fa
-.idd/knowledge/plan-context.json	83118	5cf370f778d61219
-.idd/knowledge/plan-context.md	16910	ec08c967b8583bda
-.idd/knowledge/report.md	4554	bce8452f44adc86a
+.idd/knowledge/plan-context.json	83118	e16fe4c34e5f1128
+.idd/knowledge/plan-context.md	16910	33bb8305d51735f3
+.idd/knowledge/report.md	4554	0a75a003016823c0
 .idd/knowledge/system-architecture.json	83518	f3dcf530bdf26fff
 .idd/knowledge/system-architecture.md	23505	bff2b9e616181d0c
 .idd/workflow/active-change	30	e4918d715d5a3618

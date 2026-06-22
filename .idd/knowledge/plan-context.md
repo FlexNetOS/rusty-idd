@@ -4,7 +4,7 @@
 - Goal: Add pre and post hooks that enforce the full autonomous Rusty IDD workflow from a develop-based worktree through tracked task claim, OpenSpec readiness, validation, PR branch push, and auto-merge into develop.
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/autonomous-workflow-hooks`
 - Source graph: 138 files, 8582 nodes, 35163 edges via `codegraph-rust`
-- Context package: 204 files, 142013 tokens via `repomix-rs`
+- Context package: 205 files, 142350 tokens via `repomix-rs`
 
 ## Automation Order
 
