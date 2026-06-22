@@ -212,11 +212,16 @@ For write-capable tool use, `codex workflow-check` requires:
 - task-card evidence in `.handoff/tasks/*.task.json` or
   `.idd/evidence/autonomous-workflow/task.md`.
 
+For push or task-completion commands such as `git push`, `gh pr create`,
+`gh pr merge`, `hf done`, `handoff done`, `task complete`, or `task done`, the
+hook requires validation evidence before the command proceeds.
+
 At Stop/SubagentStop, once the branch has dirty work or commits beyond
 `develop`, the hook also requires:
 
-- `.idd/evidence/autonomous-workflow/validation.md` with build, test, lint,
-  secret-scan, and manifest results;
+- `.idd/evidence/autonomous-workflow/validation.md` with build, generated
+  artifacts, test, lint, secret-scan, and manifest results, with `Test:` listed
+  after `Generated artifacts:`;
 - `.idd/evidence/autonomous-workflow/pr.md` with the PR, `Base: develop`, and
   auto-merge status.
 
