@@ -42,7 +42,7 @@ path	size_bytes	fnv1a64
 .idd/LOCK.md	65	fd4e6132014f2489
 .idd/evidence/autonomous-workflow/pr.md	529	f0cfed1f630fc512
 .idd/evidence/autonomous-workflow/task.md	681	88d0e3273a3d62ac
-.idd/evidence/autonomous-workflow/validation.md	1780	2da70c71c70a0719
+.idd/evidence/autonomous-workflow/validation.md	1893	0281ff50eac78ef1
 .idd/evidence/prompt-hub-boundary/research.md	598	3318f818ef05fb2f
 .idd/goals/adopt-full-handoff-upstream.md	1229	499108991fe5a363
 .idd/goals/comprehensive-e2e-test-suite.md	1638	3fd24a8b94c3f6fc
@@ -53,9 +53,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	33653	9e456c148f9e6bfd
-.idd/knowledge/architecture.md	6633	7369fe5a2986abd4
-.idd/knowledge/index.json	19676878	b0d8be71f7d98a8f
+.idd/knowledge/architecture.json	33653	5171b7a59f268db3
+.idd/knowledge/architecture.md	6633	28fd376a710d970e
+.idd/knowledge/index.json	19676878	8a5f87e15c89b7e5
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -66,9 +66,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2678	c288ba0ce065945e
 .idd/knowledge/operating-model.json	57771	3e6a452f574bead2
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
-.idd/knowledge/plan-context.json	87500	6a5b516c6de67f25
-.idd/knowledge/plan-context.md	18600	a033763483d50fd4
-.idd/knowledge/report.md	5051	04664252c1debbd8
+.idd/knowledge/plan-context.json	87500	5b2f0d3dc24f5aed
+.idd/knowledge/plan-context.md	18600	da7f195871751134
+.idd/knowledge/report.md	5051	202c7a616181a59c
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	34	6e0f31283f8dcf6f
@@ -186,7 +186,7 @@ AI_MERGE/38_handoff_kb_refresh/mirror-verification.md	976	4a9db17b3112ae50
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
-Cargo.lock	119952	528f62e5a8646e98
+Cargo.lock	119952	9aae6dabf7d2d748
 Cargo.toml	1458	4fbde74649b68678
 GEMINI.md	609	ce93a61c7f63579f
 Justfile	8682	b1ccad11c74c33d6
@@ -559,7 +559,7 @@ crates/tui/ralph-implement.sh	393	8e4a4cdae6cb24bb
 crates/tui/src/app.rs	195144	e05491939b145e8d
 crates/tui/src/lib.rs	6981	809321747bfb2538
 crates/tui/src/ui.rs	84930	8993c1a7fab71e0e
-docs/rusty-idd/architecture-diagrams.md	6378	cd10d5412f488231
+docs/rusty-idd/architecture-diagrams.md	6378	962c98c4a5f6bc85
 docs/rusty-idd/codex-environment.md	15785	cba53732ada8ceee
 docs/rusty-idd/dependency-duplication.md	3837	93266b2549c197c6
 docs/rusty-idd/design.md	5985	b2802a4850aff45d
@@ -578,7 +578,7 @@ docs/rusty-idd/oracle-fixtures/README.md	2869	7480f06c19981249
 docs/rusty-idd/parity-matrix.md	3751	09f53a814e6d4f2b
 docs/rusty-idd/production-readiness-audit.md	11122	69d58cbe34b95c1f
 docs/rusty-idd/proposal.md	4199	92f7222bed7dc629
-docs/rusty-idd/security-advisories.md	3089	76e0c21677ab1c6e
+docs/rusty-idd/security-advisories.md	3308	c3444ea563fef02f
 docs/rusty-idd/slice-sequence.md	4787	31b0327da33791ae
 docs/rusty-idd/spec-engine-design.md	16111	564ef04dbe9afc91
 intent-driven-template/.agent/README.md	1168	cdebde111e86219a

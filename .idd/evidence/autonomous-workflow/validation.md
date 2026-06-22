@@ -14,7 +14,9 @@
 - Lint: passed `cargo fmt --all -- --check`,
   `cargo clippy -p rusty-idd-cli --all-targets --locked -- -D warnings`, and
   `git diff --check`.
-- Audit: passed `cargo audit --deny warnings`.
+- Audit: passed `cargo audit --deny warnings` after refreshing the RustSec
+  advisory DB and upgrading `memmap2` from 0.9.10 to 0.9.11 for
+  RUSTSEC-2026-0186.
 - Secret scan: branch diff scan for AWS keys, private-key headers, GitHub PATs,
   OpenAI-style keys, and Slack tokens returned no matches. Whole-tree scan only
   reported known upstream repomix secretlint fixture strings under

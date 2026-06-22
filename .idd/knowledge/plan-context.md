@@ -26,7 +26,7 @@ path, wrapper, linker, home directories, and cache root, and rejects user-global
 or system-owned paths for this repo workflow.
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/envctl-owned-rust-toolchain-cache`
 - Source graph: 139 files, 8753 nodes, 36109 edges via `codegraph-rust`
-- Context package: 324 files, 724952 tokens via `repomix-rs`
+- Context package: 324 files, 725025 tokens via `repomix-rs`
 
 ## Automation Order
 
