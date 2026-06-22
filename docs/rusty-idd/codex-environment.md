@@ -256,7 +256,8 @@ The audit checks the active `codex` binary first. On this workstation, the
 managed path resolves to the source-built Rust executable under
 `../codex/codex-rs/target/release/codex`. The parent `envctl` component builds
 that executable directly with Cargo, high-parallel jobs, release incremental
-artifacts, LTO disabled for local workstation builds, and `mold` when present.
+artifacts, LTO disabled for local workstation builds, and the parent-managed
+Rust linker/cache contract when present.
 
 Python still appears in upstream Codex source material, but the audit classifies
 it as developer/package tooling:
@@ -269,6 +270,45 @@ it as developer/package tooling:
   wheel-only `sdk/python-runtime`.
 
 Those surfaces do not contradict the active runtime being Rust-native.
+
+## Rust Toolchain And Cache Ownership
+
+Rusty IDD Rust builds must use the parent `meta` / `envctl` Rust environment,
+not user-global or system-depth state. A compliant activation owns all mutable
+Rust toolchain and cache state under the meta root:
+
+```text
+RUSTUP_HOME=$META_ROOT/.env/rust/rustup
+CARGO_HOME=$META_ROOT/.env/rust/cargo
+RUSTC_WRAPPER=$META_ROOT/.env/rust/bin/kache
+# audit cache root: $META_ROOT/.cache/rust/kache
+```
+
+The target compiler surface is nightly Rust with `rustc_codegen_gcc` available
+as a runtime backend. The target linker is parent-managed `wild-linker`; mold is
+not the compliant linker for this workflow. The compiler cache preference order
+is `kache`, then `hurry` or `zccache`; `sccache` is only a last-resort fallback
+at version `0.15.0` or newer, and daemon communication must use UDS/unix sockets
+rather than TCP loopback.
+
+Strict audit mode reports the actual Cargo-executed compiler path and rejects
+non-meta-owned paths:
+
+```bash
+cargo run --bin rusty-idd -- codex system-audit \
+  --rust-toolchain \
+  --meta-root .. \
+  --rust-toolchain-name "$RUSTUP_TOOLCHAIN" \
+  --codegen-backend rustc_codegen_gcc \
+  --cache-root "$META_ROOT/.cache/rust/kache" \
+  --linker-path "$META_ROOT/.env/rust/bin/wild"
+```
+
+The parent `meta` / `envctl` layer is responsible for installing or updating
+nightly Rust, `rustc_codegen_gcc`, `wild-linker`, `kache`, `hurry`, `zccache`,
+or fallback `sccache`. Agents working in this repository must not repair a
+missing Rust tool by writing to `~/.rustup`, `~/.cargo`, `/usr/bin`, `/opt`, or
+other user/system-owned locations.
 
 ## Tool Installation
 

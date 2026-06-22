@@ -307,7 +307,7 @@ fn codex_env_check_passes_on_required_repo_artifacts() {
     );
     write(
         &root.path().join("docs/rusty-idd/codex-environment.md"),
-        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\n`rusty-idd merge-tools show`\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nAutonomous Workflow Hooks\ncodex workflow-check\nenvctl\ntoolchain\n.codex/rules\n",
+        "`AI_MERGE/` is a tool/evidence surface\nThe default harness order is\n`rusty-idd merge-tools show`\nWrite-capable implementation is intentionally outside the default loop\nUpgrade-Only Gap Handling\nmeta` / `envctl`\nMulti-Model Loop\nAutonomous Workflow Hooks\ncodex workflow-check\nenvctl\ntoolchain\nnightly Rust\nrustc_codegen_gcc\nwild-linker\nkache\nzccache\n.codex/rules\n",
     );
     write(
         &root.path().join("docs/rusty-idd/merge-tools-package.md"),
@@ -847,7 +847,7 @@ if [ -d "$M/codex/codex-rs/cli" ]; then
   export CARGO_PROFILE_RELEASE_LTO="${CARGO_PROFILE_RELEASE_LTO:-false}"
   export CARGO_PROFILE_RELEASE_CODEGEN_UNITS="${CARGO_PROFILE_RELEASE_CODEGEN_UNITS:-$jobs}"
   export CARGO_PROFILE_RELEASE_INCREMENTAL="${CARGO_PROFILE_RELEASE_INCREMENTAL:-true}"
-  export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=mold"
+  export RUSTFLAGS="${RUSTFLAGS:-} -C link-arg=-fuse-ld=wild"
   cargo build --release -p codex-cli --jobs "$jobs" --timings --manifest-path "$M/codex/codex-rs/Cargo.toml"
 else
   bun install -g @openai/codex
@@ -879,9 +879,119 @@ id = "gemini-cli"
     assert!(out.contains("codex source-build path: true"));
     assert!(out.contains("direct Cargo codex build: true"));
     assert!(out.contains("high-parallel Cargo jobs: true"));
-    assert!(out.contains("mold linker path: true"));
+    assert!(out.contains("wild linker path: true"));
     assert!(out.contains("Bun fallback only: true"));
     assert!(out.contains("Python in codex component: 0"));
+}
+
+#[test]
+fn codex_system_audit_accepts_meta_owned_rust_toolchain_surface() {
+    let root = tempfile::tempdir().unwrap();
+    let codex_bin = root.path().join("codex-bin");
+    fs::write(&codex_bin, b"\x7fELFfake-codex").unwrap();
+    let meta = root.path().join("meta");
+
+    let out = run_ok(
+        &[
+            "codex",
+            "system-audit",
+            "--codex-bin",
+            codex_bin.to_str().unwrap(),
+            "--rust-toolchain",
+            "--meta-root",
+            meta.to_str().unwrap(),
+            "--rust-toolchain-name",
+            "nightly-x86_64-unknown-linux-gnu",
+            "--rustc-path",
+            meta.join(".env/rust/rustup/toolchains/nightly/bin/rustc")
+                .to_str()
+                .unwrap(),
+            "--cargo-bin",
+            meta.join(".env/rust/rustup/toolchains/nightly/bin/cargo")
+                .to_str()
+                .unwrap(),
+            "--rustup-home",
+            meta.join(".env/rust/rustup").to_str().unwrap(),
+            "--cargo-home",
+            meta.join(".env/rust/cargo").to_str().unwrap(),
+            "--rustc-wrapper",
+            meta.join(".env/rust/bin/kache").to_str().unwrap(),
+            "--cache-wrapper",
+            "kache",
+            "--cache-root",
+            meta.join(".cache/rust/kache").to_str().unwrap(),
+            "--linker-path",
+            meta.join(".env/rust/bin/wild").to_str().unwrap(),
+            "--codegen-backend",
+            "rustc_codegen_gcc",
+        ],
+        root.path(),
+    );
+
+    assert!(out.contains("Rust toolchain audit"));
+    assert!(out.contains("toolchain: nightly-x86_64-unknown-linux-gnu"));
+    assert!(out.contains("rustc wrapper:"));
+    assert!(out.contains("(kache)"));
+    assert!(out.contains("codegen backend: rustc_codegen_gcc"));
+    assert!(out.contains("verdict: meta/envctl-owned Rust toolchain contract satisfied"));
+}
+
+#[test]
+fn codex_system_audit_rejects_user_global_rust_toolchain_surface() {
+    let root = tempfile::tempdir().unwrap();
+    let codex_bin = root.path().join("codex-bin");
+    fs::write(&codex_bin, b"\x7fELFfake-codex").unwrap();
+    let meta = root.path().join("meta");
+    let home = root.path().join("home/drdave");
+
+    let (stdout, stderr) = run_fail(
+        &[
+            "codex",
+            "system-audit",
+            "--codex-bin",
+            codex_bin.to_str().unwrap(),
+            "--rust-toolchain",
+            "--meta-root",
+            meta.to_str().unwrap(),
+            "--rust-toolchain-name",
+            "stable-x86_64-unknown-linux-gnu",
+            "--rustc-path",
+            home.join(".rustup/toolchains/stable/bin/rustc")
+                .to_str()
+                .unwrap(),
+            "--cargo-bin",
+            home.join(".rustup/toolchains/stable/bin/cargo")
+                .to_str()
+                .unwrap(),
+            "--rustup-home",
+            home.join(".rustup").to_str().unwrap(),
+            "--cargo-home",
+            home.join(".cargo").to_str().unwrap(),
+            "--rustc-wrapper",
+            "/usr/bin/sccache",
+            "--cache-wrapper",
+            "sccache",
+            "--cache-root",
+            home.join(".cache/sccache").to_str().unwrap(),
+            "--linker-path",
+            "/usr/bin/mold",
+            "--codegen-backend",
+            "llvm",
+            "--sccache-version",
+            "0.14.0",
+            "--cache-transport",
+            "tcp://127.0.0.1:4226",
+        ],
+        root.path(),
+    );
+
+    assert!(stdout.contains("non-compliant: rustc path is outside meta root"));
+    assert!(stdout.contains("toolchain must be nightly"));
+    assert!(stdout.contains("codegen backend must be rustc_codegen_gcc"));
+    assert!(stdout.contains("linker must be wild-linker/wild"));
+    assert!(stdout.contains("sccache fallback requires version 0.15.0 or newer"));
+    assert!(stdout.contains("sccache fallback must use UDS/unix socket transport"));
+    assert!(stderr.contains("Rust toolchain audit found"));
 }
 
 #[test]
