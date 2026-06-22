@@ -39,7 +39,7 @@ path	size_bytes	fnv1a64
 .handoff/tasks/rusty-idd-comprehensive-e2e-workflow-tests.task.json	818	234894891b4d63da
 .handoff/tasks/rusty-idd-e2e-review-upgrades.task.json	1054	61f67353039fcb4c
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/evidence/autonomous-workflow/pr.md	668	89b32a39a24d3f20
+.idd/evidence/autonomous-workflow/pr.md	660	3d0cdccbef92c39f
 .idd/evidence/autonomous-workflow/task.md	845	47291e073bd3ba0b
 .idd/evidence/autonomous-workflow/validation.md	2617	6714caafadafb781
 .idd/goals/comprehensive-e2e-test-suite.md	1638	3fd24a8b94c3f6fc
@@ -47,9 +47,9 @@ path	size_bytes	fnv1a64
 .idd/goals/grit-full-integration.md	1079	7b79112fc741a993
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	33554	e00d57250987365a
-.idd/knowledge/architecture.md	6633	ea2e0085b7537539
-.idd/knowledge/index.json	18993796	cc38f3ead72b3e2c
+.idd/knowledge/architecture.json	33554	8adb8dcfd44c54dd
+.idd/knowledge/architecture.md	6633	e0942690ab8568d2
+.idd/knowledge/index.json	18993796	3b785037b5bdaafb
 .idd/knowledge/integration-owners.json	3021	5c7cbe5d96626df6
 .idd/knowledge/integration-owners.md	1033	4c608e4d884975b4
 .idd/knowledge/integration-plan.json	29054	1f6ce0af4d175f56
@@ -62,7 +62,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	20477	b3efe7fce5e72f42
 .idd/knowledge/plan-context.json	73291	67929c91718b2865
 .idd/knowledge/plan-context.md	16764	fed7baebce068b8a
-.idd/knowledge/report.md	4979	cc3ed2e4f69546e2
+.idd/knowledge/report.md	4979	7d35b192b1927d5d
 .idd/knowledge/system-architecture.json	58454	070c9ef4bb6fde02
 .idd/knowledge/system-architecture.md	16397	ea4e68a93d1e7114
 .idd/workflow/active-change	31	04e821f68902df14
