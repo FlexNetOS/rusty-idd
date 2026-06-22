@@ -1,6 +1,6 @@
 # Integration Readiness
 
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs`
 - Source plan: `.idd/knowledge/integration-plan.json`
 - Source system architecture: `.idd/knowledge/system-architecture.json`
 - Change: `integrate-prompt-front-door`
