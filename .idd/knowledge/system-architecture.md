@@ -50,8 +50,8 @@
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
 | `github_org` | `fix/autonomous-feature-develop-approval` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
-| `handoff` | `feat/hftask-0072-full-kb-adoption` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
-| `harness_hub` | `develop` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
+| `handoff` | `develop` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
+| `harness_hub` | `harness-evolve/rust-port-confirmable-tail` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
 | `hermes-agent` | `main` | false | agents, ai, untriaged | role:agent-environment | node, github-actions |
 | `hooks_hub` | `master` | false | hooks, hub | role:capability-hub | github-actions |
 | `icm` | `fix/containment-claude-p-recursion` | false | ai, memory | role:agent-environment, role:knowledge-memory, role:rust-code-surface | rust, claude, github-actions |
@@ -85,7 +85,7 @@
 | `rtk-tokenkill` | `develop` | false | ai, optimization, tools | role:agent-environment, role:rust-code-surface | rust, claude, github-actions |
 | `ruflo` | `main` | true | ai, forked, rust, wasm | role:agent-environment | node, agents, claude, github-actions |
 | `rusty-idd` | `` | false | idd, tools | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | rust, openspec, idd-knowledge, handoff, agents, claude, github-actions, make, just |
-| `ruvector` | `docs/hooks-setup-integrated-tools` | true | ai, crates-only, forked, rust, wasm | role:agent-environment, role:fleet-handoff, role:rust-code-surface | rust, node, handoff, agents, claude, github-actions |
+| `ruvector` | `develop` | true | ai, crates-only, forked, rust, wasm | role:agent-environment, role:fleet-handoff, role:rust-code-surface | rust, node, handoff, agents, claude, github-actions |
 | `shimmy` | `chore/remove-deceptive-stubs` | false | forked, untriaged | role:rust-code-surface | rust, github-actions, make |
 | `template_hub` | `master` | false | hub, templates | role:capability-hub | github-actions |
 | `teri` | `fix/mirofish-spine-and-llm` | true | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 139 files, 8697 nodes, 35719 edges via `codegraph-rust` | 310 files, 711022 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
+| `rusty-idd` | 139 files, 8697 nodes, 35719 edges via `codegraph-rust` | 319 files, 720698 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
 
 ## Edges
 
