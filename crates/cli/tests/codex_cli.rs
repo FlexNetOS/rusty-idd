@@ -501,6 +501,32 @@ fn codex_workflow_check_rejects_pr_evidence_for_different_change_at_stop() {
 }
 
 #[test]
+fn codex_workflow_check_ignores_trailing_nonrequired_evidence_bullets() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
+    write_validation(
+        root.path(),
+        &format!(
+            "{VALIDATION_PASS}- Review note: stale prior evidence was rejected by the parser.\n"
+        ),
+    );
+    write_pr_evidence(root.path());
+
+    let out = run_ok(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+    assert!(out.contains("autonomous workflow check passed"));
+}
+
+#[test]
 fn codex_workflow_check_requires_validation_before_push() {
     let root = setup_workflow_repo();
     let hook_input =
