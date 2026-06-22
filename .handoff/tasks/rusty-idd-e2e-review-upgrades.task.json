@@ -1,0 +1,24 @@
+{
+  "id": "KBTASK-RUSTY-IDD-E2E-REVIEW-UPGRADES",
+  "source": "tasks/rusty-idd-e2e-review-upgrades",
+  "title": "Deep review and upgrade Rusty IDD E2E workflow tests",
+  "status": "claimed",
+  "priority": "high",
+  "assignee": "codex",
+  "claim": {
+    "agent": "codex",
+    "branch": "feature/e2e-review-upgrades",
+    "worktree": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-review-upgrades"
+  },
+  "checkpoint": {
+    "status": "in_progress",
+    "note": "Validation and PR evidence binding implemented; focused workflow-check tests and full post-refresh just ci passed before publication evidence."
+  },
+  "intent_lock": {
+    "goal": "deep research code review loop over the comprehensive E2E workflow test suite",
+    "change": "harden-e2e-validation-evidence",
+    "validation": "tests must reject failed or placeholder evidence before task completion, push, PR, and merge",
+    "rollback": "revert ADR 0006, workflow-check validation parser changes, tests, and generated artifacts",
+    "evidence": "AI_MERGE/36_e2e_review_upgrades"
+  }
+}
