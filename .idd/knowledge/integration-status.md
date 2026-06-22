@@ -1,6 +1,6 @@
 # Integration Status Queue
 
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/autonomous-workflow-hooks`
 - Source plan: `.idd/knowledge/integration-plan.json`
 - Next planned work: `integrate-rtk-ai-foundation`
 
