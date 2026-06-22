@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:25a4922125eb9a63",
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/scoped-agent-swarm-packages",
+  "workspace_fingerprint": "fnv1a64:1f1202df77f78115",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/verify-package-goal",
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 141,
@@ -15,8 +15,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 335,
-    "tokens": 729750,
+    "files": 340,
+    "tokens": 732774,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -1364,6 +1364,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 335 files and 729750 tokens"
+    "repomix context package measured 340 files and 732774 tokens"
   ]
 }
