@@ -23,7 +23,7 @@ misordered validation entries for build, generated artifacts, tests, lint,
 secret scan, and manifest evidence.
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-review-upgrades`
 - Source graph: 139 files, 8697 nodes, 35719 edges via `codegraph-rust`
-- Context package: 293 files, 695105 tokens via `repomix-rs`
+- Context package: 293 files, 695106 tokens via `repomix-rs`
 
 ## Automation Order
 
