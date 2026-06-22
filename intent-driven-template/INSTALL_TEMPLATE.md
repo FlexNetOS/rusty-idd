@@ -39,6 +39,7 @@ Copy these template files and directories into the target project when they do
 not already exist:
 
 - `openspec/`
+- `.agent/`
 - `.opencode/`
 - `.agents/`
 - `skills-lock.json`
@@ -56,9 +57,10 @@ Merge these files when they already exist:
 3. Copy missing template directories and files into the target project.
 4. Merge `AGENTS.md` by adding the OpenSpec git-discipline instruction without
    removing existing user instructions.
-5. If `opencode.json`, `skills-lock.json`, `openspec/`, `.opencode/`, or
-   `.agents/` already exist, compare the template version with the target version
-   and ask the user before replacing or restructuring anything.
+5. If `opencode.json`, `skills-lock.json`, `openspec/`, `.agent/`,
+   `.opencode/`, or `.agents/` already exist, compare the template version with
+   the target version and ask the user before replacing or restructuring
+   anything.
 6. Keep the target project's product code, package files, application docs, and
    existing tests unchanged unless the user explicitly asks for changes.
 7. Verify the resulting file tree and summarize exactly what changed.
