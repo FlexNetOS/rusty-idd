@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/architecture-artifacts-upgrade",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration",
   "source_plan": ".idd/knowledge/integration-plan.json",
   "source_system_architecture": ".idd/knowledge/system-architecture.json",
   "selector": {
@@ -54,10 +54,11 @@
       "repo_found": true,
       "repo_name": "prompt_hub",
       "path": "prompt_hub",
-      "branch": null,
-      "head": null,
-      "dirty": false,
+      "branch": "main",
+      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "dirty": true,
       "required_tool_ids": [
+        "cargo",
         "git"
       ]
     }
@@ -118,6 +119,18 @@
   ],
   "tool_requirements": [
     {
+      "id": "cargo",
+      "name": "Rust Cargo",
+      "required_by": [
+        "repo:prompt-hub"
+      ],
+      "provisioned_by": "parent meta/envctl Rust toolchain",
+      "default_path": true,
+      "evidence": [
+        "owner repo exposes Rust package metadata or cargo diagnostics"
+      ]
+    },
+    {
       "id": "git",
       "name": "Git",
       "required_by": [
@@ -171,6 +184,24 @@
     }
   ],
   "native_diagnostics": [
+    {
+      "command": "cd prompt_hub && cargo metadata --locked --format-version 1",
+      "owner_repo": "repo:prompt-hub",
+      "required_tool_ids": [
+        "cargo"
+      ],
+      "mode": "read-only",
+      "mutates_repo": false
+    },
+    {
+      "command": "cd prompt_hub && cargo test --workspace --all-features --locked",
+      "owner_repo": "repo:prompt-hub",
+      "required_tool_ids": [
+        "cargo"
+      ],
+      "mode": "native-build-or-test",
+      "mutates_repo": false
+    },
     {
       "command": "cd third_party/upstream/ai-prompt && npm ci",
       "owner_repo": "github.com/f/ai-prompt",
@@ -319,10 +350,10 @@
     "remove .idd/knowledge/integration-readiness.* and regenerate integration status/owner artifacts"
   ],
   "findings": [
-    "0 resolved owner repos report dirty state",
+    "1 resolved owner repos report dirty state",
     "all owner repos resolved in the system architecture graph",
     "joined 1 owner repos against .idd/knowledge/system-architecture.json",
-    "readiness derived 4 tool requirements from 1 owner surfaces",
+    "readiness derived 5 tool requirements from 1 owner surfaces",
     "readiness generation is deterministic and does not execute native diagnostics",
     "selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json"
   ]

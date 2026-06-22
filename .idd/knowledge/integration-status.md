@@ -1,6 +1,6 @@
 # Integration Status Queue
 
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/architecture-artifacts-upgrade`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration`
 - Source plan: `.idd/knowledge/integration-plan.json`
 - Next planned work: `integrate-rtk-ai-foundation`
 
