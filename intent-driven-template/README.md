@@ -37,6 +37,8 @@ Read and understand INSTALL_TEMPLATE.md and follow the instructions there.
   for the full `proposal -> specs -> design -> adr -> tasks` lifecycle.
 - OpenSpec git discipline so proposals land on `main` before apply, and
   implementation lands on `main` before archive.
+- A portable `.agent` front door that lets file-reading agents discover the
+  same skills and commands without requiring OpenCode-specific conventions.
 - OpenCode skills for repeatable collaboration and implementation workflows,
   including C4 diagrams, ADR authoring, and OpenSpec lifecycle commands.
 - Superpowers from https://github.com/obra/superpowers for guided practices such
@@ -64,6 +66,14 @@ proposal -> specs -> design -> adr -> tasks
 - `design` explains the implementation approach and trade-offs.
 - `adr` records durable architectural decisions.
 - `tasks` turn the accepted intent, behaviour, design, and decisions into work.
+
+## Portable Agent Surface
+
+Agents that do not understand OpenCode directories should start at
+`.agent/manifest.json`. The portable surface provides command wrappers for the
+OPSX lifecycle and a direct `create-c4-diagram` command. Canonical skill bodies
+remain in `.agents/skills`, and canonical OpenCode command docs remain in
+`.opencode/commands`.
 
 ## Schema
 

@@ -1,0 +1,96 @@
+{
+  "version": 1,
+  "name": "intent-driven-template-portable-agent",
+  "description": "Agent-agnostic command and skill entrypoint for the intent-driven template.",
+  "canonicalSkillRoot": "../.agents/skills",
+  "canonicalCommandRoot": "../.opencode/commands",
+  "skills": [
+    {
+      "name": "architectural-decision-records",
+      "portablePath": "skills/architectural-decision-records/SKILL.md",
+      "canonicalPath": "../.agents/skills/architectural-decision-records/SKILL.md"
+    },
+    {
+      "name": "c4-diagrams",
+      "portablePath": "skills/c4-diagrams/SKILL.md",
+      "canonicalPath": "../.agents/skills/c4-diagrams/SKILL.md",
+      "templatesPath": "../.agents/skills/c4-diagrams/templates.md"
+    },
+    {
+      "name": "gherkin-authoring",
+      "portablePath": "skills/gherkin-authoring/SKILL.md",
+      "canonicalPath": "../.agents/skills/gherkin-authoring/SKILL.md"
+    },
+    {
+      "name": "grill-me",
+      "portablePath": "skills/grill-me/SKILL.md",
+      "canonicalPath": "../.agents/skills/grill-me/SKILL.md"
+    },
+    {
+      "name": "openspec-git-discipline",
+      "portablePath": "skills/openspec-git-discipline/SKILL.md",
+      "canonicalPath": "../.agents/skills/openspec-git-discipline/SKILL.md"
+    }
+  ],
+  "commands": [
+    {
+      "name": "create-c4-diagram",
+      "path": "commands/create-c4-diagram.md",
+      "skills": ["c4-diagrams"]
+    },
+    {
+      "name": "opsx-apply",
+      "path": "commands/opsx-apply.md",
+      "canonicalPath": "../.opencode/commands/opsx-apply.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-archive",
+      "path": "commands/opsx-archive.md",
+      "canonicalPath": "../.opencode/commands/opsx-archive.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-bulk-apply",
+      "path": "commands/opsx-bulk-apply.md",
+      "canonicalPath": "../.opencode/commands/opsx-bulk-apply.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-continue",
+      "path": "commands/opsx-continue.md",
+      "canonicalPath": "../.opencode/commands/opsx-continue.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-explore",
+      "path": "commands/opsx-explore.md",
+      "canonicalPath": "../.opencode/commands/opsx-explore.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-new",
+      "path": "commands/opsx-new.md",
+      "canonicalPath": "../.opencode/commands/opsx-new.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-propose",
+      "path": "commands/opsx-propose.md",
+      "canonicalPath": "../.opencode/commands/opsx-propose.md",
+      "skills": ["grill-me", "gherkin-authoring", "c4-diagrams", "architectural-decision-records", "openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-sync",
+      "path": "commands/opsx-sync.md",
+      "canonicalPath": "../.opencode/commands/opsx-sync.md",
+      "skills": ["openspec-git-discipline"]
+    },
+    {
+      "name": "opsx-verify",
+      "path": "commands/opsx-verify.md",
+      "canonicalPath": "../.opencode/commands/opsx-verify.md",
+      "skills": ["openspec-git-discipline"]
+    }
+  ]
+}
