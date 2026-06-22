@@ -12,7 +12,7 @@ and future consolidation work.
 | CodeGraph Rust | https://github.com/Jakedismo/codegraph-rust | `ce5bf27a2978983a9089d177447f296e4c6521bb` | 369 | `third_party/upstream/codegraph-rust` |
 | repomix-rs | https://github.com/sopaco/repomix-rs | `946df10d48c669ca3a99f757ffd2c6fa35844e62` | 133 | `third_party/upstream/repomix-rs` |
 | Grit | https://github.com/FlexNetOS/grit | `57b60842d71145c271b994bb7a8c33c3bca42dfe` | 100 | `third_party/upstream/grit` |
-| Handoff | https://github.com/FlexNetOS/handoff | `7be85fcea3c2454fc3470fc929860afb7ea9864b` | 533 | `third_party/upstream/handoff` |
+| Handoff | https://github.com/FlexNetOS/handoff | `6365c12fc38f5d7247d81f9fdbd3a55817797904` | 550 | `third_party/upstream/handoff` |
 
 ## Import Method
 

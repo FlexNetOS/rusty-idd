@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:d7166997ffa682a8`
+- Workspace fingerprint: `fnv1a64:163df9d714b30ed6`
 - Indexed source files: 139
 - Graph nodes: 8697
 - Graph edges: 35719
 - Resolved call edges: 20359
 - Functions with complexity: 2189
-- Packed files: 193
-- Packed tokens: 661695
+- Packed files: 198
+- Packed tokens: 670695
 - Suspicious files: 0
 
 ## Hotspots
@@ -46,6 +46,7 @@
 | 95446 | `AI_MERGE/34_grit_full_integration/01_rusty_idd_inventory_before_adoption.md` |
 | 9464 | `crates/tui/src/app.rs` |
 | 8632 | `crates/knowledge/src/lib.rs` |
+| 7982 | `AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md` |
 | 7659 | `AI_MERGE/36_handoff_full_adoption/handoff-tracked-files.md` |
 | 7088 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
 | 7088 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
@@ -58,8 +59,7 @@
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
 | 2469 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/02_feature_matrix.md` |
 | 2421 | `AI_MERGE/14_upstream_full_adoption.md` |
-| 2319 | `Justfile` |
 
 ## Findings
 
-- packed context is 661695 tokens, above default budget 120000
+- packed context is 670695 tokens, above default budget 120000

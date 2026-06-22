@@ -1,17 +1,14 @@
-# Full Handoff Adoption Task Evidence
+# Handoff KB Refresh Task Evidence
 
 - Task: `KBTASK-RUSTY-IDD-ADOPT-FULL-HANDOFF`
-- Claim: repo-local task card from `tasks/rusty-idd-adopt-full-handoff`
-- Change: `adopt-full-handoff-upstream`
-- Goal file: `.idd/goals/adopt-full-handoff-upstream.md`
-- Branch: `fix/complete-handoff-mirror-idea`
+- Change: `refresh-handoff-kb-upstream`
+- Goal file: `.idd/goals/refresh-handoff-kb-upstream.md`
+- Branch: `fix/refresh-handoff-kb-mirror`
 
-The original adoption task was minted and claimed before implementation. PR #87
-imported the tracked handoff repository baseline, and PR #92 closes the final
-gap found during trunk proof: Rusty IDD's mirror was missing handoff's nine
-tracked `.idea/*` files because they are ignored by default in Rusty IDD.
+Final parity proof found that `meta/handoff` advanced to commit
+`6365c12fc38f5d7247d81f9fdbd3a55817797904` with 550 tracked files, adding a
+tracked `.kb` knowledge surface after the earlier handoff adoption PRs.
 
-The completed correction force-adds only the tracked handoff `.idea` files,
-excludes source-local `.idea/workspace.xml`, refreshes deterministic Rusty IDD
-artifacts, and keeps the mirror outside the Cargo workspace until adapter/parity
-work is explicitly scoped.
+This refresh replaces the Rusty IDD handoff mirror from committed handoff HEAD,
+updates the upstream pin, records dirty source working-tree state as evidence,
+and excludes uncommitted source edits from the mirror.
