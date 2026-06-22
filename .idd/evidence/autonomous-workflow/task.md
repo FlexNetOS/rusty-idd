@@ -1,13 +1,18 @@
-# Envctl Rust Toolchain CI Task Evidence
+# Task Evidence: integrate-agent-harness
 
-- Task: `KBTASK-RUSTY-IDD-ENVCTL-RUST-CI`
-- Change: `envctl-owned-rust-toolchain-cache`
-- Goal file: `.idd/goals/envctl-owned-rust-toolchain-cache.md`
-- Branch: `fix/ci-envctl-rust-toolchain`
-- Claim: `claim recorded by this Rusty IDD worktree owner for the active CI implementation slice`
+- Task: Replace always-loaded harness/tool overflow with task-scoped Rusty IDD
+  agent harness packages.
+- Branch: `feature/scoped-agent-swarm-packages`
+- Base: `origin/develop`
+- Worktree: `.worktrees/scoped-agent-swarm-packages`
+- Active OpenSpec change: `integrate-agent-harness`
+- Status: claimed
 
-This task moves GitHub workflow Rust setup away from Rust action/cache shims and
-onto the Rusty IDD envctl-owned toolchain/cache contract. The CI path reports
-the actual Cargo-executed compiler, uses meta-local Rust homes, requires the
-nightly `rustc_codegen_gcc` surface, uses `wild`, and selects kache/hurry/zccache
-without falling back to sccache.
+## Checkpoint
+
+- Created fresh feature worktree from `origin/develop`.
+- Recalled ICM context for Rusty IDD harness tool overflow, scoped packages,
+  and meta/envctl Rust toolchain/cache constraints.
+- Refreshed `.idd/knowledge/plan-context.md` for the goal.
+- Created OpenSpec proposal, design, spec delta, task list, and ADR before
+  implementation.

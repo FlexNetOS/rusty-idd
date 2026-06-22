@@ -1,11 +1,11 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:0989b79023ab02e7`
+- Workspace fingerprint: `fnv1a64:25a4922125eb9a63`
 - Source graph provider: `codegraph-rust`
-- Source graph: 139 files, 8765 nodes, 36180 edges
+- Source graph: 141 files, 8824 nodes, 36372 edges
 - Source languages: rust
 - Context provider: `repomix-rs`
-- Context package: 328 files, 726262 tokens
+- Context package: 335 files, 729750 tokens
 
 ## Automation Stages
 
@@ -31,10 +31,10 @@
 
 | Component | Kind | Files | Nodes | Edges | Languages |
 |---|---|---:|---:|---:|---|
-| `cli` | crate | 24 | 933 | 4282 | Rust, rust |
+| `cli` | crate | 26 | 992 | 4504 | Rust, rust |
 | `core` | crate | 12 | 448 | 2479 | Rust, rust |
 | `knowledge` | crate | 1 | 639 | 4653 | Rust, rust |
-| `merge-tools` | crate | 1 | 45 | 235 | Rust, rust |
+| `merge-tools` | crate | 1 | 45 | 234 | Rust, rust |
 | `runner` | crate | 4 | 770 | 3135 | Rust, rust |
 | `spec` | crate | 24 | 461 | 1969 | Rust, rust |
 | `tui` | crate | 3 | 1006 | 3985 | Rust, rust |
@@ -59,8 +59,10 @@
 | `crate:cli` | codegraph:References | `crate:spec` |
 | `crate:cli` | codegraph:Calls | `external:codegraph-core` |
 | `crate:cli` | codegraph:Calls | `external:codegraph-parser` |
+| `crate:core` | codegraph:Calls | `crate:cli` |
 | `crate:core` | codegraph:Calls | `crate:spec` |
 | `crate:core` | codegraph:Calls | `external:codegraph-core` |
+| `crate:knowledge` | codegraph:Calls | `crate:cli` |
 | `crate:knowledge` | codegraph:Imports | `crate:cli` |
 | `crate:knowledge` | codegraph:Calls | `crate:core` |
 | `crate:knowledge` | codegraph:Imports | `crate:core` |
@@ -71,6 +73,7 @@
 | `crate:knowledge` | codegraph:Imports | `external:codegraph-parser` |
 | `crate:merge-tools` | codegraph:Calls | `crate:core` |
 | `crate:merge-tools` | codegraph:Calls | `crate:spec` |
+| `crate:runner` | codegraph:Calls | `crate:cli` |
 | `crate:runner` | codegraph:Calls | `crate:core` |
 | `crate:runner` | codegraph:Calls | `crate:spec` |
 | `crate:runner` | codegraph:Calls | `external:codegraph-core` |
@@ -81,9 +84,11 @@
 | `crate:tui` | codegraph:References | `crate:runner` |
 | `crate:tui` | codegraph:Calls | `crate:spec` |
 | `crate:tui` | codegraph:Calls | `external:codegraph-core` |
+| `external:codegraph-core` | codegraph:Calls | `crate:cli` |
 | `external:codegraph-core` | codegraph:Calls | `crate:core` |
 | `external:codegraph-core` | codegraph:Calls | `crate:spec` |
 | `external:codegraph-core` | codegraph:References | `crate:spec` |
+| `external:codegraph-parser` | codegraph:Calls | `crate:cli` |
 | `external:codegraph-parser` | codegraph:Calls | `crate:core` |
 | `external:codegraph-parser` | codegraph:Calls | `crate:spec` |
 | `external:codegraph-parser` | codegraph:Calls | `external:codegraph-core` |
@@ -113,4 +118,4 @@
 ## Findings
 
 - CodeGraph-backed parsing completed without source failures
-- repomix context package measured 328 files and 726262 tokens
+- repomix context package measured 335 files and 729750 tokens
