@@ -44,6 +44,7 @@ path	size_bytes	fnv1a64
 .idd/evidence/autonomous-workflow/task.md	696	7e43c86ce2bfd033
 .idd/evidence/autonomous-workflow/validation.md	1292	ef2e499668afd6ca
 .idd/evidence/prompt-hub-boundary/research.md	598	3318f818ef05fb2f
+.idd/evidence/verify-package-stage/pr.md	339	684abebf2f4e315f
 .idd/evidence/verify-package-stage/task.md	761	22f4b0d10667ecca
 .idd/evidence/verify-package-stage/validation.md	1364	93433dc8e722ff50
 .idd/goals/add-verify-package-stage.md	5049	42e8bce2ebbab696
@@ -57,9 +58,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34490	bb629ab552912770
-.idd/knowledge/architecture.md	6913	9c8ff9fd5627c599
-.idd/knowledge/index.json	19315360	32b82c21c823abab
+.idd/knowledge/architecture.json	34490	c7a2e96599aac8ff
+.idd/knowledge/architecture.md	6913	938e6eede8070f2e
+.idd/knowledge/index.json	19315360	d06f4d9a04133f10
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -72,7 +73,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91967	bea8268e4399f043
 .idd/knowledge/plan-context.md	22710	f2ed9834ebcebb2b
-.idd/knowledge/report.md	5051	70f37f74380f413d
+.idd/knowledge/report.md	5051	dfb9c7a6bfd0343e
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	25	c1e1a191208bdbfe
