@@ -221,9 +221,15 @@ At Stop/SubagentStop, once the branch has dirty work or commits beyond
 
 - `.idd/evidence/autonomous-workflow/validation.md` with build, generated
   artifacts, test, lint, secret-scan, and manifest results, with `Test:` listed
-  after `Generated artifacts:`;
-- `.idd/evidence/autonomous-workflow/pr.md` with the PR, `Base: develop`, and
-  auto-merge status.
+  after `Generated artifacts:`. Each required result must be success-like
+  (`passed`, `completed`, `refreshed`, `clean`, `no matches`, `0 critical`, or
+  similar); failed, skipped, stale, missing, unknown, placeholder, or not-run
+  evidence does not satisfy the gate. The validation evidence must also include
+  `Change: <active-change>` so older task evidence cannot unlock a new push,
+  PR, merge, or task-completion command;
+- `.idd/evidence/autonomous-workflow/pr.md` with `Change: <active-change>`,
+  `Branch: <current-branch>`, the PR, `Base: develop`, and enabled auto-merge
+  status.
 
 The invariant Stop hook remains registered as a second Stop handler:
 
