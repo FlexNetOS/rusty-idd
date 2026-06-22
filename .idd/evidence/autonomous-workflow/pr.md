@@ -5,12 +5,13 @@
 - Base: develop
 - State: open
 - Draft: false
-- Auto-merge: pending enablement
+- Auto-merge: enabled
+- Auto-merge method: squash
+- Enabled at: 2026-06-22T03:31:21Z
+- Enabled by: `drdave-flexnetos`
 - Created at: 2026-06-22T03:30:32Z
 - Created by: `drdave-flexnetos`
-- Merge state at evidence capture: blocked while required checks were in progress
-- Initial checks in progress at evidence capture: CodeQL actions, CodeQL rust,
-  Semantic PR Title, ci rust, ci msrv
+- Merge state at evidence capture: blocked while required checks were pending
 
 GitHub verification command:
 
