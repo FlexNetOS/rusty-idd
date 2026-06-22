@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/autonomous-workflow-hooks",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/architecture-artifacts-upgrade",
   "source_plan": ".idd/knowledge/integration-plan.json",
   "source_system_architecture": ".idd/knowledge/system-architecture.json",
   "selector": {
@@ -55,38 +55,25 @@
       "repo_name": "prompt_hub",
       "path": "prompt_hub",
       "remote": "git@github.com:FlexNetOS/prompt_hub.git",
-      "branch": "main",
-      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
-      "dirty": true,
+      "branch": null,
+      "head": null,
+      "dirty": false,
       "tags": [
         "ai",
         "prompts"
       ],
-      "markers": [
-        "rust",
-        "handoff",
-        "claude",
-        "github-actions"
-      ],
+      "markers": [],
       "roles": [
         "role:agent-environment",
         "role:capability-hub",
-        "role:fleet-handoff",
-        "role:rust-code-surface",
         "role:spec-producer"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null,
       "evidence_paths": [
-        "prompt_hub",
-        "prompt_hub/.claude",
-        "prompt_hub/.github/workflows",
-        "prompt_hub/.handoff",
-        "prompt_hub/Cargo.toml"
+        "prompt_hub"
       ],
       "native_diagnostic_commands": [
-        "cd prompt_hub && cargo metadata --locked --format-version 1",
-        "cd prompt_hub && cargo test --workspace --all-features --locked",
         "git -C prompt_hub rev-parse HEAD",
         "git -C prompt_hub status --short --branch"
       ]
@@ -94,13 +81,11 @@
   ],
   "missing_owner_repos": [],
   "diagnostics": [
-    "cd prompt_hub && cargo metadata --locked --format-version 1",
-    "cd prompt_hub && cargo test --workspace --all-features --locked",
     "git -C prompt_hub rev-parse HEAD",
     "git -C prompt_hub status --short --branch"
   ],
   "findings": [
-    "1 resolved owner repos report dirty state",
+    "0 resolved owner repos report dirty state",
     "all owner repos resolved in the system architecture graph",
     "joined 1 owner repos against .idd/knowledge/system-architecture.json",
     "selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json"

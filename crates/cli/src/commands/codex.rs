@@ -478,11 +478,12 @@ fn check_develop_worktree(root: &Path, failures: &mut Vec<String>) {
 }
 
 fn active_change(root: &Path) -> Option<String> {
-    std::env::var("RUSTY_IDD_CHANGE")
+    fs::read_to_string(root.join(".idd/workflow/active-change"))
         .ok()
-        .filter(|value| !value.trim().is_empty())
+        .map(|value| value.trim().to_string())
+        .filter(|value| !value.is_empty())
         .or_else(|| {
-            fs::read_to_string(root.join(".idd/workflow/active-change"))
+            std::env::var("RUSTY_IDD_CHANGE")
                 .ok()
                 .map(|value| value.trim().to_string())
                 .filter(|value| !value.is_empty())

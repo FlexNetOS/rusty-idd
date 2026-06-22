@@ -3,15 +3,15 @@ use std::path::PathBuf;
 
 use clap::{Args, Subcommand};
 use rusty_idd_knowledge::{
-    build_architecture_graph, build_graph_planning_context, build_integration_automation_plan,
-    build_integration_owner_surfaces, build_integration_readiness_report,
-    build_integration_status_report, build_knowledge_report, build_system_architecture_graph,
-    build_system_operating_model, index_workspace, load_index, pack_workspace,
-    query_knowledge_index, refresh_workspace, ArchitectureFormat, ArchitectureOptions,
-    IndexOptions, IntegrationOwnersOptions, IntegrationPlanOptions, IntegrationReadinessOptions,
-    IntegrationStatusOptions, KnowledgeQuery, OperatingModelOptions, PackStyle,
-    PackWorkspaceOptions, PlanContextFormat, PlanContextOptions, ReportFormat, ReportOptions,
-    SystemArchitectureOptions,
+    build_architecture_diagrams, build_architecture_graph, build_graph_planning_context,
+    build_integration_automation_plan, build_integration_owner_surfaces,
+    build_integration_readiness_report, build_integration_status_report, build_knowledge_report,
+    build_system_architecture_graph, build_system_operating_model, index_workspace, load_index,
+    pack_workspace, query_knowledge_index, refresh_workspace, ArchitectureDiagramOptions,
+    ArchitectureFormat, ArchitectureOptions, IndexOptions, IntegrationOwnersOptions,
+    IntegrationPlanOptions, IntegrationReadinessOptions, IntegrationStatusOptions, KnowledgeQuery,
+    OperatingModelOptions, PackStyle, PackWorkspaceOptions, PlanContextFormat, PlanContextOptions,
+    ReportFormat, ReportOptions, SystemArchitectureOptions,
 };
 
 #[derive(Subcommand)]
@@ -24,6 +24,8 @@ pub enum KnowledgeCommand {
     Report(ReportArgs),
     /// Generate the system architecture graph from CodeGraph and repomix surfaces.
     Architecture(ArchitectureArgs),
+    /// Generate Mermaid architecture diagrams from the architecture graph.
+    Diagrams(DiagramArgs),
     /// Generate a cross-repo system graph from a parent meta workspace.
     SystemArchitecture(SystemArchitectureArgs),
     /// Generate a full-system operating model from the system graph.
@@ -102,6 +104,14 @@ pub struct ReportArgs {
 
 #[derive(Args)]
 pub struct ArchitectureArgs {
+    #[arg(long)]
+    pub workspace: PathBuf,
+    #[arg(long)]
+    pub out: PathBuf,
+}
+
+#[derive(Args)]
+pub struct DiagramArgs {
     #[arg(long)]
     pub workspace: PathBuf,
     #[arg(long)]
@@ -308,6 +318,12 @@ fn try_run(command: KnowledgeCommand) -> anyhow::Result<()> {
                 write_text(&args.out, &graph)?;
             }
             println!("wrote architecture graph to {}", args.out.display());
+        }
+        KnowledgeCommand::Diagrams(args) => {
+            let diagrams =
+                build_architecture_diagrams(ArchitectureDiagramOptions::new(args.workspace))?;
+            write_text(&args.out, &diagrams)?;
+            println!("wrote architecture diagrams to {}", args.out.display());
         }
         KnowledgeCommand::SystemArchitecture(args) => {
             let format = if args

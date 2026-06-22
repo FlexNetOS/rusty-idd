@@ -1,18 +1,18 @@
-# Autonomous Workflow Hook PR Evidence
+# Architecture Diagram Artifact PR Evidence
 
-- PR: #75 https://github.com/FlexNetOS/rusty-idd/pull/75
-- Branch: `feature/autonomous-workflow-hooks-v2`
+- PR: #77 https://github.com/FlexNetOS/rusty-idd/pull/77
+- Branch: `feature/architecture-artifacts-upgrade`
 - Base: develop
 - State: open
 - Draft: false
 - auto-merge: enabled
 - Auto-merge method: squash
-- Enabled at: 2026-06-22T00:13:07Z
+- Enabled at: 2026-06-22T01:25:56Z
 - Enabled by: `drdave-flexnetos`
 - Merge state at evidence capture: blocked pending in-progress checks
 
 GitHub verification command:
 
 ```bash
-rtk gh pr view 75 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup
+rtk gh pr view 77 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup
 ```
