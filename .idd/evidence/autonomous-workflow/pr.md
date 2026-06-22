@@ -1,18 +1,18 @@
-# Architecture Diagram Artifact PR Evidence
+# Rusty IDD + Handoff Single-Repo PR Evidence
 
-- PR: #77 https://github.com/FlexNetOS/rusty-idd/pull/77
-- Branch: `feature/architecture-artifacts-upgrade`
+- PR: #80 https://github.com/FlexNetOS/rusty-idd/pull/80
+- Branch: `feature/handoff-single-repo-architecture`
 - Base: develop
 - State: open
 - Draft: false
-- auto-merge: enabled
+- Auto-merge: enabled
 - Auto-merge method: squash
-- Enabled at: 2026-06-22T01:25:56Z
+- Enabled at: 2026-06-22T02:22:45Z
 - Enabled by: `drdave-flexnetos`
-- Merge state at evidence capture: blocked pending in-progress checks
+- Merge state at evidence capture: unknown, with no status checks reported yet
 
 GitHub verification command:
 
 ```bash
-rtk gh pr view 77 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup
+rtk gh pr view 80 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup
 ```

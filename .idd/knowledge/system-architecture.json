@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture",
   "system_root": "/home/drdave/Desktop/meta",
   "discovery_source": "meta project list --json",
   "repos": [
@@ -467,9 +467,9 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "develop",
-      "head": "e920fec414e18eca677cc2484df5a0689adba65a",
-      "dirty": false,
+      "branch": "feat/hftask-0078-differential-drive-workflow",
+      "head": "c27f2648aa6fb2440e7f769c69b8de9135c5f6de",
+      "dirty": true,
       "tags": [
         "handoff",
         "orchestration"
@@ -1004,7 +1004,7 @@
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
       "branch": "develop",
-      "head": "75ed157ae52619af6e53e554a53ab18c200aebe8",
+      "head": "6e279721bedac592813b6f1bf8186f263c1c8bdf",
       "dirty": false,
       "tags": [
         "network",
@@ -1621,7 +1621,7 @@
       "name": "teri",
       "path": "teri",
       "repo": "git@github.com:FlexNetOS/teri.git",
-      "branch": "main",
+      "branch": "fix/mirofish-spine-and-llm",
       "head": "8faa673d73af6b41af6bcd2a4f2cec2cf286c788",
       "dirty": true,
       "tags": [
@@ -3668,7 +3668,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "10 repos have local dirty state recorded as evidence",
+    "11 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture",
   "system_root": "/home/drdave/Desktop/meta",
   "source_model": ".idd/knowledge/operating-model.json",
   "work_items": [

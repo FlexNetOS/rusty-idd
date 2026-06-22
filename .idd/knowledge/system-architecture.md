@@ -1,7 +1,7 @@
 # System Architecture Graph
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
 - Discovery source: `meta project list --json`
 - Repos: 65
 - Roles: 13
@@ -50,7 +50,7 @@
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
 | `github_org` | `fix/autonomous-feature-develop-approval` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
-| `handoff` | `develop` | false | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
+| `handoff` | `feat/hftask-0078-differential-drive-workflow` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `develop` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
 | `hermes-agent` | `main` | false | agents, ai, untriaged | role:agent-environment | node, github-actions |
 | `hooks_hub` | `master` | false | hooks, hub | role:capability-hub | github-actions |
@@ -88,7 +88,7 @@
 | `ruvector` | `feat/ruvllm-cuda-default-and-embeddings` | true | ai, crates-only, forked, rust, wasm | role:agent-environment, role:fleet-handoff, role:rust-code-surface | rust, node, handoff, claude, github-actions |
 | `shimmy` | `feat/openai-embeddings-endpoint` | false | forked, untriaged | role:rust-code-surface | rust, github-actions, make |
 | `template_hub` | `master` | false | hub, templates | role:capability-hub | github-actions |
-| `teri` | `main` | true | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
+| `teri` | `fix/mirofish-spine-and-llm` | true | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
 | `tool_hub` | `feat/stage-github-org-tool-pins` | true | hub, tools | role:capability-hub | github-actions |
 | `vault_hub` | `main` | false | hub, vault | role:capability-hub |  |
 | `vox` | `main` | false | forked, tools, voice | role:rust-code-surface | rust, claude, github-actions |
@@ -307,6 +307,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 10 repos have local dirty state recorded as evidence
+- 11 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries

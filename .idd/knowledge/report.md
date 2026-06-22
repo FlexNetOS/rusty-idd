@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:f52f2b76ca51f231`
+- Workspace fingerprint: `fnv1a64:65c6c3315a0df997`
 - Indexed source files: 139
 - Graph nodes: 8649
 - Graph edges: 35408
 - Resolved call edges: 20150
 - Functions with complexity: 2160
-- Packed files: 153
-- Packed tokens: 316113
+- Packed files: 155
+- Packed tokens: 320795
 - Suspicious files: 0
 
 ## Hotspots
@@ -47,19 +47,19 @@
 | 5761 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
+| 3140 | `AI_MERGE/34_handoff_single_repo_architecture.md` |
 | 3096 | `docs/rusty-idd/codex-environment.md` |
 | 2540 | `AI_MERGE/16_upstream_knowledge_revisit.md` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
 | 2421 | `AI_MERGE/14_upstream_full_adoption.md` |
+| 2319 | `Justfile` |
 | 2301 | `crates/core/src/templates.rs` |
 | 2098 | `AI_MERGE/34_grit_full_integration/00_grit_inventory.md` |
 | 2098 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/01_repo_b_inventory.md` |
 | 2097 | `crates/tui/src/ui.rs` |
-| 2059 | `Justfile` |
 | 1994 | `Makefile` |
 | 1963 | `AI_MERGE/15_system_handoff_research.md` |
-| 1732 | `crates/cli/src/commands/codex.rs` |
 
 ## Findings
 
-- packed context is 316113 tokens, above default budget 120000
+- packed context is 320795 tokens, above default budget 120000
