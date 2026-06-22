@@ -18,6 +18,7 @@ use rusty_idd_core::manifest::workspace_fingerprint;
 use serde::{Deserialize, Serialize};
 
 const DEFAULT_MAX_PACK_TOKENS: usize = 120_000;
+const GENERATED_ARTIFACT_MAX_PACK_TOKENS: usize = 400_000;
 const DEFAULT_MAX_FILE_BYTES: u64 = 512 * 1024;
 
 #[derive(Debug, Clone)]
@@ -1010,7 +1011,7 @@ pub fn build_knowledge_report(options: ReportOptions) -> Result<String> {
     let tmp = tempfile::tempdir().context("create temporary report pack directory")?;
     let pack_out = tmp.path().join("report-pack.md");
     let mut pack_options = PackWorkspaceOptions::new(&workspace, &pack_out, PackStyle::Markdown);
-    pack_options.max_tokens = 160_000;
+    pack_options.max_tokens = GENERATED_ARTIFACT_MAX_PACK_TOKENS;
     pack_options.compress = true;
     pack_options.remove_comments = true;
     pack_options.remove_empty_lines = true;
@@ -1938,7 +1939,7 @@ fn build_architecture_pack_summary(workspace: &Path) -> Result<PackSummary> {
     let tmp = tempfile::tempdir().context("create temporary architecture pack directory")?;
     let pack_out = tmp.path().join("architecture-pack.md");
     let mut pack_options = PackWorkspaceOptions::new(workspace, &pack_out, PackStyle::Markdown);
-    pack_options.max_tokens = 160_000;
+    pack_options.max_tokens = GENERATED_ARTIFACT_MAX_PACK_TOKENS;
     pack_options.compress = true;
     pack_options.remove_comments = true;
     pack_options.remove_empty_lines = true;
