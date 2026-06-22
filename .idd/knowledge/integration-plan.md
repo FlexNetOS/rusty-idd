@@ -1,7 +1,7 @@
 # Integration Automation Plan
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
 - Source model: `.idd/knowledge/operating-model.json`
 - Work items: 19
 

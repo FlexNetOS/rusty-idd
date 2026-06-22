@@ -1,7 +1,7 @@
 # System Operating Model
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/grit-full-integration`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/handoff-single-repo-architecture`
 - Source graph: `.idd/knowledge/system-architecture.json`
 - Layers: 11
 - Capabilities: 19
