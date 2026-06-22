@@ -20,8 +20,7 @@ explicit and machine-checkable.
   and cache root.
 - Replace the previous mold assumption with a `wild-linker` requirement.
 - Prefer `kache` as the compiler cache wrapper, allow `hurry` or `zccache`, and
-  keep `sccache` only as a documented last-resort fallback at version 0.15.0 or
-  newer.
+  keep the checked-in CI implementation off the old `sccache` path.
 - Document the parent `meta` / `envctl` ownership boundary and rollback path.
 
 ## Capabilities

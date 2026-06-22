@@ -1,0 +1,209 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+mode="${1:-ci}"
+
+workspace="${GITHUB_WORKSPACE:-}"
+if [[ -z "$workspace" ]]; then
+  workspace="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+fi
+workspace="$(cd "$workspace" && pwd -P)"
+
+find_meta_root() {
+  if [[ -n "${RUSTY_IDD_META_ROOT:-}" ]]; then
+    printf '%s\n' "$RUSTY_IDD_META_ROOT"
+    return
+  fi
+  if [[ -n "${META_ROOT:-}" ]]; then
+    printf '%s\n' "$META_ROOT"
+    return
+  fi
+
+  local cursor="$workspace"
+  while [[ "$cursor" != "/" ]]; do
+    if [[ -f "$cursor/.meta.yaml" || -d "$cursor/envctl" ]]; then
+      printf '%s\n' "$cursor"
+      return
+    fi
+    cursor="$(dirname "$cursor")"
+  done
+
+  printf '%s\n' "$(cd "$workspace/.." && pwd -P)/meta"
+}
+
+META_ROOT="$(find_meta_root)"
+export META_ROOT
+
+RUSTUP_HOME="${RUSTUP_HOME:-$META_ROOT/.env/rust/rustup}"
+CARGO_HOME="${CARGO_HOME:-$META_ROOT/.env/rust/cargo}"
+RUSTY_IDD_RUST_BIN="${RUSTY_IDD_RUST_BIN:-$META_ROOT/.env/rust/bin}"
+RUSTY_IDD_CACHE_BASE="${RUSTY_IDD_CACHE_BASE:-$META_ROOT/.cache/rust}"
+CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$workspace/target}"
+
+export RUSTUP_HOME CARGO_HOME RUSTY_IDD_RUST_BIN RUSTY_IDD_CACHE_BASE CARGO_TARGET_DIR
+export PATH="$RUSTY_IDD_RUST_BIN:$CARGO_HOME/bin:$PATH"
+
+mkdir -p "$RUSTUP_HOME" "$CARGO_HOME" "$RUSTY_IDD_RUST_BIN" "$RUSTY_IDD_CACHE_BASE" "$CARGO_TARGET_DIR"
+
+case "$mode" in
+  ci|promote)
+    toolchain="${RUSTY_IDD_RUST_TOOLCHAIN:-nightly}"
+    components=(rustfmt clippy)
+    strict_rust_contract=true
+    ;;
+  msrv)
+    toolchain="${RUSTY_IDD_RUST_TOOLCHAIN:-1.88.0}"
+    components=()
+    strict_rust_contract=false
+    ;;
+  release)
+    toolchain="${RUSTY_IDD_RUST_TOOLCHAIN:-1.96.0}"
+    components=()
+    strict_rust_contract=false
+    ;;
+  *)
+    echo "unknown envctl Rust mode: $mode" >&2
+    exit 2
+    ;;
+esac
+
+if ! command -v rustup >/dev/null 2>&1; then
+  echo "rustup is required on PATH so it can materialize the meta-owned RUSTUP_HOME=$RUSTUP_HOME" >&2
+  exit 1
+fi
+
+rustup_args=(toolchain install "$toolchain" --profile minimal)
+for component in "${components[@]}"; do
+  rustup_args+=(--component "$component")
+done
+rustup "${rustup_args[@]}"
+
+export RUSTUP_TOOLCHAIN="$toolchain"
+
+if [[ "$strict_rust_contract" == true ]]; then
+  codegen_component_ok=false
+  for component in rustc-codegen-gcc rustc-codegen-gcc-preview; do
+    if rustup component add "$component" --toolchain "$toolchain"; then
+      codegen_component_ok=true
+      break
+    fi
+  done
+  if [[ "$codegen_component_ok" != true ]]; then
+    echo "nightly Rust is installed, but no rustc_codegen_gcc component was available for $toolchain" >&2
+    exit 1
+  fi
+fi
+
+cargo_for_toolchain() {
+  RUSTUP_TOOLCHAIN="$toolchain" cargo "$@"
+}
+
+install_cargo_tool() {
+  local crate="$1"
+  local binary="$2"
+  if command -v "$binary" >/dev/null 2>&1; then
+    return
+  fi
+  cargo_for_toolchain install --locked --root "$RUSTY_IDD_RUST_BIN/.." "$crate"
+}
+
+install_cache_wrapper() {
+  local wrapper="${RUSTY_IDD_CACHE_WRAPPER:-kache}"
+  case "$wrapper" in
+    kache|hurry|zccache) ;;
+    sccache)
+      echo "sccache is not part of this CI bootstrap; provision kache, hurry, or zccache through meta/envctl" >&2
+      exit 1
+      ;;
+    *)
+      echo "unsupported Rust cache wrapper '$wrapper'; expected kache, hurry, or zccache" >&2
+      exit 1
+      ;;
+  esac
+
+  if ! command -v "$wrapper" >/dev/null 2>&1; then
+    install_cargo_tool "$wrapper" "$wrapper"
+  fi
+
+  local wrapper_path
+  wrapper_path="$(command -v "$wrapper")"
+  local cache_root="$RUSTY_IDD_CACHE_BASE/$wrapper"
+  mkdir -p "$cache_root"
+
+  case "$wrapper" in
+    kache)
+      export KACHE_CACHE_DIR="$cache_root"
+      ;;
+    hurry)
+      export HURRY_CACHE_DIR="$cache_root"
+      ;;
+    zccache)
+      export ZCCACHE_CACHE_DIR="$cache_root"
+      ;;
+  esac
+
+  export RUSTC_WRAPPER="$wrapper_path"
+  export RUSTY_IDD_CACHE_WRAPPER="$wrapper"
+  export RUSTY_IDD_CACHE_ROOT="$cache_root"
+}
+
+if [[ "$strict_rust_contract" == true ]]; then
+  install_cache_wrapper
+  install_cargo_tool wild-linker wild
+  export RUSTY_IDD_LINKER_PATH="$(command -v wild)"
+  export RUSTY_IDD_CODEGEN_BACKEND="rustc_codegen_gcc"
+  install_cargo_tool cargo-audit cargo-audit
+
+  if ! command -v clang >/dev/null 2>&1; then
+    echo "clang is required as the wild-linker driver for the strict Linux Rust contract" >&2
+    exit 1
+  fi
+  export CC="${CC:-clang}"
+  export RUSTFLAGS="${RUSTFLAGS:-} -C linker=clang -C link-arg=-fuse-ld=$RUSTY_IDD_LINKER_PATH"
+elif [[ "$mode" == "ci" || "$mode" == "promote" ]]; then
+  install_cargo_tool cargo-audit cargo-audit
+fi
+
+rustc_path="$(rustup which rustc)"
+cargo_path="$(rustup which cargo)"
+
+echo "Rusty IDD envctl Rust environment"
+echo "- mode: $mode"
+echo "- META_ROOT: $META_ROOT"
+echo "- RUSTUP_HOME: $RUSTUP_HOME"
+echo "- CARGO_HOME: $CARGO_HOME"
+echo "- CARGO_TARGET_DIR: $CARGO_TARGET_DIR"
+echo "- RUSTUP_TOOLCHAIN: $RUSTUP_TOOLCHAIN"
+echo "- rustc path: $rustc_path"
+echo "- cargo path: $cargo_path"
+echo "- RUSTC_WRAPPER: ${RUSTC_WRAPPER:-<unset>}"
+echo "- RUSTFLAGS: ${RUSTFLAGS:-<unset>}"
+
+if [[ -n "${GITHUB_ENV:-}" ]]; then
+  {
+    echo "META_ROOT=$META_ROOT"
+    echo "RUSTUP_HOME=$RUSTUP_HOME"
+    echo "CARGO_HOME=$CARGO_HOME"
+    echo "RUSTY_IDD_RUST_BIN=$RUSTY_IDD_RUST_BIN"
+    echo "RUSTY_IDD_CACHE_BASE=$RUSTY_IDD_CACHE_BASE"
+    echo "CARGO_TARGET_DIR=$CARGO_TARGET_DIR"
+    echo "RUSTUP_TOOLCHAIN=$RUSTUP_TOOLCHAIN"
+    echo "RUSTC_WRAPPER=${RUSTC_WRAPPER:-}"
+    echo "RUSTY_IDD_CACHE_WRAPPER=${RUSTY_IDD_CACHE_WRAPPER:-}"
+    echo "RUSTY_IDD_CACHE_ROOT=${RUSTY_IDD_CACHE_ROOT:-}"
+    echo "RUSTY_IDD_LINKER_PATH=${RUSTY_IDD_LINKER_PATH:-}"
+    echo "RUSTY_IDD_CODEGEN_BACKEND=${RUSTY_IDD_CODEGEN_BACKEND:-}"
+    echo "CC=${CC:-}"
+    echo "KACHE_CACHE_DIR=${KACHE_CACHE_DIR:-}"
+    echo "HURRY_CACHE_DIR=${HURRY_CACHE_DIR:-}"
+    echo "ZCCACHE_CACHE_DIR=${ZCCACHE_CACHE_DIR:-}"
+    echo "RUSTFLAGS=${RUSTFLAGS:-}"
+  } >> "$GITHUB_ENV"
+fi
+
+if [[ -n "${GITHUB_PATH:-}" ]]; then
+  {
+    echo "$RUSTY_IDD_RUST_BIN"
+    echo "$CARGO_HOME/bin"
+  } >> "$GITHUB_PATH"
+fi

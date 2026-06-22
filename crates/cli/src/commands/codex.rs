@@ -998,27 +998,38 @@ fn runtime_audit(workspace: &Path) -> anyhow::Result<()> {
 }
 
 fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
-    let codex_bin = match args.codex_bin.clone() {
-        Some(path) => path,
-        None => find_on_path("codex").context("locate codex on PATH")?,
-    };
-    let resolved_codex = codex_bin
-        .canonicalize()
-        .with_context(|| format!("resolve codex binary {}", codex_bin.display()))?;
-    let binary_kind = binary_kind(&resolved_codex)?;
-
     println!("Codex system audit");
-    println!("- codex binary: {}", codex_bin.display());
-    println!("- resolved codex binary: {}", resolved_codex.display());
-    println!("- binary kind: {binary_kind}");
-    println!(
-        "- active runtime verdict: {}",
-        if binary_kind == "ELF native executable" {
-            "Rust-native binary path"
-        } else {
-            "not proven Rust-native"
-        }
-    );
+
+    let codex_runtime_requested = args.codex_bin.is_some()
+        || !args.rust_toolchain
+        || args.codex_source.is_some()
+        || args.envctl.is_some();
+    let binary_kind = if codex_runtime_requested {
+        let codex_bin = match args.codex_bin.clone() {
+            Some(path) => path,
+            None => find_on_path("codex").context("locate codex on PATH")?,
+        };
+        let resolved_codex = codex_bin
+            .canonicalize()
+            .with_context(|| format!("resolve codex binary {}", codex_bin.display()))?;
+        let binary_kind = binary_kind(&resolved_codex)?;
+
+        println!("- codex binary: {}", codex_bin.display());
+        println!("- resolved codex binary: {}", resolved_codex.display());
+        println!("- binary kind: {binary_kind}");
+        println!(
+            "- active runtime verdict: {}",
+            if binary_kind == "ELF native executable" {
+                "Rust-native binary path"
+            } else {
+                "not proven Rust-native"
+            }
+        );
+        Some(binary_kind)
+    } else {
+        println!("- codex binary: skipped (Rust toolchain audit only)");
+        None
+    };
 
     if let Some(source) = args.codex_source.clone() {
         let source = source
@@ -1097,11 +1108,17 @@ fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
         println!("  - verdict: meta/envctl-owned Rust toolchain contract satisfied");
     }
 
-    if binary_kind != "ELF native executable" {
+    if matches!(binary_kind.as_ref(), Some(kind) if *kind != "ELF native executable") {
         bail!("active codex binary is not a native ELF executable");
     }
 
-    println!("Verdict: active Codex execution is Rust-native; Python is upstream developer/package tooling unless an envctl fallback installs the Bun package.");
+    if binary_kind.is_some() {
+        println!("Verdict: active Codex execution is Rust-native; Python is upstream developer/package tooling unless an envctl fallback installs the Bun package.");
+    } else {
+        println!(
+            "Verdict: Rust toolchain audit completed without requiring a Codex runtime binary."
+        );
+    }
     Ok(())
 }
 

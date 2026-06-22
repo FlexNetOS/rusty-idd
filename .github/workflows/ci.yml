@@ -9,11 +9,12 @@ name: ci
 # cleanup slice formatted both crates and cleared all lints, so these are now
 # enforced. The audit gate fails on any NEW advisory (see .cargo/audit.toml).
 #
-# Toolchain is PINNED (not @stable) for reproducibility: the `rust` job runs the
-# full gate on a fixed stable; the `msrv` job proves the declared MSRV floor still
-# builds. Per-crate `rust-version`: core = 1.74 (zero-dep, std-only); all other
-# crates = 1.88 (bound by edition 2024 + `let`-chains stabilized in 1.88, ratatui
-# 0.30 >=1.86, and time 0.3.47 >=1.88). Bump both the pin and the floor together.
+# Rust state is owned by the parent-shaped meta/envctl prefix created by
+# scripts/ci/envctl-rust-env.sh, not by user-global rustup/Cargo homes or Rust
+# setup/cache actions. The `rust` job runs the full gate on latest nightly with
+# the strict `rustc_codegen_gcc` + wild + kache/hurry/zccache contract; the
+# `msrv` job proves the declared 1.88 floor still builds with meta-local Rust
+# homes.
 
 on:
   workflow_call:
@@ -29,12 +30,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      # Pinned stable (was @stable) so the full gate is reproducible and does not
-      # silently drift when a new stable lands. Bump deliberately.
-      - uses: dtolnay/rust-toolchain@1.96.0
+      - name: Restore meta-owned Rust cache
+        uses: actions/cache@v4
         with:
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
+          path: |
+            ${{ github.workspace }}/../meta/.env/rust
+            ${{ github.workspace }}/../meta/.cache/rust
+            target
+          key: rusty-idd-envctl-rust-nightly-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh', 'scripts/ci/envctl-rust-audit.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-nightly-${{ runner.os }}-
+      - name: Envctl Rust toolchain and cache
+        run: scripts/ci/envctl-rust-env.sh ci
+      - name: Strict envctl Rust toolchain audit
+        run: scripts/ci/envctl-rust-audit.sh
       - name: Merge-tools verification gate
         run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Build (workspace)
@@ -51,10 +60,6 @@ jobs:
         run: cargo fmt --all -- --check
       - name: Clippy
         run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-      - name: Install cargo-audit
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-audit
       - name: Security audit (fails on any new advisory)
         # Fail-closed supply-chain gate. The shared baseline (.cargo/audit.toml) is
         # auto-loaded and ignores the two accepted unmaintained transitive advisories
@@ -73,8 +78,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.88.0
-      - uses: Swatinem/rust-cache@v2
+      - name: Restore meta-owned Rust cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/../meta/.env/rust
+            ${{ github.workspace }}/../meta/.cache/rust
+            target
+          key: rusty-idd-envctl-rust-msrv-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-msrv-${{ runner.os }}-
+      - name: Envctl Rust toolchain
+        run: scripts/ci/envctl-rust-env.sh msrv
       - name: Build on the MSRV floor (1.88.0, locked)
         run: cargo build --workspace --locked
       - name: Compile tests on the MSRV floor (locked)

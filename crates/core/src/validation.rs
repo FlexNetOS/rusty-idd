@@ -331,12 +331,23 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         });
     }
 
-    if content.contains("dtolnay/rust-toolchain@stable") {
+    if content.contains("dtolnay/rust-toolchain@") {
         findings.push(ValidationFinding {
             severity: FindingSeverity::Critical,
             file: file.to_string(),
-            message: "workflow uses floating Rust toolchain @stable; pin an explicit version"
-                .to_string(),
+            message:
+                "workflow must use scripts/ci/envctl-rust-env.sh instead of dtolnay/rust-toolchain"
+                    .to_string(),
+        });
+    }
+
+    if content.contains("Swatinem/rust-cache@") {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: file.to_string(),
+            message:
+                "workflow must use explicit meta-owned cache paths instead of Swatinem/rust-cache"
+                    .to_string(),
         });
     }
 
@@ -346,6 +357,20 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
             &compact,
             "branches: [main, develop]",
             "primary CI must run on both main and develop pushes",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-env.sh ci",
+            "primary CI must materialize the envctl-owned Rust toolchain/cache",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-audit.sh",
+            "primary CI must audit the actual envctl-owned Rust compiler/cache surface",
             findings,
         );
         require_workflow_contains(
@@ -382,8 +407,15 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         require_workflow_contains(
             file,
             content,
-            "Swatinem/rust-cache@v2",
-            "promotion verification must use the shared Rust cache",
+            "scripts/ci/envctl-rust-env.sh promote",
+            "promotion verification must materialize the envctl-owned Rust toolchain/cache",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-audit.sh",
+            "promotion verification must audit the actual envctl-owned Rust compiler/cache surface",
             findings,
         );
         require_workflow_contains(
@@ -398,6 +430,16 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
             content,
             "cargo audit --deny warnings",
             "promotion verification must deny new cargo-audit warnings",
+            findings,
+        );
+    }
+
+    if file.ends_with("/release.yml") {
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-env.sh release",
+            "release workflow must materialize the envctl-owned Rust toolchain",
             findings,
         );
     }

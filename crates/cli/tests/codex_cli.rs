@@ -963,6 +963,53 @@ fn codex_system_audit_accepts_meta_owned_rust_toolchain_surface() {
 }
 
 #[test]
+fn codex_system_audit_allows_rust_toolchain_only_without_codex_binary() {
+    let root = tempfile::tempdir().unwrap();
+    let meta = root.path().join("meta");
+
+    let out = run_ok(
+        &[
+            "codex",
+            "system-audit",
+            "--rust-toolchain",
+            "--meta-root",
+            meta.to_str().unwrap(),
+            "--rust-toolchain-name",
+            "nightly-x86_64-unknown-linux-gnu",
+            "--rustc-path",
+            meta.join(".env/rust/rustup/toolchains/nightly/bin/rustc")
+                .to_str()
+                .unwrap(),
+            "--cargo-bin",
+            meta.join(".env/rust/rustup/toolchains/nightly/bin/cargo")
+                .to_str()
+                .unwrap(),
+            "--rustup-home",
+            meta.join(".env/rust/rustup").to_str().unwrap(),
+            "--cargo-home",
+            meta.join(".env/rust/cargo").to_str().unwrap(),
+            "--rustc-wrapper",
+            meta.join(".env/rust/bin/kache").to_str().unwrap(),
+            "--cache-wrapper",
+            "kache",
+            "--cache-root",
+            meta.join(".cache/rust/kache").to_str().unwrap(),
+            "--linker-path",
+            meta.join(".env/rust/bin/wild").to_str().unwrap(),
+            "--codegen-backend",
+            "rustc_codegen_gcc",
+        ],
+        root.path(),
+    );
+
+    assert!(out.contains("codex binary: skipped (Rust toolchain audit only)"));
+    assert!(out.contains("verdict: meta/envctl-owned Rust toolchain contract satisfied"));
+    assert!(out.contains(
+        "Verdict: Rust toolchain audit completed without requiring a Codex runtime binary."
+    ));
+}
+
+#[test]
 fn codex_system_audit_rejects_user_global_rust_toolchain_surface() {
     let root = tempfile::tempdir().unwrap();
     let codex_bin = root.path().join("codex-bin");
