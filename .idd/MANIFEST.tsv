@@ -40,7 +40,7 @@ path	size_bytes	fnv1a64
 .handoff/tasks/.gitkeep	1	af63c74c8601c8dd
 .handoff/tasks/rusty-idd-comprehensive-e2e-workflow-tests.task.json	818	234894891b4d63da
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/evidence/autonomous-workflow/pr.md	568	db479e460c851232
+.idd/evidence/autonomous-workflow/pr.md	648	061ebc666b901bc5
 .idd/evidence/autonomous-workflow/task.md	780	bfada059696badb9
 .idd/evidence/autonomous-workflow/validation.md	2269	93957b67fe933013
 .idd/goals/comprehensive-e2e-test-suite.md	1638	3fd24a8b94c3f6fc
