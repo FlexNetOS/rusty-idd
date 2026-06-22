@@ -547,8 +547,9 @@ fn check_develop_worktree(root: &Path, failures: &mut Vec<String>) {
         failures.push(format!("could not verify git worktree metadata: {error}"));
     }
 
-    if git_status(root, &["merge-base", "--is-ancestor", "develop", "HEAD"]).is_err() {
-        failures.push("current branch HEAD is not based on local develop".to_string());
+    let develop_ref = develop_base_ref(root);
+    if git_status(root, &["merge-base", "--is-ancestor", develop_ref, "HEAD"]).is_err() {
+        failures.push(format!("current branch HEAD is not based on {develop_ref}"));
     }
 }
 
@@ -610,12 +611,31 @@ fn check_task_evidence(root: &Path, failures: &mut Vec<String>) {
 }
 
 fn has_work_requiring_delivery(root: &Path) -> bool {
+    let commit_range = format!("{}..HEAD", develop_base_ref(root));
     git_output(root, &["status", "--porcelain", "--untracked-files=all"])
         .map(|output| !output.trim().is_empty())
         .unwrap_or(true)
-        || git_output(root, &["rev-list", "--count", "develop..HEAD"])
+        || git_output(root, &["rev-list", "--count", &commit_range])
             .map(|output| output.trim() != "0")
             .unwrap_or(true)
+}
+
+fn develop_base_ref(root: &Path) -> &'static str {
+    if git_output(
+        root,
+        &[
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            "origin/develop^{commit}",
+        ],
+    )
+    .is_ok()
+    {
+        "origin/develop"
+    } else {
+        "develop"
+    }
 }
 
 fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {

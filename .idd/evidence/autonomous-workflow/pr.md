@@ -1,8 +1,8 @@
-# Envctl-Owned Rust Toolchain PR Evidence
+# Codex Hook Base Ref PR Evidence
 
-- Change: `envctl-owned-rust-toolchain-cache`
-- PR: #96 https://github.com/FlexNetOS/rusty-idd/pull/96
-- Branch: `feature/envctl-owned-rust-toolchain-cache`
+- Change: `fix-codex-hook-base-ref`
+- PR: #97 https://github.com/FlexNetOS/rusty-idd/pull/97
+- Branch: `fix/codex-hook-issues`
 - Base: develop
 - State: open
 - Draft: false
@@ -12,5 +12,5 @@
 GitHub verification command:
 
 ```bash
-rtk gh pr view 96 --repo FlexNetOS/rusty-idd --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup,createdAt,author,mergedAt,mergeCommit
+rtk gh pr view 97 --repo FlexNetOS/rusty-idd --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup,createdAt,author,mergedAt,mergeCommit
 ```
