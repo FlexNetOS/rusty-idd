@@ -721,6 +721,9 @@ fn validation_section(text: &str, label: &'static str) -> Option<(&'static str, 
             if validation_line_label(next).is_some() {
                 break;
             }
+            if markdown_list_item(next).is_some() {
+                break;
+            }
             evidence.push(' ');
             evidence.push_str(next.trim());
             lines.next();
@@ -745,18 +748,22 @@ fn validation_line_label(line: &str) -> Option<&'static str> {
 }
 
 fn strip_markdown_list_prefix(line: &str) -> &str {
+    markdown_list_item(line).unwrap_or_else(|| line.trim_start())
+}
+
+fn markdown_list_item(line: &str) -> Option<&str> {
     let trimmed = line.trim_start();
     for bullet in ["- ", "* "] {
         if let Some(rest) = trimmed.strip_prefix(bullet) {
-            return rest.trim_start();
+            return Some(rest.trim_start());
         }
     }
     if let Some((number, rest)) = trimmed.split_once(". ") {
         if !number.is_empty() && number.chars().all(|ch| ch.is_ascii_digit()) {
-            return rest.trim_start();
+            return Some(rest.trim_start());
         }
     }
-    trimmed
+    None
 }
 
 fn validation_section_is_success(evidence: &str) -> bool {

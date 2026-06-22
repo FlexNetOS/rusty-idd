@@ -7,7 +7,7 @@
   artifacts, ADR, task evidence, and goal-file-backed
   `.idd/knowledge/plan-context.{json,md}` before the successful test gate.
 - Test: `rtk cargo test -p rusty-idd-cli --test codex_cli codex_workflow_check --locked`
-  passed 13 workflow-check tests, and the successful `rtk just ci` completed
+  passed 14 workflow-check tests, and the successful `rtk just ci` completed
   `cargo test --workspace --locked`.
 - Lint: the same successful `rtk just ci` completed
   `cargo clippy --workspace --all-targets --all-features -- -D warnings`.
