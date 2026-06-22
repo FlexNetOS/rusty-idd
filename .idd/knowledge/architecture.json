@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:559681930b949916",
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/e2e-test-suite",
+  "workspace_fingerprint": "fnv1a64:72a99dab4b22a484",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs",
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 139,
@@ -15,8 +15,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 276,
-    "tokens": 682711,
+    "files": 287,
+    "tokens": 691195,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -1324,6 +1324,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 276 files and 682711 tokens"
+    "repomix context package measured 287 files and 691195 tokens"
   ]
 }
