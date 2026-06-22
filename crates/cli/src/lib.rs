@@ -9,6 +9,7 @@
 //! - **`tui`** launches the interactive TUI via [`rusty_idd_tui::run`].
 //! - **`knowledge`** builds compact codebase graph indexes and AI context packs.
 //! - **`codex`** verifies repo-local Codex environment invariants and model loops.
+//! - **`harness`** creates task-scoped Rusty IDD agent swarm packages.
 //! - **`merge-tools`** exposes the reusable Rusty IDD merge-goal workflow package.
 //!
 //! Dependencies live at this crate (and the tui); the core crate stays zero-dep.
@@ -65,6 +66,10 @@ enum Command {
     #[command(subcommand)]
     Codex(commands::codex::CodexCommand),
 
+    /// Task-scoped Rusty IDD harness packages for workflow stages.
+    #[command(subcommand)]
+    Harness(commands::harness::HarnessCommand),
+
     /// Reusable merge-goal workflow package and legacy surface disposition.
     #[command(subcommand)]
     MergeTools(commands::merge_tools::MergeToolsCommand),
@@ -101,6 +106,7 @@ fn dispatch(command: Command) -> i32 {
         Command::Run(args) => commands::run::run(args),
         Command::Knowledge(cmd) => commands::knowledge::run(cmd),
         Command::Codex(cmd) => commands::codex::run(cmd),
+        Command::Harness(cmd) => commands::harness::run(cmd),
         Command::MergeTools(cmd) => commands::merge_tools::run(cmd),
         Command::Tui => commands::tui::run(),
     }
