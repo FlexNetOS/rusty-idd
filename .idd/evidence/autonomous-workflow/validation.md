@@ -9,8 +9,9 @@
 - Manifest: refreshed `.idd/MANIFEST.tsv` and passed the `rtk just ci` manifest freshness comparison.
 - Spec status: passed `rtk cargo run --quiet --bin rusty-idd -- spec status openspec/changes/adopt-full-handoff-upstream`; change is archivable.
 - Spec validate: passed `rtk cargo run --quiet --bin rusty-idd -- spec validate --all` with 98 passed and 0 failed.
-- Workflow post-hook: passed `rtk cargo run --quiet --bin rusty-idd -- codex workflow-check --workspace . --phase post-tool --change adopt-full-handoff-upstream`.
+- Workflow stop check: passed `rtk cargo run --quiet --bin rusty-idd -- codex workflow-check --workspace . --phase stop --change adopt-full-handoff-upstream`.
 - Mirror verification: source handoff tracked file count is 533, mirror file count is 533, file-list diff is clean, and `third_party/upstream/handoff/.git` is absent.
+- Follow-up mirror correction: final trunk proof found the committed mirror had only 524 files because tracked handoff `.idea/*` files were ignored by Rusty IDD; the fix force-added the nine tracked `.idea` files and excluded source-local `.idea/workspace.xml`.
 
 ## Rollback Path
 

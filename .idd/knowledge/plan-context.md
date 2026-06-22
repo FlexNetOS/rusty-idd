@@ -32,9 +32,9 @@ present inside Rusty IDD as an adopt-first upstream/reference source.
 Rusty IDD must contain a complete tracked-file mirror of handoff under
 `third_party/upstream/handoff`, with import evidence proving no tracked handoff
 file was left behind.
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
 - Source graph: 139 files, 8697 nodes, 35719 edges via `codegraph-rust`
-- Context package: 304 files, 707367 tokens via `repomix-rs`
+- Context package: 310 files, 711022 tokens via `repomix-rs`
 
 ## Automation Order
 
@@ -87,8 +87,8 @@ file was left behind.
 
 | Repo | Branch | Dirty | Roles | Architecture |
 |---|---|---|---|---|
-| `rusty-idd` | `main` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 139 files, 8664 nodes, 35503 edges; 691195 tokens; surfaces 4; top: codegraph-core, codegraph-parser, knowledge |
-| `ruvector` | `docs/align-severe-readmes` | true | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
+| `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 139 files, 8697 nodes, 35719 edges; 711022 tokens; surfaces 4; top: codegraph-core, codegraph-parser, knowledge |
+| `ruvector` | `docs/hooks-setup-integrated-tools` | true | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
 | `agent` | `main` | false | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
 | `meta_git_lib` | `chore/indicatif-0.18-rustsec-2025-0119` | false | role:fleet-handoff, role:meta-control-plane, role:rust-code-surface |  |
 | `lane` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
@@ -96,7 +96,7 @@ file was left behind.
 | `prompt_hub` | `main` | true | role:agent-environment, role:capability-hub, role:fleet-handoff, role:rust-code-surface, role:spec-producer |  |
 | `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `envctl` | `master` | true | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider |  |
-| `handoff` | `develop` | true | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
+| `handoff` | `feat/hftask-0072-full-kb-adoption` | true | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
 | `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `github_org` | `fix/autonomous-feature-develop-approval` | false | role:agent-environment, role:fleet-handoff |  |
