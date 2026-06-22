@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/autonomous-workflow-hooks",
   "system_root": "/home/drdave/Desktop/meta",
   "source_model": ".idd/knowledge/operating-model.json",
   "work_items": [

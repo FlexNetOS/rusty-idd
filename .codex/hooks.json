@@ -1,6 +1,42 @@
 {
   "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase pre-tool'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD workflow before tool use"
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Bash|apply_patch",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase post-tool'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD workflow after tool use"
+          }
+        ]
+      }
+    ],
     "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase stop'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD workflow handoff"
+          }
+        ]
+      },
       {
         "hooks": [
           {
@@ -8,6 +44,18 @@
             "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex env-check --workspace \"$root\"'",
             "timeout": 180,
             "statusMessage": "Checking Rusty IDD Codex invariants"
+          }
+        ]
+      }
+    ],
+    "SubagentStop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- codex workflow-check --workspace \"$root\" --phase stop'",
+            "timeout": 180,
+            "statusMessage": "Checking Rusty IDD subagent workflow handoff"
           }
         ]
       }
