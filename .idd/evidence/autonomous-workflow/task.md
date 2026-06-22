@@ -1,10 +1,11 @@
-# Autonomous Workflow Hook Task Evidence
+# Task Evidence
 
-- Task card: `KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS`
-- KB slug: `tasks/rusty-idd-autonomous-workflow-hooks`
-- Claim command: `hf claim KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS`
-- Branch: `feature/autonomous-workflow-hooks-v2`
-- Base: `develop`
+- Task: `KBTASK-RUSTY-IDD-ARCHITECTURE-ARTIFACTS-UPGRADE`
+- KB source: `tasks/rusty-idd-architecture-artifacts-upgrade`
+- claim: `rtk hf claim KBTASK-RUSTY-IDD-ARCHITECTURE-ARTIFACTS-UPGRADE`
+- Change: `add-architecture-diagram-artifacts`
 
-This evidence exists so repo-local hooks can verify that implementation work is
-bound to a tracked task card before code changes begin.
+The task was minted from the parent meta KB with the repo-local `handoff` build
+because the installed `rtk hf task mint` did not locate the sibling meta `.kb`
+from the Rusty IDD checkout. The resulting fleet task card was claimed before
+implementation.

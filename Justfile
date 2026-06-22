@@ -84,6 +84,12 @@ plan-context-check:
 knowledge-check:
     tmpdir=$(mktemp -d) && {{rusty_idd}} knowledge index --workspace . --out "$tmpdir/index.json" && {{rusty_idd}} knowledge report --workspace . --out "$tmpdir/report.md" && {{rusty_idd}} knowledge architecture --workspace . --out "$tmpdir/architecture.json" && {{rusty_idd}} knowledge architecture --workspace . --out "$tmpdir/architecture.md" && cmp -s .idd/knowledge/index.json "$tmpdir/index.json" && cmp -s .idd/knowledge/report.md "$tmpdir/report.md" && cmp -s .idd/knowledge/architecture.json "$tmpdir/architecture.json" && cmp -s .idd/knowledge/architecture.md "$tmpdir/architecture.md" || { echo ".idd/knowledge artifacts are stale; run just knowledge" >&2; rm -rf "$tmpdir"; exit 1; }; rm -rf "$tmpdir"
 
+diagrams:
+    {{rusty_idd}} knowledge diagrams --workspace . --out docs/rusty-idd/architecture-diagrams.md
+
+diagrams-check:
+    tmp=$(mktemp) && {{rusty_idd}} knowledge diagrams --workspace . --out "$tmp" && cmp -s docs/rusty-idd/architecture-diagrams.md "$tmp" || { echo "docs/rusty-idd/architecture-diagrams.md is stale; run just diagrams" >&2; rm -f "$tmp"; exit 1; }; rm -f "$tmp"
+
 codex-env-check:
     {{rusty_idd}} codex env-check
 
@@ -96,4 +102,4 @@ codex-runtime-audit:
 codex-system-audit:
     {{rusty_idd}} codex system-audit
 
-ci: build test validate manifest-check knowledge-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check knowledge-check diagrams-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
