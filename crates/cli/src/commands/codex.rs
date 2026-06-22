@@ -589,12 +589,11 @@ fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {
 
     let pr = root.join(".idd/evidence/autonomous-workflow/pr.md");
     match read_text(&pr) {
-        Ok(text)
-            if text.contains("PR:")
-                && text.contains("Base: develop")
-                && text.to_ascii_lowercase().contains("auto-merge") => {}
-        Ok(_) => failures
-            .push("PR evidence must include PR, Base: develop, and auto-merge status".to_string()),
+        Ok(text) if pr_evidence_is_complete(root, &text) => {}
+        Ok(_) => failures.push(
+            "PR evidence must include current Change, Branch, PR, Base: develop, and enabled auto-merge status"
+                .to_string(),
+        ),
         Err(_) => {
             failures.push("missing PR/automerge evidence for autonomous workflow".to_string())
         }
@@ -604,34 +603,216 @@ fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {
 fn check_validation_evidence(root: &Path, failures: &mut Vec<String>) {
     let validation = root.join(".idd/evidence/autonomous-workflow/validation.md");
     match read_text(&validation) {
-        Ok(text) if validation_evidence_is_complete(&text) => {}
+        Ok(text)
+            if validation_evidence_is_complete(&text)
+                && evidence_matches_active_change(root, &text) => {}
         Ok(_) => failures.push(
-            "validation evidence must include Build, Generated artifacts, Test, Lint, Secret scan, and Manifest results with Test after Generated artifacts"
+            "validation evidence must include successful Build, Generated artifacts, Test, Lint, Secret scan, and Manifest results with Test after Generated artifacts, and must name the active change"
                 .to_string(),
         ),
         Err(_) => failures.push("missing validation evidence for autonomous workflow".to_string()),
     }
 }
 
+const VALIDATION_SECTIONS: [&str; 6] = [
+    "Build:",
+    "Generated artifacts:",
+    "Test:",
+    "Lint:",
+    "Secret scan:",
+    "Manifest:",
+];
+
 fn validation_evidence_is_complete(text: &str) -> bool {
-    let has_required = [
-        "Build:",
-        "Generated artifacts:",
-        "Test:",
-        "Lint:",
-        "Secret scan:",
-        "Manifest:",
-    ]
-    .iter()
-    .all(|marker| text.contains(marker));
-    has_required && marker_after(text, "Generated artifacts:", "Test:")
+    let sections = VALIDATION_SECTIONS
+        .iter()
+        .map(|label| validation_section(text, label))
+        .collect::<Option<Vec<_>>>();
+    let Some(sections) = sections else {
+        return false;
+    };
+
+    sections
+        .iter()
+        .all(|(_, _, evidence)| validation_section_is_success(evidence))
+        && section_after(&sections, "Generated artifacts:", "Test:")
 }
 
-fn marker_after(text: &str, before: &str, after: &str) -> bool {
-    match (text.find(before), text.find(after)) {
+fn pr_evidence_is_complete(root: &Path, text: &str) -> bool {
+    if !evidence_matches_active_change(root, text) {
+        return false;
+    }
+
+    let normalized = text.replace('`', "");
+    let lines = normalized
+        .lines()
+        .map(strip_markdown_list_prefix)
+        .map(str::trim)
+        .collect::<Vec<_>>();
+
+    let has_current_branch = current_branch(root).is_none_or(|branch| {
+        branch == "HEAD"
+            || lines
+                .iter()
+                .any(|line| *line == format!("Branch: {branch}"))
+    });
+    let has_pr = lines.iter().any(|line| {
+        let lower = line.to_ascii_lowercase();
+        line.starts_with("PR:")
+            && !lower.contains("pending")
+            && !lower.contains("todo")
+            && !lower.contains("placeholder")
+            && (line.contains('#') || line.contains("https://github.com/"))
+    });
+    let has_develop_base = lines.contains(&"Base: develop");
+    let has_auto_merge_enabled = lines.iter().any(|line| {
+        let lower = line.to_ascii_lowercase();
+        lower.starts_with("auto-merge:") && lower.contains("enabled")
+    });
+
+    has_current_branch && has_pr && has_develop_base && has_auto_merge_enabled
+}
+
+fn evidence_matches_active_change(root: &Path, text: &str) -> bool {
+    let Some(change) = active_change(root) else {
+        return true;
+    };
+    let normalized = text.replace('`', "");
+    normalized
+        .lines()
+        .map(strip_markdown_list_prefix)
+        .any(|line| line.trim() == format!("Change: {change}"))
+}
+
+fn current_branch(root: &Path) -> Option<String> {
+    git_output(root, &["branch", "--show-current"])
+        .ok()
+        .map(|branch| branch.trim().to_string())
+        .filter(|branch| !branch.is_empty())
+}
+
+fn section_after(sections: &[(&str, usize, String)], before: &str, after: &str) -> bool {
+    match (
+        sections
+            .iter()
+            .find_map(|(label, position, _)| (*label == before).then_some(*position)),
+        sections
+            .iter()
+            .find_map(|(label, position, _)| (*label == after).then_some(*position)),
+    ) {
         (Some(before_idx), Some(after_idx)) => before_idx < after_idx,
         _ => false,
     }
+}
+
+fn validation_section(text: &str, label: &'static str) -> Option<(&'static str, usize, String)> {
+    let mut position = 0;
+    let mut lines = text.lines().peekable();
+
+    while let Some(line) = lines.next() {
+        let line_start = position;
+        position += line.len() + 1;
+        let Some(initial) = validation_line_after_label(line, label) else {
+            continue;
+        };
+
+        let mut evidence = initial.trim().to_string();
+        while let Some(next) = lines.peek() {
+            if validation_line_label(next).is_some() {
+                break;
+            }
+            if markdown_list_item(next).is_some() {
+                break;
+            }
+            evidence.push(' ');
+            evidence.push_str(next.trim());
+            lines.next();
+        }
+        return Some((label, line_start, evidence));
+    }
+
+    None
+}
+
+fn validation_line_after_label<'a>(line: &'a str, label: &str) -> Option<&'a str> {
+    let trimmed = strip_markdown_list_prefix(line);
+    trimmed.strip_prefix(label)
+}
+
+fn validation_line_label(line: &str) -> Option<&'static str> {
+    let trimmed = strip_markdown_list_prefix(line);
+    VALIDATION_SECTIONS
+        .iter()
+        .copied()
+        .find(|label| trimmed.starts_with(label))
+}
+
+fn strip_markdown_list_prefix(line: &str) -> &str {
+    markdown_list_item(line).unwrap_or_else(|| line.trim_start())
+}
+
+fn markdown_list_item(line: &str) -> Option<&str> {
+    let trimmed = line.trim_start();
+    for bullet in ["- ", "* "] {
+        if let Some(rest) = trimmed.strip_prefix(bullet) {
+            return Some(rest.trim_start());
+        }
+    }
+    if let Some((number, rest)) = trimmed.split_once(". ") {
+        if !number.is_empty() && number.chars().all(|ch| ch.is_ascii_digit()) {
+            return Some(rest.trim_start());
+        }
+    }
+    None
+}
+
+fn validation_section_is_success(evidence: &str) -> bool {
+    let lower = evidence.to_ascii_lowercase();
+    let normalized = lower
+        .replace("0 failed", "")
+        .replace("0 failures", "")
+        .replace("0 failure", "")
+        .replace("no failures", "")
+        .replace("no failure", "");
+
+    let failure_markers = [
+        "fail",
+        "error",
+        "skipped",
+        "not run",
+        "not-run",
+        "missing",
+        "stale",
+        "unknown",
+        "todo",
+        "placeholder",
+        "blocked",
+    ];
+    if failure_markers
+        .iter()
+        .any(|marker| normalized.contains(marker))
+    {
+        return false;
+    }
+
+    let success_markers = [
+        "pass",
+        "passed",
+        "success",
+        "succeeded",
+        "completed",
+        "clean",
+        "refreshed",
+        "no matches",
+        "no findings",
+        "no critical",
+        "no warning",
+        "0 critical",
+        "0 warning",
+        "0 failed",
+        "wrote ",
+    ];
+    success_markers.iter().any(|marker| lower.contains(marker))
 }
 
 fn check_required_file(root: &Path, rel: &str, detail: &str, failures: &mut Vec<String>) {

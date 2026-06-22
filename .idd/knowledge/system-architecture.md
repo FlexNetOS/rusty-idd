@@ -1,7 +1,7 @@
 # System Architecture Graph
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff`
 - Discovery source: `meta project list --json`
 - Repos: 65
 - Roles: 13
@@ -50,7 +50,7 @@
 | `flow_hub` | `master` | false | flow, hub | role:capability-hub | github-actions |
 | `github_org` | `fix/autonomous-feature-develop-approval` | false | ci, org | role:agent-environment, role:fleet-handoff | handoff, agents, claude, github-actions, make |
 | `grit` | `master` | false | untriaged | role:rust-code-surface | rust, github-actions |
-| `handoff` | `develop` | false | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
+| `handoff` | `develop` | true | handoff, orchestration | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions, make |
 | `harness_hub` | `develop` | false | harness, hub | role:capability-hub, role:fleet-handoff | handoff, github-actions |
 | `hermes-agent` | `main` | false | agents, ai, untriaged | role:agent-environment | node, github-actions |
 | `hooks_hub` | `master` | false | hooks, hub | role:capability-hub | github-actions |
@@ -85,7 +85,7 @@
 | `rtk-tokenkill` | `develop` | false | ai, optimization, tools | role:agent-environment, role:rust-code-surface | rust, claude, github-actions |
 | `ruflo` | `main` | true | ai, forked, rust, wasm | role:agent-environment | node, agents, claude, github-actions |
 | `rusty-idd` | `main` | false | idd, tools | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | rust, openspec, idd-knowledge, handoff, agents, claude, github-actions, make, just |
-| `ruvector` | `feat/ruvllm-cuda-default-and-embeddings` | true | ai, crates-only, forked, rust, wasm | role:agent-environment, role:fleet-handoff, role:rust-code-surface | rust, node, handoff, claude, github-actions |
+| `ruvector` | `docs/align-severe-readmes` | true | ai, crates-only, forked, rust, wasm | role:agent-environment, role:fleet-handoff, role:rust-code-surface | rust, node, handoff, claude, github-actions |
 | `shimmy` | `chore/remove-deceptive-stubs` | false | forked, untriaged | role:rust-code-surface | rust, github-actions, make |
 | `template_hub` | `master` | false | hub, templates | role:capability-hub | github-actions |
 | `teri` | `fix/mirofish-spine-and-llm` | true | forked, untriaged | role:fleet-handoff, role:rust-code-surface | rust, handoff, claude, github-actions |
@@ -99,7 +99,7 @@
 
 | Repo | Source Graph | Context Package | Surfaces | Top Components |
 |---|---|---|---:|---|
-| `rusty-idd` | 139 files, 8649 nodes, 35408 edges via `codegraph-rust` | 249 files, 358256 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
+| `rusty-idd` | 139 files, 8664 nodes, 35503 edges via `codegraph-rust` | 287 files, 691195 tokens via `repomix-rs` | 4 | codegraph-core, codegraph-parser, knowledge, tui, cli |
 
 ## Edges
 
@@ -308,6 +308,6 @@
 ## Findings
 
 - discovered 65 peer repos from meta project list --json
-- 10 repos have local dirty state recorded as evidence
+- 11 repos have local dirty state recorded as evidence
 - 1 repos expose .idd/knowledge/architecture.json
 - 1 repos expose parsed architecture summaries

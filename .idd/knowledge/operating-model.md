@@ -1,7 +1,7 @@
 # System Operating Model
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff`
 - Source graph: `.idd/knowledge/system-architecture.json`
 - Layers: 11
 - Capabilities: 19
