@@ -1,24 +1,17 @@
-# PromptHub Boundary Task Evidence
+# Full Handoff Adoption Task Evidence
 
-- Task: `rusty-idd-prompt-hub-boundary-decision`
-- Claim: repo-local task card
-  `.handoff/tasks/rusty-idd-prompt-hub-boundary-decision.task.json`
-- Change: `decide-prompt-hub-boundary`
-- Goal file: `.idd/goals/prompt-hub-boundary-decision.md`
-- Worktree:
-  `/home/drdave/Desktop/meta/rusty-idd/.worktrees/prompt_hub`
-- Branch: `feature/prompt_hub`
-- Peer repo researched:
-  `/home/drdave/Desktop/meta/prompt_hub`
+- Task: `KBTASK-RUSTY-IDD-ADOPT-FULL-HANDOFF`
+- Claim: repo-local task card from `tasks/rusty-idd-adopt-full-handoff`
+- Change: `adopt-full-handoff-upstream`
+- Goal file: `.idd/goals/adopt-full-handoff-upstream.md`
+- Branch: `fix/complete-handoff-mirror-idea`
 
-The task was claimed before writing the decision artifacts. Research found
-PromptHub is a front-door/spec-producer surface with three Rust crates, prompt
-templates, RBAC/audit/search, swarm handoff helpers, and vibe intent flow.
+The original adoption task was minted and claimed before implementation. PR #87
+imported the tracked handoff repository baseline, and PR #92 closes the final
+gap found during trunk proof: Rusty IDD's mirror was missing handoff's nine
+tracked `.idea/*` files because they are ignored by default in Rusty IDD.
 
-The accepted decision is that Rusty IDD consumes PromptHub-produced goal
-artifacts through goal-file planning. PromptHub does not own Rusty IDD `.idd`,
-OpenSpec, ADR, validation, manifest, or merge evidence state.
-
-Completion evidence: goal file, OpenSpec proposal/design/spec/tasks, ADR 0007,
-AI_MERGE research note, generated knowledge artifacts, architecture diagrams,
-manifest, and validation evidence were all produced for the active change.
+The completed correction force-adds only the tracked handoff `.idea` files,
+excludes source-local `.idea/workspace.xml`, refreshes deterministic Rusty IDD
+artifacts, and keeps the mirror outside the Cargo workspace until adapter/parity
+work is explicitly scoped.

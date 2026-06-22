@@ -1,51 +1,18 @@
-# PromptHub Boundary Validation Evidence
+# Full Handoff Adoption Validation Evidence
 
-- Change: `decide-prompt-hub-boundary`
-- Goal file: `.idd/goals/prompt-hub-boundary-decision.md`
-- Branch: `feature/prompt_hub`
-- Build: `RUSTY_IDD_CHANGE=decide-prompt-hub-boundary RUSTY_IDD_GOAL_FILE=.idd/goals/prompt-hub-boundary-decision.md rtk just ci` completed `cargo build --workspace --locked` successfully.
-- Generated artifacts: refreshed `.idd/knowledge/*`,
-  `docs/rusty-idd/architecture-diagrams.md`, `.idd/MANIFEST.tsv`, OpenSpec
-  artifacts, ADR, task evidence, AI_MERGE research evidence, and goal-file-backed
-  `.idd/knowledge/plan-context.{json,md}` before the successful test gate.
-- Test: the same successful `rtk just ci` completed
-  `cargo test --workspace --locked`.
-- Lint: the same successful `rtk just ci` completed
-  `cargo fmt --all -- --check` and
-  `cargo clippy --workspace --all-targets --all-features -- -D warnings`.
-- Secret scan: changed-file scan for private key, AWS, GitHub, Slack, and
-  OpenAI token patterns returned no matches.
-- Manifest: the same successful `rtk just ci` completed `manifest-check`
-  after `.idd/MANIFEST.tsv` regeneration.
-- Knowledge artifacts: the same successful `rtk just ci` completed freshness
-  checks for knowledge index, report, architecture graph, architecture diagrams,
-  system/operating/integration artifacts, and goal-file plan context.
-- Spec status:
-  `rtk cargo run --bin rusty-idd -- spec status openspec/changes/decide-prompt-hub-boundary`
-  passed and reported the change archivable.
-- Spec validate: `rtk cargo run --bin rusty-idd -- spec validate --all` passed
-  with 97 valid items and 0 failed.
-- Rusty IDD validation: the same successful `rtk just ci` completed
-  `rusty-idd validate --workspace .` with 0 critical and 0 warning.
-- Runtime audit: the same successful `rtk just ci` completed
-  `rusty-idd codex runtime-audit`.
-- Env check: the same successful `rtk just ci` completed
-  `rusty-idd codex env-check`.
-- Supply-chain audit: the same successful `rtk just ci` completed
-  `cargo audit --deny warnings`.
-- Diff check: `rtk git diff --check` passed.
-- PromptHub native diagnostic: `rtk cargo check --workspace` passed in
-  `/home/drdave/Desktop/meta/prompt_hub`.
-- Workflow pre-hook:
-  `RUSTY_IDD_CHANGE=decide-prompt-hub-boundary RUSTY_IDD_GOAL_FILE=.idd/goals/prompt-hub-boundary-decision.md rtk cargo run --bin rusty-idd -- codex workflow-check --workspace . --phase pre-tool --change decide-prompt-hub-boundary`
-  passed.
-- Workflow post-hook:
-  `RUSTY_IDD_CHANGE=decide-prompt-hub-boundary RUSTY_IDD_GOAL_FILE=.idd/goals/prompt-hub-boundary-decision.md rtk cargo run --bin rusty-idd -- codex workflow-check --workspace . --phase post-tool --change decide-prompt-hub-boundary`
-  passed.
+- Change: `adopt-full-handoff-upstream`
+- Build: passed `RUSTY_IDD_CHANGE=adopt-full-handoff-upstream RUSTY_IDD_GOAL_FILE=.idd/goals/adopt-full-handoff-upstream.md rtk just ci`, including `cargo build --workspace --locked`.
+- Generated artifacts: refreshed and compared `.idd/knowledge/*`, `docs/rusty-idd/architecture-diagrams.md`, `.idd/MANIFEST.tsv`, OpenSpec artifacts, ADR, AI_MERGE evidence, task evidence, and goal-file-backed `.idd/knowledge/plan-context.{json,md}` before the successful test gate.
+- Test: passed `cargo test --workspace --locked` through the successful `rtk just ci` gate after generated artifacts.
+- Lint: passed `cargo fmt --all -- --check` and `cargo clippy --workspace --all-targets --all-features -- -D warnings` through the successful `rtk just ci` gate.
+- Secret scan: changed-file scan for private key, AWS, Google API, GitHub, and OpenAI token patterns returned no matches.
+- Manifest: refreshed `.idd/MANIFEST.tsv` and passed the `rtk just ci` manifest freshness comparison.
+- Spec status: passed `rtk cargo run --quiet --bin rusty-idd -- spec status openspec/changes/adopt-full-handoff-upstream`; change is archivable.
+- Spec validate: passed `rtk cargo run --quiet --bin rusty-idd -- spec validate --all` with 98 passed and 0 failed.
+- Workflow stop check: passed `rtk cargo run --quiet --bin rusty-idd -- codex workflow-check --workspace . --phase stop --change adopt-full-handoff-upstream`.
+- Mirror verification: source handoff tracked file count is 533, mirror file count is 533, file-list diff is clean, and `third_party/upstream/handoff/.git` is absent.
+- Follow-up mirror correction: final trunk proof found the committed mirror had only 524 files because tracked handoff `.idea/*` files were ignored by Rusty IDD; the fix force-added the nine tracked `.idea` files and excluded source-local `.idea/workspace.xml`.
 
 ## Rollback Path
 
-Revert the PromptHub boundary goal file, OpenSpec change, ADR 0007, task card,
-AI_MERGE research note, validation evidence, active-change update, and refreshed
-generated artifacts. Then rerun Rusty IDD knowledge refresh, plan context,
-manifest, `spec validate --all`, and `just ci`.
+Revert ADR 0006, the `adopt-full-handoff-upstream` OpenSpec package, `.idd/goals/adopt-full-handoff-upstream.md`, `AI_MERGE/36_handoff_full_adoption/`, the `third_party/upstream/UPSTREAMS.md` handoff row, `third_party/upstream/handoff/`, and regenerated `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, and `docs/rusty-idd/architecture-diagrams.md`.
