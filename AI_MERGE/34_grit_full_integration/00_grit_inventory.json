@@ -1,0 +1,19 @@
+{
+  "name": "grit",
+  "root": "/home/drdave/Desktop/meta/grit",
+  "files_scanned": 100,
+  "languages": {"Python": 6, "Rust": 21, "Shell": 16, "TypeScript": 14},
+  "package_managers": ["cargo"],
+  "entrypoints": ["src/main.rs"],
+  "workflows": [".github/workflows/ci.yml", ".github/workflows/next-release.yml", ".github/workflows/pr-target-check.yml", ".github/workflows/release-please.yml", ".github/workflows/release.yml"],
+  "agent_files": ["AGENTS.md"],
+  "security_files": [],
+  "env_keys": ["GITHUB_TOKEN", "HOMEBREW_TAP_TOKEN"],
+  "secret_refs": [
+    {"file": ".github/workflows/next-release.yml", "key": "GITHUB_TOKEN", "source": "github-actions-secret"},
+    {"file": ".github/workflows/release-please.yml", "key": "GITHUB_TOKEN", "source": "github-actions-secret"},
+    {"file": ".github/workflows/release.yml", "key": "GITHUB_TOKEN", "source": "github-actions-secret"},
+    {"file": ".github/workflows/release.yml", "key": "HOMEBREW_TAP_TOKEN", "source": "github-actions-secret"},
+    {"file": "docs/RELEASE_FLOW.md", "key": "GITHUB_TOKEN", "source": "github-actions-secret"}
+  ]
+}

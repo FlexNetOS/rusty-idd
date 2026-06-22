@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:8841a1ba28afe40b`
+- Workspace fingerprint: `fnv1a64:f52f2b76ca51f231`
 - Indexed source files: 139
 - Graph nodes: 8649
-- Graph edges: 35402
-- Resolved call edges: 20144
+- Graph edges: 35408
+- Resolved call edges: 20150
 - Functions with complexity: 2160
-- Packed files: 130
-- Packed tokens: 106292
+- Packed files: 153
+- Packed tokens: 316113
 - Suspicious files: 0
 
 ## Hotspots
@@ -39,8 +39,11 @@
 
 | Tokens | File |
 |---:|---|
+| 95914 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/00_repo_a_inventory.md` |
+| 95446 | `AI_MERGE/34_grit_full_integration/01_rusty_idd_inventory_before_adoption.md` |
 | 9464 | `crates/tui/src/app.rs` |
 | 8632 | `crates/knowledge/src/lib.rs` |
+| 7088 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
 | 5761 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
@@ -49,17 +52,14 @@
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
 | 2421 | `AI_MERGE/14_upstream_full_adoption.md` |
 | 2301 | `crates/core/src/templates.rs` |
+| 2098 | `AI_MERGE/34_grit_full_integration/00_grit_inventory.md` |
+| 2098 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/01_repo_b_inventory.md` |
 | 2097 | `crates/tui/src/ui.rs` |
 | 2059 | `Justfile` |
 | 1994 | `Makefile` |
 | 1963 | `AI_MERGE/15_system_handoff_research.md` |
 | 1732 | `crates/cli/src/commands/codex.rs` |
-| 1712 | `crates/runner/src/data.rs` |
-| 1679 | `AI_MERGE/31_prompt_front_door_upstream_adoption.md` |
-| 1663 | `docs/rusty-idd/architecture-diagrams.md` |
-| 1603 | `crates/runner/src/runner.rs` |
-| 1594 | `AI_MERGE/13_codex_environment.md` |
 
 ## Findings
 
-No knowledge findings.
+- packed context is 316113 tokens, above default budget 120000

@@ -95,6 +95,7 @@ fn fingerprint_should_skip(rel: &str) -> bool {
         || rel.starts_with(".idd/runs/")
         || rel == ".idd/MANIFEST.tsv"
         || rel == "AI_MERGE/validation_report.md"
+        || rel == "docs/rusty-idd/architecture-diagrams.md"
         || is_upstream_generated_local_artifact(rel)
 }
 
@@ -241,6 +242,12 @@ mod tests {
         fs::write(
             root.join("third_party/upstream/codegraph-rust/docs/specifications/local.spec.md"),
             "generated\n",
+        )
+        .unwrap();
+        fs::create_dir_all(root.join("docs/rusty-idd")).unwrap();
+        fs::write(
+            root.join("docs/rusty-idd/architecture-diagrams.md"),
+            "generated diagrams\n",
         )
         .unwrap();
         let second = workspace_fingerprint(root).unwrap();
