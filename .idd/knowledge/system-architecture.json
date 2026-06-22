@@ -467,8 +467,8 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "feat/hftask-0072-full-kb-adoption",
-      "head": "eee15361d22e8b5ceb7c59bb0e5704b0f7e8e967",
+      "branch": "develop",
+      "head": "6365c12fc38f5d7247d81f9fdbd3a55817797904",
       "dirty": true,
       "tags": [
         "handoff",
@@ -494,8 +494,8 @@
       "name": "harness_hub",
       "path": "harness_hub",
       "repo": "git@github.com:FlexNetOS/harness_hub.git",
-      "branch": "develop",
-      "head": "b156367476fd79a9db6525029b884723027304d8",
+      "branch": "harness-evolve/rust-port-confirmable-tail",
+      "head": "b48f838a2622500a4a4074cf5aa73d99495b3b5b",
       "dirty": false,
       "tags": [
         "harness",
@@ -1006,7 +1006,7 @@
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
       "branch": "develop",
-      "head": "c56da8f6d10317df5792658c37b94c23057e17c5",
+      "head": "bfb4e4e689dfb4f816d792fc983119e75b83154c",
       "dirty": false,
       "tags": [
         "network",
@@ -1285,8 +1285,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 310,
-          "tokens": 711022,
+          "files": 319,
+          "tokens": 720698,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1316,6 +1316,10 @@
             [
               "crates/knowledge/src/lib.rs",
               8632
+            ],
+            [
+              "AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md",
+              7982
             ],
             [
               "AI_MERGE/36_handoff_full_adoption/handoff-tracked-files.md",
@@ -1384,10 +1388,6 @@
             [
               "crates/tui/src/ui.rs",
               2097
-            ],
-            [
-              "crates/cli/src/commands/codex.rs",
-              1999
             ]
           ],
           "suspicious_files": 0,
@@ -1549,8 +1549,8 @@
       "name": "ruvector",
       "path": "meta-ruvector",
       "repo": "git@github.com:FlexNetOS/meta-ruvector.git",
-      "branch": "docs/hooks-setup-integrated-tools",
-      "head": "793635d5ef1b94b9d15b20789588c34d03c4dcb8",
+      "branch": "develop",
+      "head": "0c6b52a716b0960a83e9c07448f6cb4186329888",
       "dirty": true,
       "tags": [
         "ai",
