@@ -45,6 +45,11 @@ artifacts or when preparing compact context for an agent.
      `rusty-idd knowledge architecture --workspace . --out .idd/knowledge/architecture.json`
    - The graph combines CodeGraph-backed source structure with repomix-backed context
      package metrics and maps both to Rusty IDD automation stages.
+   - Generate current architecture diagrams from the same graph when agents need
+     visual context:
+     `rusty-idd knowledge diagrams --workspace . --out docs/rusty-idd/architecture-diagrams.md`
+   - Treat the diagram document as generated. Do not hand-edit it; run
+     `just diagrams` and verify with `just diagrams-check`.
 
 5. Generate a system graph when the task crosses repo boundaries.
    - Use the parent meta workspace when working from this checkout:
@@ -181,8 +186,9 @@ artifacts or when preparing compact context for an agent.
    - Grep or slice generated packs and indexes instead of dumping the full file.
    - Treat `.idd/knowledge/index.json`, `.idd/knowledge/report.md`,
      `.idd/knowledge/architecture.json`, `.idd/knowledge/architecture.md`,
+     `docs/rusty-idd/architecture-diagrams.md`,
      `.idd/knowledge/system-architecture.json`, and
-    `.idd/knowledge/system-architecture.md`, `.idd/knowledge/plan-context.json`,
+     `.idd/knowledge/system-architecture.md`, `.idd/knowledge/plan-context.json`,
     `.idd/knowledge/plan-context.md`, `.idd/knowledge/operating-model.json`,
     `.idd/knowledge/operating-model.md`, `.idd/knowledge/integration-plan.json`,
     `.idd/knowledge/integration-plan.md`, `.idd/knowledge/integration-owners.json`,
@@ -204,6 +210,7 @@ After changing source or control-plane files, refresh artifacts and run:
 ```bash
 cargo run --bin rusty-idd -- knowledge refresh --workspace .
 cargo run --bin rusty-idd -- knowledge architecture --workspace . --out .idd/knowledge/architecture.md
+cargo run --bin rusty-idd -- knowledge diagrams --workspace . --out docs/rusty-idd/architecture-diagrams.md
 cargo run --bin rusty-idd -- knowledge system-architecture --workspace . --system-root .. --out .idd/knowledge/system-architecture.md
 cargo run --bin rusty-idd -- knowledge operating-model --workspace . --out .idd/knowledge/operating-model.md
 cargo run --bin rusty-idd -- knowledge integration-plan --workspace . --out .idd/knowledge/integration-plan.md

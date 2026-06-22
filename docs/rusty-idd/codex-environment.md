@@ -23,10 +23,11 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
 | Codex env workflow | `.agents/skills/rusty-idd-codex-rust-env/SKILL.md` | Operate skills, hooks, agents, knowledge, and gates. |
 | Project config | `.codex/config.toml` | Enables hooks and caps subagent fan-out. |
 | Project rules | `.codex/rules/default.rules` | Blocks raw host/process management and prompts for untracked tool installs. |
-| Stop hook | `.codex/hooks.json` | Runs the Rusty IDD invariant checker from the git root when a turn stops. |
+| Workflow hooks | `.codex/hooks.json` | Runs Rusty IDD workflow checks before/after write-capable tool use and at turn/subagent stop. |
 | Custom agents | `.codex/agents/*.toml` | Read-heavy explorer/gap/verifier agents and one writer agent. |
 | Model loop config | `.codex/loops/rusty-idd-model-loop.toml` | Defines read-only, design-first Codex passes across model roles. |
 | Codex env CLI | `rusty-idd codex env-check` | Rust-native checks for required artifacts and forbidden regressions. |
+| Workflow check CLI | `rusty-idd codex workflow-check` | Rust-native checks for active change, task-card evidence, validation evidence, and PR handoff evidence. |
 | Runtime audit CLI | `rusty-idd codex runtime-audit` | Rust-native proof that repo-local Codex hooks, agents, loops, and targets do not depend on Python. |
 | System audit CLI | `rusty-idd codex system-audit` | Rust-native proof that the active Codex binary and parent-managed source-build path are Rust-first. |
 | Model loop CLI | `rusty-idd codex model-loop` | Rust-native command that emits or executes exact read-only `codex exec` commands for the default loop. |
@@ -190,18 +191,44 @@ runtime evidence. A clean result means:
 Generated dependency build output under `target/**` is ignored because it is not
 repo-owned Codex control-plane code.
 
-## Stop Hook
+## Autonomous Workflow Hooks
 
-The Stop hook is git-root anchored so it works even when Codex starts from a
-subdirectory:
+The hook surface is git-root anchored so it works even when Codex starts from a
+subdirectory. PreToolUse and PostToolUse run around Bash/apply_patch-style tool
+use, while Stop and SubagentStop run before a turn ends.
+
+The workflow hook command is:
+
+```bash
+sh -lc 'root="$(git rev-parse --show-toplevel)"; exec cargo run --quiet --manifest-path "$root/Cargo.toml" --bin rusty-idd -- codex workflow-check --workspace "$root" --phase pre-tool'
+```
+
+For write-capable tool use, `codex workflow-check` requires:
+
+- a feature branch in a worktree based on `develop`;
+- `.idd/knowledge/plan-context.md`;
+- `.idd/workflow/active-change` or `RUSTY_IDD_CHANGE`;
+- a ready OpenSpec change with proposal, specs, design, ADR, and tasks;
+- task-card evidence in `.handoff/tasks/*.task.json` or
+  `.idd/evidence/autonomous-workflow/task.md`.
+
+At Stop/SubagentStop, once the branch has dirty work or commits beyond
+`develop`, the hook also requires:
+
+- `.idd/evidence/autonomous-workflow/validation.md` with build, test, lint,
+  secret-scan, and manifest results;
+- `.idd/evidence/autonomous-workflow/pr.md` with the PR, `Base: develop`, and
+  auto-merge status.
+
+The invariant Stop hook remains registered as a second Stop handler:
 
 ```bash
 sh -lc 'root="$(git rev-parse --show-toplevel)"; exec cargo run --quiet --manifest-path "$root/Cargo.toml" --bin rusty-idd -- codex env-check --workspace "$root"'
 ```
 
-The hook timeout is 180 seconds. That keeps normal stops bounded while allowing
+Each hook timeout is 180 seconds. That keeps normal stops bounded while allowing
 Cargo to wait briefly on build locks or rebuild the small CLI slice when needed.
-If Codex reports that the hook is skipped instead of failed, review and trust the
+If Codex reports that a hook is skipped instead of failed, review and trust the
 changed hook definition with `/hooks`; Codex records trust by hook hash.
 
 ## System Language Audit
