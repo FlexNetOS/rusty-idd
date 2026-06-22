@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/consume-handoff-dotdirs",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff",
   "system_root": "/home/drdave/Desktop/meta",
   "discovery_source": "meta project list --json",
   "repos": [
@@ -469,7 +469,7 @@
       "repo": "git@github.com:FlexNetOS/handoff.git",
       "branch": "develop",
       "head": "ff85f8071fe36a467603d7e679b7e9af58208d30",
-      "dirty": false,
+      "dirty": true,
       "tags": [
         "handoff",
         "orchestration"
@@ -1006,7 +1006,7 @@
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
       "branch": "develop",
-      "head": "0356d599b2c73d753b18fbb00c235656ee62296f",
+      "head": "6115d2799c0e16cd80351c762860c53c3bc7afb6",
       "dirty": false,
       "tags": [
         "network",
@@ -1246,7 +1246,7 @@
       "path": "rusty-idd",
       "repo": "git@github.com:FlexNetOS/rusty-idd.git",
       "branch": "main",
-      "head": "28bf2e2ae94f717a7a72a06ec33e84b08e57c273",
+      "head": "324db89da7e256d6cca51a12e69e02ae5c4534ae",
       "dirty": false,
       "tags": [
         "idd",
@@ -1275,8 +1275,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 139,
-          "nodes": 8649,
-          "edges": 35408,
+          "nodes": 8664,
+          "edges": 35503,
           "languages": [
             "rust"
           ],
@@ -1285,10 +1285,22 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 249,
-          "tokens": 358256,
+          "files": 287,
+          "tokens": 691195,
           "output_style": "markdown",
           "top_files_by_tokens": [
+            [
+              "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/00_repo_a_inventory.md",
+              102353
+            ],
+            [
+              "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/01_repo_b_inventory.md",
+              102353
+            ],
+            [
+              "AI_MERGE/35_e2e_test_suite/00_rusty_idd_inventory_before.md",
+              101899
+            ],
             [
               "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/00_repo_a_inventory.md",
               95914
@@ -1310,6 +1322,10 @@
               7088
             ],
             [
+              "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md",
+              7088
+            ],
+            [
               "AI_MERGE/11_integration_research_audit_roadmap.md",
               5761
             ],
@@ -1322,12 +1338,12 @@
               3666
             ],
             [
-              "AI_MERGE/34_handoff_single_repo_architecture.md",
-              3140
+              "docs/rusty-idd/codex-environment.md",
+              3165
             ],
             [
-              "docs/rusty-idd/codex-environment.md",
-              3096
+              "AI_MERGE/34_handoff_single_repo_architecture.md",
+              3140
             ],
             [
               "AI_MERGE/16_upstream_knowledge_revisit.md",
@@ -1336,6 +1352,10 @@
             [
               "docs/rusty-idd/production-readiness-audit.md",
               2502
+            ],
+            [
+              "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/02_feature_matrix.md",
+              2469
             ],
             [
               "AI_MERGE/14_upstream_full_adoption.md",
@@ -1368,26 +1388,6 @@
             [
               "AI_MERGE/15_system_handoff_research.md",
               1963
-            ],
-            [
-              "crates/cli/src/commands/codex.rs",
-              1732
-            ],
-            [
-              "crates/runner/src/data.rs",
-              1712
-            ],
-            [
-              "AI_MERGE/31_prompt_front_door_upstream_adoption.md",
-              1679
-            ],
-            [
-              "crates/runner/src/runner.rs",
-              1603
-            ],
-            [
-              "AI_MERGE/13_codex_environment.md",
-              1594
             ]
           ],
           "suspicious_files": 0,
@@ -1402,7 +1402,7 @@
             "kind": "external_crate",
             "files": 39,
             "nodes": 1918,
-            "edges": 9069,
+            "edges": 9070,
             "languages": [
               "Rust",
               "rust"
@@ -1449,8 +1449,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 24,
-            "nodes": 821,
-            "edges": 3519,
+            "nodes": 835,
+            "edges": 3614,
             "languages": [
               "Rust",
               "rust"
@@ -1486,7 +1486,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1955,
+            "edges": 1952,
             "languages": [
               "Rust",
               "rust"
@@ -1549,8 +1549,8 @@
       "name": "ruvector",
       "path": "meta-ruvector",
       "repo": "git@github.com:FlexNetOS/meta-ruvector.git",
-      "branch": "feat/ruvllm-cuda-default-and-embeddings",
-      "head": "4729fc99afca52b1bda16b7964a332b03e23f7d5",
+      "branch": "docs/align-severe-readmes",
+      "head": "3d72d5d56a41e205e06af59f1c013abc1210226a",
       "dirty": true,
       "tags": [
         "ai",
@@ -3679,7 +3679,7 @@
   ],
   "findings": [
     "discovered 65 peer repos from meta project list --json",
-    "10 repos have local dirty state recorded as evidence",
+    "11 repos have local dirty state recorded as evidence",
     "1 repos expose .idd/knowledge/architecture.json",
     "1 repos expose parsed architecture summaries"
   ]

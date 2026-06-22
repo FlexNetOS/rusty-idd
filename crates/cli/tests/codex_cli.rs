@@ -159,6 +159,46 @@ const STOP_HOOK_JSON: &str = r#"{
 }
 "#;
 
+const VALIDATION_PASS: &str = "\
+Change: add-autonomous-workflow-hooks
+Build: passed cargo build --workspace --locked
+Generated artifacts: refreshed .idd/knowledge and manifest artifacts
+Test: passed cargo test --workspace --locked
+Lint: passed cargo clippy --workspace --all-targets --all-features
+Secret scan: no matches
+Manifest: refreshed .idd/MANIFEST.tsv
+";
+
+const VALIDATION_FAILING_MARKERS: &str = "\
+Build: failed with compiler errors
+Generated artifacts: skipped
+Test: failed
+Lint: unknown
+Secret scan: not run
+Manifest: stale
+";
+
+fn write_validation(root: &Path, content: &str) {
+    write(
+        &root.join(".idd/evidence/autonomous-workflow/validation.md"),
+        content,
+    );
+}
+
+fn write_pr_evidence(root: &Path) {
+    write(
+        &root.join(".idd/evidence/autonomous-workflow/pr.md"),
+        "Change: add-autonomous-workflow-hooks\nBranch: feature/workflow-hooks\nPR: #123\nBase: develop\nAuto-merge: enabled\n",
+    );
+}
+
+fn write_stale_pr_evidence(root: &Path) {
+    write(
+        &root.join(".idd/evidence/autonomous-workflow/pr.md"),
+        "Change: previous-change\nBranch: feature/old-work\nPR: #122\nBase: develop\nAuto-merge: enabled\n",
+    );
+}
+
 fn setup_workflow_repo() -> tempfile::TempDir {
     let root = tempfile::tempdir().unwrap();
     git_ok(root.path(), &["init"]);
@@ -373,16 +413,8 @@ fn codex_workflow_check_stop_requires_delivery_evidence_for_dirty_work() {
     assert!(stderr.contains("missing validation evidence"));
     assert!(stderr.contains("missing PR/automerge evidence"));
 
-    write(
-        &root
-            .path()
-            .join(".idd/evidence/autonomous-workflow/validation.md"),
-        "Build: pass\nGenerated artifacts: refreshed\nTest: pass\nLint: pass\nSecret scan: pass\nManifest: refreshed\n",
-    );
-    write(
-        &root.path().join(".idd/evidence/autonomous-workflow/pr.md"),
-        "PR: #123\nBase: develop\nauto-merge: enabled\n",
-    );
+    write_validation(root.path(), VALIDATION_PASS);
+    write_pr_evidence(root.path());
 
     let out = run_ok(
         &[
@@ -402,16 +434,11 @@ fn codex_workflow_check_stop_requires_delivery_evidence_for_dirty_work() {
 fn codex_workflow_check_rejects_test_before_generated_artifacts() {
     let root = setup_workflow_repo();
     write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
-    write(
-        &root
-            .path()
-            .join(".idd/evidence/autonomous-workflow/validation.md"),
-        "Build: pass\nTest: pass\nGenerated artifacts: refreshed\nLint: pass\nSecret scan: pass\nManifest: refreshed\n",
+    write_validation(
+        root.path(),
+        "Build: passed\nTest: passed\nGenerated artifacts: refreshed\nLint: passed\nSecret scan: no matches\nManifest: refreshed\n",
     );
-    write(
-        &root.path().join(".idd/evidence/autonomous-workflow/pr.md"),
-        "PR: #123\nBase: develop\nauto-merge: enabled\n",
-    );
+    write_pr_evidence(root.path());
 
     let (_stdout, stderr) = run_fail(
         &[
@@ -426,6 +453,77 @@ fn codex_workflow_check_rejects_test_before_generated_artifacts() {
     );
 
     assert!(stderr.contains("Test after Generated artifacts"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_failed_validation_markers_at_stop() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
+    write_validation(root.path(), VALIDATION_FAILING_MARKERS);
+    write_pr_evidence(root.path());
+
+    let (_stdout, stderr) = run_fail(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(stderr.contains("validation evidence"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_pr_evidence_for_different_change_at_stop() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
+    write_validation(root.path(), VALIDATION_PASS);
+    write_stale_pr_evidence(root.path());
+
+    let (_stdout, stderr) = run_fail(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+
+    assert!(stderr.contains("PR evidence"));
+    assert!(stderr.contains("current Change"));
+}
+
+#[test]
+fn codex_workflow_check_ignores_trailing_nonrequired_evidence_bullets() {
+    let root = setup_workflow_repo();
+    write(&root.path().join("src/lib.rs"), "pub fn touched() {}\n");
+    write_validation(
+        root.path(),
+        &format!(
+            "{VALIDATION_PASS}- Review note: stale prior evidence was rejected by the parser.\n"
+        ),
+    );
+    write_pr_evidence(root.path());
+
+    let out = run_ok(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "stop",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+    );
+    assert!(out.contains("autonomous workflow check passed"));
 }
 
 #[test]
@@ -451,6 +549,111 @@ fn codex_workflow_check_requires_validation_before_push() {
 }
 
 #[test]
+fn codex_workflow_check_rejects_failed_validation_before_push() {
+    let root = setup_workflow_repo();
+    write_validation(root.path(), VALIDATION_FAILING_MARKERS);
+    let hook_input =
+        r#"{"tool_name":"Bash","tool_input":{"command":"git push origin feature/workflow-hooks"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("validation evidence"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_placeholder_validation_before_pr_create() {
+    let root = setup_workflow_repo();
+    write_validation(
+        root.path(),
+        "Build: TODO\nGenerated artifacts: missing\nTest: not run\nLint: skipped\nSecret scan: unknown\nManifest: stale\n",
+    );
+    let hook_input =
+        r#"{"tool_name":"Bash","tool_input":{"command":"gh pr create --base develop --fill"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("validation evidence"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_failed_validation_before_pr_merge() {
+    let root = setup_workflow_repo();
+    write_validation(root.path(), VALIDATION_FAILING_MARKERS);
+    let hook_input = r#"{"tool_name":"Bash","tool_input":{"command":"gh pr merge 123 --auto --squash --delete-branch"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("validation evidence"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_validation_for_different_change_before_push() {
+    let root = setup_workflow_repo();
+    write_validation(
+        root.path(),
+        "\
+Change: add-comprehensive-e2e-workflow-tests
+Build: passed cargo build --workspace --locked
+Generated artifacts: refreshed .idd/knowledge and manifest artifacts
+Test: passed cargo test --workspace --locked
+Lint: passed cargo clippy --workspace --all-targets --all-features
+Secret scan: no matches
+Manifest: refreshed .idd/MANIFEST.tsv
+",
+    );
+    let hook_input =
+        r#"{"tool_name":"Bash","tool_input":{"command":"git push origin feature/workflow-hooks"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("active change"));
+}
+
+#[test]
 fn codex_workflow_check_requires_validation_before_task_completion() {
     let root = setup_workflow_repo();
     let hook_input = r#"{"tool_name":"Bash","tool_input":{"command":"hf done --pr 123 KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS"}}"#;
@@ -469,6 +672,28 @@ fn codex_workflow_check_requires_validation_before_task_completion() {
     );
 
     assert!(stderr.contains("missing validation evidence"));
+}
+
+#[test]
+fn codex_workflow_check_rejects_failed_validation_before_task_completion() {
+    let root = setup_workflow_repo();
+    write_validation(root.path(), VALIDATION_FAILING_MARKERS);
+    let hook_input = r#"{"tool_name":"Bash","tool_input":{"command":"hf done --pr 123 KBTASK-RUSTY-IDD-AUTONOMOUS-WORKFLOW-HOOKS"}}"#;
+
+    let (_stdout, stderr) = run_fail_with_stdin(
+        &[
+            "codex",
+            "workflow-check",
+            "--phase",
+            "pre-tool",
+            "--workspace",
+            ".",
+        ],
+        root.path(),
+        hook_input,
+    );
+
+    assert!(stderr.contains("validation evidence"));
 }
 
 #[test]

@@ -1,20 +1,17 @@
-# Comprehensive E2E Workflow PR Evidence
+# Full Handoff Adoption PR Evidence
 
-- PR: #82 https://github.com/FlexNetOS/rusty-idd/pull/82
-- Branch: `feature/e2e-test-suite`
+- Change: `adopt-full-handoff-upstream`
+- PR: #87 https://github.com/FlexNetOS/rusty-idd/pull/87
+- Branch: `feature/adopt-full-handoff`
 - Base: develop
 - State: open
 - Draft: false
 - Auto-merge: enabled
 - Auto-merge method: squash
-- Enabled at: 2026-06-22T03:31:21Z
-- Enabled by: `drdave-flexnetos`
-- Created at: 2026-06-22T03:30:32Z
-- Created by: `drdave-flexnetos`
-- Merge state at evidence capture: blocked while required checks were pending
+- Merge state at evidence capture: branch rebased on `origin/develop`; auto-merge configured for PR #87.
 
 GitHub verification command:
 
 ```bash
-rtk gh pr view 82 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup
+rtk gh pr view 87 --json number,url,state,baseRefName,headRefName,isDraft,autoMergeRequest,mergeStateStatus,statusCheckRollup
 ```
