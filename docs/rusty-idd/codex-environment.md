@@ -287,9 +287,10 @@ RUSTC_WRAPPER=$META_ROOT/.env/rust/bin/kache
 The target compiler surface is nightly Rust with `rustc_codegen_gcc` available
 as a runtime backend. The target linker is parent-managed `wild-linker`; mold is
 not the compliant linker for this workflow. The compiler cache preference order
-is `kache`, then `hurry` or `zccache`; `sccache` is only a last-resort fallback
-at version `0.15.0` or newer, and daemon communication must use UDS/unix sockets
-rather than TCP loopback.
+is `kache`, then `hurry` or `zccache`. The strict audit can classify
+`sccache` only as a separately approved last-resort fallback at version
+`0.15.0` or newer with UDS/unix socket transport, but the checked-in CI
+bootstrap does not fall back to sccache.
 
 Strict audit mode reports the actual Cargo-executed compiler path and rejects
 non-meta-owned paths:
@@ -306,9 +307,15 @@ cargo run --bin rusty-idd -- codex system-audit \
 
 The parent `meta` / `envctl` layer is responsible for installing or updating
 nightly Rust, `rustc_codegen_gcc`, `wild-linker`, `kache`, `hurry`, `zccache`,
-or fallback `sccache`. Agents working in this repository must not repair a
-missing Rust tool by writing to `~/.rustup`, `~/.cargo`, `/usr/bin`, `/opt`, or
-other user/system-owned locations.
+or any separately approved fallback cache tool. Agents working in this
+repository must not repair a missing Rust tool by writing to `~/.rustup`,
+`~/.cargo`, `/usr/bin`, `/opt`, or other user/system-owned locations.
+
+GitHub workflows call `scripts/ci/envctl-rust-env.sh` to materialize the
+meta-owned `RUSTUP_HOME`, `CARGO_HOME`, cache root, `wild`, and kache-compatible
+wrapper before running Cargo. Primary CI and promotion verification then call
+`scripts/ci/envctl-rust-audit.sh`, which reports the actual `rustc` and `cargo`
+paths used by Cargo and rejects the sccache path for this implementation.
 
 ## Tool Installation
 

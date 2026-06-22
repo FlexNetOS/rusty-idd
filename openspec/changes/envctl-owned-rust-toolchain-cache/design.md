@@ -20,15 +20,15 @@ non-meta-owned paths and reports the exact active surface.
 
 - Make Rusty IDD able to audit a meta/envctl-owned nightly Rust stack.
 - Report the exact compiler path, Cargo path, wrapper, linker, and cache root.
-- Prefer `kache`, allow `hurry` or `zccache`, and keep `sccache` only as a
-  documented fallback with strict version and UDS requirements.
+- Prefer `kache`, allow `hurry` or `zccache`, and keep the checked-in CI path
+  off `sccache`.
 - Replace mold with parent-managed `wild-linker`.
 - Keep actual installation and binary provisioning in parent `meta` / `envctl`.
 
 **Non-Goals:**
 
-- Do not install nightly Rust, `rustc_codegen_gcc`, `wild-linker`, `kache`,
-  `hurry`, `zccache`, or `sccache` from this repository.
+- Do not install Rust tooling into user-global or system-owned paths from this
+  repository.
 - Do not start, stop, or manage cache daemons from this repository.
 - Do not commit toolchain or cache contents.
 - Do not make `rustc_codegen_gcc` the default backend for every build in this
@@ -43,7 +43,7 @@ non-meta-owned paths and reports the exact active surface.
    `/opt`, and other system-owned paths.
 3. Model expected tools as policy: `nightly`, `rustc_codegen_gcc`,
    `wild-linker`, and compiler cache wrapper preference order
-   `kache > hurry|zccache > sccache`.
+   `kache > hurry|zccache` for the checked-in CI implementation.
 4. Keep cache daemon lifecycle outside Rusty IDD. The audit can validate socket
    path policy but must not create or kill daemons.
 5. Document parent `meta` / `envctl` as the only provisioning location.
@@ -53,8 +53,8 @@ non-meta-owned paths and reports the exact active surface.
 - Nightly plus alternative codegen is less stable than stable LLVM Rust. The
   mitigation is audit-first adoption: record the runtime surface and keep the
   default build path reversible while parent provisioning matures.
-- `kache`, `hurry`, and `zccache` are newer surfaces than sccache. The contract
-  therefore accepts multiple modern wrappers but demands meta-owned paths.
+- `kache`, `hurry`, and `zccache` are the active cache-wrapper targets. The
+  contract accepts multiple modern wrappers but demands meta-owned paths.
 - `rustc_codegen_gcc` may require platform-specific runtime libraries. The
   audit records the requirement but leaves installation to parent envctl.
 

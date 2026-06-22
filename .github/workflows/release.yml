@@ -32,8 +32,20 @@ jobs:
             exe: ".exe"
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.96.0
-      - uses: Swatinem/rust-cache@v2
+      - name: Restore meta-owned Rust cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/../meta/.env/rust
+            ${{ github.workspace }}/../meta/.cache/rust
+            target
+          key: rusty-idd-envctl-rust-release-${{ runner.os }}-${{ matrix.suffix }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-release-${{ runner.os }}-${{ matrix.suffix }}-
+            rusty-idd-envctl-rust-release-${{ runner.os }}-
+      - name: Envctl Rust toolchain
+        shell: bash
+        run: scripts/ci/envctl-rust-env.sh release
       - name: Build release binary
         run: cargo build --workspace --locked --release --bin rusty-idd
       - name: Stage asset

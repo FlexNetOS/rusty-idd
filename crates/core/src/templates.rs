@@ -116,10 +116,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.96.0
+      - name: Restore meta-owned Rust cache
+        uses: actions/cache@v4
         with:
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
+          path: |
+            ${{ github.workspace }}/../meta/.env/rust
+            ${{ github.workspace }}/../meta/.cache/rust
+            target
+          key: rusty-idd-envctl-rust-nightly-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh', 'scripts/ci/envctl-rust-audit.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-nightly-${{ runner.os }}-
+      - name: Envctl Rust toolchain and cache
+        run: scripts/ci/envctl-rust-env.sh ci
+      - name: Strict envctl Rust toolchain audit
+        run: scripts/ci/envctl-rust-audit.sh
       - name: Merge-tools verification
         run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Format
@@ -134,10 +144,6 @@ jobs:
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
           git diff --exit-code -- .idd/MANIFEST.tsv
-      - name: Install cargo-audit
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-audit
       - name: Security audit
         run: cargo audit --deny warnings
 "#;

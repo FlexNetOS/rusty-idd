@@ -15,8 +15,7 @@ Target toolchain and build acceleration stack:
 - `wild-linker` as the meta-owned Linux linker path, replacing the previous
   mold assumption.
 - a meta-owned compiler cache path, preferring `kache`, then `hurry` or
-  `zccache`, with `sccache` only as a last-resort fallback at version 0.15.0 or
-  newer and using UDS rather than TCP loopback when a daemon is required.
+  `zccache`. The checked-in CI path must not fall back to `sccache`.
 
 Rusty IDD must expose an audit that reports the actual Cargo-executed compiler
 path, wrapper, linker, home directories, and cache root, and rejects user-global

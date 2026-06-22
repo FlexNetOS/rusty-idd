@@ -51,3 +51,19 @@ builds without accepting user-global or system-owned Rust state as compliant.
   Rusty IDD.
 - **AND** the missing tool SHALL be routed to the parent `meta` / `envctl`
   provisioning contract.
+
+#### Scenario: CI bootstrap uses the envctl cache target
+
+- **GIVEN** GitHub CI materializes the Rusty IDD Rust environment
+- **WHEN** the checked-in bootstrap selects a compiler cache wrapper
+- **THEN** it SHALL use `kache`, `hurry`, or `zccache` under the parent
+  meta/envctl root.
+- **AND** it SHALL fail rather than falling back to `sccache`.
+
+#### Scenario: Workflows expose the actual compiler surface
+
+- **GIVEN** primary CI or promotion verification runs Rust gates
+- **WHEN** the strict Rust toolchain audit runs
+- **THEN** it SHALL pass explicit `rustc`, `cargo`, `RUSTUP_HOME`,
+  `CARGO_HOME`, cache wrapper, cache root, linker, toolchain, and backend
+  values derived from the active CI environment.
