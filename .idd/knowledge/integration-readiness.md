@@ -1,6 +1,6 @@
 # Integration Readiness
 
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/prompt_hub`
 - Source plan: `.idd/knowledge/integration-plan.json`
 - Source system architecture: `.idd/knowledge/system-architecture.json`
 - Change: `integrate-prompt-front-door`
@@ -10,7 +10,7 @@
 
 | Owner | Found | Repo | Branch | Dirty | Required Tools |
 |---|---|---|---|---:|---|
-| `repo:prompt-hub` | true | `prompt_hub` | `main` | true | cargo, git |
+| `repo:prompt-hub` | true | `prompt_hub` | `` | false | cargo, git, just, make |
 
 ## Upstream Inputs
 
@@ -25,6 +25,8 @@
 |---|---:|---|---|---|
 | `cargo` | true | parent meta/envctl Rust toolchain | repo:prompt-hub | owner repo exposes Rust package metadata or cargo diagnostics |
 | `git` | true | parent meta/envctl managed PATH | github.com/f/ai-prompt, github.com/f/prompts.chat, integration-owner-state | native owner diagnostics include git state checks; upstream adoption pins exact git revisions before consolidation |
+| `just` | true | parent meta/envctl managed toolchain | repo:prompt-hub | owner repo exposes Justfile diagnostics |
+| `make` | true | parent meta/envctl managed toolchain | repo:prompt-hub | owner repo exposes Makefile diagnostics |
 | `node` | true | parent meta/envctl managed Node/npm toolchain | github.com/f/ai-prompt, github.com/f/prompts.chat | upstream package metadata exposes npm native diagnostics |
 | `postgres` | false | parent meta/envctl managed runtime or explicit external service | github.com/f/prompts.chat | upstream postinstall/build commands require DATABASE_URL for Prisma generation |
 | `wordpress` | false | parent meta/envctl managed frontend/tooling surface | github.com/f/ai-prompt | upstream WordPress plugin scripts are native diagnostic surfaces |
@@ -35,6 +37,10 @@
 |---|---|---|---:|---|
 | `cd prompt_hub && cargo metadata --locked --format-version 1` | `repo:prompt-hub` | read-only | false | cargo |
 | `cd prompt_hub && cargo test --workspace --all-features --locked` | `repo:prompt-hub` | native-build-or-test | false | cargo |
+| `cd prompt_hub && just --list` | `repo:prompt-hub` | read-only | false | just |
+| `cd prompt_hub && just ci` | `repo:prompt-hub` | native-build-or-test | false | just |
+| `cd prompt_hub && make -n ci` | `repo:prompt-hub` | read-only | false | make |
+| `cd prompt_hub && make ci` | `repo:prompt-hub` | native-build-or-test | false | make |
 | `cd third_party/upstream/ai-prompt && npm ci` | `github.com/f/ai-prompt` | native-build-or-test | true | node |
 | `cd third_party/upstream/ai-prompt && npm run build` | `github.com/f/ai-prompt` | native-build-or-test | false | node |
 | `cd third_party/upstream/ai-prompt && npm run lint:css` | `github.com/f/ai-prompt` | native-build-or-test | false | node |
@@ -46,6 +52,7 @@
 | `git -C prompt_hub status --short --branch` | `repo:prompt-hub` | read-only | false | git |
 | `git ls-remote https://github.com/f/ai-prompt.git HEAD` | `github.com/f/ai-prompt` | read-only | false | git |
 | `git ls-remote https://github.com/f/prompts.chat.git HEAD` | `github.com/f/prompts.chat` | read-only | false | git |
+| `test -f prompt_hub/.idd/knowledge/architecture.json` | `repo:prompt-hub` | read-only | false |  |
 | `test -f third_party/upstream/ai-prompt/package.json` | `github.com/f/ai-prompt` | read-only | false |  |
 | `test -f third_party/upstream/prompts.chat/package.json` | `github.com/f/prompts.chat` | read-only | false |  |
 
@@ -88,9 +95,9 @@
 
 ## Findings
 
-- 1 resolved owner repos report dirty state
+- 0 resolved owner repos report dirty state
 - all owner repos resolved in the system architecture graph
 - joined 1 owner repos against .idd/knowledge/system-architecture.json
-- readiness derived 5 tool requirements from 1 owner surfaces
+- readiness derived 7 tool requirements from 1 owner surfaces
 - readiness generation is deterministic and does not execute native diagnostics
 - selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json
