@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "system_root": "/home/drdave/Desktop/meta",
   "discovery_source": "meta project list --json",
   "repos": [
@@ -467,8 +467,8 @@
       "name": "handoff",
       "path": "handoff",
       "repo": "git@github.com:FlexNetOS/handoff.git",
-      "branch": "develop",
-      "head": "ff85f8071fe36a467603d7e679b7e9af58208d30",
+      "branch": "feat/hftask-0072-full-kb-adoption",
+      "head": "eee15361d22e8b5ceb7c59bb0e5704b0f7e8e967",
       "dirty": true,
       "tags": [
         "handoff",
@@ -1006,7 +1006,7 @@
       "path": "network-control",
       "repo": "git@github.com:FlexNetOS/network-control.git",
       "branch": "develop",
-      "head": "6115d2799c0e16cd80351c762860c53c3bc7afb6",
+      "head": "c56da8f6d10317df5792658c37b94c23057e17c5",
       "dirty": false,
       "tags": [
         "network",
@@ -1245,8 +1245,8 @@
       "name": "rusty-idd",
       "path": "rusty-idd",
       "repo": "git@github.com:FlexNetOS/rusty-idd.git",
-      "branch": "main",
-      "head": "324db89da7e256d6cca51a12e69e02ae5c4534ae",
+      "branch": null,
+      "head": null,
       "dirty": false,
       "tags": [
         "idd",
@@ -1275,8 +1275,8 @@
         "source_graph": {
           "provider": "codegraph-rust",
           "files": 139,
-          "nodes": 8664,
-          "edges": 35503,
+          "nodes": 8697,
+          "edges": 35719,
           "languages": [
             "rust"
           ],
@@ -1285,8 +1285,8 @@
         },
         "context_package": {
           "provider": "repomix-rs",
-          "files": 287,
-          "tokens": 691195,
+          "files": 310,
+          "tokens": 711022,
           "output_style": "markdown",
           "top_files_by_tokens": [
             [
@@ -1318,6 +1318,10 @@
               8632
             ],
             [
+              "AI_MERGE/36_handoff_full_adoption/handoff-tracked-files.md",
+              7659
+            ],
+            [
               "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md",
               7088
             ],
@@ -1339,7 +1343,7 @@
             ],
             [
               "docs/rusty-idd/codex-environment.md",
-              3165
+              3280
             ],
             [
               "AI_MERGE/34_handoff_single_repo_architecture.md",
@@ -1382,12 +1386,8 @@
               2097
             ],
             [
-              "Makefile",
-              1994
-            ],
-            [
-              "AI_MERGE/15_system_handoff_research.md",
-              1963
+              "crates/cli/src/commands/codex.rs",
+              1999
             ]
           ],
           "suspicious_files": 0,
@@ -1449,8 +1449,8 @@
             "name": "cli",
             "kind": "crate",
             "files": 24,
-            "nodes": 835,
-            "edges": 3614,
+            "nodes": 867,
+            "edges": 3830,
             "languages": [
               "Rust",
               "rust"
@@ -1486,7 +1486,7 @@
             "kind": "crate",
             "files": 24,
             "nodes": 461,
-            "edges": 1952,
+            "edges": 1957,
             "languages": [
               "Rust",
               "rust"
@@ -1549,8 +1549,8 @@
       "name": "ruvector",
       "path": "meta-ruvector",
       "repo": "git@github.com:FlexNetOS/meta-ruvector.git",
-      "branch": "docs/align-severe-readmes",
-      "head": "3d72d5d56a41e205e06af59f1c013abc1210226a",
+      "branch": "docs/hooks-setup-integrated-tools",
+      "head": "793635d5ef1b94b9d15b20789588c34d03c4dcb8",
       "dirty": true,
       "tags": [
         "ai",
@@ -1563,6 +1563,7 @@
         "rust",
         "node",
         "handoff",
+        "agents",
         "claude",
         "github-actions"
       ],

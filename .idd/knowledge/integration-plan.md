@@ -1,7 +1,7 @@
 # Integration Automation Plan
 
 - System root: `/home/drdave/Desktop/meta`
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff`
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
 - Source model: `.idd/knowledge/operating-model.json`
 - Work items: 19
 
