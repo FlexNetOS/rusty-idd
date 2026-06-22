@@ -1,0 +1,35 @@
+{
+  "id": "rusty-idd-prompt-hub-boundary-decision",
+  "title": "Decide PromptHub to Rusty IDD front-door boundary",
+  "status": "done",
+  "priority": "high",
+  "assignee": "codex",
+  "claim": {
+    "claimed_by": "codex",
+    "claimed_at": "2026-06-22T04:55:00Z"
+  },
+  "checkpoint": {
+    "status": "complete",
+    "note": "Deep local research found prompt_hub is a front-door/spec-producer surface with core library, CLI, server, prompt templates, swarm handoff, RBAC, audit, and vibe intent flow. Rusty IDD should consume goal artifacts rather than being embedded in prompt_hub. OpenSpec, ADR, AI_MERGE evidence, generated artifacts, and validation are complete."
+  },
+  "completion": {
+    "completed_by": "codex",
+    "completed_at": "2026-06-22T05:05:00Z",
+    "result": "Decision recorded: Rusty IDD consumes PromptHub-produced goal artifacts through goal-file planning; PromptHub does not own Rusty IDD lifecycle internals."
+  },
+  "intent_lock": {
+    "goal": "Decide whether Rusty IDD should consume prompt_hub or prompt_hub should consume Rusty IDD.",
+    "goal_file": ".idd/goals/prompt-hub-boundary-decision.md",
+    "change": "decide-prompt-hub-boundary",
+    "workspace": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/prompt_hub",
+    "peer_repo": "/home/drdave/Desktop/meta/prompt_hub"
+  },
+  "acceptance": [
+    "Goal-file-backed Rusty IDD plan context exists for the decision",
+    "OpenSpec proposal, design, tasks, and spec delta record the boundary",
+    "ADR records the ownership decision",
+    "AI_MERGE research evidence cites prompt_hub source surfaces and diagnostics",
+    "Knowledge artifacts, architecture diagrams, and manifest are refreshed",
+    "Rusty IDD validation and full gate evidence are recorded"
+  ]
+}

@@ -1,12 +1,24 @@
-# Task Evidence
+# PromptHub Boundary Task Evidence
 
-- Task: `KBTASK-RUSTY-IDD-ADOPT-FULL-HANDOFF`
-- Claim: repo-local task card from `tasks/rusty-idd-adopt-full-handoff`
-- Claim command:
-  `rtk hf claim KBTASK-RUSTY-IDD-ADOPT-FULL-HANDOFF`
-- Change: `adopt-full-handoff-upstream`
+- Task: `rusty-idd-prompt-hub-boundary-decision`
+- Claim: repo-local task card
+  `.handoff/tasks/rusty-idd-prompt-hub-boundary-decision.task.json`
+- Change: `decide-prompt-hub-boundary`
+- Goal file: `.idd/goals/prompt-hub-boundary-decision.md`
 - Worktree:
-  `/home/drdave/Desktop/meta/rusty-idd/.worktrees/adopt-full-handoff`
-- Branch: `feature/adopt-full-handoff`
+  `/home/drdave/Desktop/meta/rusty-idd/.worktrees/prompt_hub`
+- Branch: `feature/prompt_hub`
+- Peer repo researched:
+  `/home/drdave/Desktop/meta/prompt_hub`
 
-The adoption task was minted and claimed before implementation. The completed implementation imports the complete tracked handoff repository at pinned commit `7be85fcea3c2454fc3470fc929860afb7ea9864b` as a Rusty IDD upstream mirror, records the sibling checkout source state as evidence, and keeps the mirror outside the Cargo workspace until adapter/parity work is explicitly scoped.
+The task was claimed before writing the decision artifacts. Research found
+PromptHub is a front-door/spec-producer surface with three Rust crates, prompt
+templates, RBAC/audit/search, swarm handoff helpers, and vibe intent flow.
+
+The accepted decision is that Rusty IDD consumes PromptHub-produced goal
+artifacts through goal-file planning. PromptHub does not own Rusty IDD `.idd`,
+OpenSpec, ADR, validation, manifest, or merge evidence state.
+
+Completion evidence: goal file, OpenSpec proposal/design/spec/tasks, ADR 0007,
+AI_MERGE research note, generated knowledge artifacts, architecture diagrams,
+manifest, and validation evidence were all produced for the active change.
