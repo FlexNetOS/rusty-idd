@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/prompt_hub",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_plan": ".idd/knowledge/integration-plan.json",
   "source_system_architecture": ".idd/knowledge/system-architecture.json",
   "selector": {
@@ -54,14 +54,12 @@
       "repo_found": true,
       "repo_name": "prompt_hub",
       "path": "prompt_hub",
-      "branch": null,
-      "head": null,
-      "dirty": false,
+      "branch": "main",
+      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "dirty": true,
       "required_tool_ids": [
         "cargo",
-        "git",
-        "just",
-        "make"
+        "git"
       ]
     }
   ],
@@ -148,30 +146,6 @@
       ]
     },
     {
-      "id": "just",
-      "name": "Just",
-      "required_by": [
-        "repo:prompt-hub"
-      ],
-      "provisioned_by": "parent meta/envctl managed toolchain",
-      "default_path": true,
-      "evidence": [
-        "owner repo exposes Justfile diagnostics"
-      ]
-    },
-    {
-      "id": "make",
-      "name": "Make",
-      "required_by": [
-        "repo:prompt-hub"
-      ],
-      "provisioned_by": "parent meta/envctl managed toolchain",
-      "default_path": true,
-      "evidence": [
-        "owner repo exposes Makefile diagnostics"
-      ]
-    },
-    {
       "id": "node",
       "name": "Node/npm",
       "required_by": [
@@ -224,42 +198,6 @@
       "owner_repo": "repo:prompt-hub",
       "required_tool_ids": [
         "cargo"
-      ],
-      "mode": "native-build-or-test",
-      "mutates_repo": false
-    },
-    {
-      "command": "cd prompt_hub && just --list",
-      "owner_repo": "repo:prompt-hub",
-      "required_tool_ids": [
-        "just"
-      ],
-      "mode": "read-only",
-      "mutates_repo": false
-    },
-    {
-      "command": "cd prompt_hub && just ci",
-      "owner_repo": "repo:prompt-hub",
-      "required_tool_ids": [
-        "just"
-      ],
-      "mode": "native-build-or-test",
-      "mutates_repo": false
-    },
-    {
-      "command": "cd prompt_hub && make -n ci",
-      "owner_repo": "repo:prompt-hub",
-      "required_tool_ids": [
-        "make"
-      ],
-      "mode": "read-only",
-      "mutates_repo": false
-    },
-    {
-      "command": "cd prompt_hub && make ci",
-      "owner_repo": "repo:prompt-hub",
-      "required_tool_ids": [
-        "make"
       ],
       "mode": "native-build-or-test",
       "mutates_repo": false
@@ -364,13 +302,6 @@
       "mutates_repo": false
     },
     {
-      "command": "test -f prompt_hub/.idd/knowledge/architecture.json",
-      "owner_repo": "repo:prompt-hub",
-      "required_tool_ids": [],
-      "mode": "read-only",
-      "mutates_repo": false
-    },
-    {
       "command": "test -f third_party/upstream/ai-prompt/package.json",
       "owner_repo": "github.com/f/ai-prompt",
       "required_tool_ids": [],
@@ -419,10 +350,10 @@
     "remove .idd/knowledge/integration-readiness.* and regenerate integration status/owner artifacts"
   ],
   "findings": [
-    "0 resolved owner repos report dirty state",
+    "1 resolved owner repos report dirty state",
     "all owner repos resolved in the system architecture graph",
     "joined 1 owner repos against .idd/knowledge/system-architecture.json",
-    "readiness derived 7 tool requirements from 1 owner surfaces",
+    "readiness derived 5 tool requirements from 1 owner surfaces",
     "readiness generation is deterministic and does not execute native diagnostics",
     "selected integrate-prompt-front-door from .idd/knowledge/integration-plan.json"
   ]

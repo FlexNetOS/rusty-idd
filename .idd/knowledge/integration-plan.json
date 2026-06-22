@@ -1,7 +1,7 @@
 {
   "schema_version": 1,
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/prompt_hub",
-  "system_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "system_root": "/home/drdave/Desktop/meta",
   "source_model": ".idd/knowledge/operating-model.json",
   "work_items": [
     {
@@ -47,9 +47,21 @@
       "status": "partial",
       "change_id": "integrate-fleet-handoff",
       "owner_repos": [
+        "repo:agent",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
         "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:meta-git-lib",
+        "repo:network-control",
         "repo:prompt-hub",
         "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:teri",
         "repo:weave"
       ],
       "anchors": [
@@ -574,6 +586,7 @@
         "repo:copilot-plugin",
         "repo:ecc",
         "repo:flexnetos-runner",
+        "repo:github-org",
         "repo:harness-hub",
         "repo:hermes-agent",
         "repo:icm",
@@ -585,7 +598,9 @@
         "repo:prompt-hub",
         "repo:rtk-tokenkill",
         "repo:ruflo",
-        "repo:ruvector"
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:weave"
       ],
       "anchors": [
         "harness-agent-rs rust port"
