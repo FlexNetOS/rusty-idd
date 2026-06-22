@@ -40,9 +40,9 @@ path	size_bytes	fnv1a64
 .handoff/tasks/rusty-idd-e2e-review-upgrades.task.json	1470	3d899c1f0f951005
 .handoff/tasks/rusty-idd-prompt-hub-boundary-decision.task.json	1745	e9c9be153c724cc7
 .idd/LOCK.md	65	fd4e6132014f2489
-.idd/evidence/autonomous-workflow/pr.md	529	f0cfed1f630fc512
+.idd/evidence/autonomous-workflow/pr.md	491	f1758769d1d12524
 .idd/evidence/autonomous-workflow/task.md	491	648cc47acd832a65
-.idd/evidence/autonomous-workflow/validation.md	1893	0281ff50eac78ef1
+.idd/evidence/autonomous-workflow/validation.md	1657	cbd8c872bb61f45c
 .idd/evidence/prompt-hub-boundary/research.md	598	3318f818ef05fb2f
 .idd/goals/adopt-full-handoff-upstream.md	1229	499108991fe5a363
 .idd/goals/comprehensive-e2e-test-suite.md	1638	3fd24a8b94c3f6fc
@@ -54,9 +54,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	33641	e2f7851c0f5afbe5
-.idd/knowledge/architecture.md	6633	8d53a318fc4ff128
-.idd/knowledge/index.json	19258984	2bf0a5cebfc5f0ee
+.idd/knowledge/architecture.json	33641	41ad892958379e31
+.idd/knowledge/architecture.md	6633	d810a0806ef82d0c
+.idd/knowledge/index.json	19258984	19fd7370b35da902
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -67,9 +67,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2678	c288ba0ce065945e
 .idd/knowledge/operating-model.json	57771	3e6a452f574bead2
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
-.idd/knowledge/plan-context.json	83287	3a9279db13303d4d
-.idd/knowledge/plan-context.md	17189	de7293f74da47feb
-.idd/knowledge/report.md	5051	56dc8d58779005c5
+.idd/knowledge/plan-context.json	83287	36b4ca6e1f32e6cf
+.idd/knowledge/plan-context.md	17189	cae4eca4cdef0431
+.idd/knowledge/report.md	5051	9dd59c057bd315f9
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	24	1186ae7b3587a2f6
@@ -184,7 +184,7 @@ AI_MERGE/38_handoff_kb_refresh/README.md	371	a25f4e2ae4bee340
 AI_MERGE/38_handoff_kb_refresh/handoff-source-state.md	306	78cc42cdb5bf6e71
 AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md	25609	3ce95245308ec3c2
 AI_MERGE/38_handoff_kb_refresh/mirror-verification.md	976	4a9db17b3112ae50
-AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
+AI_MERGE/validation_report.md	307	bd98455f6c4e7a78
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
 Cargo.lock	119952	9aae6dabf7d2d748
@@ -716,7 +716,7 @@ openspec/changes/envctl-owned-rust-toolchain-cache/tasks.md	1076	49abb9c3ad0a303
 openspec/changes/fix-codex-hook-base-ref/design.md	1265	bbac7df4f8d1e204
 openspec/changes/fix-codex-hook-base-ref/proposal.md	780	cac6ce41901e8ce0
 openspec/changes/fix-codex-hook-base-ref/specs/codex-harness-flow/spec.md	669	231a412747aecec3
-openspec/changes/fix-codex-hook-base-ref/tasks.md	356	5cd1fe9b5351cc60
+openspec/changes/fix-codex-hook-base-ref/tasks.md	356	0470514ff5dcbf20
 openspec/changes/harden-e2e-validation-evidence/design.md	3712	a8583b9f00cd9443
 openspec/changes/harden-e2e-validation-evidence/proposal.md	2013	53e2e99dbfb7a4c5
 openspec/changes/harden-e2e-validation-evidence/specs/comprehensive-e2e-workflow-tests/spec.md	2401	88d61df9528c6e75

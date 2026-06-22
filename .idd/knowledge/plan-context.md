@@ -4,7 +4,7 @@
 - Goal: repair Codex Stop hook delivery detection so worktrees created from origin/develop do not falsely require PR evidence when local develop is stale
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/fix-codex-hook-issues`
 - Source graph: 139 files, 8758 nodes, 36130 edges via `codegraph-rust`
-- Context package: 328 files, 725750 tokens via `repomix-rs`
+- Context package: 328 files, 725752 tokens via `repomix-rs`
 
 ## Automation Order
 
