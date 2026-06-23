@@ -175,10 +175,12 @@ Use `--execute` only when you intentionally want to run the loop:
 cargo run --bin rusty-idd -- codex model-loop --execute
 ```
 
-The default passes are read-only:
+The default passes are read-only. Cheap read-heavy discovery uses
+`gpt-5.5-mini`; the final verification pass stays on `gpt-5.5` for higher
+confidence before implementation or handoff.
 
-- `explore`: fast read-only scan with `gpt-5.4-mini`.
-- `gap-hunt`: high-reasoning read-only audit with `gpt-5.5`.
+- `explore`: fast read-only scan with `gpt-5.5-mini`.
+- `gap-hunt`: focused read-only audit with `gpt-5.5-mini`.
 - `verify`: high-reasoning read-only verification with `gpt-5.5`.
 
 Write-capable implementation is intentionally outside the default loop. Use a
@@ -362,6 +364,13 @@ the envctl `.toolchains` state exists. Primary CI and promotion verification
 then call `scripts/ci/envctl-rust-audit.sh`, which reports the actual `rustc`
 and `cargo` paths used by Cargo and rejects the sccache path for this
 implementation.
+
+Workflow caches must resolve the parent meta root to a canonical path before
+restore/save. Do not pass raw `../meta` paths to `actions/cache`; GitHub rejects
+relative parent segments, which prevents the envctl Rust cache from being saved
+even though the workflow appears to request the right files. Cache parent
+`.env/rust` and `.cache/rust` tool state separately from workspace `target` so
+Cargo.lock changes do not invalidate the toolchain/tool cache.
 
 ## Tool Installation
 

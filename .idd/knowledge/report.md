@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:eeb293a022676392`
+- Workspace fingerprint: `fnv1a64:710684f800cf2631`
 - Indexed source files: 141
 - Graph nodes: 8832
 - Graph edges: 36415
 - Resolved call edges: 20787
 - Functions with complexity: 2221
-- Packed files: 205
-- Packed tokens: 675900
+- Packed files: 206
+- Packed tokens: 676665
 - Suspicious files: 0
 
 ## Hotspots
@@ -51,15 +51,15 @@
 | 7088 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
 | 7088 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
 | 5761 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
-| 4350 | `docs/rusty-idd/codex-environment.md` |
+| 4484 | `docs/rusty-idd/codex-environment.md` |
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
 | 3140 | `AI_MERGE/34_handoff_single_repo_architecture.md` |
 | 3081 | `crates/cli/src/commands/codex.rs` |
+| 2595 | `crates/core/src/templates.rs` |
 | 2540 | `AI_MERGE/16_upstream_knowledge_revisit.md` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
-| 2469 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/02_feature_matrix.md` |
 
 ## Findings
 
-- packed context is 675900 tokens, above default budget 120000
+- packed context is 676665 tokens, above default budget 120000

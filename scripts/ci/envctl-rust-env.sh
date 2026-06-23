@@ -32,7 +32,43 @@ find_meta_root() {
 }
 
 META_ROOT="$(find_meta_root)"
+META_ROOT="$(mkdir -p "$META_ROOT" && cd "$META_ROOT" && pwd -P)"
 export META_ROOT
+
+ci_group_start() {
+  if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+    printf '::group::%s\n' "$1"
+  else
+    printf '==> %s\n' "$1"
+  fi
+}
+
+ci_group_end() {
+  if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+    printf '::endgroup::\n'
+  fi
+}
+
+timed_step() {
+  local label="$1"
+  shift
+  local start end elapsed status
+  start="$(date +%s)"
+  ci_group_start "$label"
+  set +e
+  "$@"
+  status=$?
+  set -e
+  end="$(date +%s)"
+  elapsed=$((end - start))
+  if [[ "$status" -eq 0 ]]; then
+    printf 'Rusty IDD bootstrap span: %s completed in %ss\n' "$label" "$elapsed"
+  else
+    printf 'Rusty IDD bootstrap span: %s failed in %ss\n' "$label" "$elapsed" >&2
+  fi
+  ci_group_end
+  return "$status"
+}
 
 select_rust_layout() {
   if [[ -n "${RUSTY_IDD_RUST_LAYOUT:-}" ]]; then
@@ -111,14 +147,14 @@ rustup_args=(toolchain install "$toolchain" --profile minimal)
 for component in "${components[@]}"; do
   rustup_args+=(--component "$component")
 done
-rustup "${rustup_args[@]}"
+timed_step "rustup toolchain install $toolchain" rustup "${rustup_args[@]}"
 
 export RUSTUP_TOOLCHAIN="$toolchain"
 
 if [[ "$strict_rust_contract" == true ]]; then
   codegen_component_ok=false
   for component in rustc-codegen-gcc rustc-codegen-gcc-preview; do
-    if rustup component add "$component" --toolchain "$toolchain"; then
+    if timed_step "rustup component add $component" rustup component add "$component" --toolchain "$toolchain"; then
       codegen_component_ok=true
       break
     fi
@@ -136,10 +172,12 @@ cargo_for_toolchain() {
 install_cargo_tool() {
   local crate="$1"
   local binary="$2"
-  if command -v "$binary" >/dev/null 2>&1; then
+  local binary_path="$RUSTY_IDD_RUST_BIN/$binary"
+  if [[ -x "$binary_path" ]]; then
+    printf 'Rusty IDD bootstrap reuse: %s at %s\n' "$binary" "$binary_path"
     return
   fi
-  cargo_for_toolchain install --locked --root "$RUSTY_IDD_RUST_BIN/.." "$crate"
+  timed_step "cargo install $crate" cargo_for_toolchain install --locked --root "$RUSTY_IDD_RUST_BIN/.." "$crate"
 }
 
 install_cache_wrapper() {
@@ -156,12 +194,12 @@ install_cache_wrapper() {
       ;;
   esac
 
-  if ! command -v "$wrapper" >/dev/null 2>&1; then
+  if [[ ! -x "$RUSTY_IDD_RUST_BIN/$wrapper" ]]; then
     install_cargo_tool "$wrapper" "$wrapper"
   fi
 
   local wrapper_path
-  wrapper_path="$(command -v "$wrapper")"
+  wrapper_path="$RUSTY_IDD_RUST_BIN/$wrapper"
   local cache_root="$RUSTY_IDD_CACHE_BASE/$wrapper"
   mkdir -p "$cache_root"
 
@@ -185,7 +223,7 @@ install_cache_wrapper() {
 if [[ "$strict_rust_contract" == true ]]; then
   install_cache_wrapper
   install_cargo_tool wild-linker wild
-  export RUSTY_IDD_LINKER_PATH="$(command -v wild)"
+  export RUSTY_IDD_LINKER_PATH="$RUSTY_IDD_RUST_BIN/wild"
   export RUSTY_IDD_CODEGEN_BACKEND="rustc_codegen_gcc"
   install_cargo_tool cargo-audit cargo-audit
 
