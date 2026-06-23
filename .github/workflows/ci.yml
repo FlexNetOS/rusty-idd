@@ -73,6 +73,11 @@ jobs:
           git diff --exit-code -- .idd/MANIFEST.tsv
       - name: Vendor adapter drift gate (ADR-0010/0015)
         run: cargo run --bin rusty-idd -- render --all --check
+      - name: ADR ledger collision gate (ADR-0016)
+        # Fails closed on any NEW duplicate ADR number. The four accepted
+        # historical collisions (0002/0004/0005/0006) are a frozen baseline and
+        # are reported but do not fail; see ADR-0016.
+        run: cargo run --bin rusty-idd -- spec adr list --check
       - name: Format
         run: cargo fmt --all -- --check
       - name: Clippy

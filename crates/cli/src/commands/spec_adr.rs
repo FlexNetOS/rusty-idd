@@ -2,10 +2,21 @@
 //! (`rusty_idd_spec::adr`). Reads the repo-level `adr/` directory and reports
 //! the in-force decisions or the next sequence number.
 
+use std::collections::BTreeMap;
 use std::path::Path;
 
 use clap::Subcommand;
 use rusty_idd_spec::adr::{parse_adr, Adr, AdrSet, AdrStatus};
+
+/// Frozen baseline of ADR sequence numbers that are *knowingly* duplicated by
+/// immutable, already-accepted ADRs. Parallel changes each allocated the same
+/// `spec adr next` value before either committed, producing these four
+/// collisions. ADRs are immutable once accepted (supersede, don't edit), so the
+/// files are frozen historical artifacts and reconciled by ADR-0016 + a
+/// slug-canonical referencing rule — not by renumbering. The `--check` gate
+/// treats exactly these numbers as accepted and fails closed on any *new*
+/// collision, mirroring the `.cargo/audit.toml` baseline philosophy.
+const ACCEPTED_DUPLICATE_ADRS: &[u32] = &[2, 4, 5, 6];
 
 #[derive(Subcommand)]
 pub enum AdrCommand {
@@ -18,6 +29,11 @@ pub enum AdrCommand {
         /// Show every ADR (including superseded/proposed) with its status.
         #[arg(long)]
         all: bool,
+        /// Fail closed on any duplicate ADR number outside the frozen baseline
+        /// of known historical collisions. Reports all duplicates; exits
+        /// non-zero only on new ones.
+        #[arg(long)]
+        check: bool,
     },
     /// Print the next ADR sequence number (zero-padded NNNN).
     Next {
@@ -30,7 +46,17 @@ pub enum AdrCommand {
 /// Dispatch a `spec adr` subcommand.
 pub fn run(cmd: AdrCommand) -> i32 {
     match cmd {
-        AdrCommand::List { adr_dir, all } => run_list(&adr_dir, all),
+        AdrCommand::List {
+            adr_dir,
+            all,
+            check,
+        } => {
+            if check {
+                run_check(&adr_dir)
+            } else {
+                run_list(&adr_dir, all)
+            }
+        }
         AdrCommand::Next { adr_dir } => run_next(&adr_dir),
     }
 }
@@ -125,4 +151,98 @@ fn run_next(adr_dir: &Path) -> i32 {
     let set = load_adrs(adr_dir).unwrap_or_default();
     println!("{:04}", set.next_number());
     0
+}
+
+/// `spec adr list --check` — fail closed on ADR-number collisions outside the
+/// frozen baseline. Duplicates are always reported (for visibility); only
+/// *new* collisions cause a non-zero exit.
+fn run_check(adr_dir: &Path) -> i32 {
+    let set = match load_adrs(adr_dir) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("rusty-idd: {e}");
+            return 1;
+        }
+    };
+    let duplicates = collisions(&set);
+    if duplicates.is_empty() {
+        println!("ADR ledger: no duplicate numbers.");
+        return 0;
+    }
+
+    let mut new_collisions: Vec<u32> = Vec::new();
+    for (number, count) in &duplicates {
+        let accepted = ACCEPTED_DUPLICATE_ADRS.contains(number);
+        let tag = if accepted {
+            "accepted baseline"
+        } else {
+            "NEW COLLISION"
+        };
+        println!("ADR-{number:04}: {count} ADRs share this number ({tag})");
+        if !accepted {
+            new_collisions.push(*number);
+        }
+    }
+
+    if new_collisions.is_empty() {
+        println!(
+            "ADR ledger OK: {} duplicate number(s), all in the frozen baseline.",
+            duplicates.len()
+        );
+        0
+    } else {
+        eprintln!(
+            "ADR ledger FAIL: {} new collision(s) outside the baseline {:?}:",
+            new_collisions.len(),
+            ACCEPTED_DUPLICATE_ADRS
+        );
+        for n in &new_collisions {
+            eprintln!("  ADR-{n:04}");
+        }
+        eprintln!(
+            "  fix: give the new ADR the next free number (`rusty-idd spec adr next`), \
+             or, if it is an accepted immutable historical collision, add it to \
+             ACCEPTED_DUPLICATE_ADRS with an ADR recording why."
+        );
+        1
+    }
+}
+
+/// Numbers shared by more than one ADR, mapped to how many ADRs use them.
+/// Sorted ascending by number (BTreeMap) for deterministic output.
+fn collisions(set: &AdrSet) -> BTreeMap<u32, usize> {
+    let mut counts: BTreeMap<u32, usize> = BTreeMap::new();
+    for a in &set.adrs {
+        *counts.entry(a.number).or_insert(0) += 1;
+    }
+    counts.into_iter().filter(|(_, c)| *c > 1).collect()
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    fn adr(number: u32, slug: &str) -> Adr {
+        Adr {
+            number,
+            title: format!("ADR {number} {slug}"),
+            status: AdrStatus::Accepted,
+            supersedes: Vec::new(),
+        }
+    }
+
+    #[test]
+    fn collisions_finds_only_shared_numbers() {
+        let set = AdrSet::new(vec![adr(1, "a"), adr(2, "b"), adr(2, "c"), adr(3, "d")]);
+        let dups = collisions(&set);
+        assert_eq!(dups.len(), 1);
+        assert_eq!(dups.get(&2), Some(&2));
+        assert!(!dups.contains_key(&1));
+    }
+
+    #[test]
+    fn baseline_numbers_are_the_four_known_collisions() {
+        // Guards against accidental edits to the frozen baseline.
+        assert_eq!(ACCEPTED_DUPLICATE_ADRS, &[2, 4, 5, 6]);
+    }
 }
