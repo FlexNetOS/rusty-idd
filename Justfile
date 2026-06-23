@@ -41,6 +41,11 @@ render-check:
 adr-check:
     {{rusty_idd}} spec adr list --check
 
+# Fleet-deploy self-check (ADR-0017): the home repo's thin-adapter surface is in
+# sync (adapters match `render`, front-door SessionStart hook present).
+deploy-check:
+    {{rusty_idd}} deploy --target . --all --check
+
 knowledge:
     {{rusty_idd}} knowledge refresh --workspace .
 
@@ -111,4 +116,4 @@ codex-runtime-audit:
 codex-system-audit:
     {{rusty_idd}} codex system-audit
 
-ci: build test validate manifest-check render-check adr-check knowledge-check diagrams-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check render-check adr-check deploy-check knowledge-check diagrams-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit

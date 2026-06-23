@@ -1,61 +1,81 @@
 # Graph Planning Context
 
-- Change: `harness-session-frontdoor`
-- Goal: # Harness Session Front Door + ADR Ledger Hygiene Goal
+- Change: `fleet-deploy-control-plane`
+- Goal: # Fleet-Deploy Control-Plane Goal
 
-rusty-idd --goal-file .idd/goals/harness-session-frontdoor.md
+rusty-idd --goal-file .idd/goals/fleet-deploy-control-plane.md
 
-The front door is built but nothing invokes it. `rusty-idd next` (ADR-0015) and
-the thin vendor adapters (`render`, ADR-0010) exist and are CI-enforced, yet no
-vendor surface actually *calls* `rusty-idd next` at session start — agents must
-remember to run it. Close that gap: wire the `SessionStart` hook of each vendor
-surface that supports one to invoke `rusty-idd next`, so the computed
-next-step imperative is presented automatically at the start of every session
-(backlog item 4.2 of harness-control-plane).
+Deploy the Rusty IDD full package across the entire meta fleet so every fleet
+repository is governed by one deterministic, engine-owned control plane instead
+of each repo carrying its own divergent prose harness. Rusty IDD does **not**
+replace each repo's runtime: it **consumes** each repo's existing
+vendor/provider harness (its forge loop and runtime) and installs a *minimal*
+adapter surface on top, so an agent can be swapped seamlessly between repos
+because the harness it sees is the same thin CLI-over-MCP front door everywhere
+(`rusty-idd next`), not a repo-specific prose blob.
 
-While here, reconcile the ADR ledger: parallel changes each allocated the same
-ADR number before committing, producing duplicate-numbered ADRs at 0002, 0004,
-0005, and 0006 (backlog item 4.5). ADRs are immutable once accepted, so the
-existing files are frozen as historical artifacts; reconciliation is a new ADR
-plus an engine collision detector that prevents recurrence.
+This preserves the Rusty IDD workflow order:
 
-This preserves the Rusty IDD workflow order: goal -> graph context -> OpenSpec
-(spec delta + design + tasks) -> ADR -> implementation after ready -> validation
-refresh.
+1. Goal file and graph-backed context (`knowledge plan-context`).
+2. OpenSpec proposal, spec delta, design, ADR, and tasks; readiness via
+   `spec status` / `spec next`.
+3. Task-scoped harness package for the active stage (`harness package`).
+4. Implementation only after OpenSpec is ready.
+5. Generated-artifact refresh + mandatory validation before completion and push.
 
 ## Intent
 
-- Add a `SessionStart` hook to `.codex/hooks.json` that runs `rusty-idd next`
-  (same `sh -lc 'root=...; cargo run ... --bin rusty-idd -- next --base "$root"'`
-  shape as the existing workflow-check hooks).
-- Create `.claude/settings.json` with a `hooks.SessionStart` entry that runs
-  `rusty-idd next`, so Claude Code surfaces the imperative on session start.
-- Add a fail-closed ADR-number collision detector (`rusty-idd spec adr list
-  --check`, mirroring `render --check`) that exits non-zero on any NEW duplicate
-  number beyond a frozen baseline of the four known historical collisions; wire
-  it into CI so the bug cannot recur.
-- Author ADR-0016 recording the historical collisions as frozen and establishing
-  slug-canonical ADR referencing going forward.
+Add the missing **fleet front door**: a single deterministic command that takes
+the rusty-idd thin-adapter surface (already rendered for the home repo by
+`rusty-idd render`) and **deploys** it into one or more *target* fleet repos —
+writing the per-vendor `rusty-idd-adapter.md` and the SessionStart hook that
+calls `rusty-idd next`, while never touching the target repo's own forge loop or
+runtime. The result: every fleet member presents the same minimal agent harness,
+backed by the one engine, so agents are portable across the fleet.
+
+The "full package" deployed is the rusty-idd binary surface plus its rendered
+thin adapters and hooks — the control plane — applied per repo. Adopting the
+handoff and prompt_hub runtimes *into* rusty-idd, and retiring those standalone
+repos, are sequenced follow-on goals; this slice delivers the deploy mechanism
+and proves it against the home repo and at least one peer (handoff).
+
+## Required Method
+
+- Bind this goal with `rusty-idd knowledge plan-context --goal-file` over the
+  refreshed `.idd/knowledge/*` graph artifacts.
+- Bind the goal to OpenSpec change `fleet-deploy-control-plane` and drive it with
+  the artifact-DAG oracle (`rusty-idd next` / `spec status` / `spec next`).
+- Reuse the existing engine-owned adapter source of truth
+  (`render::expected_adapter`) and the VENDORS gate; the deploy command MUST
+  render byte-identical adapters to `render`, only into a target repo root.
+- Record the architecture as ADR-0017, building on ADR-0010 (stage packages),
+  ADR-0015 (single control plane), and the `render` / `render --check` drift
+  gate, without superseding them.
+- A `--check` / `--dry-run` mode that reports drift per target without writing,
+  so fleet deployment is verifiable and idempotent.
+- Refresh `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, and validation evidence
+  before completion (refresh-last → validate → manifest).
 
 ## Decision Target
 
-Vendor surfaces SHALL invoke `rusty-idd next` automatically at session start via
-their native `SessionStart` hook, not by relying on the agent to remember. The
-ADR ledger SHALL be collision-checked in CI against a frozen baseline of the four
-accepted historical duplicates; new collisions SHALL fail closed.
+Rusty IDD SHALL expose a fleet-deploy command that installs its thin-adapter
+control-plane surface (per-vendor `rusty-idd-adapter.md` + SessionStart hook
+calling `rusty-idd next`) into a target fleet repo without mutating that repo's
+forge loop or runtime, with an idempotent `--check`/`--dry-run` drift mode, so
+the same minimal agent harness is presented across the whole fleet.
 
 ## Non-Goals
 
-- No change to `rusty-idd next` behavior or output (it already exists, ADR-0015).
-- No renumbering or editing of the existing duplicate-numbered ADRs (immutable;
-  reconciled by ADR + slug-canonical rule, not by mutation).
-- No additional stage packages (impl/validation/handoff swarms) — that is backlog
-  4.3 (the separate add-verify-package-stage change), out of scope here.
-- No new vendor surfaces; `.agents`/`.devin` have no standard SessionStart hook
-  mechanism and keep their existing thin adapter only.
+- No adoption of handoff or prompt_hub runtimes into rusty-idd in this slice
+  (sequenced follow-on; this slice only deploys the control-plane surface).
+- No retirement, archiving, or `.meta.yaml` unregistration in this slice.
+- No mutation of any target repo's forge loop, runtime, build, or generated
+  artifacts — the deploy is additive (adapters + hooks) only.
+- No native Rust swarm runtime; vendor runtimes still execute subagents.
+- No downgrade of any existing gate, dependency, or generated artifact.
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd`
-- Source graph: 145 files, 8965 nodes, 36839 edges via `codegraph-rust`
-- Context package: 376 files, 753083 tokens via `repomix-rs`
+- Source graph: 149 files, 9210 nodes, 37690 edges via `codegraph-rust`
+- Context package: 399 files, 768804 tokens via `repomix-rs`
 
 ## Automation Order
 
@@ -77,14 +97,14 @@ accepted historical duplicates; new collisions SHALL fail closed.
 
 | Component | Kind | Files | Nodes | Edges | Evidence |
 |---|---|---:|---:|---:|---|
-| `cli` | crate | 30 | 1131 | 5013 | crates/cli/src/commands/codex.rs, crates/cli/src/commands/core.rs, crates/cli/src/commands/harness.rs, crates/cli/src/commands/knowledge.rs, crates/cli/src/commands/merge_tools.rs, crates/cli/src/commands/mod.rs, crates/cli/src/commands/next.rs, crates/cli/src/commands/render.rs, crates/cli/src/commands/run.rs, crates/cli/src/commands/spec.rs, crates/cli/src/commands/spec_adr.rs, crates/cli/src/commands/spec_archive.rs |
+| `cli` | crate | 34 | 1371 | 5896 | crates/cli/src/commands/codex.rs, crates/cli/src/commands/core.rs, crates/cli/src/commands/deploy.rs, crates/cli/src/commands/harness.rs, crates/cli/src/commands/knowledge.rs, crates/cli/src/commands/merge_tools.rs, crates/cli/src/commands/mod.rs, crates/cli/src/commands/next.rs, crates/cli/src/commands/render.rs, crates/cli/src/commands/run.rs, crates/cli/src/commands/spec.rs, crates/cli/src/commands/spec_adr.rs |
+| `core` | crate | 12 | 448 | 2479 | crates/core/src/cli.rs, crates/core/src/env_contract.rs, crates/core/src/fs_utils.rs, crates/core/src/lib.rs, crates/core/src/manifest.rs, crates/core/src/model.rs, crates/core/src/planner.rs, crates/core/src/scanner.rs, crates/core/src/templates.rs, crates/core/src/validation.rs, crates/core/tests/smoke.rs, crates/core/tests/template_agent_surface.rs |
+| `spec` | crate | 24 | 461 | 1976 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
 | `codegraph-core` | external_crate | 39 | 1918 | 9070 | crates/external/codegraph-core/benches/core_micro.rs, crates/external/codegraph-core/src/advanced_config.rs, crates/external/codegraph-core/src/arena.rs, crates/external/codegraph-core/src/buffer_pool.rs, crates/external/codegraph-core/src/cli_config.rs, crates/external/codegraph-core/src/compression.rs, crates/external/codegraph-core/src/config.rs, crates/external/codegraph-core/src/config_manager.rs, crates/external/codegraph-core/src/embedding_config.rs, crates/external/codegraph-core/src/error.rs, crates/external/codegraph-core/src/incremental/mod.rs, crates/external/codegraph-core/src/incremental/updater.rs |
 | `codegraph-parser` | external_crate | 29 | 1060 | 7485 | crates/external/codegraph-parser/src/complexity.rs, crates/external/codegraph-parser/src/diff.rs, crates/external/codegraph-parser/src/edge.rs, crates/external/codegraph-parser/src/fast_io.rs, crates/external/codegraph-parser/src/fast_ml/enhancer.rs, crates/external/codegraph-parser/src/fast_ml/mod.rs, crates/external/codegraph-parser/src/fast_ml/pattern_matcher.rs, crates/external/codegraph-parser/src/fast_ml/symbol_resolver.rs, crates/external/codegraph-parser/src/file_collect.rs, crates/external/codegraph-parser/src/integration_tests.rs, crates/external/codegraph-parser/src/language.rs, crates/external/codegraph-parser/src/languages/cpp.rs |
-| `core` | crate | 12 | 448 | 2479 | crates/core/src/cli.rs, crates/core/src/env_contract.rs, crates/core/src/fs_utils.rs, crates/core/src/lib.rs, crates/core/src/manifest.rs, crates/core/src/model.rs, crates/core/src/planner.rs, crates/core/src/scanner.rs, crates/core/src/templates.rs, crates/core/src/validation.rs, crates/core/tests/smoke.rs, crates/core/tests/template_agent_surface.rs |
-| `spec` | crate | 24 | 461 | 1967 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
-| `runner` | crate | 4 | 770 | 3135 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | crates/external/repomix-shared/src/lib.rs, crates/external/repomix-shared/src/types.rs |
 | `knowledge` | crate | 1 | 639 | 4653 | crates/knowledge/src/lib.rs |
+| `runner` | crate | 4 | 770 | 3135 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
 | `tui` | crate | 3 | 1006 | 3985 | crates/tui/src/app.rs, crates/tui/src/lib.rs, crates/tui/src/ui.rs |
 | `merge-tools` | crate | 1 | 45 | 234 | crates/merge-tools/src/lib.rs |
 
@@ -109,25 +129,25 @@ accepted historical duplicates; new collisions SHALL fail closed.
 | Repo | Branch | Dirty | Roles | Architecture |
 |---|---|---|---|---|
 | `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 139 files, 8697 nodes, 35719 edges; 720698 tokens; surfaces 4; top: codegraph-core, codegraph-parser, knowledge |
-| `ruvector` | `develop` | true | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
-| `prompt_hub` | `main` | true | role:agent-environment, role:capability-hub, role:fleet-handoff, role:rust-code-surface, role:spec-producer |  |
-| `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
 | `meta_git_lib` | `chore/indicatif-0.18-rustsec-2025-0119` | false | role:fleet-handoff, role:meta-control-plane, role:rust-code-surface |  |
-| `lifeos` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `agent` | `main` | false | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
-| `lane` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `meta_cli` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
-| `network-control` | `develop` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `envctl` | `master` | true | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider |  |
-| `handoff` | `develop` | true | role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
-| `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
-| `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `github_org` | `fix/autonomous-feature-develop-approval` | false | role:agent-environment, role:fleet-handoff |  |
+| `ruvector` | `develop` | true | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
 | `loop_cli` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
 | `loop_lib` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
-| `meta_core` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `meta_cli` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
 | `meta_git_cli` | `feat/dep-upgrades` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `meta_project_cli` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `meta_rust_cli` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `prompt_hub` | `main` | true | role:agent-environment, role:capability-hub, role:fleet-handoff, role:rust-code-surface, role:spec-producer |  |
+| `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
+| `meta_core` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `meta_plugin_protocol` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `meta_mcp` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
 | `meta_plugin_api` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `agent` | `main` | false | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
+| `envctl` | `master` | true | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider |  |
+| `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
+| `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
+| `lane` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
 
 ## Operating Layers
 
@@ -136,6 +156,7 @@ accepted historical duplicates; new collisions SHALL fail closed.
 - `Environment and security`: Vault, key relay, certificates, and parent-managed toolchains (1 capabilities, 3 repos)
 - `Executive control plane`: Company-level command, OpenSpec, handoff, and repo governance (2 capabilities, 14 repos)
 - `Front door experience`: Prompt, chat, LifeOS, and operator-facing user experience surfaces (2 capabilities, 3 repos)
+- `Governance and reasoning`: Board-style reasoning, strategy, and policy without direct execution (1 capabilities, 5 repos)
 - `Infrastructure and device fabric`: Network control plus distributed device compute, storage, inference, and memory (2 capabilities, 5 repos)
 - `Interface automation`: AR-glasses workflow, local automation, media, and home interfaces (2 capabilities, 3 repos)
 - `Knowledge and runtime`: Memory, vector/progress databases, inference, training, and runtime state (1 capabilities, 4 repos)
@@ -147,23 +168,23 @@ accepted historical duplicates; new collisions SHALL fail closed.
 | Capability | Layer | Status | Repos | Anchors |
 |---|---|---|---|---|
 | `IDD and spec engine` | `layer:executive-control-plane` | partial | repo:handoff, repo:rusty-idd | Rusty IDD built into handoff |
-| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:obscura, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
 | `Central and fleet handoff` | `layer:coordination-communication` | partial | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:meta-git-lib, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:ruvector, repo:teri, repo:weave | handoff central and fleet design |
-| `Prompt front door` | `layer:front-door-experience` | partial | repo:prompt-hub | github.com/f/prompts.chat, github.com/f/ai-prompt, prompt_hub front door to handoff and rusty-idd |
-| `Lua and AR interface automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi, repo:yazelix | Lua required for AR glasses workflow, Brilliant Labs Noa style Rust-native agent UX |
-| `Digital twin simulation` | `layer:simulation-validation` | partial | repo:teri | Teri digital twin simulator |
-| `GitHub agent-run upgrades` | `layer:agent-runtime` | partial | repo:grit, repo:yazelix | GRIT from rtk-ai, Beads mandatory for code contributors through Yazelix, github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca, github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b |
-| `Vector and agentic runtime` | `layer:knowledge-runtime` | partial | repo:database-hub, repo:icm, repo:obsidian-mind, repo:ruvector | meta-ruvector full agentic system |
-| `User front door` | `layer:front-door-experience` | partial | repo:lifeos, repo:prompt-hub, repo:ruvector | goose-like chat integration, LifeOS front door |
 | `Meta peer repo control` | `layer:executive-control-plane` | partial | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli | meta peer repo system |
+| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:obscura, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
+| `Prompt front door` | `layer:front-door-experience` | partial | repo:prompt-hub | github.com/f/prompts.chat, github.com/f/ai-prompt, prompt_hub front door to handoff and rusty-idd |
+| `Vector and agentic runtime` | `layer:knowledge-runtime` | partial | repo:database-hub, repo:icm, repo:obsidian-mind, repo:ruvector | meta-ruvector full agentic system |
+| `GitHub agent-run upgrades` | `layer:agent-runtime` | partial | repo:grit, repo:yazelix | GRIT from rtk-ai, Beads mandatory for code contributors through Yazelix, github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca, github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b |
+| `Lua and AR interface automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi, repo:yazelix | Lua required for AR glasses workflow, Brilliant Labs Noa style Rust-native agent UX |
+| `User front door` | `layer:front-door-experience` | partial | repo:lifeos, repo:prompt-hub, repo:ruvector | goose-like chat integration, LifeOS front door |
 | `Parser and terminal runtime` | `layer:toolchain-parser-runtime` | partial | repo:rusty-idd, repo:tool-hub, repo:yazelix | tree-sitter via Yazelix, Yazelix default terminal, nushell, Lua, Ghostty, Zellij |
+| `Digital twin simulation` | `layer:simulation-validation` | partial | repo:teri | Teri digital twin simulator |
+| `Network engineering and control` | `layer:infrastructure-device-fabric` | partial | repo:lane, repo:network-control, repo:network-hub | lane merges into network-manager |
+| `Agent communication layer` | `layer:coordination-communication` | partial | repo:atc, repo:handoff, repo:mcp-hub, repo:weave | weave agent communication layer |
+| `Personal media and home automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi | personal life media TV home automation |
 | `RTK AI foundation` | `layer:toolchain-parser-runtime` | partial | repo:grit, repo:icm, repo:rtk-tokenkill, repo:vox | RTK from rtk-ai, ICM from rtk-ai, VOX from rtk-ai, GRIT from rtk-ai |
 | `Environment and vault relay` | `layer:environment-security` | partial | repo:envctl, repo:vault-hub, repo:yazelix | /run/media/drdave/COGNITUM, Cognitum vault on Pi Zero |
-| `Network engineering and control` | `layer:infrastructure-device-fabric` | partial | repo:lane, repo:network-control, repo:network-hub | lane merges into network-manager |
-| `Personal media and home automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi | personal life media TV home automation |
-| `Agent communication layer` | `layer:coordination-communication` | partial | repo:atc, repo:handoff, repo:mcp-hub, repo:weave | weave agent communication layer |
+| `Board reasoning layer` | `layer:governance-reasoning` | partial | repo:flexnetos-brain, repo:flexnetos-wiki, repo:icm, repo:my-wiki, repo:obsidian-mind | company hierarchy board layer |
 | `Distributed device fabric` | `layer:infrastructure-device-fabric` | partial | repo:envctl, repo:network-control, repo:oh-my-pi | user devices for distributed compute storage inference memory |
-| `Domain upgrade path` | `layer:coordination-communication` | partial | repo:obscura, repo:weave | weave plus Obscura domain upgrades |
 
 ## Integration Work
 
@@ -178,9 +199,9 @@ accepted historical duplicates; new collisions SHALL fail closed.
 | 90 | `Integrate Vector and agentic runtime` | `integrate-vector-runtime` | repo:database-hub, repo:icm, repo:obsidian-mind, repo:ruvector |  |
 | 100 | `Integrate User front door` | `integrate-user-front-door` | repo:lifeos, repo:prompt-hub, repo:ruvector | goose-like chat integration |
 | 120 | `Integrate Network engineering and control` | `integrate-network-engineering` | repo:lane, repo:network-control, repo:network-hub |  |
-| 130 | `Integrate Distributed device fabric` | `integrate-distributed-device-fabric` | repo:envctl, repo:network-control, repo:oh-my-pi |  |
 | 140 | `Integrate Lua and AR interface automation` | `integrate-lua-ar-interface` | repo:lifeos, repo:oh-my-pi, repo:yazelix |  |
 | 500 | `Integrate Agent harness runtime` | `integrate-agent-harness` | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:obscura, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave |  |
+| 500 | `Integrate Meta peer repo control` | `integrate-meta-peer-control` | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli |  |
 
 ## Planning Guidance
 
@@ -195,5 +216,5 @@ accepted historical duplicates; new collisions SHALL fail closed.
 ## Findings
 
 - system context selected 13 roles and 20 repos from 65 discovered repos
-- operating context selected 10 layers and 18 capabilities from 19 generated capabilities
+- operating context selected 11 layers and 18 capabilities from 19 generated capabilities
 - integration context selected 12 work items from 19 generated work items

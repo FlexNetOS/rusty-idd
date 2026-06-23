@@ -13,15 +13,16 @@ use std::path::PathBuf;
 use clap::Args;
 
 /// Known vendor surfaces: `(name, directory)`. Adoption of a new surface is a
-/// deliberate, reviewed code change here.
-const VENDORS: &[(&str, &str)] = &[
+/// deliberate, reviewed code change here. Shared with `commands::deploy`
+/// (`pub(crate)`) so fleet deploy targets exactly the same vendor set as render.
+pub(crate) const VENDORS: &[(&str, &str)] = &[
     ("claude", ".claude"),
     ("codex", ".codex"),
     ("agents", ".agents"),
     ("devin", ".devin"),
 ];
 
-const ADAPTER_FILE: &str = "rusty-idd-adapter.md";
+pub(crate) const ADAPTER_FILE: &str = "rusty-idd-adapter.md";
 
 /// Args for `rusty-idd render`.
 #[derive(Args)]
@@ -62,7 +63,7 @@ pub fn expected_adapter(vendor: &str) -> String {
     )
 }
 
-fn lookup(name: &str) -> Option<(&'static str, &'static str)> {
+pub(crate) fn lookup(name: &str) -> Option<(&'static str, &'static str)> {
     VENDORS.iter().copied().find(|(n, _)| *n == name)
 }
 

@@ -2,6 +2,7 @@
 
 pub mod codex;
 pub mod core;
+pub mod deploy;
 pub mod harness;
 pub mod knowledge;
 pub mod merge_tools;
