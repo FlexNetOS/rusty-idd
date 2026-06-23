@@ -65,14 +65,15 @@ path	size_bytes	fnv1a64
 .idd/goals/envctl-owned-rust-toolchain-cache.md	1032	5f2df6ada270317d
 .idd/goals/fix-codex-hook-base-ref.md	624	596f3228a7a1de89
 .idd/goals/grit-full-integration.md	1079	7b79112fc741a993
+.idd/goals/harness-control-plane.md	2452	f26dc1e6372c4119
 .idd/goals/improve-ci-bootstrap-observability.md	2340	f4365aa19734d6db
 .idd/goals/prompt-hub-boundary-decision.md	2470	6148ced473f9c3e0
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34786	3288ed4bacaa6146
-.idd/knowledge/architecture.md	7019	785ccf425b487d84
-.idd/knowledge/index.json	18294011	87972396e8c8b0eb
+.idd/knowledge/architecture.json	34786	daec87d992677074
+.idd/knowledge/architecture.md	7019	57b962425b41c682
+.idd/knowledge/index.json	18294011	edfec6602ef0ea9d
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -83,9 +84,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2678	c288ba0ce065945e
 .idd/knowledge/operating-model.json	57771	3e6a452f574bead2
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
-.idd/knowledge/plan-context.json	88334	909238b7026e2c57
-.idd/knowledge/plan-context.md	19738	0cec7d5a7ba347db
-.idd/knowledge/report.md	5008	53c391ddda0518f7
+.idd/knowledge/plan-context.json	88596	4219977133d7dbd5
+.idd/knowledge/plan-context.md	19884	5f38d3391ba3adf3
+.idd/knowledge/report.md	5008	6a0a2f8e43893227
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	22	a81e800efa3a2ede
@@ -200,6 +201,7 @@ AI_MERGE/38_handoff_kb_refresh/README.md	371	a25f4e2ae4bee340
 AI_MERGE/38_handoff_kb_refresh/handoff-source-state.md	306	78cc42cdb5bf6e71
 AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md	25609	3ce95245308ec3c2
 AI_MERGE/38_handoff_kb_refresh/mirror-verification.md	976	4a9db17b3112ae50
+AI_MERGE/39_harness_control_plane.md	3546	41ef8a2edbaf0184
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
@@ -586,7 +588,7 @@ crates/tui/ralph-implement.sh	393	8e4a4cdae6cb24bb
 crates/tui/src/app.rs	195144	e05491939b145e8d
 crates/tui/src/lib.rs	6981	809321747bfb2538
 crates/tui/src/ui.rs	84930	8993c1a7fab71e0e
-docs/rusty-idd/architecture-diagrams.md	6378	962c98c4a5f6bc85
+docs/rusty-idd/architecture-diagrams.md	6784	50fe068ea6290251
 docs/rusty-idd/codex-environment.md	18978	9d9b3fb8323019b8
 docs/rusty-idd/dependency-duplication.md	3837	93266b2549c197c6
 docs/rusty-idd/design.md	5985	b2802a4850aff45d
@@ -762,6 +764,7 @@ openspec/changes/harden-e2e-validation-evidence/specs/comprehensive-e2e-workflow
 openspec/changes/harden-e2e-validation-evidence/tasks.md	1526	fc61113f90d68409
 openspec/changes/harness-control-plane/assets/as-is-architecture-diagrams.md	6673	64ff0b4f274824f6
 openspec/changes/harness-control-plane/assets/as-is-architecture-graph.json	34460	697bc4de63c41342
+openspec/changes/harness-control-plane/assets/harness-package-scan.md	3390	6e8f5691e574b06d
 openspec/changes/harness-control-plane/design.md	7394	ffbc2d79ff861c70
 openspec/changes/harness-control-plane/proposal.md	2107	b8a03f719a7a4f14
 openspec/changes/harness-control-plane/specs/harness-control-plane/spec.md	2291	d54086386fc963da

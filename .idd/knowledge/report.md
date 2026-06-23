@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:76949efbf0a3b8ae`
+- Workspace fingerprint: `fnv1a64:af60691671d6d197`
 - Indexed source files: 143
 - Graph nodes: 8880
 - Graph edges: 36560
 - Resolved call edges: 20861
 - Functions with complexity: 2232
-- Packed files: 209
-- Packed tokens: 677892
+- Packed files: 210
+- Packed tokens: 678973
 - Suspicious files: 0
 
 ## Hotspots
@@ -62,4 +62,4 @@
 
 ## Findings
 
-- packed context is 677892 tokens, above default budget 120000
+- packed context is 678973 tokens, above default budget 120000
