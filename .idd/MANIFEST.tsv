@@ -43,7 +43,7 @@ path	size_bytes	fnv1a64
 .idd/evidence/autonomous-workflow/pr.md	218	562a8791ccf25507
 .idd/evidence/autonomous-workflow/task.md	696	7e43c86ce2bfd033
 .idd/evidence/autonomous-workflow/validation.md	1292	ef2e499668afd6ca
-.idd/evidence/ci-bootstrap-observability/pr.md	368	a4f1a3af749f26ff
+.idd/evidence/ci-bootstrap-observability/pr.md	541	b02392bce007fb82
 .idd/evidence/ci-bootstrap-observability/task.md	810	700a7a9dcf50bac0
 .idd/evidence/ci-bootstrap-observability/validation.md	4291	dc0e19175d5ad73e
 .idd/evidence/envctl-toolchain-contract/pr.md	734	fa4ed4e281d9d8d6
@@ -70,9 +70,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34498	7aedb8483a76f444
-.idd/knowledge/architecture.md	6914	ed4838a7b4c7aa0d
-.idd/knowledge/index.json	19588224	15e06f9f757673fe
+.idd/knowledge/architecture.json	34498	adc6f6f615e64697
+.idd/knowledge/architecture.md	6914	e02361fe623b72dc
+.idd/knowledge/index.json	19588224	77ba83428708f3d1
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -85,7 +85,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	88334	909238b7026e2c57
 .idd/knowledge/plan-context.md	19738	0cec7d5a7ba347db
-.idd/knowledge/report.md	5008	3b1fe36cfd1f7ebb
+.idd/knowledge/report.md	5008	c4a0990228080956
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	35	416037165e371285
