@@ -5,6 +5,7 @@ pub mod core;
 pub mod harness;
 pub mod knowledge;
 pub mod merge_tools;
+pub mod next;
 pub mod run;
 pub mod spec;
 pub mod spec_adr;

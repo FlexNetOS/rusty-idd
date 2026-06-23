@@ -5,6 +5,8 @@
 //!   *verbatim* to [`rusty_idd_core::cli::run`], giving automatic
 //!   parity with the legacy `idd` binary (same code path).
 //! - **`spec`** is a new CLI over [`rusty_idd_spec`] (validate / archive / show).
+//! - **`next`** is the harness control-plane front door (ADR-0015): one
+//!   deterministic imperative for the active change, reusing the `spec` oracle.
 //! - **`run`** is a headless task runner over [`rusty_idd_runner`] (no ratatui).
 //! - **`tui`** launches the interactive TUI via [`rusty_idd_tui::run`].
 //! - **`knowledge`** builds compact codebase graph indexes and AI context packs.
@@ -55,6 +57,11 @@ enum Command {
     #[command(subcommand)]
     Spec(commands::spec::SpecCommand),
 
+    /// Harness control-plane front door: print the single next imperative for
+    /// the active change (ADR-0015). Vendor surfaces call this instead of
+    /// carrying a static prose harness.
+    Next(commands::next::NextArgs),
+
     /// Headless task runner for an OpenSpec change (no interactive UI).
     Run(commands::run::RunArgs),
 
@@ -103,6 +110,7 @@ fn dispatch(command: Command) -> i32 {
         Command::Manifest(a) => commands::core::delegate("manifest", &a.args),
         Command::Github(a) => commands::core::delegate("github", &a.args),
         Command::Spec(cmd) => commands::spec::run(cmd),
+        Command::Next(args) => commands::next::run(args),
         Command::Run(args) => commands::run::run(args),
         Command::Knowledge(cmd) => commands::knowledge::run(cmd),
         Command::Codex(cmd) => commands::codex::run(cmd),
