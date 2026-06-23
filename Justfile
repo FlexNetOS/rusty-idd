@@ -38,6 +38,9 @@ render:
 render-check:
     {{rusty_idd}} render --all --check
 
+adr-check:
+    {{rusty_idd}} spec adr list --check
+
 knowledge:
     {{rusty_idd}} knowledge refresh --workspace .
 
@@ -108,4 +111,4 @@ codex-runtime-audit:
 codex-system-audit:
     {{rusty_idd}} codex system-audit
 
-ci: build test validate manifest-check knowledge-check diagrams-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
+ci: build test validate manifest-check render-check adr-check knowledge-check diagrams-check operating-model-check integration-plan-check integration-status-check integration-owners-check integration-readiness-check plan-context-check codex-env-check codex-runtime-audit codex-model-loop fmt-check lint audit
