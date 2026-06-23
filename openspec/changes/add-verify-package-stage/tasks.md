@@ -14,34 +14,34 @@
 
 ## 2. Verify-Stage Package Slice
 
-- [ ] 2.1 Extend `rusty-idd harness package` to accept `--stage verify`.
-- [ ] 2.2 Add `--goal-file`, `--task-file`, and `--plan-file` inputs for
+- [x] 2.1 Extend `rusty-idd harness package` to accept `--stage verify`.
+- [x] 2.2 Add `--goal-file`, `--task-file`, and `--plan-file` inputs for
   verification package generation.
-- [ ] 2.3 Emit JSON and Markdown package formats for the verify stage.
-- [ ] 2.4 Include only verify-scoped roles, contracts, tools, helpers, hooks,
+- [x] 2.3 Emit JSON and Markdown package formats for the verify stage.
+- [x] 2.4 Include only verify-scoped roles, contracts, tools, helpers, hooks,
   validation gates, and evidence schema.
-- [ ] 2.5 Ensure the package compares implementation output against the
+- [x] 2.5 Ensure the package compares implementation output against the
   original request, goal, task card, OpenSpec tasks, and plan.
-- [ ] 2.6 Ensure the package requires ICM recall/context comparison and graph
+- [x] 2.6 Ensure the package requires ICM recall/context comparison and graph
   or knowledge artifact comparison.
 
 ## 3. Thin `/verify` Adapter
 
-- [ ] 3.1 Add a minimal `/verify` adapter prompt for Codex or equivalent model
+- [x] 3.1 Add a minimal `/verify` adapter prompt for Codex or equivalent model
   surfaces.
-- [ ] 3.2 Ensure the adapter delegates to Rusty IDD package generation instead
+- [x] 3.2 Ensure the adapter delegates to Rusty IDD package generation instead
   of embedding the full checklist.
-- [ ] 3.3 Document that missing verification capability must be reported as a
+- [x] 3.3 Document that missing verification capability must be reported as a
   missing Rusty IDD package capability, not solved with ad hoc always-loaded
   prompt growth.
 
 ## 4. Validation and Delivery
 
-- [ ] 4.1 Add focused tests for verify package output.
-- [ ] 4.2 Run focused CLI tests for harness package generation.
-- [ ] 4.3 Run formatting, clippy, and relevant workspace checks.
-- [ ] 4.4 Refresh `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.
-- [ ] 4.5 Run Rusty IDD validation and OpenSpec status.
-- [ ] 4.6 Record validation and PR evidence.
+- [x] 4.1 Add focused tests for verify package output.
+- [x] 4.2 Run focused CLI tests for harness package generation.
+- [x] 4.3 Run formatting, clippy, and relevant workspace checks.
+- [x] 4.4 Refresh `.idd/knowledge/*` and `.idd/MANIFEST.tsv`.
+- [x] 4.5 Run Rusty IDD validation and OpenSpec status.
+- [x] 4.6 Record validation and PR evidence.
 - [ ] 4.7 Commit, push, open a PR to `develop`, and enable auto-merge when
   green.

@@ -3,6 +3,7 @@ path	size_bytes	fnv1a64
 .agents/skills/rusty-idd-adopt-first/SKILL.md	2499	1f19669f9f97e40c
 .agents/skills/rusty-idd-codex-rust-env/SKILL.md	6109	fc465fa19e45bd0a
 .agents/skills/rusty-idd-knowledge/SKILL.md	13610	6cb7529bbfe7f6a4
+.agents/skills/rusty-idd-verify/SKILL.md	2233	a72115f00b8b550e
 .cargo/audit.toml	1371	581e4e83e760f244
 .claude/agent-guard.toml	316	a05fb9faa045160a
 .claude/rules/meta-destructive-commands.md	732	8e499672d8d8fbea
@@ -78,9 +79,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34771	a163fb74741700e4
-.idd/knowledge/architecture.md	7019	2d73a2b32005dedd
-.idd/knowledge/index.json	18538029	cf7ccd4283e1c4f3
+.idd/knowledge/architecture.json	34771	d5d1eb8d2f5fcd13
+.idd/knowledge/architecture.md	7019	b1d21d128ebe1946
+.idd/knowledge/index.json	18595080	faacba383174ad85
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -93,10 +94,10 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	88583	0be51a7aaf1281f9
 .idd/knowledge/plan-context.md	20156	5331abfd6f3619aa
-.idd/knowledge/report.md	5008	b43ee3c573e7a6ed
+.idd/knowledge/report.md	5008	53b6db24a89cab24
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
-.idd/workflow/active-change	26	df351a89f1e9a46a
+.idd/workflow/active-change	25	c1e1a191208bdbfe
 .release-please-manifest.json	19	f96b929db2fa1886
 AGENTS.md	5479	f8dab9bedceb1463
 AI_MERGE/03_env_and_secret_contracts.md	1894	e23b0ed94b9df35c
@@ -210,6 +211,7 @@ AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md	25609	3ce95245308ec3c2
 AI_MERGE/38_handoff_kb_refresh/mirror-verification.md	976	4a9db17b3112ae50
 AI_MERGE/39_harness_control_plane.md	3546	41ef8a2edbaf0184
 AI_MERGE/40_harness_session_frontdoor.md	2829	1277edae0b7111f5
+AI_MERGE/41_verify_package_stage.md	2546	3cdc7fe738aee098
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
@@ -246,7 +248,7 @@ commitlint.config.cjs	348	83ecfbe9e12d50ac
 crates/cli/Cargo.toml	1317	ccb2250e76ff6957
 crates/cli/src/commands/codex.rs	61827	3e4a24473b93ad3e
 crates/cli/src/commands/core.rs	963	f1b569ea54a904c9
-crates/cli/src/commands/harness.rs	8276	bd64822c4e2fa50d
+crates/cli/src/commands/harness.rs	18204	f6a21ba2f06d7217
 crates/cli/src/commands/knowledge.rs	21666	96cc7da7876b8227
 crates/cli/src/commands/merge_tools.rs	1781	b65672a651ab8324
 crates/cli/src/commands/mod.rs	328	71bc01fdc4547b5b
@@ -265,7 +267,7 @@ crates/cli/src/main.rs	207	b078697d840d6a6c
 crates/cli/tests/adr_check_cli.rs	2616	0d823efb410e9aba
 crates/cli/tests/archive_cli.rs	8615	65fa9077ee609c7f
 crates/cli/tests/codex_cli.rs	36612	2ca398bc9222d8c4
-crates/cli/tests/harness_cli.rs	2964	8470b55884cf8ad2
+crates/cli/tests/harness_cli.rs	6224	a59ec4c2fecd2aef
 crates/cli/tests/knowledge_cli.rs	11180	811f88340de1ca08
 crates/cli/tests/merge_tools_cli.rs	1868	0077fb48051d7693
 crates/cli/tests/next_cli.rs	4460	1d1e966336e3bf76
@@ -728,7 +730,7 @@ openspec/changes/add-system-operating-model-graph/tasks.md	743	3390a81f48e9f436
 openspec/changes/add-verify-package-stage/design.md	4265	6f4cab6bff8d0f92
 openspec/changes/add-verify-package-stage/proposal.md	2358	4ba6535e61c611cd
 openspec/changes/add-verify-package-stage/specs/agent-harness-workflow/spec.md	3029	d2dd495358d92f60
-openspec/changes/add-verify-package-stage/tasks.md	2132	ac14ff1a5939ff5c
+openspec/changes/add-verify-package-stage/tasks.md	2132	bd51bf40122d2d04
 openspec/changes/adopt-full-handoff-upstream/design.md	3559	6237c9df3cb12390
 openspec/changes/adopt-full-handoff-upstream/proposal.md	1990	c1b079bd358f2505
 openspec/changes/adopt-full-handoff-upstream/specs/handoff-adoption-into-rusty-idd/spec.md	870	a21d1af2a0aae50e
