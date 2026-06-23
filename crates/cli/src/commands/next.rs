@@ -15,6 +15,7 @@
 use std::path::{Path, PathBuf};
 
 use clap::Args;
+use serde::Serialize;
 
 /// Args for `rusty-idd next`.
 #[derive(Args)]
@@ -23,6 +24,27 @@ pub struct NextArgs {
     /// current directory).
     #[arg(long, default_value = ".")]
     base: PathBuf,
+    /// Emit a deterministic JSON object for non-interactive adapters instead of
+    /// the human-readable imperative.
+    #[arg(long)]
+    json: bool,
+}
+
+/// Machine-readable front-door view (`rusty-idd next --json`). Embeds the shared
+/// `spec_status` snapshot so it cannot disagree with `spec status --json`.
+#[derive(Serialize)]
+struct FrontDoorView {
+    active_change: Option<String>,
+    change: Option<crate::commands::spec_status::StatusSnapshot>,
+    next_command: Option<String>,
+}
+
+/// The one scoped next command for a change, given its next ready artifact.
+fn next_command_for(active: &str, next_id: Option<&str>) -> String {
+    match next_id {
+        Some(id) => format!("rusty-idd spec scaffold {id} --change {active}"),
+        None => format!("rusty-idd spec archive openspec/changes/{active} --yes"),
+    }
 }
 
 /// Read the active change name from `<base>/.idd/workflow/active-change`.
@@ -37,8 +59,61 @@ pub(crate) fn resolve_active_change(base: &Path) -> Option<String> {
 
 /// `rusty-idd next` — print the single next imperative for the active change.
 pub fn run(args: NextArgs) -> i32 {
-    let base = &args.base;
+    if args.json {
+        return run_json(&args.base);
+    }
+    run_text(&args.base)
+}
 
+/// Machine-readable mode: one deterministic JSON object for adapters. Fails
+/// closed (non-zero, no stdout JSON) on a dangling active-change pointer.
+fn run_json(base: &Path) -> i32 {
+    let Some(active) = resolve_active_change(base) else {
+        let view = FrontDoorView {
+            active_change: None,
+            change: None,
+            next_command: None,
+        };
+        println!("{}", serde_json::to_string_pretty(&view).unwrap());
+        return 0;
+    };
+
+    let change_dir = base.join("openspec/changes").join(&active);
+    if !change_dir.is_dir() {
+        eprintln!(
+            "rusty-idd next: active change '{active}' has no directory at {}",
+            change_dir.display()
+        );
+        return 1;
+    }
+
+    let snapshot = match crate::commands::spec_status::snapshot_for(&change_dir) {
+        Ok(s) => s,
+        Err(e) => {
+            eprintln!("rusty-idd next: {e}");
+            return 1;
+        }
+    };
+    let next_id = crate::commands::spec_status::next_artifact_id(&change_dir);
+    let view = FrontDoorView {
+        active_change: Some(active.clone()),
+        change: Some(snapshot),
+        next_command: Some(next_command_for(&active, next_id.as_deref())),
+    };
+    match serde_json::to_string_pretty(&view) {
+        Ok(text) => {
+            println!("{text}");
+            0
+        }
+        Err(e) => {
+            eprintln!("rusty-idd next: failed to serialize JSON: {e}");
+            1
+        }
+    }
+}
+
+/// Human-readable mode: the single next imperative for the active change.
+fn run_text(base: &Path) -> i32 {
     let Some(active) = resolve_active_change(base) else {
         println!("rusty-idd next — no active change.");
         println!("  set one:   echo <change> > .idd/workflow/active-change");
