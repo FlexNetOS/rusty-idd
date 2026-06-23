@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:36d226d7a9682432",
+  "workspace_fingerprint": "fnv1a64:eeb293a022676392",
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/envctl-toolchain-contract",
   "source_graph": {
     "provider": "codegraph-rust",
@@ -16,7 +16,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 351,
-    "tokens": 738367,
+    "tokens": 738368,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -1364,6 +1364,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 351 files and 738367 tokens"
+    "repomix context package measured 351 files and 738368 tokens"
   ]
 }

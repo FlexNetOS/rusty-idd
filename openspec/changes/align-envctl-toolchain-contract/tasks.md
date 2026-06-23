@@ -25,4 +25,4 @@
 - [x] 3.4 Verify OpenSpec status.
 - [x] 3.5 Run Rusty IDD validation.
 - [x] 3.6 Refresh `.idd/MANIFEST.tsv`.
-- [ ] 3.7 Commit, push, open PR, and monitor CI.
+- [x] 3.7 Commit, push, open PR, and monitor CI.

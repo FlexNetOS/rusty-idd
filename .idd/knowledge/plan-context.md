@@ -62,7 +62,7 @@ using real user-global or system-depth Rust state.
   updated.
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/envctl-toolchain-contract`
 - Source graph: 141 files, 8832 nodes, 36415 edges via `codegraph-rust`
-- Context package: 351 files, 738367 tokens via `repomix-rs`
+- Context package: 351 files, 738368 tokens via `repomix-rs`
 
 ## Automation Order
 
