@@ -175,8 +175,17 @@ pub fn run_status(change_dir: &Path, json: bool) -> i32 {
     0
 }
 
+/// Build the artifact-DAG snapshot for a change — the shared oracle data behind
+/// both `spec status --json` and the front door's `next --json`
+/// ([`crate::commands::next`]). One snapshot type means the two can never
+/// disagree.
+pub fn snapshot_for(change_dir: &Path) -> Result<StatusSnapshot, String> {
+    let schema = load_for(change_dir)?;
+    status_snapshot(change_dir, &schema)
+}
+
 #[derive(Debug, Serialize)]
-struct StatusSnapshot {
+pub struct StatusSnapshot {
     change: String,
     change_dir: String,
     schema: SchemaSummary,
