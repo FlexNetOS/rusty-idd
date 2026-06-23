@@ -81,9 +81,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	35959	16f4e722957936e0
-.idd/knowledge/architecture.md	7447	40ff3b3bce992dfe
-.idd/knowledge/index.json	47109585	d81a527aae705f76
+.idd/knowledge/architecture.json	35959	019bc8bfda98fe1a
+.idd/knowledge/architecture.md	7447	6a4acaa11e9ddffa
+.idd/knowledge/index.json	47113812	1961d8a3ee390cd1
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -96,7 +96,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4412	7e3b982e861be756
+.idd/knowledge/report.md	4412	bd79780a2e25bf0c
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -219,7 +219,7 @@ AI_MERGE/42_harness_gap_hunt_hardening.md	2320	890537f5334f5000
 AI_MERGE/43_archive_harness_arc.md	2634	2eeb6dc60556551f
 AI_MERGE/44_fleet_deploy_control_plane.md	3490	074f160562146e1b
 AI_MERGE/45_unify_handoff_prompthub_plan.md	3337	9b40f8d68473e1af
-AI_MERGE/46_unify_slice1_import.md	4642	16b0ef9503e58665
+AI_MERGE/46_unify_slice1_import.md	5449	79eca0ae5d511724
 AI_MERGE/unify-handoff-prompthub/00_handoff_inventory.json	7038	5454b7e941b5aa4e
 AI_MERGE/unify-handoff-prompthub/00_handoff_inventory.md	46678	93e1e57f778a04fb
 AI_MERGE/unify-handoff-prompthub/01_prompt_hub_inventory.json	3761	4dbefd35b35c214e
@@ -426,7 +426,7 @@ crates/external/repomix-shared/src/types.rs	933	b8fc1a15f1b9e97a
 crates/knowledge/Cargo.toml	893	94f37ae84c46a5d8
 crates/knowledge/src/lib.rs	247367	dbf4fecd0aced2b6
 crates/merge-tools/Cargo.toml	316	ab7f080cd956f4d0
-crates/merge-tools/src/lib.rs	13021	f7b78b2950f9c149
+crates/merge-tools/src/lib.rs	14046	8da3de76453b7166
 crates/runner/Cargo.toml	758	82b599192ec7f519
 crates/runner/src/config.rs	23501	4be7bbf4c1c86261
 crates/runner/src/data.rs	61962	290cec99ae0e96c8

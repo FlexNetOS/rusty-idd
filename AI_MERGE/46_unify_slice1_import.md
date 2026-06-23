@@ -62,6 +62,19 @@ live tokens) — every match is a detection regex or fake test value. The rest o
 `imports/` stays under the live secret gate, and all of it stays first-class in
 the code graph.
 
+## Engine accommodation: merge-tools verify foreign-manifest surface
+
+`crates/merge-tools/src/lib.rs`: `foreign_manifest_allowed` now treats
+`imports/` as an allowed surface for foreign package manifests (`package.json`,
+`go.mod`, `pyproject.toml`, …), the same allowance already granted to
+`third_party/upstream/`. Faithfully-adopted complete repos legitimately carry
+their own manifests (e.g. `imports/handoff/spike/ruvocal-mcp-bridge/package.json`)
+until later slices reconcile them into `crates/`. The CI "Merge-tools
+verification gate" (`merge-tools verify --workspace .`) flagged these before the
+allowance; it now passes (59 crate manifests, 53 src trees). `src_purity`
+enforcement is unaffected — it scopes to `crates/`, never `imports/`. Unit test:
+`imports_surface_allows_foreign_manifests`.
+
 ## Not in this slice
 
 Reconciling the 5 shared crates (handoff base + rusty-idd's forward additions —
