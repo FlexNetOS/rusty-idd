@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:0d72e922ba8b7205",
+  "workspace_fingerprint": "fnv1a64:3eb381b5b4f60182",
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/self-upgrade-governor-goal",
   "source_graph": {
     "provider": "codegraph-rust",
@@ -16,7 +16,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 346,
-    "tokens": 735721,
+    "tokens": 735722,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -1364,6 +1364,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 346 files and 735721 tokens"
+    "repomix context package measured 346 files and 735722 tokens"
   ]
 }

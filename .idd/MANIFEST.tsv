@@ -44,7 +44,7 @@ path	size_bytes	fnv1a64
 .idd/evidence/autonomous-workflow/task.md	696	7e43c86ce2bfd033
 .idd/evidence/autonomous-workflow/validation.md	1292	ef2e499668afd6ca
 .idd/evidence/prompt-hub-boundary/research.md	598	3318f818ef05fb2f
-.idd/evidence/self-upgrade-governor/pr.md	423	e5b7f2ff3035e2ba
+.idd/evidence/self-upgrade-governor/pr.md	483	08260466f6aa53f2
 .idd/evidence/self-upgrade-governor/task.md	763	ac1b5762d771a87b
 .idd/evidence/self-upgrade-governor/validation.md	1692	e26ab6874439e4e8
 .idd/evidence/verify-package-stage/pr.md	339	684abebf2f4e315f
@@ -62,9 +62,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34497	f45158cabebbaaae
-.idd/knowledge/architecture.md	6913	a51dde55e266132f
-.idd/knowledge/index.json	19567339	931236a6916e9cbd
+.idd/knowledge/architecture.json	34497	4b7616892a5f0938
+.idd/knowledge/architecture.md	6913	4b852e2c8fd14d4f
+.idd/knowledge/index.json	19567339	b5eccb62f31fb7ed
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -75,9 +75,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2678	c288ba0ce065945e
 .idd/knowledge/operating-model.json	57771	3e6a452f574bead2
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
-.idd/knowledge/plan-context.json	93994	dd8a9aff17274019
-.idd/knowledge/plan-context.md	25204	5cf3a94fd93f0e9f
-.idd/knowledge/report.md	5051	af89fe5217e3b07e
+.idd/knowledge/plan-context.json	93994	7c1b02e24bfb5f0e
+.idd/knowledge/plan-context.md	25204	51d1a0405e0f59fa
+.idd/knowledge/report.md	5051	14a2f84d5f4420ce
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	26	340eeb3bf105ad8d
@@ -688,7 +688,7 @@ openspec/changes/add-self-upgrade-governor/design.md	3886	201188e5c96030fd
 openspec/changes/add-self-upgrade-governor/proposal.md	2254	72deb77093bd32e0
 openspec/changes/add-self-upgrade-governor/specs/agent-harness-workflow/spec.md	947	ba1b43862b81b9c7
 openspec/changes/add-self-upgrade-governor/specs/self-upgrade-governor/spec.md	2563	0d8e853aa16654fb
-openspec/changes/add-self-upgrade-governor/tasks.md	1225	f3249632c35d7455
+openspec/changes/add-self-upgrade-governor/tasks.md	1225	e2bb2d58d2a9548d
 openspec/changes/add-system-architecture-peer-graph/design.md	2335	dd724bfd40b8348c
 openspec/changes/add-system-architecture-peer-graph/proposal.md	1376	9616a6efe1937fbd
 openspec/changes/add-system-architecture-peer-graph/specs/system-architecture-peer-graph/spec.md	1353	52bc210327ffd537

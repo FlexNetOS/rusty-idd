@@ -302,7 +302,7 @@ implement that target until the self-upgrade governor goal artifacts are
 created and validated.
 - Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/self-upgrade-governor-goal`
 - Source graph: 141 files, 8824 nodes, 36372 edges via `codegraph-rust`
-- Context package: 346 files, 735721 tokens via `repomix-rs`
+- Context package: 346 files, 735722 tokens via `repomix-rs`
 
 ## Automation Order
 

@@ -28,4 +28,4 @@
 - [x] 3.2 Verify OpenSpec status for this change.
 - [x] 3.3 Run Rusty IDD validation.
 - [x] 3.4 Refresh `.idd/MANIFEST.tsv`.
-- [ ] 3.5 Commit, push, and open a PR against `develop`.
+- [x] 3.5 Commit, push, and open a PR against `develop`.

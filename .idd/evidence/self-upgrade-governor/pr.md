@@ -3,8 +3,8 @@
 - Change: `add-self-upgrade-governor`
 - Branch: `feature/self-upgrade-governor-goal`
 - Base: `develop`
-- PR: Pending
-- Auto-merge: Pending
+- PR: https://github.com/FlexNetOS/rusty-idd/pull/102
+- Auto-merge: Enabled with merge strategy
 
 ## Summary
 
