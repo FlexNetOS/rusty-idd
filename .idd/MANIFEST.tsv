@@ -81,9 +81,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	35959	9adc2accb0433faa
-.idd/knowledge/architecture.md	7447	aa8778c1ea2b96b2
-.idd/knowledge/index.json	47113812	efa18ab4f335743d
+.idd/knowledge/architecture.json	36817	22a824edf63854d3
+.idd/knowledge/architecture.md	7677	eba1fdfc4f35b09b
+.idd/knowledge/index.json	47392622	5e56fb3c63593691
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -96,7 +96,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4412	40f00c16ca8bfee0
+.idd/knowledge/report.md	4431	e4d8dd4dcc98fa6a
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -243,6 +243,7 @@ AI_MERGE/44_fleet_deploy_control_plane.md	3490	074f160562146e1b
 AI_MERGE/45_unify_handoff_prompthub_plan.md	3337	9b40f8d68473e1af
 AI_MERGE/46_unify_slice1_import.md	5449	79eca0ae5d511724
 AI_MERGE/47_stage_prompthub_upgrades.md	3039	50fa8d695f12b267
+AI_MERGE/48_unify_slice_work_order.md	3006	92b02afd50bac07d
 AI_MERGE/unify-handoff-prompthub/00_handoff_inventory.json	7038	5454b7e941b5aa4e
 AI_MERGE/unify-handoff-prompthub/00_handoff_inventory.md	46678	93e1e57f778a04fb
 AI_MERGE/unify-handoff-prompthub/01_prompt_hub_inventory.json	3761	4dbefd35b35c214e
@@ -277,8 +278,8 @@ AI_MERGE/unify-handoff-prompthub/REGENERATE.md	1212	5acb9f48dd9842bc
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
-Cargo.lock	119952	9aae6dabf7d2d748
-Cargo.toml	1458	4fbde74649b68678
+Cargo.lock	121780	5ae5640d45f8fc82
+Cargo.toml	1483	53d70a123ca7e87d
 GEMINI.md	609	ce93a61c7f63579f
 Justfile	9082	176eaec84e697b95
 LICENSE	1084	48ecb3c3d178a316
@@ -669,6 +670,9 @@ crates/tui/ralph-implement.sh	393	8e4a4cdae6cb24bb
 crates/tui/src/app.rs	195144	e05491939b145e8d
 crates/tui/src/lib.rs	6981	809321747bfb2538
 crates/tui/src/ui.rs	84930	8993c1a7fab71e0e
+crates/work-order/Cargo.toml	818	317db07498f0b41c
+crates/work-order/src/intake.rs	16933	88608b15d250371b
+crates/work-order/src/lib.rs	25092	d49140caa74a277e
 docs/rusty-idd/architecture-diagrams.md	6784	702ea48d4be7f189
 docs/rusty-idd/codex-environment.md	18978	9d9b3fb8323019b8
 docs/rusty-idd/dependency-duplication.md	3837	93266b2549c197c6
