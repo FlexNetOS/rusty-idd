@@ -1,11 +1,11 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:cec2a15590458df0`
+- Workspace fingerprint: `fnv1a64:c2638d70127083b2`
 - Source graph provider: `codegraph-rust`
-- Source graph: 385 files, 25072 nodes, 90585 edges
+- Source graph: 387 files, 25252 nodes, 91112 edges
 - Source languages: javascript, python, rust
 - Context provider: `repomix-rs`
-- Context package: 312 files, 180106 tokens
+- Context package: 315 files, 182183 tokens
 
 ## Automation Stages
 
@@ -31,17 +31,18 @@
 
 | Component | Kind | Files | Nodes | Edges | Languages |
 |---|---|---:|---:|---:|---|
-| `cli` | crate | 34 | 1371 | 6078 | Rust, rust |
+| `cli` | crate | 34 | 1371 | 6080 | Rust, rust |
 | `core` | crate | 12 | 455 | 2421 | Rust, rust |
 | `knowledge` | crate | 1 | 639 | 4653 | Rust, rust |
 | `merge-tools` | crate | 1 | 50 | 240 | Rust, rust |
 | `runner` | crate | 4 | 770 | 3048 | Rust, rust |
 | `spec` | crate | 24 | 461 | 1552 | Rust, rust |
 | `tui` | crate | 3 | 1006 | 3985 | Rust, rust |
+| `work-order` | crate | 2 | 165 | 527 | Rust, rust |
 | `codegraph-core` | external_crate | 39 | 1918 | 9101 | Rust, rust |
 | `codegraph-parser` | external_crate | 29 | 1060 | 7486 | Rust, rust |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | Rust, rust |
-| `imports` | repo_surface | 236 | 14297 | 55380 | JavaScript, Python, Rust, javascript, python, rust |
+| `imports` | repo_surface | 236 | 14297 | 55441 | JavaScript, Python, Rust, javascript, python, rust |
 
 ## Edges
 
@@ -84,6 +85,9 @@
 | `crate:tui` | codegraph:Calls | `external:codegraph-core` |
 | `crate:tui` | codegraph:Calls | `repo:imports` |
 | `crate:tui` | codegraph:References | `repo:imports` |
+| `crate:work-order` | codegraph:Calls | `crate:cli` |
+| `crate:work-order` | codegraph:Calls | `repo:imports` |
+| `crate:work-order` | codegraph:References | `repo:imports` |
 | `external:codegraph-core` | codegraph:Calls | `crate:cli` |
 | `external:codegraph-core` | codegraph:Calls | `repo:imports` |
 | `external:codegraph-core` | codegraph:Imports | `repo:imports` |
@@ -124,4 +128,4 @@
 ## Findings
 
 - CodeGraph-backed parsing completed without source failures
-- repomix context package measured 312 files and 180106 tokens
+- repomix context package measured 315 files and 182183 tokens
