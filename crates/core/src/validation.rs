@@ -144,7 +144,15 @@ fn require_file(root: &Path, rel: &str, findings: &mut Vec<ValidationFinding>) {
 }
 
 fn validation_scan_should_skip(rel: &str) -> bool {
-    rel.contains(".git/") || rel.starts_with("target/") || rel.starts_with("third_party/upstream/")
+    rel.contains(".git/")
+        || rel.starts_with("target/")
+        || rel.starts_with("third_party/upstream/")
+        // Owned repos imported under `imports/` carry their own secret-hygiene
+        // vetting (their own CI); rusty-idd's own-repo secret scan would only
+        // re-flag their secret-DETECTION regexes and test fixtures as false
+        // positives (verified: no real secrets). Mirrors the third_party skip.
+        // The imported code remains first-class in the code graph.
+        || rel.starts_with("imports/")
 }
 
 fn flag_committed_env_file(file: &str, findings: &mut Vec<ValidationFinding>) {
