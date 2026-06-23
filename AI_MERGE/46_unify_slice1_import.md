@@ -5,27 +5,42 @@ the `unify-handoff-prompthub` change (merge-tools phase 4), under ADR-0018.
 
 ## What this slice does
 
-Imports the **complete tracked state** of both owned repos into rusty-idd under
+Imports the **complete working tree** of both owned repos into rusty-idd under
 `imports/`, **first-class in the code graph**, without flattening into `crates/`
-(reconciliation is later slices). Faithful adopt: nothing stripped.
+(reconciliation is later slices). Faithful adopt: byte-for-byte, nothing stripped.
 
-- `imports/handoff/` — 563 tracked files (`git archive origin/develop`).
-- `imports/prompt_hub/` — 432 tracked files (`git archive origin/main`).
+- `imports/handoff/` — full working tree (excludes only `.git/`).
+- `imports/prompt_hub/` — full working tree (excludes only `.git/`).
 
-### Why tracked-state (`git archive`), not a working-tree copy
+### Why the complete working tree (not `git archive` tracked-state)
 
-The durable knowledge base and ledgers ARE tracked and come in:
-- handoff `.kb/store/documents/context/*` (project-brief, patterns, architecture,
-  product, tech, active, progress), `.kb/store/commits/*`, `.kb/AGENTS.md`;
-  `.handoff/ledger.events.jsonl` (witnessed export).
-- prompt_hub `.kb/store/*`; `.handoff/ledger.db` (tracked).
+The owner directive is explicit: *"keep all the dotfolders and files. you need
+them. this is why the current gitignore policy needs an upgrade."* A `git archive`
+import keeps only **tracked** files and silently drops the durable artifacts that
+are gitignored in the source repos but are nonetheless real, owned meta state:
 
-Only `.kb/.cache/*.db` is excluded — it is **untracked daemon runtime** in the
-source repos (a regenerable SQLite index of the tracked store) that the live
-GitKB daemon rewrites constantly. A working-tree copy pulled it and churn-broke
-the validate fingerprint; the tracked-state import is deterministic and keeps the
-*real* `.kb` knowledge base. This is faithful to each repo's tracked content, not
-a strip.
+- handoff `.kb/.cache/*` (GitKB code-intel index), `.kb/workspaces/*`,
+  `.kb/config.toml`, `.handoff/ledger.db` + `.handoff/ledger.db.rvf` (witnessed
+  binary ledger), `.grit/`, `.idea/workspace.xml`, `_workspace/`, `_workspace_prev/`.
+- prompt_hub `.kb/.cache/*`, `prompthub.db`, `.idea/workspace.xml`,
+  `.claude/settings.local.json`.
+
+These are imported via `git add -f imports/` so the **nested `.gitignore` files
+carried inside each adopted repo** (which ignore `.kb/.cache`, `target/`, db
+files, etc. in their *own* repo context) do not strip them here. Empirically the
+imported `.kb/.cache` does **not** churn on disk — the live GitKB daemon manages
+only rusty-idd's *own* `.kb`, not these adopted subtrees — so the snapshot is a
+stable static import and the validate workspace fingerprint stays clean.
+
+### Gitignore-policy upgrade (required to hold the import)
+
+`.gitignore` rewritten so rusty-idd's own local-artifact patterns are **anchored
+to the repo root** (`/target`, `/.worktrees/`, `/.idd/runs/`, `/.idea/`,
+`/.vscode/`) and therefore never strip an adopted repo's identically-named
+dotfolders under `imports/`. A trailing `!imports/**` safety net re-includes
+anything the universal-junk patterns would otherwise exclude there. The
+`*.idd-bak-*` rotating-backup pattern stays unanchored (runtime litter at any
+depth) but is also covered by the `!imports/**` net.
 
 ## Code graph is first-class over the imports
 
@@ -33,15 +48,19 @@ a strip.
 index.json 18M → 47M). It is NOT excluded — the earlier instinct to exclude it was
 reverted. (Contrast: `third_party/upstream/` third-party mirrors stay excluded.)
 
-## Engine accommodation (verified-safe, mirrors existing scope)
+## Engine accommodation: path-scoped secret allowlist (not a blanket skip)
 
-`crates/core/src/validation.rs`: the own-repo secret-hygiene scan now skips
-`imports/` (mirroring the existing `third_party/upstream/` skip). prompt_hub's
-`privacy.rs` is a secret-DETECTION module — its `ghp_[a-zA-Z0-9]{36}` regex and a
-fake test-fixture token tripped the scanner as false positives. Verified: **no
-real secrets** in imports (no `-----BEGIN` keys, no live tokens). Imported owned
-repos carry their own secret vetting; the imported code stays first-class in the
-code graph — only the secret gate skips it.
+`crates/core/src/validation.rs`: the own-repo secret-hygiene scan now reads
+`.idd/secret-allowlist.txt` (one path substring per line) and exempts only the
+**named** placeholder files from secret-pattern findings — it does **not** skip
+`imports/` wholesale (the earlier blanket-skip instinct was reverted at owner
+direction: *"Allowlist the place holders"*). Two prompt_hub files are listed:
+`src/privacy.rs` (a secret-DETECTION module whose own provider token-detection
+regexes trip the scanner) and `src/context_gatherer.rs` (detection patterns +
+fixtures). Verified: **no real secrets** in imports (no `-----BEGIN` keys, no
+live tokens) — every match is a detection regex or fake test value. The rest of
+`imports/` stays under the live secret gate, and all of it stays first-class in
+the code graph.
 
 ## Not in this slice
 
@@ -56,7 +75,8 @@ tests, and dedup — each a subsequent slice under `unify-handoff-prompthub`.
 - `cargo fmt --all -- --check` — clean.
 - `cargo clippy --workspace --all-targets --all-features -- -D warnings` — no
   issues (imports/ is not a workspace member; not built this slice).
-- `cargo test --workspace --locked` — 686 passed, 3 ignored.
+- `cargo test --workspace --locked` — 687 passed, 3 ignored (adds
+  `secret_allowlist_exempts_listed_placeholder_files`).
 - `rusty-idd spec validate --all` — 143/143.
 - `rusty-idd validate --workspace .` — 0 critical, 0 warning (refresh-last).
 - `render --all --check`, `spec adr list --check`, `deploy --target . --all

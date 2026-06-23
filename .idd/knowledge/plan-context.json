@@ -6,8 +6,8 @@
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 385,
-    "nodes": 25060,
-    "edges": 90550,
+    "nodes": 25062,
+    "edges": 90574,
     "languages": [
       "javascript",
       "python",
@@ -19,7 +19,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 312,
-    "tokens": 179975,
+    "tokens": 180013,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -292,7 +292,7 @@
       "kind": "repo_surface",
       "files": 236,
       "nodes": 14297,
-      "edges": 55377,
+      "edges": 55380,
       "languages": [
         "JavaScript",
         "Python",
@@ -303,7 +303,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 14039,
+          "node_id": 14041,
           "name": "clone",
           "file": "imports/prompt_hub/prompt-hub/src/chaos_auto.rs",
           "line_start": 73,
@@ -316,21 +316,21 @@
           ]
         },
         {
-          "node_id": 14739,
+          "node_id": 14741,
           "name": "collect",
           "file": "imports/prompt_hub/prompt-hub/src/garbage_collector.rs",
           "line_start": 66,
           "line_end": 108,
-          "score": 4816,
+          "score": 4826,
           "reasons": [
             "43 lines",
-            "478 graph links",
-            "474 call links",
+            "479 graph links",
+            "475 call links",
             "3 unresolved calls"
           ]
         },
         {
-          "node_id": 11972,
+          "node_id": 11974,
           "name": "main",
           "file": "imports/handoff/hf/src/main.rs",
           "line_start": 3216,
@@ -345,7 +345,7 @@
           ]
         },
         {
-          "node_id": 21730,
+          "node_id": 21732,
           "name": "create_router",
           "file": "imports/prompt_hub/prompthub-server/src/server.rs",
           "line_start": 23,
@@ -359,7 +359,7 @@
           ]
         },
         {
-          "node_id": 10700,
+          "node_id": 10702,
           "name": "build_hf_args",
           "file": "imports/handoff/hf/src/bin/hf-mcp.rs",
           "line_start": 265,
@@ -374,7 +374,7 @@
           ]
         },
         {
-          "node_id": 9673,
+          "node_id": 9675,
           "name": "new",
           "file": "imports/handoff/crates/tui/src/app.rs",
           "line_start": 114,
@@ -388,7 +388,7 @@
           ]
         },
         {
-          "node_id": 20954,
+          "node_id": 20956,
           "name": "into_response",
           "file": "imports/prompt_hub/prompthub-server/src/responses.rs",
           "line_start": 59,
@@ -401,7 +401,7 @@
           ]
         },
         {
-          "node_id": 8950,
+          "node_id": 8952,
           "name": "implementation_loop",
           "file": "imports/handoff/crates/runner/src/runner.rs",
           "line_start": 428,
@@ -477,8 +477,8 @@
       "name": "core",
       "kind": "crate",
       "files": 12,
-      "nodes": 448,
-      "edges": 2392,
+      "nodes": 450,
+      "edges": 2416,
       "languages": [
         "Rust",
         "rust"
@@ -512,7 +512,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 3558,
+          "node_id": 3560,
           "name": "visit_dir",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 247,
@@ -554,7 +554,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 4305,
+          "node_id": 4307,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/rust.rs",
           "line_start": 97,
@@ -569,7 +569,7 @@
           ]
         },
         {
-          "node_id": 4157,
+          "node_id": 4159,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/java.rs",
           "line_start": 109,
@@ -584,7 +584,7 @@
           ]
         },
         {
-          "node_id": 4230,
+          "node_id": 4232,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/php.rs",
           "line_start": 130,
@@ -599,7 +599,7 @@
           ]
         },
         {
-          "node_id": 4075,
+          "node_id": 4077,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
           "line_start": 105,
@@ -614,7 +614,7 @@
           ]
         },
         {
-          "node_id": 4281,
+          "node_id": 4283,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
           "line_start": 122,
@@ -629,7 +629,7 @@
           ]
         },
         {
-          "node_id": 4099,
+          "node_id": 4101,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
           "line_start": 109,
@@ -644,7 +644,7 @@
           ]
         },
         {
-          "node_id": 4372,
+          "node_id": 4374,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/swift.rs",
           "line_start": 108,
@@ -763,7 +763,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 6739,
+          "node_id": 6741,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
@@ -777,7 +777,7 @@
           ]
         },
         {
-          "node_id": 6754,
+          "node_id": 6756,
           "name": "handle_config_input",
           "file": "crates/tui/src/app.rs",
           "line_start": 702,
@@ -811,7 +811,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 6017,
+          "node_id": 6019,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
