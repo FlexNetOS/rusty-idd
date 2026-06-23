@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:ec9398513689e665`
+- Workspace fingerprint: `fnv1a64:ee984631583a42d3`
 - Indexed source files: 149
 - Graph nodes: 9210
 - Graph edges: 37690
 - Resolved call edges: 21493
 - Functions with complexity: 2316
-- Packed files: 223
-- Packed tokens: 686274
+- Packed files: 132
+- Packed tokens: 93384
 - Suspicious files: 0
 
 ## Hotspots
@@ -39,27 +39,27 @@
 
 | Tokens | File |
 |---:|---|
-| 102353 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/00_repo_a_inventory.md` |
-| 102353 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/01_repo_b_inventory.md` |
-| 101899 | `AI_MERGE/35_e2e_test_suite/00_rusty_idd_inventory_before.md` |
-| 95914 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/00_repo_a_inventory.md` |
-| 95446 | `AI_MERGE/34_grit_full_integration/01_rusty_idd_inventory_before_adoption.md` |
 | 9464 | `crates/tui/src/app.rs` |
 | 8632 | `crates/knowledge/src/lib.rs` |
-| 7982 | `AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md` |
-| 7659 | `AI_MERGE/36_handoff_full_adoption/handoff-tracked-files.md` |
-| 7088 | `AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
-| 7088 | `AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md` |
-| 5761 | `AI_MERGE/11_integration_research_audit_roadmap.md` |
 | 4484 | `docs/rusty-idd/codex-environment.md` |
 | 4132 | `docs/rusty-idd/spec-engine-design.md` |
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
-| 3140 | `AI_MERGE/34_handoff_single_repo_architecture.md` |
 | 3081 | `crates/cli/src/commands/codex.rs` |
 | 2595 | `crates/core/src/templates.rs` |
-| 2540 | `AI_MERGE/16_upstream_knowledge_revisit.md` |
 | 2502 | `docs/rusty-idd/production-readiness-audit.md` |
+| 2428 | `Justfile` |
+| 2097 | `crates/tui/src/ui.rs` |
+| 1994 | `Makefile` |
+| 1779 | `docs/rusty-idd/architecture-diagrams.md` |
+| 1712 | `crates/runner/src/data.rs` |
+| 1603 | `crates/runner/src/runner.rs` |
+| 1488 | `docs/rusty-idd/design.md` |
+| 1364 | `crates/runner/src/config.rs` |
+| 1356 | `docs/rusty-idd/slice-sequence.md` |
+| 1306 | `crates/cli/src/commands/knowledge.rs` |
+| 1282 | `adr/0004-handoff-outer-single-repo.md` |
+| 1189 | `AGENTS.md` |
 
 ## Findings
 
-- packed context is 686274 tokens, above default budget 120000
+No knowledge findings.
