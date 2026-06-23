@@ -734,7 +734,7 @@ output_dir = "/tmp/rusty-idd-test-loop"
 [[passes]]
 name = "explore"
 agent = "rusty-idd-explorer"
-model = "gpt-5.4-mini"
+model = "gpt-5.5-mini"
 reasoning = "medium"
 sandbox = "read-only"
 prompt = "Inspect without editing."
