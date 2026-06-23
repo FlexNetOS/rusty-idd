@@ -71,6 +71,8 @@ jobs:
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
           git diff --exit-code -- .idd/MANIFEST.tsv
+      - name: Vendor adapter drift gate (ADR-0010/0015)
+        run: cargo run --bin rusty-idd -- render --all --check
       - name: Format
         run: cargo fmt --all -- --check
       - name: Clippy

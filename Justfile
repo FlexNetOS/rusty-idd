@@ -32,6 +32,12 @@ manifest:
 manifest-check:
     tmp=$(mktemp) && {{rusty_idd}} manifest --workspace . --out "$tmp" && cmp -s .idd/MANIFEST.tsv "$tmp" || { echo ".idd/MANIFEST.tsv is stale; run just manifest" >&2; rm -f "$tmp"; exit 1; }; rm -f "$tmp"
 
+render:
+    {{rusty_idd}} render --all
+
+render-check:
+    {{rusty_idd}} render --all --check
+
 knowledge:
     {{rusty_idd}} knowledge refresh --workspace .
 
