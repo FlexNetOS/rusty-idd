@@ -264,6 +264,7 @@ fn verify_package(
             entry("graph-knowledge-comparison", "Knowledge graph and context artifact comparison notes against the implementation."),
             entry("icm-comparison", "ICM recall results and comparison against implementation decisions and assumptions."),
             entry("unanswered-questions", "Explicit list of unresolved questions; an empty list is valid for a pass verdict."),
+            entry("rollback-risk", "Rollback path and risk level (blast radius, reversibility) from the risk reviewer."),
             entry("pass-fail-verdict", "Final pass or fail verdict with rollback risk level and evidence locations."),
         ],
         adapter_boundary: vec![

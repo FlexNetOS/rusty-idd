@@ -153,6 +153,12 @@ fn harness_verify_package_json_declares_evidence_schema_and_adapters() {
         .unwrap()
         .iter()
         .any(|entry| entry["name"] == "icm-comparison"));
+    // rollback-risk is a distinct evidence field (design.md lists 9 fields).
+    assert!(json["evidence_schema"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|entry| entry["name"] == "rollback-risk"));
     assert!(json["adapter_boundary"]
         .as_array()
         .unwrap()

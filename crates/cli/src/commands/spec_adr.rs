@@ -9,14 +9,18 @@ use clap::Subcommand;
 use rusty_idd_spec::adr::{parse_adr, Adr, AdrSet, AdrStatus};
 
 /// Frozen baseline of ADR sequence numbers that are *knowingly* duplicated by
-/// immutable, already-accepted ADRs. Parallel changes each allocated the same
-/// `spec adr next` value before either committed, producing these four
-/// collisions. ADRs are immutable once accepted (supersede, don't edit), so the
+/// immutable, already-accepted ADRs, mapped to the EXACT number of ADRs that
+/// legitimately share each. Parallel changes each allocated the same `spec adr
+/// next` value before either committed, producing these four collisions (two
+/// ADRs each). ADRs are immutable once accepted (supersede, don't edit), so the
 /// files are frozen historical artifacts and reconciled by ADR-0016 + a
 /// slug-canonical referencing rule — not by renumbering. The `--check` gate
-/// treats exactly these numbers as accepted and fails closed on any *new*
-/// collision, mirroring the `.cargo/audit.toml` baseline philosophy.
-const ACCEPTED_DUPLICATE_ADRS: &[u32] = &[2, 4, 5, 6];
+/// accepts a baseline number only at its frozen count; a *third* file at a
+/// baseline number (count exceeds the baseline) is a NEW collision and fails
+/// closed, just like a collision at a fresh number. Mirrors the
+/// `.cargo/audit.toml` baseline philosophy: known exceptions are pinned exactly,
+/// anything beyond them fails.
+const ACCEPTED_DUPLICATE_ADRS: &[(u32, usize)] = &[(2, 2), (4, 2), (5, 2), (6, 2)];
 
 #[derive(Subcommand)]
 pub enum AdrCommand {
@@ -172,11 +176,18 @@ fn run_check(adr_dir: &Path) -> i32 {
 
     let mut new_collisions: Vec<u32> = Vec::new();
     for (number, count) in &duplicates {
-        let accepted = ACCEPTED_DUPLICATE_ADRS.contains(number);
-        let tag = if accepted {
-            "accepted baseline"
-        } else {
-            "NEW COLLISION"
+        // Accepted only at the EXACT frozen count: a baseline number with extra
+        // files beyond its pinned count is a new collision (count exceeds
+        // baseline), not a free pass.
+        let baseline = ACCEPTED_DUPLICATE_ADRS
+            .iter()
+            .find(|(n, _)| n == number)
+            .map(|(_, c)| *c);
+        let accepted = baseline == Some(*count);
+        let tag = match baseline {
+            Some(expected) if *count > expected => "EXCEEDS BASELINE",
+            Some(_) => "accepted baseline",
+            None => "NEW COLLISION",
         };
         println!("ADR-{number:04}: {count} ADRs share this number ({tag})");
         if !accepted {
@@ -242,7 +253,8 @@ mod tests {
 
     #[test]
     fn baseline_numbers_are_the_four_known_collisions() {
-        // Guards against accidental edits to the frozen baseline.
-        assert_eq!(ACCEPTED_DUPLICATE_ADRS, &[2, 4, 5, 6]);
+        // Guards against accidental edits to the frozen baseline: exactly the
+        // four historical numbers, each pinned to a count of 2.
+        assert_eq!(ACCEPTED_DUPLICATE_ADRS, &[(2, 2), (4, 2), (5, 2), (6, 2)]);
     }
 }

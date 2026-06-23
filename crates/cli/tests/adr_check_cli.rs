@@ -53,6 +53,19 @@ fn baseline_collision_passes_but_is_reported() {
 }
 
 #[test]
+fn third_file_at_baseline_number_exceeds_baseline_and_fails() {
+    let d = tempfile::tempdir().unwrap();
+    // 0002 is a baseline collision pinned at count 2; a THIRD file pushes the
+    // count past the frozen baseline and must fail closed.
+    write_adr(d.path(), 2, "beta");
+    write_adr(d.path(), 2, "beta-two");
+    write_adr(d.path(), 2, "beta-three");
+    let (code, _o, err) = check(d.path());
+    assert_eq!(code, 1, "{err}");
+    assert!(err.contains("ADR-0002"), "{err}");
+}
+
+#[test]
 fn new_collision_fails_closed() {
     let d = tempfile::tempdir().unwrap();
     write_adr(d.path(), 1, "alpha");
