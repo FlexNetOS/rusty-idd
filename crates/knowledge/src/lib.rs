@@ -1023,9 +1023,7 @@ pub fn build_knowledge_report(options: ReportOptions) -> Result<String> {
     pack_options
         .ignore_patterns
         .push("third_party/upstream/**".to_string());
-    pack_options
-        .ignore_patterns
-        .push("AI_MERGE/validation_report.md".to_string());
+    pack_options.ignore_patterns.push("AI_MERGE/**".to_string());
     let pack = pack_workspace(pack_options)?;
     let report = report_from_parts(&index, pack);
 
@@ -1954,9 +1952,7 @@ fn build_architecture_pack_summary(workspace: &Path) -> Result<PackSummary> {
     pack_options
         .ignore_patterns
         .push("crates/tui/openspec/changes/archive/**".to_string());
-    pack_options
-        .ignore_patterns
-        .push("AI_MERGE/validation_report.md".to_string());
+    pack_options.ignore_patterns.push("AI_MERGE/**".to_string());
     pack_options
         .ignore_patterns
         .push("docs/rusty-idd/architecture-diagrams.md".to_string());
