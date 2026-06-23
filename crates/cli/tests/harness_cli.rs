@@ -99,3 +99,101 @@ fn harness_package_rejects_missing_target() {
 
     assert!(stderr.contains("package target does not exist"));
 }
+
+#[test]
+fn harness_verify_package_markdown_is_stage_scoped() {
+    let root = tempfile::tempdir().unwrap();
+    let out = run_ok(
+        &[
+            "harness", "package", "--stage", "verify", "--target", ".", "--format", "markdown",
+        ],
+        root.path(),
+    );
+
+    assert!(out.contains("# verify-stage scoped Rust agent swarm package"));
+    assert!(out.contains("- Stage: `verify`"));
+    // goal/task/plan-comparison roles + contracts (tasks 2.5)
+    assert!(out.contains("goal-comparator"));
+    assert!(out.contains("original-request-contract"));
+    assert!(out.contains("task-plan-contract"));
+    // graph + ICM comparison (task 2.6)
+    assert!(out.contains("icm-checker"));
+    assert!(out.contains("icm-comparison-contract"));
+    assert!(out.contains("graph-contract"));
+    assert!(out.contains("icm-recall-context-compare"));
+    // verify-specific gates + evidence
+    assert!(out.contains("## Validation Gates"));
+    assert!(out.contains("goal-matched"));
+    assert!(out.contains("rollback-path-present"));
+    assert!(out.contains("## Evidence Schema"));
+    assert!(out.contains("pass-fail-verdict"));
+    // not scan content
+    assert!(!out.contains("scan-orchestrator"));
+}
+
+#[test]
+fn harness_verify_package_json_declares_evidence_schema_and_adapters() {
+    let root = tempfile::tempdir().unwrap();
+    let out = run_ok(
+        &[
+            "harness", "package", "--stage", "verify", "--target", ".", "--format", "json",
+        ],
+        root.path(),
+    );
+    let json: serde_json::Value = serde_json::from_str(&out).unwrap();
+
+    assert_eq!(json["stage"], "verify");
+    assert!(json["evidence_schema"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|entry| entry["name"] == "pass-fail-verdict"));
+    assert!(json["evidence_schema"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|entry| entry["name"] == "icm-comparison"));
+    assert!(json["adapter_boundary"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|entry| entry["name"] == ".codex"));
+    assert!(json["validation_gates"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .any(|entry| entry["name"] == "goal-matched"));
+    // no bound files were passed -> optional fields are omitted from JSON
+    assert!(json.get("goal_file").is_none());
+}
+
+#[test]
+fn harness_verify_package_binds_goal_task_plan_files() {
+    let root = tempfile::tempdir().unwrap();
+    std::fs::write(root.path().join("goal.md"), "Test goal").unwrap();
+    std::fs::write(root.path().join("task.md"), "Test task").unwrap();
+    std::fs::write(root.path().join("plan.md"), "Test plan").unwrap();
+    let out = run_ok(
+        &[
+            "harness",
+            "package",
+            "--stage",
+            "verify",
+            "--target",
+            ".",
+            "--goal-file",
+            "goal.md",
+            "--task-file",
+            "task.md",
+            "--plan-file",
+            "plan.md",
+            "--format",
+            "json",
+        ],
+        root.path(),
+    );
+    let json: serde_json::Value = serde_json::from_str(&out).unwrap();
+    assert_eq!(json["goal_file"], "goal.md");
+    assert_eq!(json["task_file"], "task.md");
+    assert_eq!(json["plan_file"], "plan.md");
+}
