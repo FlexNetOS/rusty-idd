@@ -79,9 +79,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34771	d5d1eb8d2f5fcd13
-.idd/knowledge/architecture.md	7019	b1d21d128ebe1946
-.idd/knowledge/index.json	18595080	faacba383174ad85
+.idd/knowledge/architecture.json	34771	a22bc8a9e40e972f
+.idd/knowledge/architecture.md	7019	824892435e261e9c
+.idd/knowledge/index.json	18608225	08c693b794a01a12
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -94,7 +94,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	88583	0be51a7aaf1281f9
 .idd/knowledge/plan-context.md	20156	5331abfd6f3619aa
-.idd/knowledge/report.md	5008	53b6db24a89cab24
+.idd/knowledge/report.md	5008	e4a76317a1626730
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	25	c1e1a191208bdbfe
@@ -212,6 +212,7 @@ AI_MERGE/38_handoff_kb_refresh/mirror-verification.md	976	4a9db17b3112ae50
 AI_MERGE/39_harness_control_plane.md	3546	41ef8a2edbaf0184
 AI_MERGE/40_harness_session_frontdoor.md	2829	1277edae0b7111f5
 AI_MERGE/41_verify_package_stage.md	2546	3cdc7fe738aee098
+AI_MERGE/42_harness_gap_hunt_hardening.md	2320	890537f5334f5000
 AI_MERGE/validation_report.md	106	7c5c6d4e8b6be4c5
 CLAUDE.md	609	e6a58ac803ad4f9e
 CONTRIBUTING.md	1308	7a8f4568400f0da1
@@ -248,7 +249,7 @@ commitlint.config.cjs	348	83ecfbe9e12d50ac
 crates/cli/Cargo.toml	1317	ccb2250e76ff6957
 crates/cli/src/commands/codex.rs	61827	3e4a24473b93ad3e
 crates/cli/src/commands/core.rs	963	f1b569ea54a904c9
-crates/cli/src/commands/harness.rs	18204	f6a21ba2f06d7217
+crates/cli/src/commands/harness.rs	18326	9720fdd6dd4f3cb2
 crates/cli/src/commands/knowledge.rs	21666	96cc7da7876b8227
 crates/cli/src/commands/merge_tools.rs	1781	b65672a651ab8324
 crates/cli/src/commands/mod.rs	328	71bc01fdc4547b5b
@@ -256,7 +257,7 @@ crates/cli/src/commands/next.rs	6729	5654462d42c1c9a0
 crates/cli/src/commands/render.rs	6038	90002b2f65d8e733
 crates/cli/src/commands/run.rs	3018	ee708bc43d81cb11
 crates/cli/src/commands/spec.rs	15409	150767f43adf4010
-crates/cli/src/commands/spec_adr.rs	8203	a233acb27dde293e
+crates/cli/src/commands/spec_adr.rs	8997	ef3c746d80bd91b3
 crates/cli/src/commands/spec_archive.rs	9851	e502fec649d0f61b
 crates/cli/src/commands/spec_plan_integration.rs	13645	086712c72923f51b
 crates/cli/src/commands/spec_scaffold.rs	2321	fab75357bfedd98e
@@ -264,10 +265,10 @@ crates/cli/src/commands/spec_status.rs	9986	180bdc91cc0c0796
 crates/cli/src/commands/tui.rs	422	374f9014c8caa807
 crates/cli/src/lib.rs	5176	15f4ced6b180996c
 crates/cli/src/main.rs	207	b078697d840d6a6c
-crates/cli/tests/adr_check_cli.rs	2616	0d823efb410e9aba
+crates/cli/tests/adr_check_cli.rs	3115	896f76eb5eb139b8
 crates/cli/tests/archive_cli.rs	8615	65fa9077ee609c7f
 crates/cli/tests/codex_cli.rs	36612	2ca398bc9222d8c4
-crates/cli/tests/harness_cli.rs	6224	a59ec4c2fecd2aef
+crates/cli/tests/harness_cli.rs	6449	6d76cf56db4fbb78
 crates/cli/tests/knowledge_cli.rs	11180	811f88340de1ca08
 crates/cli/tests/merge_tools_cli.rs	1868	0077fb48051d7693
 crates/cli/tests/next_cli.rs	4460	1d1e966336e3bf76
@@ -277,7 +278,7 @@ crates/cli/tests/spec_adr_cli.rs	3006	e36ff73f7c003d8f
 crates/cli/tests/spec_cli.rs	7030	743b3377347e7ef7
 crates/cli/tests/spec_scaffold_cli.rs	10652	41a2a7e6c17d16a8
 crates/cli/tests/spec_status_cli.rs	4539	f2c3594949ce1113
-crates/cli/tests/vendor_hooks.rs	2835	206c74627cd37181
+crates/cli/tests/vendor_hooks.rs	3513	498c678557def3e4
 crates/config/example.toml	3253	90954a36e226ce83
 crates/core/.gitignore	89	4b9f68dc3c8fa297
 crates/core/Cargo.toml	644	58f88b6cdf738a3a

@@ -51,6 +51,15 @@ fn invokes_next(cmds: &[String]) -> bool {
         .any(|c| c.contains("rusty-idd -- next") || c.contains("rusty-idd next"))
 }
 
+/// `next` takes `--base` (not `--workspace`). Assert the SessionStart command
+/// passes `--base` so a flag-drop (silent default to `.`) or a `--workspace`
+/// substitution (a clap error at every session start) is caught by tests.
+fn next_uses_base(cmds: &[String]) -> bool {
+    cmds.iter().any(|c| {
+        (c.contains("rusty-idd -- next") || c.contains("rusty-idd next")) && c.contains("--base")
+    })
+}
+
 #[test]
 fn codex_session_start_calls_front_door() {
     let cfg = load_json(".codex/hooks.json");
@@ -62,6 +71,10 @@ fn codex_session_start_calls_front_door() {
     assert!(
         invokes_next(&cmds),
         ".codex SessionStart does not invoke `rusty-idd next`: {cmds:?}"
+    );
+    assert!(
+        next_uses_base(&cmds),
+        ".codex SessionStart `next` must pass --base (not --workspace): {cmds:?}"
     );
 }
 
@@ -86,5 +99,9 @@ fn claude_session_start_calls_front_door() {
     assert!(
         invokes_next(&cmds),
         ".claude SessionStart does not invoke `rusty-idd next`: {cmds:?}"
+    );
+    assert!(
+        next_uses_base(&cmds),
+        ".claude SessionStart `next` must pass --base (not --workspace): {cmds:?}"
     );
 }
