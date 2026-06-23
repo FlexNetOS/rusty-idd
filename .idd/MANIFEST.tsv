@@ -43,7 +43,7 @@ path	size_bytes	fnv1a64
 .idd/evidence/autonomous-workflow/pr.md	218	562a8791ccf25507
 .idd/evidence/autonomous-workflow/task.md	696	7e43c86ce2bfd033
 .idd/evidence/autonomous-workflow/validation.md	1292	ef2e499668afd6ca
-.idd/evidence/envctl-toolchain-contract/pr.md	578	ffe1293464825e28
+.idd/evidence/envctl-toolchain-contract/pr.md	734	fa4ed4e281d9d8d6
 .idd/evidence/envctl-toolchain-contract/task.md	589	b46ca38e48f31912
 .idd/evidence/envctl-toolchain-contract/validation.md	2701	96ad03715163156d
 .idd/evidence/prompt-hub-boundary/research.md	598	3318f818ef05fb2f
@@ -66,9 +66,9 @@ path	size_bytes	fnv1a64
 .idd/goals/refresh-handoff-kb-upstream.md	763	bd8f89924b9b3d65
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
-.idd/knowledge/architecture.json	34497	4793ae4dd5db70f1
-.idd/knowledge/architecture.md	6914	12cd258f9d647b0b
-.idd/knowledge/index.json	19552184	b91cea29031e96f0
+.idd/knowledge/architecture.json	34497	5bf5638f86679bb4
+.idd/knowledge/architecture.md	6914	b1f857abdfb83a18
+.idd/knowledge/index.json	19552184	fbbb9cdecf99f0ef
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -79,9 +79,9 @@ path	size_bytes	fnv1a64
 .idd/knowledge/integration-status.md	2678	c288ba0ce065945e
 .idd/knowledge/operating-model.json	57771	3e6a452f574bead2
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
-.idd/knowledge/plan-context.json	87464	c81361b5cb9beefd
-.idd/knowledge/plan-context.md	19447	8dbfd87944208dbf
-.idd/knowledge/report.md	5051	edc4d03474bf5056
+.idd/knowledge/plan-context.json	87464	07d471e9d1627314
+.idd/knowledge/plan-context.md	19447	23f2617e4a2fb23e
+.idd/knowledge/report.md	5051	cb2ccdb33ec62ad1
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/workflow/active-change	32	4ea68a8d1c2de466
@@ -718,7 +718,7 @@ openspec/changes/adopt-grit-full-integration/tasks.md	1320	1a88682f6909bc73
 openspec/changes/align-envctl-toolchain-contract/design.md	2715	00ebb87cdc3863ee
 openspec/changes/align-envctl-toolchain-contract/proposal.md	1641	65afedf86d3b4e92
 openspec/changes/align-envctl-toolchain-contract/specs/envctl-toolchain-layout/spec.md	1621	892f6cfc27743eb1
-openspec/changes/align-envctl-toolchain-contract/tasks.md	1028	3ef846d11cfce790
+openspec/changes/align-envctl-toolchain-contract/tasks.md	1028	ce9bfdaa73584698
 openspec/changes/archive/integrate-agent-communication/design.md	2253	a21748a063d466fb
 openspec/changes/archive/integrate-agent-communication/proposal.md	1084	aa04b2b3aa464007
 openspec/changes/archive/integrate-agent-communication/specs/agent-communication/spec.md	1959	eefb77b855c5f798
