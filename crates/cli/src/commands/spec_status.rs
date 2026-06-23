@@ -244,6 +244,16 @@ fn status_snapshot(change_dir: &Path, schema: &Schema) -> Result<StatusSnapshot,
     })
 }
 
+/// Resolve the next ready artifact id for a change without printing — the
+/// reusable oracle behind both `spec next` and the top-level `next` front door
+/// ([`crate::commands::next`]). Returns `None` when the change is complete
+/// (ready to archive) or fully blocked.
+pub fn next_artifact_id(change_dir: &Path) -> Option<String> {
+    let schema = load_for(change_dir).ok()?;
+    let done = done_set(change_dir, &schema);
+    schema.next_ready(&done).map(|a| a.id.clone())
+}
+
 /// `spec next <change_dir>` — print just the next ready artifact id (scriptable),
 /// or a note when the change is complete.
 pub fn run_next(change_dir: &Path) -> i32 {
