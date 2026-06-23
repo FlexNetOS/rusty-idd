@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:e25dfa4ae3901c1d",
+  "workspace_fingerprint": "fnv1a64:21ddf2ef2fa7adb4",
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_graph": {
     "provider": "codegraph-rust",
-    "files": 143,
-    "nodes": 8906,
-    "edges": 36670,
+    "files": 145,
+    "nodes": 8965,
+    "edges": 36839,
     "languages": [
       "rust"
     ],
@@ -15,8 +15,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 370,
-    "tokens": 750903,
+    "files": 376,
+    "tokens": 753083,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -109,7 +109,7 @@
       ],
       [
         "Justfile",
-        2319
+        2348
       ],
       [
         "AI_MERGE/34_grit_full_integration/00_grit_inventory.md",
@@ -128,9 +128,9 @@
       "id": "crate:cli",
       "name": "cli",
       "kind": "crate",
-      "files": 28,
-      "nodes": 1075,
-      "edges": 4844,
+      "files": 30,
+      "nodes": 1131,
+      "edges": 5013,
       "languages": [
         "Rust",
         "rust"
@@ -160,11 +160,11 @@
         "crates/cli/src/commands/merge_tools.rs",
         "crates/cli/src/commands/mod.rs",
         "crates/cli/src/commands/next.rs",
+        "crates/cli/src/commands/render.rs",
         "crates/cli/src/commands/run.rs",
         "crates/cli/src/commands/spec.rs",
         "crates/cli/src/commands/spec_adr.rs",
-        "crates/cli/src/commands/spec_archive.rs",
-        "crates/cli/src/commands/spec_plan_integration.rs"
+        "crates/cli/src/commands/spec_archive.rs"
       ]
     },
     {
@@ -207,7 +207,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 4892,
+          "node_id": 4948,
           "name": "integration_readiness_report",
           "file": "crates/knowledge/src/lib.rs",
           "line_start": 4532,
@@ -222,7 +222,7 @@
           ]
         },
         {
-          "node_id": 5106,
+          "node_id": 5162,
           "name": "integration_owner_surfaces_join_work_item_to_system_repos",
           "file": "crates/knowledge/src/lib.rs",
           "line_start": 6676,
@@ -269,7 +269,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 5721,
+          "node_id": 5777,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
@@ -284,7 +284,7 @@
           ]
         },
         {
-          "node_id": 5680,
+          "node_id": 5736,
           "name": "new",
           "file": "crates/runner/src/runner.rs",
           "line_start": 54,
@@ -309,14 +309,14 @@
       "kind": "crate",
       "files": 24,
       "nodes": 461,
-      "edges": 1970,
+      "edges": 1967,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 6158,
+          "node_id": 6214,
           "name": "contains",
           "file": "crates/spec/src/model/spec.rs",
           "line_start": 30,
@@ -356,7 +356,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 6443,
+          "node_id": 6499,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
@@ -370,7 +370,7 @@
           ]
         },
         {
-          "node_id": 6458,
+          "node_id": 6514,
           "name": "handle_config_input",
           "file": "crates/tui/src/app.rs",
           "line_start": 702,
@@ -385,7 +385,7 @@
           ]
         },
         {
-          "node_id": 7160,
+          "node_id": 7216,
           "name": "draw_config_screen",
           "file": "crates/tui/src/ui.rs",
           "line_start": 330,
@@ -419,7 +419,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 3262,
+          "node_id": 3318,
           "name": "visit_dir",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 247,
@@ -433,7 +433,7 @@
           ]
         },
         {
-          "node_id": 3264,
+          "node_id": 3320,
           "name": "process_path_event",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 526,
@@ -448,7 +448,7 @@
           ]
         },
         {
-          "node_id": 1946,
+          "node_id": 2002,
           "name": "apply_env_overrides",
           "file": "crates/external/codegraph-core/src/config_manager.rs",
           "line_start": 674,
@@ -491,7 +491,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 4009,
+          "node_id": 4065,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/rust.rs",
           "line_start": 97,
@@ -506,7 +506,7 @@
           ]
         },
         {
-          "node_id": 3861,
+          "node_id": 3917,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/java.rs",
           "line_start": 109,
@@ -521,7 +521,7 @@
           ]
         },
         {
-          "node_id": 3934,
+          "node_id": 3990,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/php.rs",
           "line_start": 130,
@@ -536,7 +536,7 @@
           ]
         },
         {
-          "node_id": 3779,
+          "node_id": 3835,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
           "line_start": 105,
@@ -551,7 +551,7 @@
           ]
         },
         {
-          "node_id": 3985,
+          "node_id": 4041,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
           "line_start": 122,
@@ -566,7 +566,7 @@
           ]
         },
         {
-          "node_id": 3803,
+          "node_id": 3859,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
           "line_start": 109,
@@ -581,7 +581,7 @@
           ]
         },
         {
-          "node_id": 4076,
+          "node_id": 4132,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/swift.rs",
           "line_start": 108,
@@ -596,7 +596,7 @@
           ]
         },
         {
-          "node_id": 3836,
+          "node_id": 3892,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/go.rs",
           "line_start": 104,
@@ -809,7 +809,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 9012"
+        "knowledge edge 9124"
       ]
     },
     {
@@ -817,7 +817,7 @@
       "target": "crate:knowledge",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 8695"
+        "knowledge edge 8749"
       ]
     },
     {
@@ -825,7 +825,7 @@
       "target": "crate:knowledge",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 8559"
+        "knowledge edge 8613"
       ]
     },
     {
@@ -833,7 +833,7 @@
       "target": "crate:knowledge",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 8808"
+        "knowledge edge 8862"
       ]
     },
     {
@@ -841,7 +841,7 @@
       "target": "crate:merge-tools",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 8863"
+        "knowledge edge 8917"
       ]
     },
     {
@@ -849,7 +849,7 @@
       "target": "crate:merge-tools",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 8857"
+        "knowledge edge 8911"
       ]
     },
     {
@@ -857,7 +857,7 @@
       "target": "crate:runner",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 8952"
+        "knowledge edge 9064"
       ]
     },
     {
@@ -865,7 +865,7 @@
       "target": "crate:runner",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 8941"
+        "knowledge edge 9053"
       ]
     },
     {
@@ -873,7 +873,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 7419"
+        "knowledge edge 7473"
       ]
     },
     {
@@ -881,7 +881,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 8959"
+        "knowledge edge 9071"
       ]
     },
     {
@@ -889,7 +889,7 @@
       "target": "crate:spec",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 9049"
+        "knowledge edge 9161"
       ]
     },
     {
@@ -897,7 +897,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 7890"
+        "knowledge edge 7944"
       ]
     },
     {
@@ -905,7 +905,7 @@
       "target": "external:codegraph-parser",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 8814"
+        "knowledge edge 8868"
       ]
     },
     {
@@ -913,7 +913,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 11395"
+        "knowledge edge 11564"
       ]
     },
     {
@@ -921,7 +921,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 11285"
+        "knowledge edge 11454"
       ]
     },
     {
@@ -929,7 +929,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 11160"
+        "knowledge edge 11329"
       ]
     },
     {
@@ -937,7 +937,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 27232"
+        "knowledge edge 27401"
       ]
     },
     {
@@ -945,7 +945,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 26144"
+        "knowledge edge 26313"
       ]
     },
     {
@@ -953,7 +953,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 26812"
+        "knowledge edge 26981"
       ]
     },
     {
@@ -961,7 +961,7 @@
       "target": "crate:core",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 26159"
+        "knowledge edge 26328"
       ]
     },
     {
@@ -969,7 +969,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 26882"
+        "knowledge edge 27051"
       ]
     },
     {
@@ -977,7 +977,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 26838"
+        "knowledge edge 27007"
       ]
     },
     {
@@ -985,7 +985,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 26149"
+        "knowledge edge 26318"
       ]
     },
     {
@@ -993,7 +993,7 @@
       "target": "external:codegraph-parser",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 27089"
+        "knowledge edge 27258"
       ]
     },
     {
@@ -1001,7 +1001,7 @@
       "target": "external:codegraph-parser",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 26154"
+        "knowledge edge 26323"
       ]
     },
     {
@@ -1009,7 +1009,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30251"
+        "knowledge edge 30420"
       ]
     },
     {
@@ -1017,7 +1017,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30275"
+        "knowledge edge 30444"
       ]
     },
     {
@@ -1025,7 +1025,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30170"
+        "knowledge edge 30339"
       ]
     },
     {
@@ -1033,7 +1033,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30796"
+        "knowledge edge 30965"
       ]
     },
     {
@@ -1041,7 +1041,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30798"
+        "knowledge edge 30967"
       ]
     },
     {
@@ -1049,7 +1049,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30334"
+        "knowledge edge 30503"
       ]
     },
     {
@@ -1057,7 +1057,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 30620"
+        "knowledge edge 30789"
       ]
     },
     {
@@ -1065,7 +1065,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 32601"
+        "knowledge edge 32770"
       ]
     },
     {
@@ -1073,7 +1073,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 32845"
+        "knowledge edge 33014"
       ]
     },
     {
@@ -1081,7 +1081,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 34396"
+        "knowledge edge 34565"
       ]
     },
     {
@@ -1089,7 +1089,7 @@
       "target": "crate:runner",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 33732"
+        "knowledge edge 33901"
       ]
     },
     {
@@ -1097,7 +1097,7 @@
       "target": "crate:runner",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 33696"
+        "knowledge edge 33865"
       ]
     },
     {
@@ -1105,7 +1105,7 @@
       "target": "crate:runner",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 33721"
+        "knowledge edge 33890"
       ]
     },
     {
@@ -1113,7 +1113,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 33828"
+        "knowledge edge 33997"
       ]
     },
     {
@@ -1121,7 +1121,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 33934"
+        "knowledge edge 34103"
       ]
     },
     {
@@ -1129,7 +1129,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 14321"
+        "knowledge edge 14490"
       ]
     },
     {
@@ -1137,7 +1137,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 13781"
+        "knowledge edge 13950"
       ]
     },
     {
@@ -1145,7 +1145,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 13148"
+        "knowledge edge 13317"
       ]
     },
     {
@@ -1153,7 +1153,7 @@
       "target": "crate:spec",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 16104"
+        "knowledge edge 16273"
       ]
     },
     {
@@ -1161,7 +1161,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 20213"
+        "knowledge edge 20382"
       ]
     },
     {
@@ -1169,7 +1169,7 @@
       "target": "crate:core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 20300"
+        "knowledge edge 20469"
       ]
     },
     {
@@ -1177,7 +1177,7 @@
       "target": "crate:spec",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 19681"
+        "knowledge edge 19850"
       ]
     },
     {
@@ -1185,7 +1185,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 19676"
+        "knowledge edge 19845"
       ]
     },
     {
@@ -1193,7 +1193,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 19741"
+        "knowledge edge 19910"
       ]
     },
     {
@@ -1201,7 +1201,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 19886"
+        "knowledge edge 20055"
       ]
     },
     {
@@ -1380,6 +1380,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 370 files and 750903 tokens"
+    "repomix context package measured 376 files and 753083 tokens"
   ]
 }

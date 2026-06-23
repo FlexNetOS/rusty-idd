@@ -6,6 +6,7 @@ pub mod harness;
 pub mod knowledge;
 pub mod merge_tools;
 pub mod next;
+pub mod render;
 pub mod run;
 pub mod spec;
 pub mod spec_adr;
