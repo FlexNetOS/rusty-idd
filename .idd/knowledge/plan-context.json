@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
   "change": null,
-  "goal": "# add-self-upgrade-governor\n\n## Step 1: Run This Goal Through Rusty IDD\n\n```bash\nrusty-idd --goal-file .idd/goals/add-self-upgrade-governor.md\n```\n\nIf the active CLI surface requires a subcommand for goal binding, use the same\ngoal file as the input to the Rusty IDD planning command:\n\n```bash\nrusty-idd knowledge plan-context \\\n  --workspace . \\\n  --out .idd/knowledge/plan-context.md \\\n  --goal-file .idd/goals/add-self-upgrade-governor.md\n```\n\n## Goal\n\nCreate a first-class Rusty IDD self-upgrade governor workflow from the approved\nbrainstorm below. The always-on harness must remain small. Rusty IDD must own\nthe task-scoped packages, candidate-goal generation, lifecycle gates,\nverification, publishing, and learning loop.\n\n## Approved Brainstorm To Execute\n\nYes. The path is not \"one infinite agent with every tool loaded.\" It is a\nbounded renewable Rusty IDD loop: each cycle discovers work, writes one narrow\ngoal, generates the right task-scoped package, runs it through OpenSpec,\nexecutes one PR, verifies hard, merges, then starts the next cycle from the new\nrepo truth.\n\nThe repo already has several pieces:\n\n- `rusty-idd knowledge` gives graph/context artifacts.\n- `rusty-idd spec status/next` gives lifecycle gates.\n- `rusty-idd run` can drive OpenSpec tasks.\n- `.codex/loops/rusty-idd-model-loop.toml` already defines read-only\n  explore/gap/verify passes.\n- `.codex/agents/*` already splits explorer, gap-hunter, verifier,\n  implementer roles.\n- `codex workflow-check` already enforces active-change, validation, and PR\n  evidence.\n- `merge-tools` is already a Rusty IDD-owned package model for one workflow\n  family.\n\nWhat is missing is the self-upgrade governor.\n\n## Core Idea\n\nRusty IDD should own a first-class command family something like:\n\n```bash\nrusty-idd self-upgrade scan\nrusty-idd self-upgrade propose\nrusty-idd self-upgrade goal\nrusty-idd self-upgrade package\nrusty-idd self-upgrade run\nrusty-idd self-upgrade verify\nrusty-idd self-upgrade publish\nrusty-idd self-upgrade next\n```\n\nThe always-on harness stays tiny. It only says: \"Ask Rusty IDD for the next\nscoped package.\" Rusty IDD does the real routing.\n\nThe loop should look like this:\n\n```text\nrepo truth\n  -> scan\n  -> opportunity graph\n  -> candidate goals\n  -> architecture/design reasoning\n  -> goal file\n  -> OpenSpec change\n  -> task-scoped package\n  -> implementation\n  -> exhaustive verify\n  -> PR/merge\n  -> ICM + knowledge refresh\n  -> next goal\n```\n\n## How Rusty IDD Writes Its Own Goals\n\nIt should not let a model free-write arbitrary goals directly into execution.\nInstead, use a typed pipeline:\n\n```text\nFinding\n  -> Opportunity\n  -> Hypothesis\n  -> CandidateGoal\n  -> GoalReview\n  -> ApprovedGoal\n  -> OpenSpecChange\n  -> Package\n```\n\nExample:\n\n```text\nFinding:\n  \"The verify package exists as docs/goal artifacts but has no first-class CLI package command.\"\n\nOpportunity:\n  \"Promote verify package from documented workflow to executable Rusty IDD package.\"\n\nHypothesis:\n  \"A first-class verify package reduces copy/paste prompts and improves post-task quality.\"\n\nCandidateGoal:\n  \"Add `rusty-idd harness package --stage verify` that emits contracts, agents, tools, evidence schema, and gates.\"\n\nGoalReview:\n  risk: medium\n  blast_radius: cli + docs + tests\n  package: verify\n  requires_human: false if docs/CLI only; true if changing merge policy\n\nApprovedGoal:\n  saved under `.idd/goals/...`\n\nOpenSpecChange:\n  proposal/design/spec/ADR/tasks generated in order.\n```\n\nThat gives self-authored goals without letting the loop become sloppy.\n\n## The Endless Loop Should Be Two Loops\n\nSplit it:\n\n```text\n1. Discovery Loop: endless, read-only, cheap\n2. Delivery Loop: finite, write-capable, one goal/PR at a time\n```\n\nThe discovery loop can run forever because it only produces ranked candidate\ngoals. The delivery loop must always terminate:\n\n- one active goal\n- one worktree\n- one OpenSpec change\n- one PR\n- one merge or one blocked handoff\n- no hidden background mutation\n\nThat prevents agent soup.\n\n## Package Types To Add First\n\nCreate Rusty IDD-owned packages in this order:\n\n1. `scan` package\n\n   Finds stale artifacts, missing specs, workflow gaps, CI drift, code\n   hotspots, orphaned work, toolchain risk.\n\n2. `goal` package\n\n   Converts findings into candidate goals with risk score, blast radius, owner\n   boundary, evidence, and suggested OpenSpec slug.\n\n3. `design` package\n\n   Forces architecture reasoning before implementation. Reads ADRs, OpenSpec,\n   `.idd/knowledge`, current code, and prior ICM.\n\n4. `implement` package\n\n   The only write-capable package. Must require ready OpenSpec status.\n\n5. `verify` package\n\n   Exhaustive post-task verifier: original request vs goal vs plan vs diff vs\n   tests vs graph vs ICM vs PR evidence.\n\n6. `publish` package\n\n   Commit, push, PR, CI wait with useful parallel work, merge, sync, cleanup.\n\n7. `learn` package\n\n   Stores durable ICM lessons, updates knowledge artifacts, feeds the next\n   discovery cycle.\n\n## The Self-Upgrade Governor\n\nThis is the missing component. Name it something like `crates/self-upgrade` or\n`crates/governor`.\n\nIt owns:\n\n```text\nQueue:\n  candidate goals, approved goals, blocked goals, completed goals\n\nPolicy:\n  what can run automatically\n  what requires user approval\n  max risk per cycle\n  max file blast radius\n  max session duration\n  max parallel agents\n\nScoring:\n  correctness impact\n  workflow friction removed\n  compile/test speed impact\n  verification quality\n  token/context savings\n  user-stated priority\n\nState:\n  last scan\n  last completed PR\n  active worktree\n  active change\n  current package\n  verification result\n```\n\n## Important Safety Rule\n\nDo not build a true unbounded write loop. Build an endless read/recommend loop\nplus a bounded approve/run/publish loop.\n\nAuto-run can be allowed for low-risk categories:\n\n```text\nAllowed auto goals:\n  stale generated artifact refresh\n  docs/spec consistency repair\n  missing validation evidence\n  narrow CLI package emission\n  test fixture repair\n  workflow prompt/package scaffolding\n\nRequire approval:\n  dependency upgrades\n  architecture boundary changes\n  toolchain changes\n  auth/secrets/env behavior\n  deletion/removal\n  cross-repo mutation\n  CI policy changes\n```\n\n## Preferred Path\n\nStart with one vertical slice:\n\n```text\nGoal: Add Rusty IDD self-upgrade discovery package.\n\nIt should:\n  1. scan repo truth\n  2. produce candidate goals\n  3. rank them\n  4. write no code by default\n  5. emit a `rusty-idd --goal-file ...` ready artifact\n  6. route the chosen candidate into the existing OpenSpec flow\n```\n\nThen the next goal can be generated by the new system itself: \"Promote candidate\ngoal into OpenSpec scaffolding.\"\n\nThat is the bootstrap moment. After that, Rusty IDD starts feeding itself\nclean, scoped goals instead of relying on giant always-loaded harness prompts.\n\nThe north star:\n\n```text\nCodex asks: \"What package do I need for this goal?\"\nRusty IDD answers with a scoped package.\nThe package produces evidence.\nThe evidence produces the next goal.\nThe loop continues, but every write is still reviewable, typed, gated, and PR-shaped.\n```\n\nThat is how Rusty IDD gets full-auto self-upgrade without turning the harness\ninto a token furnace.\n\n## First Downstream Test Target\n\nAfter this goal-artifact pass is complete, the first test target must be Rusty\nIDD feature integrations and automations:\n\n- What is the real integration between Rusty IDD, handoff, and prompt_hub?\n- Where is the autonomous flow?\n- How are the handoff kernel, handoff CLI, and prompt_hub CLI integrated?\n- What is the directory structure?\n- How do other repos initiate, build the proper directory structure, and sync?\n\nThis goal file records that target for the next cycle. Do not research or\nimplement that target until the self-upgrade governor goal artifacts are\ncreated and validated.",
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/self-upgrade-governor-goal",
+  "goal": "# align-envctl-toolchain-contract\n\n## Step 1: Run This Goal Through Rusty IDD\n\n```bash\nrusty-idd --goal-file .idd/goals/align-envctl-toolchain-contract.md\n```\n\nIf the active CLI surface requires a subcommand for goal binding, use:\n\n```bash\nrusty-idd knowledge plan-context \\\n  --workspace . \\\n  --out .idd/knowledge/plan-context.md \\\n  --goal-file .idd/goals/align-envctl-toolchain-contract.md\n```\n\n## Goal\n\nAlign Rusty IDD local Rust validation with the parent `meta` / `envctl`\ntoolchain ownership contract.\n\n## Evidence\n\nThe self-upgrade loop discovered a contract mismatch:\n\n- CI successfully uses `scripts/ci/envctl-rust-env.sh` with isolated\n  `$META_ROOT/.env/rust/{rustup,cargo,bin}` plus kache, wild, and\n  `rustc_codegen_gcc`.\n- The local workstation's envctl-owned Rust toolchain lives under\n  `$META_ROOT/.toolchains/{cargo,rustup}`.\n- `~/.cargo/bin/{cargo,rustup,rustc}` are not true user-global installs here;\n  they are symlinks into `$META_ROOT/.toolchains/cargo/bin/rustup`.\n- `envctl env --toolchains` emits\n  `CARGO_HOME=$META_ROOT/.toolchains/cargo`.\n- The previous artifact pass incorrectly described local `cargo/rustup` as\n  unavailable rather than diagnosing the `.toolchains` versus `.env/rust`\n  contract split.\n\n## Required Change\n\nRusty IDD must support both envctl-owned layouts:\n\n- `isolated`: CI/bootstrap layout under `$META_ROOT/.env/rust`.\n- `toolchains`: workstation envctl layout under\n  `$META_ROOT/.toolchains/{cargo,rustup}`.\n\nGitHub Actions must keep the strict isolated layout by default. Local validation\nmust prefer the envctl-managed `.toolchains` layout when it exists, without\nusing real user-global or system-depth Rust state.\n\n## Success Criteria\n\n- `scripts/ci/envctl-rust-env.sh` reports the selected layout.\n- GitHub Actions remains on `.env/rust` unless explicitly overridden.\n- Local workstation validation can run with `.toolchains` and reports actual\n  `rustc` and `cargo` paths under the meta root.\n- Documentation explains both layouts and the envctl ownership boundary.\n- OpenSpec, ADR, evidence, generated knowledge, and manifest artifacts are\n  updated.",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd/.worktrees/envctl-toolchain-contract",
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 141,
-    "nodes": 8824,
-    "edges": 36372,
+    "nodes": 8832,
+    "edges": 36415,
     "languages": [
       "rust"
     ],
@@ -16,8 +16,8 @@
   },
   "context_package": {
     "provider": "repomix-rs",
-    "files": 346,
-    "tokens": 735722,
+    "files": 351,
+    "tokens": 738367,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -69,12 +69,12 @@
         5761
       ],
       [
-        "docs/rusty-idd/spec-engine-design.md",
-        4132
+        "docs/rusty-idd/codex-environment.md",
+        4350
       ],
       [
-        "docs/rusty-idd/codex-environment.md",
-        4049
+        "docs/rusty-idd/spec-engine-design.md",
+        4132
       ],
       [
         "docs/rusty-idd/lifecycle-contract.md",
@@ -285,12 +285,39 @@
   ],
   "focus_components": [
     {
+      "id": "crate:core",
+      "name": "core",
+      "kind": "crate",
+      "files": 12,
+      "nodes": 448,
+      "edges": 2479,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/core/src/cli.rs",
+        "crates/core/src/env_contract.rs",
+        "crates/core/src/fs_utils.rs",
+        "crates/core/src/lib.rs",
+        "crates/core/src/manifest.rs",
+        "crates/core/src/model.rs",
+        "crates/core/src/planner.rs",
+        "crates/core/src/scanner.rs",
+        "crates/core/src/templates.rs",
+        "crates/core/src/validation.rs",
+        "crates/core/tests/smoke.rs",
+        "crates/core/tests/template_agent_surface.rs"
+      ]
+    },
+    {
       "id": "crate:cli",
       "name": "cli",
       "kind": "crate",
       "files": 26,
-      "nodes": 992,
-      "edges": 4504,
+      "nodes": 1000,
+      "edges": 4547,
       "languages": [
         "Rust",
         "rust"
@@ -328,221 +355,6 @@
       ]
     },
     {
-      "id": "crate:core",
-      "name": "core",
-      "kind": "crate",
-      "files": 12,
-      "nodes": 448,
-      "edges": 2479,
-      "languages": [
-        "Rust",
-        "rust"
-      ],
-      "hotspots": [],
-      "evidence_paths": [
-        "crates/core/src/cli.rs",
-        "crates/core/src/env_contract.rs",
-        "crates/core/src/fs_utils.rs",
-        "crates/core/src/lib.rs",
-        "crates/core/src/manifest.rs",
-        "crates/core/src/model.rs",
-        "crates/core/src/planner.rs",
-        "crates/core/src/scanner.rs",
-        "crates/core/src/templates.rs",
-        "crates/core/src/validation.rs",
-        "crates/core/tests/smoke.rs",
-        "crates/core/tests/template_agent_surface.rs"
-      ]
-    },
-    {
-      "id": "external:codegraph-parser",
-      "name": "codegraph-parser",
-      "kind": "external_crate",
-      "files": 29,
-      "nodes": 1060,
-      "edges": 7485,
-      "languages": [
-        "Rust",
-        "rust"
-      ],
-      "hotspots": [
-        {
-          "node_id": 3926,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/rust.rs",
-          "line_start": 97,
-          "line_end": 496,
-          "score": 3544,
-          "reasons": [
-            "400 lines",
-            "302 graph links",
-            "299 call links",
-            "7 unresolved calls",
-            "cyclomatic complexity 31"
-          ]
-        },
-        {
-          "node_id": 3778,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/java.rs",
-          "line_start": 109,
-          "line_end": 457,
-          "score": 2871,
-          "reasons": [
-            "349 lines",
-            "237 graph links",
-            "234 call links",
-            "3 unresolved calls",
-            "cyclomatic complexity 41"
-          ]
-        },
-        {
-          "node_id": 3851,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/php.rs",
-          "line_start": 130,
-          "line_end": 428,
-          "score": 2375,
-          "reasons": [
-            "299 lines",
-            "196 graph links",
-            "193 call links",
-            "3 unresolved calls",
-            "cyclomatic complexity 32"
-          ]
-        },
-        {
-          "node_id": 3696,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
-          "line_start": 105,
-          "line_end": 394,
-          "score": 2220,
-          "reasons": [
-            "290 lines",
-            "182 graph links",
-            "179 call links",
-            "5 unresolved calls",
-            "cyclomatic complexity 29"
-          ]
-        },
-        {
-          "node_id": 3902,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
-          "line_start": 122,
-          "line_end": 394,
-          "score": 2193,
-          "reasons": [
-            "273 lines",
-            "180 graph links",
-            "177 call links",
-            "3 unresolved calls",
-            "cyclomatic complexity 33"
-          ]
-        },
-        {
-          "node_id": 3720,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
-          "line_start": 109,
-          "line_end": 394,
-          "score": 2186,
-          "reasons": [
-            "286 lines",
-            "180 graph links",
-            "177 call links",
-            "3 unresolved calls",
-            "cyclomatic complexity 28"
-          ]
-        },
-        {
-          "node_id": 3993,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/swift.rs",
-          "line_start": 108,
-          "line_end": 387,
-          "score": 2141,
-          "reasons": [
-            "280 lines",
-            "175 graph links",
-            "172 call links",
-            "4 unresolved calls",
-            "cyclomatic complexity 30"
-          ]
-        },
-        {
-          "node_id": 3753,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/go.rs",
-          "line_start": 104,
-          "line_end": 296,
-          "score": 1456,
-          "reasons": [
-            "193 lines",
-            "118 graph links",
-            "115 call links",
-            "4 unresolved calls",
-            "cyclomatic complexity 23"
-          ]
-        }
-      ],
-      "evidence_paths": [
-        "crates/external/codegraph-parser/src/complexity.rs",
-        "crates/external/codegraph-parser/src/diff.rs",
-        "crates/external/codegraph-parser/src/edge.rs",
-        "crates/external/codegraph-parser/src/fast_io.rs",
-        "crates/external/codegraph-parser/src/fast_ml/enhancer.rs",
-        "crates/external/codegraph-parser/src/fast_ml/mod.rs",
-        "crates/external/codegraph-parser/src/fast_ml/pattern_matcher.rs",
-        "crates/external/codegraph-parser/src/fast_ml/symbol_resolver.rs",
-        "crates/external/codegraph-parser/src/file_collect.rs",
-        "crates/external/codegraph-parser/src/integration_tests.rs",
-        "crates/external/codegraph-parser/src/language.rs",
-        "crates/external/codegraph-parser/src/languages/cpp.rs"
-      ]
-    },
-    {
-      "id": "crate:spec",
-      "name": "spec",
-      "kind": "crate",
-      "files": 24,
-      "nodes": 461,
-      "edges": 1969,
-      "languages": [
-        "Rust",
-        "rust"
-      ],
-      "hotspots": [
-        {
-          "node_id": 6075,
-          "name": "contains",
-          "file": "crates/spec/src/model/spec.rs",
-          "line_start": 30,
-          "line_end": 32,
-          "score": 3356,
-          "reasons": [
-            "337 graph links",
-            "334 call links"
-          ]
-        }
-      ],
-      "evidence_paths": [
-        "crates/spec/src/adr/mod.rs",
-        "crates/spec/src/archive/mod.rs",
-        "crates/spec/src/lib.rs",
-        "crates/spec/src/model/block.rs",
-        "crates/spec/src/model/delta.rs",
-        "crates/spec/src/model/merge.rs",
-        "crates/spec/src/model/mod.rs",
-        "crates/spec/src/model/requirement.rs",
-        "crates/spec/src/model/spec.rs",
-        "crates/spec/src/parse/common.rs",
-        "crates/spec/src/parse/delta_parser.rs",
-        "crates/spec/src/parse/emit.rs"
-      ]
-    },
-    {
       "id": "external:codegraph-core",
       "name": "codegraph-core",
       "kind": "external_crate",
@@ -555,7 +367,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 3179,
+          "node_id": 3187,
           "name": "visit_dir",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 247,
@@ -569,7 +381,7 @@
           ]
         },
         {
-          "node_id": 3181,
+          "node_id": 3189,
           "name": "process_path_event",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 526,
@@ -584,7 +396,7 @@
           ]
         },
         {
-          "node_id": 1863,
+          "node_id": 1871,
           "name": "apply_env_overrides",
           "file": "crates/external/codegraph-core/src/config_manager.rs",
           "line_start": 674,
@@ -615,36 +427,151 @@
       ]
     },
     {
-      "id": "crate:merge-tools",
-      "name": "merge-tools",
-      "kind": "crate",
-      "files": 1,
-      "nodes": 45,
-      "edges": 234,
-      "languages": [
-        "Rust",
-        "rust"
-      ],
-      "hotspots": [],
-      "evidence_paths": [
-        "crates/merge-tools/src/lib.rs"
-      ]
-    },
-    {
-      "id": "external:repomix-shared",
-      "name": "repomix-shared",
+      "id": "external:codegraph-parser",
+      "name": "codegraph-parser",
       "kind": "external_crate",
-      "files": 2,
-      "nodes": 11,
-      "edges": 34,
+      "files": 29,
+      "nodes": 1060,
+      "edges": 7485,
       "languages": [
         "Rust",
         "rust"
       ],
-      "hotspots": [],
+      "hotspots": [
+        {
+          "node_id": 3934,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/rust.rs",
+          "line_start": 97,
+          "line_end": 496,
+          "score": 3544,
+          "reasons": [
+            "400 lines",
+            "302 graph links",
+            "299 call links",
+            "7 unresolved calls",
+            "cyclomatic complexity 31"
+          ]
+        },
+        {
+          "node_id": 3786,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/java.rs",
+          "line_start": 109,
+          "line_end": 457,
+          "score": 2871,
+          "reasons": [
+            "349 lines",
+            "237 graph links",
+            "234 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 41"
+          ]
+        },
+        {
+          "node_id": 3859,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/php.rs",
+          "line_start": 130,
+          "line_end": 428,
+          "score": 2375,
+          "reasons": [
+            "299 lines",
+            "196 graph links",
+            "193 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 32"
+          ]
+        },
+        {
+          "node_id": 3704,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
+          "line_start": 105,
+          "line_end": 394,
+          "score": 2220,
+          "reasons": [
+            "290 lines",
+            "182 graph links",
+            "179 call links",
+            "5 unresolved calls",
+            "cyclomatic complexity 29"
+          ]
+        },
+        {
+          "node_id": 3910,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
+          "line_start": 122,
+          "line_end": 394,
+          "score": 2193,
+          "reasons": [
+            "273 lines",
+            "180 graph links",
+            "177 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 33"
+          ]
+        },
+        {
+          "node_id": 3728,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
+          "line_start": 109,
+          "line_end": 394,
+          "score": 2186,
+          "reasons": [
+            "286 lines",
+            "180 graph links",
+            "177 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 28"
+          ]
+        },
+        {
+          "node_id": 4001,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/swift.rs",
+          "line_start": 108,
+          "line_end": 387,
+          "score": 2141,
+          "reasons": [
+            "280 lines",
+            "175 graph links",
+            "172 call links",
+            "4 unresolved calls",
+            "cyclomatic complexity 30"
+          ]
+        },
+        {
+          "node_id": 3761,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/go.rs",
+          "line_start": 104,
+          "line_end": 296,
+          "score": 1456,
+          "reasons": [
+            "193 lines",
+            "118 graph links",
+            "115 call links",
+            "4 unresolved calls",
+            "cyclomatic complexity 23"
+          ]
+        }
+      ],
       "evidence_paths": [
-        "crates/external/repomix-shared/src/lib.rs",
-        "crates/external/repomix-shared/src/types.rs"
+        "crates/external/codegraph-parser/src/complexity.rs",
+        "crates/external/codegraph-parser/src/diff.rs",
+        "crates/external/codegraph-parser/src/edge.rs",
+        "crates/external/codegraph-parser/src/fast_io.rs",
+        "crates/external/codegraph-parser/src/fast_ml/enhancer.rs",
+        "crates/external/codegraph-parser/src/fast_ml/mod.rs",
+        "crates/external/codegraph-parser/src/fast_ml/pattern_matcher.rs",
+        "crates/external/codegraph-parser/src/fast_ml/symbol_resolver.rs",
+        "crates/external/codegraph-parser/src/file_collect.rs",
+        "crates/external/codegraph-parser/src/integration_tests.rs",
+        "crates/external/codegraph-parser/src/language.rs",
+        "crates/external/codegraph-parser/src/languages/cpp.rs"
       ]
     },
     {
@@ -660,7 +587,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 4809,
+          "node_id": 4817,
           "name": "integration_readiness_report",
           "file": "crates/knowledge/src/lib.rs",
           "line_start": 4532,
@@ -675,7 +602,7 @@
           ]
         },
         {
-          "node_id": 5023,
+          "node_id": 5031,
           "name": "integration_owner_surfaces_join_work_item_to_system_repos",
           "file": "crates/knowledge/src/lib.rs",
           "line_start": 6676,
@@ -706,7 +633,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 5638,
+          "node_id": 5646,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
@@ -721,7 +648,7 @@
           ]
         },
         {
-          "node_id": 5597,
+          "node_id": 5605,
           "name": "new",
           "file": "crates/runner/src/runner.rs",
           "line_start": 54,
@@ -741,6 +668,63 @@
       ]
     },
     {
+      "id": "crate:spec",
+      "name": "spec",
+      "kind": "crate",
+      "files": 24,
+      "nodes": 461,
+      "edges": 1969,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 6083,
+          "name": "contains",
+          "file": "crates/spec/src/model/spec.rs",
+          "line_start": 30,
+          "line_end": 32,
+          "score": 3356,
+          "reasons": [
+            "337 graph links",
+            "334 call links"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/spec/src/adr/mod.rs",
+        "crates/spec/src/archive/mod.rs",
+        "crates/spec/src/lib.rs",
+        "crates/spec/src/model/block.rs",
+        "crates/spec/src/model/delta.rs",
+        "crates/spec/src/model/merge.rs",
+        "crates/spec/src/model/mod.rs",
+        "crates/spec/src/model/requirement.rs",
+        "crates/spec/src/model/spec.rs",
+        "crates/spec/src/parse/common.rs",
+        "crates/spec/src/parse/delta_parser.rs",
+        "crates/spec/src/parse/emit.rs"
+      ]
+    },
+    {
+      "id": "external:repomix-shared",
+      "name": "repomix-shared",
+      "kind": "external_crate",
+      "files": 2,
+      "nodes": 11,
+      "edges": 34,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/external/repomix-shared/src/lib.rs",
+        "crates/external/repomix-shared/src/types.rs"
+      ]
+    },
+    {
       "id": "crate:tui",
       "name": "tui",
       "kind": "crate",
@@ -753,7 +737,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 6360,
+          "node_id": 6368,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
@@ -767,7 +751,7 @@
           ]
         },
         {
-          "node_id": 6375,
+          "node_id": 6383,
           "name": "handle_config_input",
           "file": "crates/tui/src/app.rs",
           "line_start": 702,
@@ -782,7 +766,7 @@
           ]
         },
         {
-          "node_id": 7077,
+          "node_id": 7085,
           "name": "draw_config_screen",
           "file": "crates/tui/src/ui.rs",
           "line_start": 330,
@@ -801,6 +785,22 @@
         "crates/tui/src/app.rs",
         "crates/tui/src/lib.rs",
         "crates/tui/src/ui.rs"
+      ]
+    },
+    {
+      "id": "crate:merge-tools",
+      "name": "merge-tools",
+      "kind": "crate",
+      "files": 1,
+      "nodes": 45,
+      "edges": 234,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/merge-tools/src/lib.rs"
       ]
     }
   ],
@@ -1317,16 +1317,38 @@
       }
     },
     {
-      "id": "repo:prompt-hub",
-      "name": "prompt_hub",
-      "path": "prompt_hub",
-      "repo": "git@github.com:FlexNetOS/prompt_hub.git",
+      "id": "repo:loop-cli",
+      "name": "loop_cli",
+      "path": "loop_cli",
+      "repo": "git@github.com:FlexNetOS/loop_cli.git",
       "branch": "main",
-      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "head": "6390636cd5f0ba6abdacc772bb70a3fe55584563",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:envctl",
+      "name": "envctl",
+      "path": "envctl",
+      "repo": "git@github.com:FlexNetOS/envctl.git",
+      "branch": "master",
+      "head": "3bc70b7a0830538cce199c44f425677dba6d97dc",
       "dirty": true,
       "tags": [
-        "ai",
-        "prompts"
+        "env",
+        "tools"
       ],
       "markers": [
         "rust",
@@ -1335,11 +1357,33 @@
         "github-actions"
       ],
       "roles": [
-        "role:agent-environment",
-        "role:capability-hub",
         "role:fleet-handoff",
         "role:rust-code-surface",
-        "role:spec-producer"
+        "role:toolchain-provider"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-git-lib",
+      "name": "meta_git_lib",
+      "path": "meta_git_lib",
+      "repo": "git@github.com:FlexNetOS/meta_git_lib.git",
+      "branch": "chore/indicatif-0.18-rustsec-2025-0119",
+      "head": "5e65ab23cd6d95e922475a69a0ee5a3371c50c87",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "handoff",
+        "github-actions"
+      ],
+      "roles": [
+        "role:fleet-handoff",
+        "role:meta-control-plane",
+        "role:rust-code-surface"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null
@@ -1376,67 +1420,195 @@
       "local_architecture": null
     },
     {
-      "id": "repo:lane",
-      "name": "lane",
-      "path": "lane",
-      "repo": "git@github.com:FlexNetOS/lane.git",
+      "id": "repo:loop-lib",
+      "name": "loop_lib",
+      "path": "loop_lib",
+      "repo": "git@github.com:FlexNetOS/loop_lib.git",
       "branch": "main",
-      "head": "a46b57ef56495cc5c64edc99df1eb55874f40327",
+      "head": "99201dea128bd969f70240212ab62d51858a6aa2",
       "dirty": false,
       "tags": [
-        "tools",
-        "workflow"
+        "canon"
       ],
       "markers": [
         "rust",
-        "handoff",
-        "claude",
         "github-actions"
       ],
       "roles": [
-        "role:fleet-handoff",
+        "role:meta-control-plane",
         "role:rust-code-surface"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null
     },
     {
-      "id": "repo:envctl",
-      "name": "envctl",
-      "path": "envctl",
-      "repo": "git@github.com:FlexNetOS/envctl.git",
-      "branch": "master",
-      "head": "3bc70b7a0830538cce199c44f425677dba6d97dc",
-      "dirty": true,
+      "id": "repo:meta-cli",
+      "name": "meta_cli",
+      "path": "meta_cli",
+      "repo": "git@github.com:FlexNetOS/meta_cli.git",
+      "branch": "main",
+      "head": "ae75f21e0961e5ca003023fbc2fc02bf87c0c47a",
+      "dirty": false,
       "tags": [
-        "env",
-        "tools"
+        "canon"
       ],
       "markers": [
         "rust",
-        "handoff",
         "claude",
         "github-actions"
       ],
       "roles": [
-        "role:fleet-handoff",
-        "role:rust-code-surface",
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-git-cli",
+      "name": "meta_git_cli",
+      "path": "meta_git_cli",
+      "repo": "git@github.com:FlexNetOS/meta_git_cli.git",
+      "branch": "feat/dep-upgrades",
+      "head": "dbe80637327b340894526d260adc74d485711df3",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-project-cli",
+      "name": "meta_project_cli",
+      "path": "meta_project_cli",
+      "repo": "git@github.com:FlexNetOS/meta_project_cli.git",
+      "branch": "main",
+      "head": "94781aa01a2942de2a64105564912f6a1ad61016",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-rust-cli",
+      "name": "meta_rust_cli",
+      "path": "meta_rust_cli",
+      "repo": "git@github.com:FlexNetOS/meta_rust_cli.git",
+      "branch": "main",
+      "head": "a46f6e3b25518b13ad5fa819f7db7f0d1eba5259",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-core",
+      "name": "meta_core",
+      "path": "meta_core",
+      "repo": "git@github.com:FlexNetOS/meta_core.git",
+      "branch": "main",
+      "head": "fe1ca7751d276b390bc121a8372126437a7846ac",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:meta-plugin-protocol",
+      "name": "meta_plugin_protocol",
+      "path": "meta_plugin_protocol",
+      "repo": "git@github.com:FlexNetOS/meta_plugin_protocol.git",
+      "branch": "main",
+      "head": "ace64c8f40bd7c32a8fac7325725489637e2e086",
+      "dirty": false,
+      "tags": [
+        "canon"
+      ],
+      "markers": [
+        "rust",
+        "github-actions"
+      ],
+      "roles": [
+        "role:meta-control-plane",
+        "role:rust-code-surface"
+      ],
+      "has_local_architecture_graph": false,
+      "local_architecture": null
+    },
+    {
+      "id": "repo:yazelix",
+      "name": "yazelix",
+      "path": "yazelix",
+      "repo": "git@github.com:FlexNetOS/yazelix.git",
+      "branch": "main",
+      "head": "03352e0687ad275459dc261d5355234c46998f0a",
+      "dirty": false,
+      "tags": [
+        "env",
+        "forked",
+        "terminal"
+      ],
+      "markers": [
+        "claude",
+        "github-actions"
+      ],
+      "roles": [
+        "role:parser-runtime-surface",
         "role:toolchain-provider"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null
     },
     {
-      "id": "repo:network-control",
-      "name": "network-control",
-      "path": "network-control",
-      "repo": "git@github.com:FlexNetOS/network-control.git",
-      "branch": "develop",
-      "head": "bfb4e4e689dfb4f816d792fc983119e75b83154c",
-      "dirty": false,
+      "id": "repo:prompt-hub",
+      "name": "prompt_hub",
+      "path": "prompt_hub",
+      "repo": "git@github.com:FlexNetOS/prompt_hub.git",
+      "branch": "main",
+      "head": "4b17d6527fc9c235e65ebaaf4174c5d397711c69",
+      "dirty": true,
       "tags": [
-        "network",
-        "tools"
+        "ai",
+        "prompts"
       ],
       "markers": [
         "rust",
@@ -1445,8 +1617,11 @@
         "github-actions"
       ],
       "roles": [
+        "role:agent-environment",
+        "role:capability-hub",
         "role:fleet-handoff",
-        "role:rust-code-surface"
+        "role:rust-code-surface",
+        "role:spec-producer"
       ],
       "has_local_architecture_graph": false,
       "local_architecture": null
@@ -1506,104 +1681,6 @@
       "local_architecture": null
     },
     {
-      "id": "repo:obscura",
-      "name": "obscura",
-      "path": "obscura",
-      "repo": "git@github.com:FlexNetOS/obscura.git",
-      "branch": "main",
-      "head": "d8c8487ca324a9daa798e00ba8794b1c833fa806",
-      "dirty": false,
-      "tags": [
-        "ai",
-        "browser",
-        "network"
-      ],
-      "markers": [
-        "rust",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:domain-upgrade-surface",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:kasetto",
-      "name": "kasetto",
-      "path": "kasetto",
-      "repo": "git@github.com:FlexNetOS/kasetto.git",
-      "branch": "main",
-      "head": "ec01ccaffad67e5fc57987f441a610682bac6290",
-      "dirty": false,
-      "tags": [
-        "agent-env",
-        "forked",
-        "tools"
-      ],
-      "markers": [
-        "rust",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:rtk-tokenkill",
-      "name": "rtk-tokenkill",
-      "path": "rtk-tokenkill",
-      "repo": "git@github.com:FlexNetOS/rtk-tokenkill.git",
-      "branch": "develop",
-      "head": "858e66770511dde4032151dd00c4121878afc14e",
-      "dirty": false,
-      "tags": [
-        "ai",
-        "optimization",
-        "tools"
-      ],
-      "markers": [
-        "rust",
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:yazelix",
-      "name": "yazelix",
-      "path": "yazelix",
-      "repo": "git@github.com:FlexNetOS/yazelix.git",
-      "branch": "main",
-      "head": "03352e0687ad275459dc261d5355234c46998f0a",
-      "dirty": false,
-      "tags": [
-        "env",
-        "forked",
-        "terminal"
-      ],
-      "markers": [
-        "claude",
-        "github-actions"
-      ],
-      "roles": [
-        "role:parser-runtime-surface",
-        "role:toolchain-provider"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
       "id": "repo:icm",
       "name": "icm",
       "path": "icm",
@@ -1629,72 +1706,25 @@
       "local_architecture": null
     },
     {
-      "id": "repo:meta-git-lib",
-      "name": "meta_git_lib",
-      "path": "meta_git_lib",
-      "repo": "git@github.com:FlexNetOS/meta_git_lib.git",
-      "branch": "chore/indicatif-0.18-rustsec-2025-0119",
-      "head": "5e65ab23cd6d95e922475a69a0ee5a3371c50c87",
-      "dirty": false,
-      "tags": [
-        "canon"
-      ],
-      "markers": [
-        "rust",
-        "handoff",
-        "github-actions"
-      ],
-      "roles": [
-        "role:fleet-handoff",
-        "role:meta-control-plane",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:ecc",
-      "name": "ECC",
-      "path": "ECC",
-      "repo": "git@github.com:FlexNetOS/ECC.git",
+      "id": "repo:obscura",
+      "name": "obscura",
+      "path": "obscura",
+      "repo": "git@github.com:FlexNetOS/obscura.git",
       "branch": "main",
-      "head": "1dcfa4665f2fb34a81c9784adfff16b4e604c6b6",
+      "head": "d8c8487ca324a9daa798e00ba8794b1c833fa806",
       "dirty": false,
       "tags": [
         "ai",
-        "forked"
+        "browser",
+        "network"
       ],
       "markers": [
-        "node",
-        "handoff",
-        "agents",
-        "claude",
+        "rust",
         "github-actions"
       ],
       "roles": [
         "role:agent-environment",
-        "role:fleet-handoff"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:loop-cli",
-      "name": "loop_cli",
-      "path": "loop_cli",
-      "repo": "git@github.com:FlexNetOS/loop_cli.git",
-      "branch": "main",
-      "head": "6390636cd5f0ba6abdacc772bb70a3fe55584563",
-      "dirty": false,
-      "tags": [
-        "canon"
-      ],
-      "markers": [
-        "rust",
-        "github-actions"
-      ],
-      "roles": [
-        "role:meta-control-plane",
+        "role:domain-upgrade-surface",
         "role:rust-code-surface"
       ],
       "has_local_architecture_graph": false,
@@ -1725,73 +1755,24 @@
       "local_architecture": null
     },
     {
-      "id": "repo:github-org",
-      "name": "github_org",
-      "path": ".github_org",
-      "repo": "git@github.com:FlexNetOS/.github.git",
-      "branch": "fix/autonomous-feature-develop-approval",
-      "head": "c21f55125722a7649073fc2da7d9fe6cb7a23ea8",
-      "dirty": false,
-      "tags": [
-        "ci",
-        "org"
-      ],
-      "markers": [
-        "handoff",
-        "agents",
-        "claude",
-        "github-actions",
-        "make"
-      ],
-      "roles": [
-        "role:agent-environment",
-        "role:fleet-handoff"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:lifeos",
-      "name": "lifeos",
-      "path": "lifeos",
-      "repo": "git@github.com:FlexNetOS/lifeos.git",
+      "id": "repo:kasetto",
+      "name": "kasetto",
+      "path": "kasetto",
+      "repo": "git@github.com:FlexNetOS/kasetto.git",
       "branch": "main",
-      "head": "d02f12477b84cddfb649d3ff71e68aa8bc401acb",
+      "head": "ec01ccaffad67e5fc57987f441a610682bac6290",
       "dirty": false,
       "tags": [
-        "untriaged"
-      ],
-      "markers": [
-        "rust",
-        "node",
-        "openspec",
-        "handoff",
-        "claude"
-      ],
-      "roles": [
-        "role:fleet-handoff",
-        "role:rust-code-surface"
-      ],
-      "has_local_architecture_graph": false,
-      "local_architecture": null
-    },
-    {
-      "id": "repo:loop-lib",
-      "name": "loop_lib",
-      "path": "loop_lib",
-      "repo": "git@github.com:FlexNetOS/loop_lib.git",
-      "branch": "main",
-      "head": "99201dea128bd969f70240212ab62d51858a6aa2",
-      "dirty": false,
-      "tags": [
-        "canon"
+        "agent-env",
+        "forked",
+        "tools"
       ],
       "markers": [
         "rust",
         "github-actions"
       ],
       "roles": [
-        "role:meta-control-plane",
+        "role:agent-environment",
         "role:rust-code-surface"
       ],
       "has_local_architecture_graph": false,
@@ -1997,6 +1978,41 @@
   ],
   "operating_capabilities": [
     {
+      "id": "capability:fleet-handoff",
+      "name": "Central and fleet handoff",
+      "layer": "layer:coordination-communication",
+      "purpose": "Maintains central and fleet handoff state for cross-repo agents",
+      "status": "partial",
+      "repos": [
+        "repo:agent",
+        "repo:ecc",
+        "repo:envctl",
+        "repo:flexnetos-runner",
+        "repo:github-org",
+        "repo:handoff",
+        "repo:harness-hub",
+        "repo:lane",
+        "repo:lifeos",
+        "repo:meta-git-lib",
+        "repo:network-control",
+        "repo:prompt-hub",
+        "repo:rusty-idd",
+        "repo:ruvector",
+        "repo:teri",
+        "repo:weave"
+      ],
+      "anchors": [
+        "handoff central and fleet design"
+      ],
+      "evidence": [
+        "repo-name:handoff",
+        "repo-name:rusty_idd",
+        "repo-name:weave",
+        "system-role:role:fleet-handoff",
+        "anchor:handoff central and fleet design"
+      ]
+    },
+    {
       "id": "capability:idd-spec-engine",
       "name": "IDD and spec engine",
       "layer": "layer:executive-control-plane",
@@ -2014,6 +2030,95 @@
         "repo-name:handoff",
         "system-role:role:idd-control-plane",
         "anchor:Rusty IDD built into handoff"
+      ]
+    },
+    {
+      "id": "capability:meta-peer-control",
+      "name": "Meta peer repo control",
+      "layer": "layer:executive-control-plane",
+      "purpose": "Controls the peer-repo environment and hosts full-system execution context",
+      "status": "partial",
+      "repos": [
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli"
+      ],
+      "anchors": [
+        "meta peer repo system"
+      ],
+      "evidence": [
+        "repo-name:meta_cli",
+        "repo-name:meta_core",
+        "repo-name:meta_git_cli",
+        "repo-name:meta_git_lib",
+        "repo-name:meta_project_cli",
+        "repo-name:meta_rust_cli",
+        "system-role:role:meta-control-plane",
+        "anchor:meta peer repo system"
+      ]
+    },
+    {
+      "id": "capability:parser-runtime",
+      "name": "Parser and terminal runtime",
+      "layer": "layer:toolchain-parser-runtime",
+      "purpose": "Carries tree-sitter, Yazelix terminal, parser, and runtime support",
+      "status": "partial",
+      "repos": [
+        "repo:rusty-idd",
+        "repo:tool-hub",
+        "repo:yazelix"
+      ],
+      "anchors": [
+        "tree-sitter via Yazelix",
+        "Yazelix default terminal",
+        "nushell",
+        "Lua",
+        "Ghostty",
+        "Zellij"
+      ],
+      "evidence": [
+        "repo-name:yazelix",
+        "repo-name:rusty_idd",
+        "repo-name:tool_hub",
+        "system-role:role:parser-runtime-surface",
+        "anchor:tree-sitter via Yazelix",
+        "anchor:Yazelix default terminal",
+        "anchor:nushell",
+        "anchor:Lua",
+        "anchor:Ghostty",
+        "anchor:Zellij"
+      ]
+    },
+    {
+      "id": "capability:env-vault-relay",
+      "name": "Environment and vault relay",
+      "layer": "layer:environment-security",
+      "purpose": "Mints relay credentials from long-running vault material through parent-managed env tooling",
+      "status": "partial",
+      "repos": [
+        "repo:envctl",
+        "repo:vault-hub",
+        "repo:yazelix"
+      ],
+      "anchors": [
+        "/run/media/drdave/COGNITUM",
+        "Cognitum vault on Pi Zero"
+      ],
+      "evidence": [
+        "repo-name:envctl",
+        "repo-name:vault_hub",
+        "system-role:role:toolchain-provider",
+        "anchor:/run/media/drdave/COGNITUM",
+        "anchor:Cognitum vault on Pi Zero"
       ]
     },
     {
@@ -2065,38 +2170,26 @@
       ]
     },
     {
-      "id": "capability:fleet-handoff",
-      "name": "Central and fleet handoff",
-      "layer": "layer:coordination-communication",
-      "purpose": "Maintains central and fleet handoff state for cross-repo agents",
+      "id": "capability:lua-ar-interface",
+      "name": "Lua and AR interface automation",
+      "layer": "layer:interface-automation",
+      "purpose": "Supports AR-glasses coding and local automation with Rust-native Lua surfaces",
       "status": "partial",
       "repos": [
-        "repo:agent",
-        "repo:ecc",
-        "repo:envctl",
-        "repo:flexnetos-runner",
-        "repo:github-org",
-        "repo:handoff",
-        "repo:harness-hub",
-        "repo:lane",
         "repo:lifeos",
-        "repo:meta-git-lib",
-        "repo:network-control",
-        "repo:prompt-hub",
-        "repo:rusty-idd",
-        "repo:ruvector",
-        "repo:teri",
-        "repo:weave"
+        "repo:oh-my-pi",
+        "repo:yazelix"
       ],
       "anchors": [
-        "handoff central and fleet design"
+        "Lua required for AR glasses workflow",
+        "Brilliant Labs Noa style Rust-native agent UX"
       ],
       "evidence": [
-        "repo-name:handoff",
-        "repo-name:rusty_idd",
-        "repo-name:weave",
-        "system-role:role:fleet-handoff",
-        "anchor:handoff central and fleet design"
+        "repo-name:lifeos",
+        "repo-name:oh_my_pi",
+        "repo-name:yazelix",
+        "anchor:Lua required for AR glasses workflow",
+        "anchor:Brilliant Labs Noa style Rust-native agent UX"
       ]
     },
     {
@@ -2147,54 +2240,47 @@
       ]
     },
     {
-      "id": "capability:digital-twin-simulation",
-      "name": "Digital twin simulation",
-      "layer": "layer:simulation-validation",
-      "purpose": "Simulates target environments so agents can test implementation behavior before real-world execution",
+      "id": "capability:distributed-device-fabric",
+      "name": "Distributed device fabric",
+      "layer": "layer:infrastructure-device-fabric",
+      "purpose": "Uses user devices for distributed compute, storage, inference, and memory",
       "status": "partial",
       "repos": [
-        "repo:teri"
+        "repo:envctl",
+        "repo:network-control",
+        "repo:oh-my-pi"
       ],
       "anchors": [
-        "Teri digital twin simulator"
+        "user devices for distributed compute storage inference memory"
       ],
       "evidence": [
-        "repo-name:teri",
-        "anchor:Teri digital twin simulator"
+        "repo-name:oh_my_pi",
+        "repo-name:network_control",
+        "repo-name:envctl",
+        "anchor:user devices for distributed compute storage inference memory"
       ]
     },
     {
-      "id": "capability:meta-peer-control",
-      "name": "Meta peer repo control",
-      "layer": "layer:executive-control-plane",
-      "purpose": "Controls the peer-repo environment and hosts full-system execution context",
+      "id": "capability:vector-runtime",
+      "name": "Vector and agentic runtime",
+      "layer": "layer:knowledge-runtime",
+      "purpose": "Provides vector DB, progress DB, agentic runtime, inference, and training surfaces",
       "status": "partial",
       "repos": [
-        "repo:loop-cli",
-        "repo:loop-lib",
-        "repo:meta-cli",
-        "repo:meta-core",
-        "repo:meta-dashboard-cli",
-        "repo:meta-git-cli",
-        "repo:meta-git-lib",
-        "repo:meta-mcp",
-        "repo:meta-plugin-api",
-        "repo:meta-plugin-protocol",
-        "repo:meta-project-cli",
-        "repo:meta-rust-cli"
+        "repo:database-hub",
+        "repo:icm",
+        "repo:obsidian-mind",
+        "repo:ruvector"
       ],
       "anchors": [
-        "meta peer repo system"
+        "meta-ruvector full agentic system"
       ],
       "evidence": [
-        "repo-name:meta_cli",
-        "repo-name:meta_core",
-        "repo-name:meta_git_cli",
-        "repo-name:meta_git_lib",
-        "repo-name:meta_project_cli",
-        "repo-name:meta_rust_cli",
-        "system-role:role:meta-control-plane",
-        "anchor:meta peer repo system"
+        "repo-name:ruvector",
+        "repo-name:database_hub",
+        "repo-name:icm",
+        "system-role:role:knowledge-memory",
+        "anchor:meta-ruvector full agentic system"
       ]
     },
     {
@@ -2221,70 +2307,20 @@
       ]
     },
     {
-      "id": "capability:network-engineering",
-      "name": "Network engineering and control",
-      "layer": "layer:infrastructure-device-fabric",
-      "purpose": "Owns network engineering, control, and lane-to-network-manager upgrade path",
+      "id": "capability:digital-twin-simulation",
+      "name": "Digital twin simulation",
+      "layer": "layer:simulation-validation",
+      "purpose": "Simulates target environments so agents can test implementation behavior before real-world execution",
       "status": "partial",
       "repos": [
-        "repo:lane",
-        "repo:network-control",
-        "repo:network-hub"
+        "repo:teri"
       ],
       "anchors": [
-        "lane merges into network-manager"
+        "Teri digital twin simulator"
       ],
       "evidence": [
-        "repo-name:lane",
-        "repo-name:network_control",
-        "repo-name:network_hub",
-        "anchor:lane merges into network-manager"
-      ]
-    },
-    {
-      "id": "capability:lua-ar-interface",
-      "name": "Lua and AR interface automation",
-      "layer": "layer:interface-automation",
-      "purpose": "Supports AR-glasses coding and local automation with Rust-native Lua surfaces",
-      "status": "partial",
-      "repos": [
-        "repo:lifeos",
-        "repo:oh-my-pi",
-        "repo:yazelix"
-      ],
-      "anchors": [
-        "Lua required for AR glasses workflow",
-        "Brilliant Labs Noa style Rust-native agent UX"
-      ],
-      "evidence": [
-        "repo-name:lifeos",
-        "repo-name:oh_my_pi",
-        "repo-name:yazelix",
-        "anchor:Lua required for AR glasses workflow",
-        "anchor:Brilliant Labs Noa style Rust-native agent UX"
-      ]
-    },
-    {
-      "id": "capability:vector-runtime",
-      "name": "Vector and agentic runtime",
-      "layer": "layer:knowledge-runtime",
-      "purpose": "Provides vector DB, progress DB, agentic runtime, inference, and training surfaces",
-      "status": "partial",
-      "repos": [
-        "repo:database-hub",
-        "repo:icm",
-        "repo:obsidian-mind",
-        "repo:ruvector"
-      ],
-      "anchors": [
-        "meta-ruvector full agentic system"
-      ],
-      "evidence": [
-        "repo-name:ruvector",
-        "repo-name:database_hub",
-        "repo-name:icm",
-        "system-role:role:knowledge-memory",
-        "anchor:meta-ruvector full agentic system"
+        "repo-name:teri",
+        "anchor:Teri digital twin simulator"
       ]
     },
     {
@@ -2317,82 +2353,6 @@
       ]
     },
     {
-      "id": "capability:parser-runtime",
-      "name": "Parser and terminal runtime",
-      "layer": "layer:toolchain-parser-runtime",
-      "purpose": "Carries tree-sitter, Yazelix terminal, parser, and runtime support",
-      "status": "partial",
-      "repos": [
-        "repo:rusty-idd",
-        "repo:tool-hub",
-        "repo:yazelix"
-      ],
-      "anchors": [
-        "tree-sitter via Yazelix",
-        "Yazelix default terminal",
-        "nushell",
-        "Lua",
-        "Ghostty",
-        "Zellij"
-      ],
-      "evidence": [
-        "repo-name:yazelix",
-        "repo-name:rusty_idd",
-        "repo-name:tool_hub",
-        "system-role:role:parser-runtime-surface",
-        "anchor:tree-sitter via Yazelix",
-        "anchor:Yazelix default terminal",
-        "anchor:nushell",
-        "anchor:Lua",
-        "anchor:Ghostty",
-        "anchor:Zellij"
-      ]
-    },
-    {
-      "id": "capability:distributed-device-fabric",
-      "name": "Distributed device fabric",
-      "layer": "layer:infrastructure-device-fabric",
-      "purpose": "Uses user devices for distributed compute, storage, inference, and memory",
-      "status": "partial",
-      "repos": [
-        "repo:envctl",
-        "repo:network-control",
-        "repo:oh-my-pi"
-      ],
-      "anchors": [
-        "user devices for distributed compute storage inference memory"
-      ],
-      "evidence": [
-        "repo-name:oh_my_pi",
-        "repo-name:network_control",
-        "repo-name:envctl",
-        "anchor:user devices for distributed compute storage inference memory"
-      ]
-    },
-    {
-      "id": "capability:env-vault-relay",
-      "name": "Environment and vault relay",
-      "layer": "layer:environment-security",
-      "purpose": "Mints relay credentials from long-running vault material through parent-managed env tooling",
-      "status": "partial",
-      "repos": [
-        "repo:envctl",
-        "repo:vault-hub",
-        "repo:yazelix"
-      ],
-      "anchors": [
-        "/run/media/drdave/COGNITUM",
-        "Cognitum vault on Pi Zero"
-      ],
-      "evidence": [
-        "repo-name:envctl",
-        "repo-name:vault_hub",
-        "system-role:role:toolchain-provider",
-        "anchor:/run/media/drdave/COGNITUM",
-        "anchor:Cognitum vault on Pi Zero"
-      ]
-    },
-    {
       "id": "capability:domain-upgrade",
       "name": "Domain upgrade path",
       "layer": "layer:coordination-communication",
@@ -2410,6 +2370,46 @@
         "repo-name:obscura",
         "system-role:role:domain-upgrade-surface",
         "anchor:weave plus Obscura domain upgrades"
+      ]
+    },
+    {
+      "id": "capability:personal-automation",
+      "name": "Personal media and home automation",
+      "layer": "layer:interface-automation",
+      "purpose": "Adds local personal life, media, TV, and home automation surfaces",
+      "status": "partial",
+      "repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi"
+      ],
+      "anchors": [
+        "personal life media TV home automation"
+      ],
+      "evidence": [
+        "repo-name:lifeos",
+        "repo-name:oh_my_pi",
+        "anchor:personal life media TV home automation"
+      ]
+    },
+    {
+      "id": "capability:network-engineering",
+      "name": "Network engineering and control",
+      "layer": "layer:infrastructure-device-fabric",
+      "purpose": "Owns network engineering, control, and lane-to-network-manager upgrade path",
+      "status": "partial",
+      "repos": [
+        "repo:lane",
+        "repo:network-control",
+        "repo:network-hub"
+      ],
+      "anchors": [
+        "lane merges into network-manager"
+      ],
+      "evidence": [
+        "repo-name:lane",
+        "repo-name:network_control",
+        "repo-name:network_hub",
+        "anchor:lane merges into network-manager"
       ]
     },
     {
@@ -2434,28 +2434,43 @@
         "system-role:role:coordination-domain-surface",
         "anchor:weave agent communication layer"
       ]
-    },
-    {
-      "id": "capability:personal-automation",
-      "name": "Personal media and home automation",
-      "layer": "layer:interface-automation",
-      "purpose": "Adds local personal life, media, TV, and home automation surfaces",
-      "status": "partial",
-      "repos": [
-        "repo:lifeos",
-        "repo:oh-my-pi"
-      ],
-      "anchors": [
-        "personal life media TV home automation"
-      ],
-      "evidence": [
-        "repo-name:lifeos",
-        "repo-name:oh_my_pi",
-        "anchor:personal life media TV home automation"
-      ]
     }
   ],
   "integration_work_items": [
+    {
+      "id": "work:integrate-idd-spec-engine",
+      "title": "Integrate IDD and spec engine",
+      "capability": "capability:idd-spec-engine",
+      "layer": "layer:executive-control-plane",
+      "priority": 10,
+      "status": "partial",
+      "change_id": "integrate-idd-spec-engine",
+      "owner_repos": [
+        "repo:handoff",
+        "repo:rusty-idd"
+      ],
+      "anchors": [
+        "Rusty IDD built into handoff"
+      ],
+      "adopt_first_inputs": [],
+      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
+      "validation": [
+        "cargo fmt --all -- --check",
+        "cargo test --workspace --all-features --locked",
+        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+        "cargo audit --deny warnings",
+        "cargo run --bin rusty-idd -- validate --workspace .",
+        "cargo run --bin rusty-idd -- spec validate --all",
+        "just ci",
+        "make ci",
+        "affected CLI smoke tests"
+      ],
+      "rollback": [
+        "Revert the OpenSpec change and generated artifacts for this integration slice",
+        "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
+        "Re-run focused owner-repo tests plus Rusty IDD gates"
+      ]
+    },
     {
       "id": "work:integrate-fleet-handoff",
       "title": "Integrate Central and fleet handoff",
@@ -2505,42 +2520,6 @@
       ]
     },
     {
-      "id": "work:integrate-agent-communication",
-      "title": "Integrate Agent communication layer",
-      "capability": "capability:agent-communication",
-      "layer": "layer:coordination-communication",
-      "priority": 30,
-      "status": "partial",
-      "change_id": "integrate-agent-communication",
-      "owner_repos": [
-        "repo:atc",
-        "repo:handoff",
-        "repo:mcp-hub",
-        "repo:weave"
-      ],
-      "anchors": [
-        "weave agent communication layer"
-      ],
-      "adopt_first_inputs": [],
-      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
-      "validation": [
-        "cargo fmt --all -- --check",
-        "cargo test --workspace --all-features --locked",
-        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
-        "cargo audit --deny warnings",
-        "cargo run --bin rusty-idd -- validate --workspace .",
-        "cargo run --bin rusty-idd -- spec validate --all",
-        "just ci",
-        "make ci",
-        "affected CLI smoke tests"
-      ],
-      "rollback": [
-        "Revert the OpenSpec change and generated artifacts for this integration slice",
-        "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
-        "Re-run focused owner-repo tests plus Rusty IDD gates"
-      ]
-    },
-    {
       "id": "work:integrate-rtk-ai-foundation",
       "title": "Integrate RTK AI foundation",
       "capability": "capability:rtk-ai-foundation",
@@ -2562,47 +2541,6 @@
       ],
       "adopt_first_inputs": [],
       "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
-      "validation": [
-        "cargo fmt --all -- --check",
-        "cargo test --workspace --all-features --locked",
-        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
-        "cargo audit --deny warnings",
-        "cargo run --bin rusty-idd -- validate --workspace .",
-        "cargo run --bin rusty-idd -- spec validate --all",
-        "just ci",
-        "make ci",
-        "affected CLI smoke tests"
-      ],
-      "rollback": [
-        "Revert the OpenSpec change and generated artifacts for this integration slice",
-        "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
-        "Re-run focused owner-repo tests plus Rusty IDD gates"
-      ]
-    },
-    {
-      "id": "work:integrate-github-agent-run-upgrades",
-      "title": "Integrate GitHub agent-run upgrades",
-      "capability": "capability:github-agent-run-upgrades",
-      "layer": "layer:agent-runtime",
-      "priority": 70,
-      "status": "partial",
-      "change_id": "integrate-github-agent-run-upgrades",
-      "owner_repos": [
-        "repo:grit",
-        "repo:yazelix"
-      ],
-      "anchors": [
-        "GRIT from rtk-ai",
-        "Beads mandatory for code contributors through Yazelix",
-        "github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
-        "github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b"
-      ],
-      "adopt_first_inputs": [
-        "Beads mandatory for code contributors through Yazelix",
-        "github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca",
-        "github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b"
-      ],
-      "implementation_boundary": "Adopt upstream repo surface first, run native diagnostics, then add thin Rusty IDD mapping",
       "validation": [
         "cargo fmt --all -- --check",
         "cargo test --workspace --all-features --locked",
@@ -2678,44 +2616,6 @@
         "meta-ruvector full agentic system"
       ],
       "adopt_first_inputs": [],
-      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
-      "validation": [
-        "cargo fmt --all -- --check",
-        "cargo test --workspace --all-features --locked",
-        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
-        "cargo audit --deny warnings",
-        "cargo run --bin rusty-idd -- validate --workspace .",
-        "cargo run --bin rusty-idd -- spec validate --all",
-        "just ci",
-        "make ci",
-        "affected CLI smoke tests"
-      ],
-      "rollback": [
-        "Revert the OpenSpec change and generated artifacts for this integration slice",
-        "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
-        "Re-run focused owner-repo tests plus Rusty IDD gates"
-      ]
-    },
-    {
-      "id": "work:integrate-user-front-door",
-      "title": "Integrate User front door",
-      "capability": "capability:user-front-door",
-      "layer": "layer:front-door-experience",
-      "priority": 100,
-      "status": "partial",
-      "change_id": "integrate-user-front-door",
-      "owner_repos": [
-        "repo:lifeos",
-        "repo:prompt-hub",
-        "repo:ruvector"
-      ],
-      "anchors": [
-        "goose-like chat integration",
-        "LifeOS front door"
-      ],
-      "adopt_first_inputs": [
-        "goose-like chat integration"
-      ],
       "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
       "validation": [
         "cargo fmt --all -- --check",
@@ -2841,6 +2741,40 @@
       ]
     },
     {
+      "id": "work:integrate-personal-automation",
+      "title": "Integrate Personal media and home automation",
+      "capability": "capability:personal-automation",
+      "layer": "layer:interface-automation",
+      "priority": 150,
+      "status": "partial",
+      "change_id": "integrate-personal-automation",
+      "owner_repos": [
+        "repo:lifeos",
+        "repo:oh-my-pi"
+      ],
+      "anchors": [
+        "personal life media TV home automation"
+      ],
+      "adopt_first_inputs": [],
+      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
+      "validation": [
+        "cargo fmt --all -- --check",
+        "cargo test --workspace --all-features --locked",
+        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+        "cargo audit --deny warnings",
+        "cargo run --bin rusty-idd -- validate --workspace .",
+        "cargo run --bin rusty-idd -- spec validate --all",
+        "just ci",
+        "make ci",
+        "affected CLI smoke tests"
+      ],
+      "rollback": [
+        "Revert the OpenSpec change and generated artifacts for this integration slice",
+        "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
+        "Re-run focused owner-repo tests plus Rusty IDD gates"
+      ]
+    },
+    {
       "id": "work:integrate-agent-harness",
       "title": "Integrate Agent harness runtime",
       "capability": "capability:agent-harness",
@@ -2912,6 +2846,50 @@
       ],
       "anchors": [
         "weave plus Obscura domain upgrades"
+      ],
+      "adopt_first_inputs": [],
+      "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",
+      "validation": [
+        "cargo fmt --all -- --check",
+        "cargo test --workspace --all-features --locked",
+        "RUSTDOCFLAGS=\"-D warnings\" cargo doc --workspace --all-features --no-deps --locked",
+        "cargo audit --deny warnings",
+        "cargo run --bin rusty-idd -- validate --workspace .",
+        "cargo run --bin rusty-idd -- spec validate --all",
+        "just ci",
+        "make ci",
+        "affected CLI smoke tests"
+      ],
+      "rollback": [
+        "Revert the OpenSpec change and generated artifacts for this integration slice",
+        "Re-run rusty-idd knowledge refresh, system-architecture, operating-model, plan-context, and manifest",
+        "Re-run focused owner-repo tests plus Rusty IDD gates"
+      ]
+    },
+    {
+      "id": "work:integrate-meta-peer-control",
+      "title": "Integrate Meta peer repo control",
+      "capability": "capability:meta-peer-control",
+      "layer": "layer:executive-control-plane",
+      "priority": 500,
+      "status": "partial",
+      "change_id": "integrate-meta-peer-control",
+      "owner_repos": [
+        "repo:loop-cli",
+        "repo:loop-lib",
+        "repo:meta-cli",
+        "repo:meta-core",
+        "repo:meta-dashboard-cli",
+        "repo:meta-git-cli",
+        "repo:meta-git-lib",
+        "repo:meta-mcp",
+        "repo:meta-plugin-api",
+        "repo:meta-plugin-protocol",
+        "repo:meta-project-cli",
+        "repo:meta-rust-cli"
+      ],
+      "anchors": [
+        "meta peer repo system"
       ],
       "adopt_first_inputs": [],
       "implementation_boundary": "Use OpenSpec change in owning repos with Rusty IDD graph artifacts as planning input",

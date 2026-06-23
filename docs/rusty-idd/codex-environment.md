@@ -292,7 +292,20 @@ Those surfaces do not contradict the active runtime being Rust-native.
 
 Rusty IDD Rust builds must use the parent `meta` / `envctl` Rust environment,
 not user-global or system-depth state. A compliant activation owns all mutable
-Rust toolchain and cache state under the meta root:
+Rust toolchain and cache state under the meta root.
+
+Rusty IDD recognizes two meta-owned Rust layouts:
+
+- `isolated`: CI/bootstrap state under `$META_ROOT/.env/rust`.
+- `toolchains`: local workstation envctl state under
+  `$META_ROOT/.toolchains/{cargo,rustup}`.
+
+GitHub Actions defaults to `isolated`. Local activation defaults to
+`toolchains` when `$META_ROOT/.toolchains/cargo/bin/rustup` and
+`$META_ROOT/.toolchains/rustup` exist. Operators may override the layout with
+`RUSTY_IDD_RUST_LAYOUT=isolated` or `RUSTY_IDD_RUST_LAYOUT=toolchains`.
+
+The CI isolated layout uses:
 
 ```text
 RUSTUP_HOME=$META_ROOT/.env/rust/rustup
@@ -300,6 +313,19 @@ CARGO_HOME=$META_ROOT/.env/rust/cargo
 RUSTC_WRAPPER=$META_ROOT/.env/rust/bin/kache
 # audit cache root: $META_ROOT/.cache/rust/kache
 ```
+
+The local envctl toolchains layout uses:
+
+```text
+RUSTUP_HOME=$META_ROOT/.toolchains/rustup
+CARGO_HOME=$META_ROOT/.toolchains/cargo
+RUSTY_IDD_RUST_BIN=$META_ROOT/.toolchains/cargo/bin
+```
+
+User-global-looking wrappers such as `~/.cargo/bin/cargo` are acceptable only
+when their resolved real path is under `META_ROOT`. Audits must report the
+actual Cargo-executed `rustc` and `cargo` paths, not just the visible wrapper
+or channel label.
 
 The target compiler surface is nightly Rust with `rustc_codegen_gcc` available
 as a runtime backend. The target linker is parent-managed `wild-linker`; mold is
@@ -330,9 +356,12 @@ repository must not repair a missing Rust tool by writing to `~/.rustup`,
 
 GitHub workflows call `scripts/ci/envctl-rust-env.sh` to materialize the
 meta-owned `RUSTUP_HOME`, `CARGO_HOME`, cache root, `wild`, and kache-compatible
-wrapper before running Cargo. Primary CI and promotion verification then call
-`scripts/ci/envctl-rust-audit.sh`, which reports the actual `rustc` and `cargo`
-paths used by Cargo and rejects the sccache path for this implementation.
+wrapper before running Cargo. Local workstation validation can call the same
+script with `RUSTY_IDD_RUST_LAYOUT=toolchains` or rely on auto-detection when
+the envctl `.toolchains` state exists. Primary CI and promotion verification
+then call `scripts/ci/envctl-rust-audit.sh`, which reports the actual `rustc`
+and `cargo` paths used by Cargo and rejects the sccache path for this
+implementation.
 
 ## Tool Installation
 
