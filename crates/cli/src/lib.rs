@@ -66,6 +66,12 @@ enum Command {
     /// `--check` them as a fail-closed drift gate (ADR-0010/0015).
     Render(commands::render::RenderArgs),
 
+    /// Deploy the thin-adapter control-plane surface (adapter + SessionStart
+    /// `rusty-idd next` hook) into a target fleet repo; `--check` is a
+    /// fail-closed drift gate (ADR-0017). Additive; never mutates the target
+    /// repo's own forge loop or runtime.
+    Deploy(commands::deploy::DeployArgs),
+
     /// Headless task runner for an OpenSpec change (no interactive UI).
     Run(commands::run::RunArgs),
 
@@ -116,6 +122,7 @@ fn dispatch(command: Command) -> i32 {
         Command::Spec(cmd) => commands::spec::run(cmd),
         Command::Next(args) => commands::next::run(args),
         Command::Render(args) => commands::render::run(args),
+        Command::Deploy(args) => commands::deploy::run(args),
         Command::Run(args) => commands::run::run(args),
         Command::Knowledge(cmd) => commands::knowledge::run(cmd),
         Command::Codex(cmd) => commands::codex::run(cmd),
