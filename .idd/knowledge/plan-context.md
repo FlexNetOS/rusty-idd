@@ -1,141 +1,308 @@
 # Graph Planning Context
 
-- Change: `add-verify-package-stage`
-- Goal: # Goal: Add Rusty IDD `/verify` Package Stage
+- Goal: # add-self-upgrade-governor
 
-## Step 1: Start With The Rusty IDD CLI
-
-Create or select the task-scoped verification package from Rusty IDD, not from
-an always-loaded `.codex` prompt body:
+## Step 1: Run This Goal Through Rusty IDD
 
 ```bash
-rusty-idd harness package \
-  --stage verify \
-  --target . \
-  --goal-file <goal.md> \
-  --task-file <task.md> \
-  --plan-file <plan.md> \
-  --format markdown
+rusty-idd --goal-file .idd/goals/add-self-upgrade-governor.md
 ```
 
-The CLI package is the source of truth. `/verify` for Codex or any other model
-is only a minimal adapter that loads and follows this package.
-
-## Original Strategy Response To Materialize
-
-Using `rusty-idd-codex-rust-env` as the frame: yes, `/verify` should be a thin
-Codex adapter that delegates to a Rusty IDD `verify` package. The prompt should
-not contain the full checklist. It should say: "load the task-scoped Rusty IDD
-verify package, then execute it against this completed task."
-
-### Core Shape
-
-Make this the next package stage:
+If the active CLI surface requires a subcommand for goal binding, use the same
+goal file as the input to the Rusty IDD planning command:
 
 ```bash
-rusty-idd harness package \
-  --stage verify \
-  --target . \
-  --goal-file <goal.md> \
-  --task-file <task.md> \
-  --plan-file <plan.md> \
-  --format markdown
+rusty-idd knowledge plan-context \
+  --workspace . \
+  --out .idd/knowledge/plan-context.md \
+  --goal-file .idd/goals/add-self-upgrade-governor.md
 ```
 
-Then `/verify` becomes a small repo prompt:
+## Goal
+
+Create a first-class Rusty IDD self-upgrade governor workflow from the approved
+brainstorm below. The always-on harness must remain small. Rusty IDD must own
+the task-scoped packages, candidate-goal generation, lifecycle gates,
+verification, publishing, and learning loop.
+
+## Approved Brainstorm To Execute
+
+Yes. The path is not "one infinite agent with every tool loaded." It is a
+bounded renewable Rusty IDD loop: each cycle discovers work, writes one narrow
+goal, generates the right task-scoped package, runs it through OpenSpec,
+executes one PR, verifies hard, merges, then starts the next cycle from the new
+repo truth.
+
+The repo already has several pieces:
+
+- `rusty-idd knowledge` gives graph/context artifacts.
+- `rusty-idd spec status/next` gives lifecycle gates.
+- `rusty-idd run` can drive OpenSpec tasks.
+- `.codex/loops/rusty-idd-model-loop.toml` already defines read-only
+  explore/gap/verify passes.
+- `.codex/agents/*` already splits explorer, gap-hunter, verifier,
+  implementer roles.
+- `codex workflow-check` already enforces active-change, validation, and PR
+  evidence.
+- `merge-tools` is already a Rusty IDD-owned package model for one workflow
+  family.
+
+What is missing is the self-upgrade governor.
+
+## Core Idea
+
+Rusty IDD should own a first-class command family something like:
+
+```bash
+rusty-idd self-upgrade scan
+rusty-idd self-upgrade propose
+rusty-idd self-upgrade goal
+rusty-idd self-upgrade package
+rusty-idd self-upgrade run
+rusty-idd self-upgrade verify
+rusty-idd self-upgrade publish
+rusty-idd self-upgrade next
+```
+
+The always-on harness stays tiny. It only says: "Ask Rusty IDD for the next
+scoped package." Rusty IDD does the real routing.
+
+The loop should look like this:
 
 ```text
-Run post-task verification through Rusty IDD, not through this prompt body.
-
-1. Load the Rusty IDD verify package:
-   rusty-idd harness package --stage verify --target . --goal-file <goal> --task-file <task> --plan-file <plan> --format markdown
-
-2. Follow that package exactly.
-3. Produce a verification report with pass/fail findings, evidence, unresolved questions, and rollback risk.
-4. Do not invent extra always-loaded .codex skills/tools. If capability is missing, report the missing Rusty IDD package capability.
+repo truth
+  -> scan
+  -> opportunity graph
+  -> candidate goals
+  -> architecture/design reasoning
+  -> goal file
+  -> OpenSpec change
+  -> task-scoped package
+  -> implementation
+  -> exhaustive verify
+  -> PR/merge
+  -> ICM + knowledge refresh
+  -> next goal
 ```
 
-### Verify Package Contents
+## How Rusty IDD Writes Its Own Goals
 
-The Rusty IDD `verify` package should include:
+It should not let a model free-write arbitrary goals directly into execution.
+Instead, use a typed pipeline:
 
-- `agent_team`: verifier, diff-auditor, test-runner, evidence-checker,
-  goal-comparator, graph-checker, icm-checker, risk-reviewer.
-- `contracts`: original request contract, plan/task contract, implementation
-  diff contract, evidence contract, adapter-boundary contract.
-- `tools`: `git diff`, `git status`, `rusty-idd validate`,
-  `rusty-idd manifest`, `rusty-idd knowledge plan-context`,
-  `rusty-idd spec status`, test/lint/build gates, ICM recall/context compare.
-- `helpers`: goal normalization, task checklist extraction, changed-file
-  classifier, risk matrix builder.
-- `hooks`: pre-verify snapshot, post-verify evidence write, manifest freshness
-  check.
-- `validation_gates`: goal matched, all tasks satisfied, tests appropriate,
-  generated artifacts fresh, no stale evidence, no unrelated regression,
-  rollback path present.
-- `evidence_schema`: findings, commands run, diff summary, test results,
-  graph/knowledge comparison, ICM comparison, unanswered questions, pass/fail
-  verdict.
-
-### What `/verify` Must Check
-
-Define verification as exhaustive but bounded:
-
-1. Compare final work against original user goal/request.
-2. Compare against task card, OpenSpec tasks, ADR/design notes, and plan.
-3. Inspect full diff and classify each changed file.
-4. Run focused tests, then broaden based on blast radius.
-5. Run Rusty IDD gates: spec status, validate, manifest, workflow-check where
-   applicable.
-6. Refresh or compare knowledge graphs and report drift.
-7. Query ICM for relevant prior decisions/preferences and compare against
-   implementation.
-8. Check PR/evidence completeness: build, test, lint, secret scan, migration
-   note, rollback.
-9. Produce a findings-first report: blockers, risks, missing evidence, then
-   pass summary.
-10. Queue unresolved questions separately instead of burying them in prose.
-
-### Preferred Implementation Path
-
-Implement this in two slices:
-
-1. Add `--stage verify` to `rusty-idd harness package`.
-   This gives Codex, Claude, Kimi, or any model the same task-scoped
-   verification contract without expanding `.codex`.
-
-2. Add the tiny `/verify` adapter prompt.
-   The prompt only loads the package and instructs the model to obey it. No
-   giant checklist in `.codex`.
-
-Later, if useful, add:
-
-```bash
-rusty-idd verify run --target . --goal-file ... --task-file ... --plan-file ...
+```text
+Finding
+  -> Opportunity
+  -> Hypothesis
+  -> CandidateGoal
+  -> GoalReview
+  -> ApprovedGoal
+  -> OpenSpecChange
+  -> Package
 ```
 
-Do not start there. First make the package authoritative; then make execution
-native once the package shape proves itself.
+Example:
 
-## Required Workflow Artifact Order
+```text
+Finding:
+  "The verify package exists as docs/goal artifacts but has no first-class CLI package command."
 
-1. Recall ICM context for `/verify`, harness packages, tool overflow, and the
-   task-scoped adapter boundary.
-2. Create a fresh worktree from `origin/develop`.
-3. Create this goal file under `.idd/goals/`.
-4. Create or select the OpenSpec change `add-verify-package-stage`.
-5. Generate graph-backed plan context for this goal.
-6. Create proposal, design, spec delta, ADR, and task artifacts.
-7. Record `.idd/workflow/active-change`.
-8. Verify OpenSpec status.
-9. Implement the Rust-owned `verify` package stage.
-10. Add the thin `/verify` adapter only after package generation exists.
-11. Run focused tests and broaden by blast radius.
-12. Refresh `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, validation, and evidence.
-13. Commit, push, open a PR to `develop`, and enable auto-merge when green.
-- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/scoped-agent-swarm-packages`
+Opportunity:
+  "Promote verify package from documented workflow to executable Rusty IDD package."
+
+Hypothesis:
+  "A first-class verify package reduces copy/paste prompts and improves post-task quality."
+
+CandidateGoal:
+  "Add `rusty-idd harness package --stage verify` that emits contracts, agents, tools, evidence schema, and gates."
+
+GoalReview:
+  risk: medium
+  blast_radius: cli + docs + tests
+  package: verify
+  requires_human: false if docs/CLI only; true if changing merge policy
+
+ApprovedGoal:
+  saved under `.idd/goals/...`
+
+OpenSpecChange:
+  proposal/design/spec/ADR/tasks generated in order.
+```
+
+That gives self-authored goals without letting the loop become sloppy.
+
+## The Endless Loop Should Be Two Loops
+
+Split it:
+
+```text
+1. Discovery Loop: endless, read-only, cheap
+2. Delivery Loop: finite, write-capable, one goal/PR at a time
+```
+
+The discovery loop can run forever because it only produces ranked candidate
+goals. The delivery loop must always terminate:
+
+- one active goal
+- one worktree
+- one OpenSpec change
+- one PR
+- one merge or one blocked handoff
+- no hidden background mutation
+
+That prevents agent soup.
+
+## Package Types To Add First
+
+Create Rusty IDD-owned packages in this order:
+
+1. `scan` package
+
+   Finds stale artifacts, missing specs, workflow gaps, CI drift, code
+   hotspots, orphaned work, toolchain risk.
+
+2. `goal` package
+
+   Converts findings into candidate goals with risk score, blast radius, owner
+   boundary, evidence, and suggested OpenSpec slug.
+
+3. `design` package
+
+   Forces architecture reasoning before implementation. Reads ADRs, OpenSpec,
+   `.idd/knowledge`, current code, and prior ICM.
+
+4. `implement` package
+
+   The only write-capable package. Must require ready OpenSpec status.
+
+5. `verify` package
+
+   Exhaustive post-task verifier: original request vs goal vs plan vs diff vs
+   tests vs graph vs ICM vs PR evidence.
+
+6. `publish` package
+
+   Commit, push, PR, CI wait with useful parallel work, merge, sync, cleanup.
+
+7. `learn` package
+
+   Stores durable ICM lessons, updates knowledge artifacts, feeds the next
+   discovery cycle.
+
+## The Self-Upgrade Governor
+
+This is the missing component. Name it something like `crates/self-upgrade` or
+`crates/governor`.
+
+It owns:
+
+```text
+Queue:
+  candidate goals, approved goals, blocked goals, completed goals
+
+Policy:
+  what can run automatically
+  what requires user approval
+  max risk per cycle
+  max file blast radius
+  max session duration
+  max parallel agents
+
+Scoring:
+  correctness impact
+  workflow friction removed
+  compile/test speed impact
+  verification quality
+  token/context savings
+  user-stated priority
+
+State:
+  last scan
+  last completed PR
+  active worktree
+  active change
+  current package
+  verification result
+```
+
+## Important Safety Rule
+
+Do not build a true unbounded write loop. Build an endless read/recommend loop
+plus a bounded approve/run/publish loop.
+
+Auto-run can be allowed for low-risk categories:
+
+```text
+Allowed auto goals:
+  stale generated artifact refresh
+  docs/spec consistency repair
+  missing validation evidence
+  narrow CLI package emission
+  test fixture repair
+  workflow prompt/package scaffolding
+
+Require approval:
+  dependency upgrades
+  architecture boundary changes
+  toolchain changes
+  auth/secrets/env behavior
+  deletion/removal
+  cross-repo mutation
+  CI policy changes
+```
+
+## Preferred Path
+
+Start with one vertical slice:
+
+```text
+Goal: Add Rusty IDD self-upgrade discovery package.
+
+It should:
+  1. scan repo truth
+  2. produce candidate goals
+  3. rank them
+  4. write no code by default
+  5. emit a `rusty-idd --goal-file ...` ready artifact
+  6. route the chosen candidate into the existing OpenSpec flow
+```
+
+Then the next goal can be generated by the new system itself: "Promote candidate
+goal into OpenSpec scaffolding."
+
+That is the bootstrap moment. After that, Rusty IDD starts feeding itself
+clean, scoped goals instead of relying on giant always-loaded harness prompts.
+
+The north star:
+
+```text
+Codex asks: "What package do I need for this goal?"
+Rusty IDD answers with a scoped package.
+The package produces evidence.
+The evidence produces the next goal.
+The loop continues, but every write is still reviewable, typed, gated, and PR-shaped.
+```
+
+That is how Rusty IDD gets full-auto self-upgrade without turning the harness
+into a token furnace.
+
+## First Downstream Test Target
+
+After this goal-artifact pass is complete, the first test target must be Rusty
+IDD feature integrations and automations:
+
+- What is the real integration between Rusty IDD, handoff, and prompt_hub?
+- Where is the autonomous flow?
+- How are the handoff kernel, handoff CLI, and prompt_hub CLI integrated?
+- What is the directory structure?
+- How do other repos initiate, build the proper directory structure, and sync?
+
+This goal file records that target for the next cycle. Do not research or
+implement that target until the self-upgrade governor goal artifacts are
+created and validated.
+- Workspace root: `/home/drdave/Desktop/meta/rusty-idd/.worktrees/self-upgrade-governor-goal`
 - Source graph: 141 files, 8824 nodes, 36372 edges via `codegraph-rust`
-- Context package: 335 files, 729750 tokens via `repomix-rs`
+- Context package: 346 files, 735722 tokens via `repomix-rs`
 
 ## Automation Order
 
@@ -163,9 +330,9 @@ native once the package shape proves itself.
 | `spec` | crate | 24 | 461 | 1969 | crates/spec/src/adr/mod.rs, crates/spec/src/archive/mod.rs, crates/spec/src/lib.rs, crates/spec/src/model/block.rs, crates/spec/src/model/delta.rs, crates/spec/src/model/merge.rs, crates/spec/src/model/mod.rs, crates/spec/src/model/requirement.rs, crates/spec/src/model/spec.rs, crates/spec/src/parse/common.rs, crates/spec/src/parse/delta_parser.rs, crates/spec/src/parse/emit.rs |
 | `codegraph-core` | external_crate | 39 | 1918 | 9070 | crates/external/codegraph-core/benches/core_micro.rs, crates/external/codegraph-core/src/advanced_config.rs, crates/external/codegraph-core/src/arena.rs, crates/external/codegraph-core/src/buffer_pool.rs, crates/external/codegraph-core/src/cli_config.rs, crates/external/codegraph-core/src/compression.rs, crates/external/codegraph-core/src/config.rs, crates/external/codegraph-core/src/config_manager.rs, crates/external/codegraph-core/src/embedding_config.rs, crates/external/codegraph-core/src/error.rs, crates/external/codegraph-core/src/incremental/mod.rs, crates/external/codegraph-core/src/incremental/updater.rs |
 | `merge-tools` | crate | 1 | 45 | 234 | crates/merge-tools/src/lib.rs |
-| `runner` | crate | 4 | 770 | 3135 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
-| `knowledge` | crate | 1 | 639 | 4653 | crates/knowledge/src/lib.rs |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | crates/external/repomix-shared/src/lib.rs, crates/external/repomix-shared/src/types.rs |
+| `knowledge` | crate | 1 | 639 | 4653 | crates/knowledge/src/lib.rs |
+| `runner` | crate | 4 | 770 | 3135 | crates/runner/src/config.rs, crates/runner/src/data.rs, crates/runner/src/lib.rs, crates/runner/src/runner.rs |
 | `tui` | crate | 3 | 1006 | 3985 | crates/tui/src/app.rs, crates/tui/src/lib.rs, crates/tui/src/ui.rs |
 
 ## System Roles
@@ -190,24 +357,24 @@ native once the package shape proves itself.
 |---|---|---|---|---|
 | `rusty-idd` | `` | false | role:agent-environment, role:fleet-handoff, role:idd-control-plane, role:rust-code-surface | 139 files, 8697 nodes, 35719 edges; 720698 tokens; surfaces 4; top: codegraph-core, codegraph-parser, knowledge |
 | `prompt_hub` | `main` | true | role:agent-environment, role:capability-hub, role:fleet-handoff, role:rust-code-surface, role:spec-producer |  |
-| `agent` | `main` | false | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
 | `ruvector` | `develop` | true | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
 | `lane` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `network-control` | `develop` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `envctl` | `master` | true | role:fleet-handoff, role:rust-code-surface, role:toolchain-provider |  |
-| `icm` | `fix/containment-claude-p-recursion` | false | role:agent-environment, role:knowledge-memory, role:rust-code-surface |  |
+| `network-control` | `develop` | false | role:fleet-handoff, role:rust-code-surface |  |
+| `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
+| `agent` | `main` | false | role:agent-environment, role:fleet-handoff, role:rust-code-surface |  |
+| `obscura` | `main` | false | role:agent-environment, role:domain-upgrade-surface, role:rust-code-surface |  |
 | `kasetto` | `main` | false | role:agent-environment, role:rust-code-surface |  |
 | `rtk-tokenkill` | `develop` | false | role:agent-environment, role:rust-code-surface |  |
-| `weave` | `develop` | false | role:agent-environment, role:coordination-domain-surface, role:fleet-handoff, role:rust-code-surface |  |
-| `atc` | `main` | false | role:agent-environment, role:coordination-domain-surface, role:rust-code-surface |  |
-| `obscura` | `main` | false | role:agent-environment, role:domain-upgrade-surface, role:rust-code-surface |  |
+| `yazelix` | `main` | false | role:parser-runtime-surface, role:toolchain-provider |  |
+| `icm` | `fix/containment-claude-p-recursion` | false | role:agent-environment, role:knowledge-memory, role:rust-code-surface |  |
+| `meta_git_lib` | `chore/indicatif-0.18-rustsec-2025-0119` | false | role:fleet-handoff, role:meta-control-plane, role:rust-code-surface |  |
 | `ECC` | `main` | false | role:agent-environment, role:fleet-handoff |  |
+| `loop_cli` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
+| `flexnetos_runner` | `chore/handoff-tier-a-pilot` | false | role:fleet-handoff, role:rust-code-surface |  |
 | `github_org` | `fix/autonomous-feature-develop-approval` | false | role:agent-environment, role:fleet-handoff |  |
 | `lifeos` | `main` | false | role:fleet-handoff, role:rust-code-surface |  |
-| `yazelix` | `main` | false | role:parser-runtime-surface, role:toolchain-provider |  |
-| `Archon` | `dev` | false | role:agent-environment |  |
-| `n8n` | `develop` | false | role:agent-environment |  |
-| `ruflo` | `main` | true | role:agent-environment |  |
+| `loop_lib` | `main` | false | role:meta-control-plane, role:rust-code-surface |  |
 
 ## Operating Layers
 
@@ -216,7 +383,6 @@ native once the package shape proves itself.
 - `Environment and security`: Vault, key relay, certificates, and parent-managed toolchains (1 capabilities, 3 repos)
 - `Executive control plane`: Company-level command, OpenSpec, handoff, and repo governance (2 capabilities, 14 repos)
 - `Front door experience`: Prompt, chat, LifeOS, and operator-facing user experience surfaces (2 capabilities, 3 repos)
-- `Governance and reasoning`: Board-style reasoning, strategy, and policy without direct execution (1 capabilities, 5 repos)
 - `Infrastructure and device fabric`: Network control plus distributed device compute, storage, inference, and memory (2 capabilities, 5 repos)
 - `Interface automation`: AR-glasses workflow, local automation, media, and home interfaces (2 capabilities, 3 repos)
 - `Knowledge and runtime`: Memory, vector/progress databases, inference, training, and runtime state (1 capabilities, 4 repos)
@@ -227,23 +393,23 @@ native once the package shape proves itself.
 
 | Capability | Layer | Status | Repos | Anchors |
 |---|---|---|---|---|
-| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:obscura, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
 | `IDD and spec engine` | `layer:executive-control-plane` | partial | repo:handoff, repo:rusty-idd | Rusty IDD built into handoff |
+| `Agent harness runtime` | `layer:agent-runtime` | partial | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:obscura, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave | harness-agent-rs rust port |
 | `Central and fleet handoff` | `layer:coordination-communication` | partial | repo:agent, repo:ecc, repo:envctl, repo:flexnetos-runner, repo:github-org, repo:handoff, repo:harness-hub, repo:lane, repo:lifeos, repo:meta-git-lib, repo:network-control, repo:prompt-hub, repo:rusty-idd, repo:ruvector, repo:teri, repo:weave | handoff central and fleet design |
-| `Meta peer repo control` | `layer:executive-control-plane` | partial | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli | meta peer repo system |
-| `Lua and AR interface automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi, repo:yazelix | Lua required for AR glasses workflow, Brilliant Labs Noa style Rust-native agent UX |
-| `Digital twin simulation` | `layer:simulation-validation` | partial | repo:teri | Teri digital twin simulator |
 | `GitHub agent-run upgrades` | `layer:agent-runtime` | partial | repo:grit, repo:yazelix | GRIT from rtk-ai, Beads mandatory for code contributors through Yazelix, github.com/Dicklesworthstone/beads_rust@2d824a8deaa203d64326849d86f8e6d4a9c24eca, github.com/delightful-ai/beads-rs@d98da231d068acbadcdcd2262971c561de86132b |
 | `Prompt front door` | `layer:front-door-experience` | partial | repo:prompt-hub | github.com/f/prompts.chat, github.com/f/ai-prompt, prompt_hub front door to handoff and rusty-idd |
-| `Distributed device fabric` | `layer:infrastructure-device-fabric` | partial | repo:envctl, repo:network-control, repo:oh-my-pi | user devices for distributed compute storage inference memory |
-| `Parser and terminal runtime` | `layer:toolchain-parser-runtime` | partial | repo:rusty-idd, repo:tool-hub, repo:yazelix | tree-sitter via Yazelix, Yazelix default terminal, nushell, Lua, Ghostty, Zellij |
-| `Vector and agentic runtime` | `layer:knowledge-runtime` | partial | repo:database-hub, repo:icm, repo:obsidian-mind, repo:ruvector | meta-ruvector full agentic system |
-| `Environment and vault relay` | `layer:environment-security` | partial | repo:envctl, repo:vault-hub, repo:yazelix | /run/media/drdave/COGNITUM, Cognitum vault on Pi Zero |
+| `Digital twin simulation` | `layer:simulation-validation` | partial | repo:teri | Teri digital twin simulator |
+| `Meta peer repo control` | `layer:executive-control-plane` | partial | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli | meta peer repo system |
 | `User front door` | `layer:front-door-experience` | partial | repo:lifeos, repo:prompt-hub, repo:ruvector | goose-like chat integration, LifeOS front door |
-| `RTK AI foundation` | `layer:toolchain-parser-runtime` | partial | repo:grit, repo:icm, repo:rtk-tokenkill, repo:vox | RTK from rtk-ai, ICM from rtk-ai, VOX from rtk-ai, GRIT from rtk-ai |
 | `Network engineering and control` | `layer:infrastructure-device-fabric` | partial | repo:lane, repo:network-control, repo:network-hub | lane merges into network-manager |
+| `Lua and AR interface automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi, repo:yazelix | Lua required for AR glasses workflow, Brilliant Labs Noa style Rust-native agent UX |
+| `Vector and agentic runtime` | `layer:knowledge-runtime` | partial | repo:database-hub, repo:icm, repo:obsidian-mind, repo:ruvector | meta-ruvector full agentic system |
+| `RTK AI foundation` | `layer:toolchain-parser-runtime` | partial | repo:grit, repo:icm, repo:rtk-tokenkill, repo:vox | RTK from rtk-ai, ICM from rtk-ai, VOX from rtk-ai, GRIT from rtk-ai |
+| `Parser and terminal runtime` | `layer:toolchain-parser-runtime` | partial | repo:rusty-idd, repo:tool-hub, repo:yazelix | tree-sitter via Yazelix, Yazelix default terminal, nushell, Lua, Ghostty, Zellij |
+| `Distributed device fabric` | `layer:infrastructure-device-fabric` | partial | repo:envctl, repo:network-control, repo:oh-my-pi | user devices for distributed compute storage inference memory |
+| `Environment and vault relay` | `layer:environment-security` | partial | repo:envctl, repo:vault-hub, repo:yazelix | /run/media/drdave/COGNITUM, Cognitum vault on Pi Zero |
+| `Domain upgrade path` | `layer:coordination-communication` | partial | repo:obscura, repo:weave | weave plus Obscura domain upgrades |
 | `Agent communication layer` | `layer:coordination-communication` | partial | repo:atc, repo:handoff, repo:mcp-hub, repo:weave | weave agent communication layer |
-| `Board reasoning layer` | `layer:governance-reasoning` | partial | repo:flexnetos-brain, repo:flexnetos-wiki, repo:icm, repo:my-wiki, repo:obsidian-mind | company hierarchy board layer |
 | `Personal media and home automation` | `layer:interface-automation` | partial | repo:lifeos, repo:oh-my-pi | personal life media TV home automation |
 
 ## Integration Work
@@ -261,7 +427,7 @@ native once the package shape proves itself.
 | 130 | `Integrate Distributed device fabric` | `integrate-distributed-device-fabric` | repo:envctl, repo:network-control, repo:oh-my-pi |  |
 | 140 | `Integrate Lua and AR interface automation` | `integrate-lua-ar-interface` | repo:lifeos, repo:oh-my-pi, repo:yazelix |  |
 | 500 | `Integrate Agent harness runtime` | `integrate-agent-harness` | repo:agent, repo:agent-skills, repo:archon, repo:atc, repo:claude-code, repo:claude-plugin, repo:claude-plugins, repo:codex, repo:copilot-plugin, repo:ecc, repo:flexnetos-runner, repo:github-org, repo:harness-hub, repo:hermes-agent, repo:icm, repo:kasetto, repo:n8n, repo:obscura, repo:oh-my-claudecode, repo:oh-my-pi, repo:prompt-hub, repo:rtk-tokenkill, repo:ruflo, repo:rusty-idd, repo:ruvector, repo:weave |  |
-| 500 | `Integrate Meta peer repo control` | `integrate-meta-peer-control` | repo:loop-cli, repo:loop-lib, repo:meta-cli, repo:meta-core, repo:meta-dashboard-cli, repo:meta-git-cli, repo:meta-git-lib, repo:meta-mcp, repo:meta-plugin-api, repo:meta-plugin-protocol, repo:meta-project-cli, repo:meta-rust-cli |  |
+| 500 | `Integrate Domain upgrade path` | `integrate-domain-upgrade` | repo:obscura, repo:weave |  |
 
 ## Planning Guidance
 
@@ -276,5 +442,5 @@ native once the package shape proves itself.
 ## Findings
 
 - system context selected 13 roles and 20 repos from 65 discovered repos
-- operating context selected 11 layers and 18 capabilities from 19 generated capabilities
+- operating context selected 10 layers and 18 capabilities from 19 generated capabilities
 - integration context selected 12 work items from 19 generated work items
