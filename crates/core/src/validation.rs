@@ -85,6 +85,7 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
         &mut findings,
     );
 
+    let secret_allowlist = load_secret_allowlist(root);
     for abs in stable_walk(root).map_err(|e| format!("walk failed: {e}"))? {
         let rel = relative_path(root, &abs);
         if validation_scan_should_skip(&rel) {
@@ -95,7 +96,9 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
         if content.is_empty() {
             continue;
         }
-        scan_secret_patterns(&rel, &content, &mut findings);
+        if !is_secret_allowlisted(&rel, &secret_allowlist) {
+            scan_secret_patterns(&rel, &content, &mut findings);
+        }
         if is_github_workflow(&rel) {
             scan_workflow_risks(&rel, &content, &mut findings);
             scan_workflow_policy(&rel, &content, &mut findings);
@@ -145,6 +148,28 @@ fn require_file(root: &Path, rel: &str, findings: &mut Vec<ValidationFinding>) {
 
 fn validation_scan_should_skip(rel: &str) -> bool {
     rel.contains(".git/") || rel.starts_with("target/") || rel.starts_with("third_party/upstream/")
+}
+
+/// Load secret-scan allowlist entries from `.idd/secret-allowlist.txt` (one path
+/// substring per line; `#` comments and blanks ignored). A file whose relative
+/// path contains any entry is exempt from secret-pattern findings — used to
+/// allowlist placeholder/detection-regex/test-fixture matches (e.g. a secret-
+/// DETECTION module's own regexes), NOT to skip scanning for real secrets
+/// elsewhere. Returns an empty list if the file is absent.
+fn load_secret_allowlist(root: &Path) -> Vec<String> {
+    std::fs::read_to_string(root.join(".idd/secret-allowlist.txt"))
+        .map(|s| {
+            s.lines()
+                .map(str::trim)
+                .filter(|l| !l.is_empty() && !l.starts_with('#'))
+                .map(ToOwned::to_owned)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn is_secret_allowlisted(rel: &str, allowlist: &[String]) -> bool {
+    allowlist.iter().any(|entry| rel.contains(entry.as_str()))
 }
 
 fn flag_committed_env_file(file: &str, findings: &mut Vec<ValidationFinding>) {
@@ -561,6 +586,21 @@ mod tests {
         flag_committed_env_file(".env.production", &mut findings);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, FindingSeverity::Critical);
+    }
+
+    #[test]
+    fn secret_allowlist_exempts_listed_placeholder_files() {
+        // An allowlisted detection-module/test-fixture path is exempt; other
+        // files are still scanned (allowlist exempts placeholders, not real
+        // secrets elsewhere).
+        let allow = vec!["imports/prompt_hub/prompt-hub/src/privacy.rs".to_string()];
+        assert!(is_secret_allowlisted(
+            "imports/prompt_hub/prompt-hub/src/privacy.rs",
+            &allow
+        ));
+        assert!(!is_secret_allowlisted("crates/cli/src/lib.rs", &allow));
+        // Empty allowlist exempts nothing.
+        assert!(!is_secret_allowlisted("anything.rs", &[]));
     }
 
     #[test]

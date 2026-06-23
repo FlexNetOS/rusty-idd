@@ -5,10 +5,12 @@
   "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
   "source_graph": {
     "provider": "codegraph-rust",
-    "files": 149,
-    "nodes": 9210,
-    "edges": 37690,
+    "files": 385,
+    "nodes": 25062,
+    "edges": 90574,
     "languages": [
+      "javascript",
+      "python",
       "rust"
     ],
     "hotspots": 20,
@@ -17,7 +19,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 312,
-    "tokens": 179926,
+    "tokens": 180013,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -285,30 +287,173 @@
   ],
   "focus_components": [
     {
+      "id": "repo:imports",
+      "name": "imports",
+      "kind": "repo_surface",
+      "files": 236,
+      "nodes": 14297,
+      "edges": 55380,
+      "languages": [
+        "JavaScript",
+        "Python",
+        "Rust",
+        "javascript",
+        "python",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 14041,
+          "name": "clone",
+          "file": "imports/prompt_hub/prompt-hub/src/chaos_auto.rs",
+          "line_start": 73,
+          "line_end": 79,
+          "score": 13664,
+          "reasons": [
+            "1366 graph links",
+            "1364 call links",
+            "1 unresolved calls"
+          ]
+        },
+        {
+          "node_id": 14741,
+          "name": "collect",
+          "file": "imports/prompt_hub/prompt-hub/src/garbage_collector.rs",
+          "line_start": 66,
+          "line_end": 108,
+          "score": 4826,
+          "reasons": [
+            "43 lines",
+            "479 graph links",
+            "475 call links",
+            "3 unresolved calls"
+          ]
+        },
+        {
+          "node_id": 11974,
+          "name": "main",
+          "file": "imports/handoff/hf/src/main.rs",
+          "line_start": 3216,
+          "line_end": 3573,
+          "score": 4185,
+          "reasons": [
+            "358 lines",
+            "372 graph links",
+            "371 call links",
+            "10 unresolved calls",
+            "cyclomatic complexity 21"
+          ]
+        },
+        {
+          "node_id": 21732,
+          "name": "create_router",
+          "file": "imports/prompt_hub/prompthub-server/src/server.rs",
+          "line_start": 23,
+          "line_end": 428,
+          "score": 2958,
+          "reasons": [
+            "406 lines",
+            "254 graph links",
+            "250 call links",
+            "12 unresolved calls"
+          ]
+        },
+        {
+          "node_id": 10702,
+          "name": "build_hf_args",
+          "file": "imports/handoff/hf/src/bin/hf-mcp.rs",
+          "line_start": 265,
+          "line_end": 512,
+          "score": 2893,
+          "reasons": [
+            "248 lines",
+            "257 graph links",
+            "248 call links",
+            "2 unresolved calls",
+            "cyclomatic complexity 33"
+          ]
+        },
+        {
+          "node_id": 9675,
+          "name": "new",
+          "file": "imports/handoff/crates/tui/src/app.rs",
+          "line_start": 114,
+          "line_end": 148,
+          "score": 2610,
+          "reasons": [
+            "35 lines",
+            "259 graph links",
+            "254 call links",
+            "4 unresolved calls"
+          ]
+        },
+        {
+          "node_id": 20956,
+          "name": "into_response",
+          "file": "imports/prompt_hub/prompthub-server/src/responses.rs",
+          "line_start": 59,
+          "line_end": 62,
+          "score": 2267,
+          "reasons": [
+            "227 graph links",
+            "225 call links",
+            "1 unresolved calls"
+          ]
+        },
+        {
+          "node_id": 8952,
+          "name": "implementation_loop",
+          "file": "imports/handoff/crates/runner/src/runner.rs",
+          "line_start": 428,
+          "line_end": 769,
+          "score": 2042,
+          "reasons": [
+            "342 lines",
+            "155 graph links",
+            "142 call links",
+            "11 unresolved calls",
+            "cyclomatic complexity 52"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "imports/handoff/crates/cli/src/commands/core.rs",
+        "imports/handoff/crates/cli/src/commands/mod.rs",
+        "imports/handoff/crates/cli/src/commands/run.rs",
+        "imports/handoff/crates/cli/src/commands/spec.rs",
+        "imports/handoff/crates/cli/src/commands/spec_adr.rs",
+        "imports/handoff/crates/cli/src/commands/spec_archive.rs",
+        "imports/handoff/crates/cli/src/commands/spec_scaffold.rs",
+        "imports/handoff/crates/cli/src/commands/spec_status.rs",
+        "imports/handoff/crates/cli/src/commands/tui.rs",
+        "imports/handoff/crates/cli/src/lib.rs",
+        "imports/handoff/crates/cli/src/main.rs",
+        "imports/handoff/crates/cli/tests/archive_cli.rs"
+      ]
+    },
+    {
       "id": "crate:cli",
       "name": "cli",
       "kind": "crate",
       "files": 34,
       "nodes": 1371,
-      "edges": 5896,
+      "edges": 6078,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 371,
-          "name": "try_run",
-          "file": "crates/cli/src/commands/knowledge.rs",
-          "line_start": 255,
-          "line_end": 516,
-          "score": 1356,
+          "node_id": 966,
+          "name": "ok",
+          "file": "crates/cli/tests/deploy_cli.rs",
+          "line_start": 19,
+          "line_end": 29,
+          "score": 1757,
           "reasons": [
-            "262 lines",
-            "100 graph links",
-            "97 call links",
-            "13 unresolved calls",
-            "cyclomatic complexity 19"
+            "176 graph links",
+            "173 call links",
+            "1 unresolved calls"
           ]
         }
       ],
@@ -332,8 +477,8 @@
       "name": "core",
       "kind": "crate",
       "files": 12,
-      "nodes": 448,
-      "edges": 2479,
+      "nodes": 450,
+      "edges": 2416,
       "languages": [
         "Rust",
         "rust"
@@ -360,54 +505,24 @@
       "kind": "external_crate",
       "files": 39,
       "nodes": 1918,
-      "edges": 9070,
+      "edges": 9101,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 3558,
+          "node_id": 3560,
           "name": "visit_dir",
           "file": "crates/external/codegraph-core/src/watch/mod.rs",
           "line_start": 247,
           "line_end": 258,
-          "score": 2022,
+          "score": 2025,
           "reasons": [
             "198 graph links",
             "194 call links",
-            "14 unresolved calls",
+            "15 unresolved calls",
             "cyclomatic complexity 4"
-          ]
-        },
-        {
-          "node_id": 3560,
-          "name": "process_path_event",
-          "file": "crates/external/codegraph-core/src/watch/mod.rs",
-          "line_start": 526,
-          "line_end": 719,
-          "score": 1695,
-          "reasons": [
-            "194 lines",
-            "137 graph links",
-            "131 call links",
-            "11 unresolved calls",
-            "cyclomatic complexity 35"
-          ]
-        },
-        {
-          "node_id": 2242,
-          "name": "apply_env_overrides",
-          "file": "crates/external/codegraph-core/src/config_manager.rs",
-          "line_start": 674,
-          "line_end": 895,
-          "score": 1383,
-          "reasons": [
-            "222 lines",
-            "91 graph links",
-            "88 call links",
-            "4 unresolved calls",
-            "cyclomatic complexity 65"
           ]
         }
       ],
@@ -432,130 +547,115 @@
       "kind": "external_crate",
       "files": 29,
       "nodes": 1060,
-      "edges": 7485,
+      "edges": 7486,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 4305,
+          "node_id": 4307,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/rust.rs",
           "line_start": 97,
           "line_end": 496,
-          "score": 3544,
+          "score": 3547,
           "reasons": [
             "400 lines",
             "302 graph links",
             "299 call links",
-            "7 unresolved calls",
+            "8 unresolved calls",
             "cyclomatic complexity 31"
           ]
         },
         {
-          "node_id": 4157,
+          "node_id": 4159,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/java.rs",
           "line_start": 109,
           "line_end": 457,
-          "score": 2871,
+          "score": 2874,
           "reasons": [
             "349 lines",
             "237 graph links",
             "234 call links",
-            "3 unresolved calls",
+            "4 unresolved calls",
             "cyclomatic complexity 41"
           ]
         },
         {
-          "node_id": 4230,
+          "node_id": 4232,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/php.rs",
           "line_start": 130,
           "line_end": 428,
-          "score": 2375,
+          "score": 2378,
           "reasons": [
             "299 lines",
             "196 graph links",
             "193 call links",
-            "3 unresolved calls",
+            "4 unresolved calls",
             "cyclomatic complexity 32"
           ]
         },
         {
-          "node_id": 4075,
+          "node_id": 4077,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
           "line_start": 105,
           "line_end": 394,
-          "score": 2220,
+          "score": 2223,
           "reasons": [
             "290 lines",
             "182 graph links",
             "179 call links",
-            "5 unresolved calls",
+            "6 unresolved calls",
             "cyclomatic complexity 29"
           ]
         },
         {
-          "node_id": 4281,
+          "node_id": 4283,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
           "line_start": 122,
           "line_end": 394,
-          "score": 2193,
+          "score": 2196,
           "reasons": [
             "273 lines",
             "180 graph links",
             "177 call links",
-            "3 unresolved calls",
+            "4 unresolved calls",
             "cyclomatic complexity 33"
           ]
         },
         {
-          "node_id": 4099,
+          "node_id": 4101,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
           "line_start": 109,
           "line_end": 394,
-          "score": 2186,
+          "score": 2189,
           "reasons": [
             "286 lines",
             "180 graph links",
             "177 call links",
-            "3 unresolved calls",
+            "4 unresolved calls",
             "cyclomatic complexity 28"
           ]
         },
         {
-          "node_id": 4372,
+          "node_id": 4374,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/swift.rs",
           "line_start": 108,
           "line_end": 387,
-          "score": 2141,
+          "score": 2144,
           "reasons": [
             "280 lines",
             "175 graph links",
             "172 call links",
-            "4 unresolved calls",
+            "5 unresolved calls",
             "cyclomatic complexity 30"
-          ]
-        },
-        {
-          "node_id": 4132,
-          "name": "walk",
-          "file": "crates/external/codegraph-parser/src/languages/go.rs",
-          "line_start": 104,
-          "line_end": 296,
-          "score": 1456,
-          "reasons": [
-            "193 lines",
-            "118 graph links",
-            "115 call links",
-            "4 unresolved calls",
-            "cyclomatic complexity 23"
           ]
         }
       ],
@@ -580,25 +680,12 @@
       "kind": "crate",
       "files": 24,
       "nodes": 461,
-      "edges": 1976,
+      "edges": 1552,
       "languages": [
         "Rust",
         "rust"
       ],
-      "hotspots": [
-        {
-          "node_id": 6454,
-          "name": "contains",
-          "file": "crates/spec/src/model/spec.rs",
-          "line_start": 30,
-          "line_end": 32,
-          "score": 3416,
-          "reasons": [
-            "343 graph links",
-            "340 call links"
-          ]
-        }
-      ],
+      "hotspots": [],
       "evidence_paths": [
         "crates/spec/src/adr/mod.rs",
         "crates/spec/src/archive/mod.rs",
@@ -658,37 +745,7 @@
         "Rust",
         "rust"
       ],
-      "hotspots": [
-        {
-          "node_id": 5188,
-          "name": "integration_readiness_report",
-          "file": "crates/knowledge/src/lib.rs",
-          "line_start": 4528,
-          "line_end": 4863,
-          "score": 1649,
-          "reasons": [
-            "336 lines",
-            "123 graph links",
-            "117 call links",
-            "7 unresolved calls",
-            "cyclomatic complexity 26"
-          ]
-        },
-        {
-          "node_id": 5402,
-          "name": "integration_owner_surfaces_join_work_item_to_system_repos",
-          "file": "crates/knowledge/src/lib.rs",
-          "line_start": 6672,
-          "line_end": 6922,
-          "score": 1488,
-          "reasons": [
-            "251 lines",
-            "121 graph links",
-            "120 call links",
-            "10 unresolved calls"
-          ]
-        }
-      ],
+      "hotspots": [],
       "evidence_paths": [
         "crates/knowledge/src/lib.rs"
       ]
@@ -706,47 +763,32 @@
       ],
       "hotspots": [
         {
-          "node_id": 6739,
+          "node_id": 6741,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
           "line_end": 148,
-          "score": 2601,
+          "score": 2610,
           "reasons": [
             "35 lines",
             "259 graph links",
             "254 call links",
-            "1 unresolved calls"
+            "4 unresolved calls"
           ]
         },
         {
-          "node_id": 6754,
+          "node_id": 6756,
           "name": "handle_config_input",
           "file": "crates/tui/src/app.rs",
           "line_start": 702,
           "line_end": 834,
-          "score": 1707,
+          "score": 1703,
           "reasons": [
             "133 lines",
-            "151 graph links",
-            "148 call links",
-            "3 unresolved calls",
+            "150 graph links",
+            "147 call links",
+            "5 unresolved calls",
             "cyclomatic complexity 19"
-          ]
-        },
-        {
-          "node_id": 7456,
-          "name": "draw_config_screen",
-          "file": "crates/tui/src/ui.rs",
-          "line_start": 330,
-          "line_end": 543,
-          "score": 1429,
-          "reasons": [
-            "214 lines",
-            "112 graph links",
-            "108 call links",
-            "13 unresolved calls",
-            "cyclomatic complexity 21"
           ]
         }
       ],
@@ -762,37 +804,25 @@
       "kind": "crate",
       "files": 4,
       "nodes": 770,
-      "edges": 3135,
+      "edges": 3048,
       "languages": [
         "Rust",
         "rust"
       ],
       "hotspots": [
         {
-          "node_id": 6017,
+          "node_id": 6019,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
           "line_end": 769,
-          "score": 2025,
+          "score": 2052,
           "reasons": [
             "342 lines",
             "156 graph links",
             "143 call links",
-            "2 unresolved calls",
+            "11 unresolved calls",
             "cyclomatic complexity 52"
-          ]
-        },
-        {
-          "node_id": 5976,
-          "name": "new",
-          "file": "crates/runner/src/runner.rs",
-          "line_start": 54,
-          "line_end": 63,
-          "score": 1408,
-          "reasons": [
-            "145 graph links",
-            "137 call links"
           ]
         }
       ],

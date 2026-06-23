@@ -19,7 +19,7 @@
 
 Each slice is its own narrow PR with parity tests; behavior preserved until parity.
 
-- [ ] 3.1 Slice: import-without-flattening — `imports/handoff/` + `imports/prompt_hub/` complete current state, code-graph-indexed (faithful; `.kb` + `.handoff` ledgers included)
+- [x] 3.1 Slice: import-without-flattening — `imports/handoff/` + `imports/prompt_hub/` **complete working trees** via `git add -f` (faithful byte-for-byte; ALL dotfolders/files kept incl. `.kb/.cache`, `.kb/workspaces`, `.handoff/ledger.db`+`.rvf`, `.grit/`, `prompthub.db`, `.idea`), code-graph-indexed first-class. Gitignore-policy upgrade: root-anchored own-artifact patterns + `!imports/**` net. Secret scan uses a path-scoped allowlist (`.idd/secret-allowlist.txt`, placeholders only — NOT a blanket skip); verified no real secrets. [AI_MERGE/46]
 - [ ] 3.2 Slice: normalize env/secret contracts (one SecretProvider + env order)
 - [ ] 3.3 Slice: canonical interfaces for the 293 handoff-base shared paths + prompt_hub crate seams
 - [ ] 3.4 Slices: reconcile shared subsystems one at a time (core → spec → runner → cli → tui), handoff base + rusty-idd forward additions, parity-tested
