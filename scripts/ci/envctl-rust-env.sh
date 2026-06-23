@@ -34,12 +34,47 @@ find_meta_root() {
 META_ROOT="$(find_meta_root)"
 export META_ROOT
 
-RUSTUP_HOME="${RUSTUP_HOME:-$META_ROOT/.env/rust/rustup}"
-CARGO_HOME="${CARGO_HOME:-$META_ROOT/.env/rust/cargo}"
-RUSTY_IDD_RUST_BIN="${RUSTY_IDD_RUST_BIN:-$META_ROOT/.env/rust/bin}"
+select_rust_layout() {
+  if [[ -n "${RUSTY_IDD_RUST_LAYOUT:-}" ]]; then
+    printf '%s\n' "$RUSTY_IDD_RUST_LAYOUT"
+    return
+  fi
+
+  if [[ -n "${GITHUB_ACTIONS:-}" ]]; then
+    printf '%s\n' "isolated"
+    return
+  fi
+
+  if [[ -x "$META_ROOT/.toolchains/cargo/bin/rustup" && -d "$META_ROOT/.toolchains/rustup" ]]; then
+    printf '%s\n' "toolchains"
+    return
+  fi
+
+  printf '%s\n' "isolated"
+}
+
+rust_layout="$(select_rust_layout)"
+case "$rust_layout" in
+  isolated|env)
+    RUSTUP_HOME="${RUSTUP_HOME:-$META_ROOT/.env/rust/rustup}"
+    CARGO_HOME="${CARGO_HOME:-$META_ROOT/.env/rust/cargo}"
+    RUSTY_IDD_RUST_BIN="${RUSTY_IDD_RUST_BIN:-$META_ROOT/.env/rust/bin}"
+    ;;
+  toolchains)
+    RUSTUP_HOME="${RUSTUP_HOME:-$META_ROOT/.toolchains/rustup}"
+    CARGO_HOME="${CARGO_HOME:-$META_ROOT/.toolchains/cargo}"
+    RUSTY_IDD_RUST_BIN="${RUSTY_IDD_RUST_BIN:-$CARGO_HOME/bin}"
+    ;;
+  *)
+    echo "unknown Rusty IDD Rust layout '$rust_layout'; expected isolated, env, or toolchains" >&2
+    exit 2
+    ;;
+esac
+
 RUSTY_IDD_CACHE_BASE="${RUSTY_IDD_CACHE_BASE:-$META_ROOT/.cache/rust}"
 CARGO_TARGET_DIR="${CARGO_TARGET_DIR:-$workspace/target}"
 
+export RUSTY_IDD_RUST_LAYOUT="$rust_layout"
 export RUSTUP_HOME CARGO_HOME RUSTY_IDD_RUST_BIN RUSTY_IDD_CACHE_BASE CARGO_TARGET_DIR
 export PATH="$RUSTY_IDD_RUST_BIN:$CARGO_HOME/bin:$PATH"
 
@@ -169,6 +204,7 @@ cargo_path="$(rustup which cargo)"
 
 echo "Rusty IDD envctl Rust environment"
 echo "- mode: $mode"
+echo "- layout: $RUSTY_IDD_RUST_LAYOUT"
 echo "- META_ROOT: $META_ROOT"
 echo "- RUSTUP_HOME: $RUSTUP_HOME"
 echo "- CARGO_HOME: $CARGO_HOME"
@@ -182,6 +218,7 @@ echo "- RUSTFLAGS: ${RUSTFLAGS:-<unset>}"
 if [[ -n "${GITHUB_ENV:-}" ]]; then
   {
     echo "META_ROOT=$META_ROOT"
+    echo "RUSTY_IDD_RUST_LAYOUT=$RUSTY_IDD_RUST_LAYOUT"
     echo "RUSTUP_HOME=$RUSTUP_HOME"
     echo "CARGO_HOME=$CARGO_HOME"
     echo "RUSTY_IDD_RUST_BIN=$RUSTY_IDD_RUST_BIN"
