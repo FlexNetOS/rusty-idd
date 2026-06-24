@@ -18,7 +18,7 @@ anyhow = "1"
 codegraph-core = { path = "../external/codegraph-core", default-features = false }
 codegraph-parser = { path = "../external/codegraph-parser" }
 ignore = "0.4"
-repomix-config = "=2.0.0"
+repomix-config = "=2.0.1"
 repomix-core = "=2.0.0"
 rusty-idd-core = { path = "../core" }
 serde = { version = "1", features = ["derive"] }
