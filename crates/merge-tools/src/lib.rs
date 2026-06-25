@@ -295,6 +295,11 @@ fn is_foreign_manifest(rel: &str) -> bool {
 
 fn foreign_manifest_allowed(rel: &str) -> bool {
     rel.starts_with("third_party/upstream/")
+        // `imports/` holds faithfully-adopted complete owned repos (ADR-0018,
+        // import-without-flattening). They legitimately carry their own foreign
+        // manifests (package.json, go.mod, pyproject.toml, …) until later slices
+        // reconcile them into `crates/` — same allowance as third-party mirrors.
+        || rel.starts_with("imports/")
         || rel.starts_with(".github/")
         || rel.starts_with("docs/")
         || rel.starts_with("openspec/")
@@ -365,5 +370,20 @@ mod tests {
             .findings
             .iter()
             .any(|finding| finding.contains("foreign package manifest")));
+    }
+
+    #[test]
+    fn imports_surface_allows_foreign_manifests() {
+        // Faithful-adopt imports (ADR-0018) carry their own foreign manifests
+        // until later slices reconcile them — same allowance as third-party.
+        assert!(foreign_manifest_allowed(
+            "imports/handoff/spike/ruvocal-mcp-bridge/package.json"
+        ));
+        assert!(foreign_manifest_allowed("imports/prompt_hub/go.mod"));
+        assert!(foreign_manifest_allowed(
+            "third_party/upstream/foo/package.json"
+        ));
+        // A foreign manifest at the repo root is still disallowed.
+        assert!(!foreign_manifest_allowed("package.json"));
     }
 }

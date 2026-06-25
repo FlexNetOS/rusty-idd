@@ -11,6 +11,7 @@ use serde::{Deserialize, Serialize};
 use serde_json::Value;
 
 #[derive(Subcommand)]
+#[allow(clippy::large_enum_variant)]
 pub enum CodexCommand {
     /// Check repo-local Codex environment invariants.
     EnvCheck(EnvCheckArgs),
@@ -56,6 +57,34 @@ pub struct SystemAuditArgs {
     pub codex_source: Option<PathBuf>,
     #[arg(long)]
     pub envctl: Option<PathBuf>,
+    #[arg(long)]
+    pub rust_toolchain: bool,
+    #[arg(long)]
+    pub meta_root: Option<PathBuf>,
+    #[arg(long)]
+    pub rustc_path: Option<PathBuf>,
+    #[arg(long)]
+    pub cargo_bin: Option<PathBuf>,
+    #[arg(long)]
+    pub rustup_home: Option<PathBuf>,
+    #[arg(long)]
+    pub cargo_home: Option<PathBuf>,
+    #[arg(long)]
+    pub rustc_wrapper: Option<PathBuf>,
+    #[arg(long)]
+    pub cache_wrapper: Option<String>,
+    #[arg(long)]
+    pub cache_root: Option<PathBuf>,
+    #[arg(long)]
+    pub linker_path: Option<PathBuf>,
+    #[arg(long)]
+    pub rust_toolchain_name: Option<String>,
+    #[arg(long)]
+    pub codegen_backend: Option<String>,
+    #[arg(long)]
+    pub sccache_version: Option<String>,
+    #[arg(long)]
+    pub cache_transport: Option<String>,
 }
 
 #[derive(Args)]
@@ -263,6 +292,11 @@ fn env_check(workspace: &Path) -> anyhow::Result<()> {
                 "codex workflow-check",
                 "envctl",
                 "toolchain",
+                "nightly Rust",
+                "rustc_codegen_gcc",
+                "wild-linker",
+                "kache",
+                "zccache",
                 ".codex/rules",
             ][..],
         ),
@@ -513,8 +547,9 @@ fn check_develop_worktree(root: &Path, failures: &mut Vec<String>) {
         failures.push(format!("could not verify git worktree metadata: {error}"));
     }
 
-    if git_status(root, &["merge-base", "--is-ancestor", "develop", "HEAD"]).is_err() {
-        failures.push("current branch HEAD is not based on local develop".to_string());
+    let develop_ref = develop_base_ref(root);
+    if git_status(root, &["merge-base", "--is-ancestor", develop_ref, "HEAD"]).is_err() {
+        failures.push(format!("current branch HEAD is not based on {develop_ref}"));
     }
 }
 
@@ -576,12 +611,31 @@ fn check_task_evidence(root: &Path, failures: &mut Vec<String>) {
 }
 
 fn has_work_requiring_delivery(root: &Path) -> bool {
+    let commit_range = format!("{}..HEAD", develop_base_ref(root));
     git_output(root, &["status", "--porcelain", "--untracked-files=all"])
         .map(|output| !output.trim().is_empty())
         .unwrap_or(true)
-        || git_output(root, &["rev-list", "--count", "develop..HEAD"])
+        || git_output(root, &["rev-list", "--count", &commit_range])
             .map(|output| output.trim() != "0")
             .unwrap_or(true)
+}
+
+fn develop_base_ref(root: &Path) -> &'static str {
+    if git_output(
+        root,
+        &[
+            "rev-parse",
+            "--verify",
+            "--quiet",
+            "origin/develop^{commit}",
+        ],
+    )
+    .is_ok()
+    {
+        "origin/develop"
+    } else {
+        "develop"
+    }
 }
 
 fn check_delivery_evidence(root: &Path, failures: &mut Vec<String>) {
@@ -944,29 +998,40 @@ fn runtime_audit(workspace: &Path) -> anyhow::Result<()> {
 }
 
 fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
-    let codex_bin = match args.codex_bin {
-        Some(path) => path,
-        None => find_on_path("codex").context("locate codex on PATH")?,
-    };
-    let resolved_codex = codex_bin
-        .canonicalize()
-        .with_context(|| format!("resolve codex binary {}", codex_bin.display()))?;
-    let binary_kind = binary_kind(&resolved_codex)?;
-
     println!("Codex system audit");
-    println!("- codex binary: {}", codex_bin.display());
-    println!("- resolved codex binary: {}", resolved_codex.display());
-    println!("- binary kind: {binary_kind}");
-    println!(
-        "- active runtime verdict: {}",
-        if binary_kind == "ELF native executable" {
-            "Rust-native binary path"
-        } else {
-            "not proven Rust-native"
-        }
-    );
 
-    if let Some(source) = args.codex_source {
+    let codex_runtime_requested = args.codex_bin.is_some()
+        || !args.rust_toolchain
+        || args.codex_source.is_some()
+        || args.envctl.is_some();
+    let binary_kind = if codex_runtime_requested {
+        let codex_bin = match args.codex_bin.clone() {
+            Some(path) => path,
+            None => find_on_path("codex").context("locate codex on PATH")?,
+        };
+        let resolved_codex = codex_bin
+            .canonicalize()
+            .with_context(|| format!("resolve codex binary {}", codex_bin.display()))?;
+        let binary_kind = binary_kind(&resolved_codex)?;
+
+        println!("- codex binary: {}", codex_bin.display());
+        println!("- resolved codex binary: {}", resolved_codex.display());
+        println!("- binary kind: {binary_kind}");
+        println!(
+            "- active runtime verdict: {}",
+            if binary_kind == "ELF native executable" {
+                "Rust-native binary path"
+            } else {
+                "not proven Rust-native"
+            }
+        );
+        Some(binary_kind)
+    } else {
+        println!("- codex binary: skipped (Rust toolchain audit only)");
+        None
+    };
+
+    if let Some(source) = args.codex_source.clone() {
         let source = source
             .canonicalize()
             .with_context(|| format!("resolve Codex source root {}", source.display()))?;
@@ -986,7 +1051,7 @@ fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
         );
     }
 
-    if let Some(envctl) = args.envctl {
+    if let Some(envctl) = args.envctl.clone() {
         let envctl = envctl
             .canonicalize()
             .with_context(|| format!("resolve envctl root {}", envctl.display()))?;
@@ -1001,7 +1066,7 @@ fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
             "  - high-parallel Cargo jobs: {}",
             envctl_audit.parallel_jobs
         );
-        println!("  - mold linker path: {}", envctl_audit.mold_linker);
+        println!("  - wild linker path: {}", envctl_audit.wild_linker);
         println!("  - Bun fallback only: {}", envctl_audit.bun_fallback);
         println!(
             "  - Python in codex component: {}",
@@ -1009,11 +1074,51 @@ fn system_audit(args: SystemAuditArgs) -> anyhow::Result<()> {
         );
     }
 
-    if binary_kind != "ELF native executable" {
+    if args.rust_toolchain {
+        let rust_audit = audit_rust_toolchain(&args)?;
+        println!("- Rust toolchain audit:");
+        println!("  - meta root: {}", rust_audit.meta_root.display());
+        println!("  - toolchain: {}", rust_audit.toolchain);
+        println!("  - rustc path: {}", rust_audit.rustc_path.display());
+        println!("  - cargo path: {}", rust_audit.cargo_path.display());
+        println!("  - RUSTUP_HOME: {}", rust_audit.rustup_home.display());
+        println!("  - CARGO_HOME: {}", rust_audit.cargo_home.display());
+        println!(
+            "  - rustc wrapper: {} ({})",
+            rust_audit.rustc_wrapper.display(),
+            rust_audit.cache_wrapper
+        );
+        println!("  - cache root: {}", rust_audit.cache_root.display());
+        println!("  - linker path: {}", rust_audit.linker_path.display());
+        println!("  - codegen backend: {}", rust_audit.codegen_backend);
+        println!("  - cache transport: {}", rust_audit.cache_transport);
+        println!(
+            "  - sccache fallback version: {}",
+            rust_audit.sccache_version.as_deref().unwrap_or("n/a")
+        );
+        if !rust_audit.failures.is_empty() {
+            for failure in &rust_audit.failures {
+                println!("  - non-compliant: {failure}");
+            }
+            bail!(
+                "Rust toolchain audit found {} non-compliant path or policy issue(s)",
+                rust_audit.failures.len()
+            );
+        }
+        println!("  - verdict: meta/envctl-owned Rust toolchain contract satisfied");
+    }
+
+    if matches!(binary_kind.as_ref(), Some(kind) if *kind != "ELF native executable") {
         bail!("active codex binary is not a native ELF executable");
     }
 
-    println!("Verdict: active Codex execution is Rust-native; Python is upstream developer/package tooling unless an envctl fallback installs the Bun package.");
+    if binary_kind.is_some() {
+        println!("Verdict: active Codex execution is Rust-native; Python is upstream developer/package tooling unless an envctl fallback installs the Bun package.");
+    } else {
+        println!(
+            "Verdict: Rust toolchain audit completed without requiring a Codex runtime binary."
+        );
+    }
     Ok(())
 }
 
@@ -1029,9 +1134,27 @@ struct EnvctlCodexAudit {
     source_build: bool,
     direct_cargo_build: bool,
     parallel_jobs: bool,
-    mold_linker: bool,
+    wild_linker: bool,
     bun_fallback: bool,
     python_mentions: usize,
+}
+
+#[derive(Default)]
+struct RustToolchainAudit {
+    meta_root: PathBuf,
+    toolchain: String,
+    rustc_path: PathBuf,
+    cargo_path: PathBuf,
+    rustup_home: PathBuf,
+    cargo_home: PathBuf,
+    rustc_wrapper: PathBuf,
+    cache_wrapper: String,
+    cache_root: PathBuf,
+    linker_path: PathBuf,
+    codegen_backend: String,
+    cache_transport: String,
+    sccache_version: Option<String>,
+    failures: Vec<String>,
 }
 
 fn audit_codex_source_root(root: &Path) -> anyhow::Result<CodexSourceAudit> {
@@ -1068,13 +1191,301 @@ fn audit_envctl_codex_component(root: &Path) -> anyhow::Result<EnvctlCodexAudit>
         parallel_jobs: codex.contains("CODEX_CARGO_JOBS")
             && codex.contains("CARGO_BUILD_JOBS")
             && codex.contains("--jobs"),
-        mold_linker: codex.contains("mold") && codex.contains("fuse-ld=mold"),
+        wild_linker: codex.contains("wild") && codex.contains("fuse-ld=wild"),
         bun_fallback: codex.contains("bun install -g @openai/codex"),
         python_mentions: codex
             .lines()
             .filter(|line| contains_python_marker(line))
             .count(),
     })
+}
+
+fn audit_rust_toolchain(args: &SystemAuditArgs) -> anyhow::Result<RustToolchainAudit> {
+    let meta_root = args
+        .meta_root
+        .as_deref()
+        .context("--meta-root is required with --rust-toolchain")?;
+    let meta_root = absolute_path(meta_root)?;
+
+    let rustc_path = args
+        .rustc_path
+        .clone()
+        .or_else(|| std::env::var_os("RUSTC").map(PathBuf::from))
+        .or_else(|| rustup_which("rustc"))
+        .or_else(|| find_on_path("rustc").ok())
+        .map(|path| absolute_path_lossy(&path))
+        .context("resolve rustc path")?;
+    let cargo_path = args
+        .cargo_bin
+        .clone()
+        .or_else(|| std::env::var_os("CARGO").map(PathBuf::from))
+        .or_else(|| rustup_which("cargo"))
+        .or_else(|| find_on_path("cargo").ok())
+        .map(|path| absolute_path_lossy(&path))
+        .context("resolve cargo path")?;
+    let rustup_home = args
+        .rustup_home
+        .clone()
+        .or_else(|| std::env::var_os("RUSTUP_HOME").map(PathBuf::from))
+        .map(|path| absolute_path_lossy(&path))
+        .context("RUSTUP_HOME is required for strict Rust toolchain audit")?;
+    let cargo_home = args
+        .cargo_home
+        .clone()
+        .or_else(|| std::env::var_os("CARGO_HOME").map(PathBuf::from))
+        .map(|path| absolute_path_lossy(&path))
+        .context("CARGO_HOME is required for strict Rust toolchain audit")?;
+    let rustc_wrapper = args
+        .rustc_wrapper
+        .clone()
+        .or_else(|| std::env::var_os("CARGO_BUILD_RUSTC_WRAPPER").map(PathBuf::from))
+        .or_else(|| std::env::var_os("RUSTC_WRAPPER").map(PathBuf::from))
+        .map(|path| absolute_path_lossy(&path))
+        .context("RUSTC_WRAPPER or --rustc-wrapper is required")?;
+    let cache_root = args
+        .cache_root
+        .clone()
+        .or_else(cache_root_from_env)
+        .map(|path| absolute_path_lossy(&path))
+        .context("cache root is required; set --cache-root or a cache-specific env var")?;
+    let linker_path = args
+        .linker_path
+        .clone()
+        .or_else(|| linker_from_rustflags().map(PathBuf::from))
+        .map(|path| absolute_path_lossy(&path))
+        .context("wild linker path is required; set --linker-path or RUSTFLAGS")?;
+    let toolchain = args
+        .rust_toolchain_name
+        .clone()
+        .or_else(|| std::env::var("RUSTUP_TOOLCHAIN").ok())
+        .or_else(active_toolchain)
+        .unwrap_or_default();
+    let codegen_backend = args
+        .codegen_backend
+        .clone()
+        .or_else(codegen_backend_from_rustflags)
+        .unwrap_or_default();
+    let cache_wrapper = args
+        .cache_wrapper
+        .clone()
+        .unwrap_or_else(|| wrapper_name(&rustc_wrapper));
+    let cache_transport = args
+        .cache_transport
+        .clone()
+        .or_else(|| {
+            std::env::var("SCCACHE_SERVER_UDS")
+                .ok()
+                .map(|_| "uds".to_string())
+        })
+        .or_else(|| std::env::var("ZCCACHE_ENDPOINT").ok())
+        .unwrap_or_else(|| "local".to_string());
+
+    let mut audit = RustToolchainAudit {
+        meta_root,
+        toolchain,
+        rustc_path,
+        cargo_path,
+        rustup_home,
+        cargo_home,
+        rustc_wrapper,
+        cache_wrapper,
+        cache_root,
+        linker_path,
+        codegen_backend,
+        cache_transport,
+        sccache_version: args.sccache_version.clone(),
+        failures: Vec::new(),
+    };
+    audit.validate();
+    Ok(audit)
+}
+
+impl RustToolchainAudit {
+    fn validate(&mut self) {
+        let path_checks = [
+            ("rustc path", &self.rustc_path),
+            ("cargo path", &self.cargo_path),
+            ("RUSTUP_HOME", &self.rustup_home),
+            ("CARGO_HOME", &self.cargo_home),
+            ("rustc wrapper", &self.rustc_wrapper),
+            ("cache root", &self.cache_root),
+            ("linker path", &self.linker_path),
+        ];
+        for (label, path) in path_checks {
+            if !path.starts_with(&self.meta_root) {
+                self.failures.push(format!(
+                    "{label} is outside meta root {}: {}",
+                    self.meta_root.display(),
+                    path.display()
+                ));
+            }
+        }
+
+        if !self.toolchain.contains("nightly") {
+            self.failures.push(format!(
+                "toolchain must be nightly for this contract, got '{}'",
+                self.toolchain
+            ));
+        }
+        if self.codegen_backend != "rustc_codegen_gcc" {
+            self.failures.push(format!(
+                "codegen backend must be rustc_codegen_gcc, got '{}'",
+                empty_marker(&self.codegen_backend)
+            ));
+        }
+        if !is_wild_linker(&self.linker_path) {
+            self.failures.push(format!(
+                "linker must be wild-linker/wild, got {}",
+                self.linker_path.display()
+            ));
+        }
+        match self.cache_wrapper.as_str() {
+            "kache" | "hurry" | "zccache" => {}
+            "sccache" => {
+                match self.sccache_version.as_deref() {
+                    Some(version) if version_at_least(version, 0, 15, 0) => {}
+                    Some(version) => self.failures.push(format!(
+                        "sccache fallback requires version 0.15.0 or newer, got {version}"
+                    )),
+                    None => self
+                        .failures
+                        .push("sccache fallback requires explicit --sccache-version".to_string()),
+                }
+                let transport = self.cache_transport.to_ascii_lowercase();
+                if !(transport.contains("uds")
+                    || transport.contains("unix")
+                    || transport.starts_with('/'))
+                {
+                    self.failures.push(format!(
+                        "sccache fallback must use UDS/unix socket transport, got '{}'",
+                        self.cache_transport
+                    ));
+                }
+            }
+            other => self.failures.push(format!(
+                "cache wrapper must be kache, hurry, zccache, or last-resort sccache, got '{}'",
+                empty_marker(other)
+            )),
+        }
+    }
+}
+
+fn absolute_path(path: &Path) -> anyhow::Result<PathBuf> {
+    Ok(if path.exists() {
+        path.canonicalize()?
+    } else if path.is_absolute() {
+        path.to_path_buf()
+    } else {
+        std::env::current_dir()?.join(path)
+    })
+}
+
+fn absolute_path_lossy(path: &Path) -> PathBuf {
+    absolute_path(path).unwrap_or_else(|_| path.to_path_buf())
+}
+
+fn rustup_which(binary: &str) -> Option<PathBuf> {
+    let output = Command::new("rustup")
+        .args(["which", binary])
+        .output()
+        .ok()?;
+    output
+        .status
+        .success()
+        .then(|| String::from_utf8_lossy(&output.stdout).trim().to_string())
+        .filter(|value| !value.is_empty())
+        .map(PathBuf::from)
+}
+
+fn active_toolchain() -> Option<String> {
+    let output = Command::new("rustup")
+        .args(["show", "active-toolchain"])
+        .output()
+        .ok()?;
+    output.status.success().then(|| {
+        String::from_utf8_lossy(&output.stdout)
+            .split_whitespace()
+            .next()
+            .unwrap_or_default()
+            .to_string()
+    })
+}
+
+fn cache_root_from_env() -> Option<PathBuf> {
+    [
+        "KACHE_CACHE_DIR",
+        "KACHE_DIR",
+        "KACHE_HOME",
+        "HURRY_CACHE_DIR",
+        "ZCCACHE_CACHE_DIR",
+        "SCCACHE_DIR",
+    ]
+    .iter()
+    .find_map(|key| std::env::var_os(key).map(PathBuf::from))
+}
+
+fn linker_from_rustflags() -> Option<String> {
+    let flags = std::env::var("RUSTFLAGS").ok()?;
+    for part in flags.split_whitespace() {
+        if let Some(linker) = part.strip_prefix("-Clinker=") {
+            return Some(linker.to_string());
+        }
+        if let Some(linker) = part.strip_prefix("-C linker=") {
+            return Some(linker.to_string());
+        }
+        if let Some(linker) = part.strip_prefix("-Clink-arg=-fuse-ld=") {
+            return Some(linker.to_string());
+        }
+        if let Some(linker) = part.strip_prefix("-C link-arg=-fuse-ld=") {
+            return Some(linker.to_string());
+        }
+    }
+    None
+}
+
+fn codegen_backend_from_rustflags() -> Option<String> {
+    let flags = std::env::var("RUSTFLAGS").ok()?;
+    flags
+        .split_whitespace()
+        .find_map(|part| part.strip_prefix("-Zcodegen-backend=").map(str::to_string))
+}
+
+fn wrapper_name(path: &Path) -> String {
+    path.file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or_default()
+        .trim_end_matches(".exe")
+        .to_string()
+}
+
+fn is_wild_linker(path: &Path) -> bool {
+    let name = path
+        .file_name()
+        .and_then(|name| name.to_str())
+        .unwrap_or_default();
+    matches!(name, "wild" | "wild-linker")
+}
+
+fn empty_marker(value: &str) -> &str {
+    if value.is_empty() {
+        "<empty>"
+    } else {
+        value
+    }
+}
+
+fn version_at_least(value: &str, major: u64, minor: u64, patch: u64) -> bool {
+    let mut parts = value
+        .trim_start_matches('v')
+        .split(|c: char| !c.is_ascii_digit())
+        .filter(|part| !part.is_empty())
+        .filter_map(|part| part.parse::<u64>().ok());
+    let found = [
+        parts.next().unwrap_or(0),
+        parts.next().unwrap_or(0),
+        parts.next().unwrap_or(0),
+    ];
+    found >= [major, minor, patch]
 }
 
 fn extract_component_block(text: &str, id: &str) -> Option<String> {

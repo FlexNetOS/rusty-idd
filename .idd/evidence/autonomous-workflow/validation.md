@@ -1,24 +1,11 @@
-# Handoff KB Refresh Validation Evidence
-
-- Change: `refresh-handoff-kb-upstream`
-- Mirror verification: source handoff tracked file count is 550, mirror file
-  count is 550, file-list diff is clean, and `third_party/upstream/handoff/.git`
-  is absent.
-- Source dirty state: handoff working-tree edits are recorded in
-  `AI_MERGE/38_handoff_kb_refresh/handoff-source-state.md` and excluded from the
-  mirror because the mirror is built from committed HEAD.
-- Build: passed `RUSTY_IDD_CHANGE=refresh-handoff-kb-upstream RUSTY_IDD_GOAL_FILE=.idd/goals/refresh-handoff-kb-upstream.md rtk just ci`, including `cargo build --workspace --locked`.
-- Generated artifacts: `rtk just ci` passed freshness checks for `.idd/MANIFEST.tsv`, `.idd/knowledge/*`, `docs/rusty-idd/architecture-diagrams.md`, and goal-file plan context for `refresh-handoff-kb-upstream`.
-- Test: passed `cargo test --workspace --locked` through the same `rtk just ci` gate.
-- Lint: passed `cargo fmt --all -- --check` and `cargo clippy --workspace --all-targets --all-features -- -D warnings` through the same `rtk just ci` gate.
-- Audit: passed `cargo audit --deny warnings` through the same `rtk just ci` gate.
-- Secret scan: changed-file scan for private key, AWS, Google API, GitHub, and OpenAI token patterns returned no matches.
-- Manifest: refreshed `.idd/MANIFEST.tsv` after validation evidence updates and verified through the `rtk just ci` manifest freshness gate.
-
-## Rollback Path
-
-Revert ADR 0008, `openspec/changes/refresh-handoff-kb-upstream`,
-`.idd/goals/refresh-handoff-kb-upstream.md`,
-`AI_MERGE/38_handoff_kb_refresh/`, the refreshed handoff mirror and upstream
-registry pin, and regenerated `.idd/knowledge/*`, `.idd/MANIFEST.tsv`, and
-`docs/rusty-idd/architecture-diagrams.md`.
+Change: integrate-agent-harness
+Build: passed `rtk cargo check --workspace --locked`
+Generated artifacts: refreshed `.idd/knowledge/*`, `.idd/knowledge/plan-context.{json,md}`, `.idd/MANIFEST.tsv`, and `AI_MERGE/validation_report.md`
+Test: passed `rtk cargo test -p rusty-idd-cli harness --locked`; passed `rtk cargo test -p rusty-idd-cli --locked`; passed `rtk cargo test --workspace --locked` with 639 passed and 3 ignored
+Lint: passed `rtk cargo clippy -p rusty-idd-cli --all-targets --all-features -- -D warnings`; passed `rtk cargo fmt --all -- --check`; passed `rtk git diff --check`
+Secret scan: passed via `rtk cargo run --bin rusty-idd -- validate --workspace .` with 0 critical and 0 warning; `AI_MERGE/validation_report.md` reports no findings
+Security audit: passed `rtk cargo audit --deny warnings`
+Manifest: refreshed with `rtk cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv`
+OpenSpec: passed `rtk cargo run --bin rusty-idd -- spec status openspec/changes/integrate-agent-harness`
+Workflow: passed `rtk cargo run --bin rusty-idd -- codex workflow-check --workspace . --phase pre-tool`
+Runtime audit: passed `rtk cargo run --bin rusty-idd -- codex runtime-audit --workspace .` with 0 live Codex Python commands and 0 obsolete Python Codex tool files

@@ -32,8 +32,37 @@ jobs:
             exe: ".exe"
     steps:
       - uses: actions/checkout@v7
-      - uses: dtolnay/rust-toolchain@1.96.0
-      - uses: Swatinem/rust-cache@v2
+      - name: Resolve meta-owned Rust root
+        id: rust-meta
+        shell: bash
+        run: |
+          meta_root="$(cd "$GITHUB_WORKSPACE/.." && pwd -P)/meta"
+          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
+          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
+      - name: Restore meta-owned Rust tool cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
+            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
+          key: rusty-idd-envctl-rust-tools-release-${{ runner.os }}-${{ matrix.suffix }}-${{ hashFiles('scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-tools-release-${{ runner.os }}-${{ matrix.suffix }}-
+            rusty-idd-envctl-rust-tools-release-${{ runner.os }}-
+      - name: Restore workspace target cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            target
+          key: rusty-idd-target-release-${{ runner.os }}-${{ matrix.suffix }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-target-release-${{ runner.os }}-${{ matrix.suffix }}-
+            rusty-idd-target-release-${{ runner.os }}-
+      - name: Envctl Rust toolchain
+        env:
+          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
+        shell: bash
+        run: scripts/ci/envctl-rust-env.sh release
       - name: Build release binary
         run: cargo build --workspace --locked --release --bin rusty-idd
       - name: Stage asset

@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="CargoProjects">
+    <cargoProject FILE="$PROJECT_DIR$/Cargo.toml">
+      <package file="$PROJECT_DIR$/hf">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/ledger">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/crates/cli">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/crates/core">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/crates/runner">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/crates/spec">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/crates/tui">
+        <feature name="default" enabled="true" />
+      </package>
+      <package file="$PROJECT_DIR$/work-order">
+        <feature name="default" enabled="true" />
+      </package>
+    </cargoProject>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="77e90644-8437-4b37-9f3e-f0b74a14d7e7" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/home/drdave/Desktop/meta/handoff" value="3F1IISY45Q7qjMaJunlNtfylDqc" />
+    </persistenceIdMap>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="221" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
+  <component name="FormatOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="Git.Settings">
+    <option name="INCOMING_COMMITS_CHECK_STRATEGY" value="FETCH" />
+    <option name="PREVIEW_PUSH_PROTECTED_ONLY" value="true" />
+    <option name="PUSH_AUTO_UPDATE" value="true" />
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;drdave-flexnetos&quot;
+  }
+}</component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="fix/windows-ledger-path-and-promote-checkout" />
+                    <option name="lastUsedInstant" value="1781816517" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="develop" />
+                    <option name="lastUsedInstant" value="1781816031" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="master" />
+        <option value="develop" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:FlexNetOS/handoff.git&quot;,
+    &quot;accountId&quot;: &quot;e19c57cf-1fb5-4a14-8fd0-176836c4bea2&quot;
+  }
+}</component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="Gsr4qk7I" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.5586435986971638" />
+      <entry key="MS500" value="2.0262724494956643" />
+      <entry key="S2" value="7.514709139195915" />
+      <entry key="S5" value="20.145243433137768" />
+      <entry key="S10" value="33.985891104412794" />
+      <entry key="S30" value="52.799018713246106" />
+      <entry key="S60" value="59.755137044591436" />
+      <entry key="M2" value="64.20959430684348" />
+      <entry key="M5" value="77.44298251690427" />
+      <entry key="M10" value="132.49979770734288" />
+      <entry key="M15" value="206.568988061261" />
+      <entry key="M30" value="399.563673643565" />
+      <entry key="H1" value="610.9155779128598" />
+      <entry key="H2" value="776.3238702196464" />
+      <entry key="H4" value="881.7812198827572" />
+      <entry key="D1" value="984.5756675871363" />
+      <entry key="W1" value="1003.7557797752196" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.5093037886724523" />
+      <entry key="MS500" value="2.013485344635218" />
+      <entry key="S2" value="7.502948731774393" />
+      <entry key="S5" value="20.13327094779377" />
+      <entry key="S10" value="33.97608549577439" />
+      <entry key="S30" value="52.7940502493153" />
+      <entry key="S60" value="59.75234070796974" />
+      <entry key="M2" value="64.20809680928909" />
+      <entry key="M5" value="77.4422627966508" />
+      <entry key="M10" value="132.49916547135686" />
+      <entry key="M15" value="206.5682395962361" />
+      <entry key="M30" value="399.56231678172816" />
+      <entry key="H1" value="610.9136872224399" />
+      <entry key="H2" value="776.3221747913063" />
+      <entry key="H4" value="881.7800702005505" />
+      <entry key="D1" value="984.5754193179241" />
+      <entry key="W1" value="1003.7557426824695" />
+    </decayedShown>
+  </component>
+  <component name="OptimizeOnSaveOptions">
+    <option name="myRunOnSave" value="true" />
+  </component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6,
+  &quot;fromUser&quot;: false
+}</component>
+  <component name="ProjectId" id="3F1IISY45Q7qjMaJunlNtfylDqc" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Cargo.Install cargo-llvm-cov.executor": "Run",
+    "Cargo.Install evcxr_repl.executor": "Run",
+    "Cargo.Test handoff.executor": "Debug",
+    "Git.Working.Tree.Tab.closed.by.user": "opened",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "code.cleanup.on.save": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "fix/windows-ledger-path-and-promote-checkout",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/drdave/Desktop/meta/prompt_hub",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.PROJECT_DISCOVERY": "true",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "org.rust.first.attach.projects": "true",
+    "rearrange.code.on.save": "true",
+    "settings.editor.selected.configurable": "language.rust.rustfmt",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
+    ]
+  }
+}]]></component>
+  <component name="QodanaHighlightedReportService">
+    <option name="localRunNotPublishedPersistedInfo">
+      <LocalReportPersistedInfo>
+        <option name="path" value="/tmp/qodana_output/qodana.sarif.json" />
+        <option name="reportGuid" value="29e00b7b-4bb8-4f1c-944f-f78bba951047" />
+        <option name="reportName" value="handoff/qodana/2026-06-18" />
+      </LocalReportPersistedInfo>
+    </option>
+  </component>
+  <component name="QodanaIsSelectedPersistenceService">
+    <option name="selectedOrLoading" value="true" />
+  </component>
+  <component name="QodanaReportsService">
+    <option name="descriptions">
+      <ReportDescription localRun="true" path="/tmp/qodana_output/qodana.sarif.json" reportGuid="29e00b7b-4bb8-4f1c-944f-f78bba951047" reportId="handoff/qodana/2026-06-18" />
+    </option>
+  </component>
+  <component name="RunManager" selected="Cargo.Test handoff">
+    <configuration name="Run hf" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="command" value="run --package hf --bin hf" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Test handoff" type="CargoCommandRunConfiguration" factoryName="Cargo Command">
+      <option name="buildProfileId" value="test" />
+      <option name="command" value="test --workspace" />
+      <option name="workingDirectory" value="file://$PROJECT_DIR$" />
+      <envs />
+      <option name="emulateTerminal" value="true" />
+      <option name="channel" value="DEFAULT" />
+      <option name="requiredFeatures" value="true" />
+      <option name="allFeatures" value="false" />
+      <option name="withSudo" value="false" />
+      <option name="buildTarget" value="REMOTE" />
+      <option name="backtrace" value="SHORT" />
+      <option name="isRedirectInput" value="false" />
+      <option name="redirectInputPath" value="" />
+      <method v="2">
+        <option name="CARGO.BUILD_TASK_PROVIDER" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="RustProjectSettings">
+    <option name="toolchainHomeDirectory" value="$USER_HOME$/.cargo/bin" />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="77e90644-8437-4b37-9f3e-f0b74a14d7e7" name="Changes" comment="" />
+      <created>1781236068690</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781236068690</updated>
+      <workItem from="1781236069717" duration="345000" />
+      <workItem from="1781797723366" duration="331000" />
+      <workItem from="1781798070662" duration="58000" />
+      <workItem from="1781798141498" duration="805000" />
+      <workItem from="1781799944354" duration="4794000" />
+      <workItem from="1781807416112" duration="9041000" />
+    </task>
+    <task id="LOCAL-00001" summary="ADR-0001: correct front door — RuVocal is the real UI; envctl zellij dash failed&#10;&#10;User clarification: the envctl/loop-forge zellij multi-pane dashboard was&#10;ATTEMPTED and FAILED — it is a dead end, not a reuse precedent. The real,&#10;chosen front door + human surface is meta/RuVector/ui (RuVocal), which needs&#10;prompt_hub integration.&#10;&#10;- §11/§12/R14: front door = RuVocal (chat UI) + prompt_hub (intent engine);&#10;  the zellij path is explicitly marked failed/do-not-revive; loop state is&#10;  surfaced via the ledger (§7) feed into RuVocal, not a new dashboard.&#10;- HFTASK-0022 reframed from a P3 &quot;human-facing half&quot; afterthought to a P1&#10;  &quot;THE real front door, prompt_hub-integrated&quot; task (depends on 0003/0019/0020).&#10;&#10;22 tasks; cargo test green (11).&#10;&#10;Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;">
+      <option name="closed" value="true" />
+      <created>1781236344327</created>
+      <option name="number" value="00001" />
+      <option name="presentableId" value="LOCAL-00001" />
+      <option name="project" value="LOCAL" />
+      <updated>1781236344327</updated>
+    </task>
+    <option name="localTasksCounter" value="2" />
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="CUSTOM_BOOLEAN_PROPERTIES">
+                <map>
+                  <entry key="Show.Git.Branches" value="true" />
+                </map>
+              </option>
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="VcsManagerConfiguration">
+    <option name="CHECK_LOCALLY_CHANGED_CONFLICTS_IN_BACKGROUND" value="true" />
+    <option name="CHANGED_ON_SERVER_INTERVAL" value="10" />
+    <option name="SHOW_DIRTY_RECURSIVELY" value="true" />
+    <MESSAGE value="add initial project configuration files and .gitignore" />
+    <MESSAGE value="ADR-0001: correct front door — RuVocal is the real UI; envctl zellij dash failed&#10;&#10;User clarification: the envctl/loop-forge zellij multi-pane dashboard was&#10;ATTEMPTED and FAILED — it is a dead end, not a reuse precedent. The real,&#10;chosen front door + human surface is meta/RuVector/ui (RuVocal), which needs&#10;prompt_hub integration.&#10;&#10;- §11/§12/R14: front door = RuVocal (chat UI) + prompt_hub (intent engine);&#10;  the zellij path is explicitly marked failed/do-not-revive; loop state is&#10;  surfaced via the ledger (§7) feed into RuVocal, not a new dashboard.&#10;- HFTASK-0022 reframed from a P3 &quot;human-facing half&quot; afterthought to a P1&#10;  &quot;THE real front door, prompt_hub-integrated&quot; task (depends on 0003/0019/0020).&#10;&#10;22 tasks; cargo test green (11).&#10;&#10;Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;" />
+    <option name="LAST_COMMIT_MESSAGE" value="ADR-0001: correct front door — RuVocal is the real UI; envctl zellij dash failed&#10;&#10;User clarification: the envctl/loop-forge zellij multi-pane dashboard was&#10;ATTEMPTED and FAILED — it is a dead end, not a reuse precedent. The real,&#10;chosen front door + human surface is meta/RuVector/ui (RuVocal), which needs&#10;prompt_hub integration.&#10;&#10;- §11/§12/R14: front door = RuVocal (chat UI) + prompt_hub (intent engine);&#10;  the zellij path is explicitly marked failed/do-not-revive; loop state is&#10;  surfaced via the ledger (§7) feed into RuVocal, not a new dashboard.&#10;- HFTASK-0022 reframed from a P3 &quot;human-facing half&quot; afterthought to a P1&#10;  &quot;THE real front door, prompt_hub-integrated&quot; task (depends on 0003/0019/0020).&#10;&#10;22 tasks; cargo test green (11).&#10;&#10;Co-Authored-By: Claude Opus 4.8 (1M context) &lt;noreply@anthropic.com&gt;" />
+    <option name="OPTIMIZE_IMPORTS_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REFORMAT_BEFORE_PROJECT_COMMIT" value="true" />
+    <option name="REARRANGE_BEFORE_PROJECT_COMMIT" value="true" />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
+  </component>
+</project>
