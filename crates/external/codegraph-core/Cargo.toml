@@ -57,7 +57,7 @@ windows-sys = { version = "0.61", features = [
 ] }
 
 [dev-dependencies]
-criterion = "0.5"
+criterion = "0.8"
 tempfile = "3"
 tokio-test = "0.4"
 
