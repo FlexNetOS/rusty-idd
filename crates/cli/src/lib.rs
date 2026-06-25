@@ -5,10 +5,13 @@
 //!   *verbatim* to [`rusty_idd_core::cli::run`], giving automatic
 //!   parity with the legacy `idd` binary (same code path).
 //! - **`spec`** is a new CLI over [`rusty_idd_spec`] (validate / archive / show).
+//! - **`next`** is the harness control-plane front door (ADR-0015): one
+//!   deterministic imperative for the active change, reusing the `spec` oracle.
 //! - **`run`** is a headless task runner over [`rusty_idd_runner`] (no ratatui).
 //! - **`tui`** launches the interactive TUI via [`rusty_idd_tui::run`].
 //! - **`knowledge`** builds compact codebase graph indexes and AI context packs.
 //! - **`codex`** verifies repo-local Codex environment invariants and model loops.
+//! - **`harness`** creates task-scoped Rusty IDD agent swarm packages.
 //! - **`merge-tools`** exposes the reusable Rusty IDD merge-goal workflow package.
 //!
 //! Dependencies live at this crate (and the tui); the core crate stays zero-dep.
@@ -54,6 +57,21 @@ enum Command {
     #[command(subcommand)]
     Spec(commands::spec::SpecCommand),
 
+    /// Harness control-plane front door: print the single next imperative for
+    /// the active change (ADR-0015). Vendor surfaces call this instead of
+    /// carrying a static prose harness.
+    Next(commands::next::NextArgs),
+
+    /// Render minimal vendor adapters from the engine source of truth, or
+    /// `--check` them as a fail-closed drift gate (ADR-0010/0015).
+    Render(commands::render::RenderArgs),
+
+    /// Deploy the thin-adapter control-plane surface (adapter + SessionStart
+    /// `rusty-idd next` hook) into a target fleet repo; `--check` is a
+    /// fail-closed drift gate (ADR-0017). Additive; never mutates the target
+    /// repo's own forge loop or runtime.
+    Deploy(commands::deploy::DeployArgs),
+
     /// Headless task runner for an OpenSpec change (no interactive UI).
     Run(commands::run::RunArgs),
 
@@ -64,6 +82,10 @@ enum Command {
     /// Repo-local Codex environment checks and dry-run-first model loops.
     #[command(subcommand)]
     Codex(commands::codex::CodexCommand),
+
+    /// Task-scoped Rusty IDD harness packages for workflow stages.
+    #[command(subcommand)]
+    Harness(commands::harness::HarnessCommand),
 
     /// Reusable merge-goal workflow package and legacy surface disposition.
     #[command(subcommand)]
@@ -98,9 +120,13 @@ fn dispatch(command: Command) -> i32 {
         Command::Manifest(a) => commands::core::delegate("manifest", &a.args),
         Command::Github(a) => commands::core::delegate("github", &a.args),
         Command::Spec(cmd) => commands::spec::run(cmd),
+        Command::Next(args) => commands::next::run(args),
+        Command::Render(args) => commands::render::run(args),
+        Command::Deploy(args) => commands::deploy::run(args),
         Command::Run(args) => commands::run::run(args),
         Command::Knowledge(cmd) => commands::knowledge::run(cmd),
         Command::Codex(cmd) => commands::codex::run(cmd),
+        Command::Harness(cmd) => commands::harness::run(cmd),
         Command::MergeTools(cmd) => commands::merge_tools::run(cmd),
         Command::Tui => commands::tui::run(),
     }

@@ -1,11 +1,11 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:163df9d714b30ed6`
+- Workspace fingerprint: `fnv1a64:c2638d70127083b2`
 - Source graph provider: `codegraph-rust`
-- Source graph: 139 files, 8697 nodes, 35719 edges
-- Source languages: rust
+- Source graph: 387 files, 25252 nodes, 91112 edges
+- Source languages: javascript, python, rust
 - Context provider: `repomix-rs`
-- Context package: 319 files, 720698 tokens
+- Context package: 315 files, 182183 tokens
 
 ## Automation Stages
 
@@ -31,64 +31,79 @@
 
 | Component | Kind | Files | Nodes | Edges | Languages |
 |---|---|---:|---:|---:|---|
-| `cli` | crate | 24 | 867 | 3830 | Rust, rust |
-| `core` | crate | 12 | 448 | 2470 | Rust, rust |
+| `cli` | crate | 34 | 1371 | 6080 | Rust, rust |
+| `core` | crate | 12 | 455 | 2421 | Rust, rust |
 | `knowledge` | crate | 1 | 639 | 4653 | Rust, rust |
-| `merge-tools` | crate | 1 | 45 | 235 | Rust, rust |
-| `runner` | crate | 4 | 770 | 3135 | Rust, rust |
-| `spec` | crate | 24 | 461 | 1957 | Rust, rust |
+| `merge-tools` | crate | 1 | 50 | 240 | Rust, rust |
+| `runner` | crate | 4 | 770 | 3048 | Rust, rust |
+| `spec` | crate | 24 | 461 | 1552 | Rust, rust |
 | `tui` | crate | 3 | 1006 | 3985 | Rust, rust |
-| `codegraph-core` | external_crate | 39 | 1918 | 9070 | Rust, rust |
-| `codegraph-parser` | external_crate | 29 | 1060 | 7485 | Rust, rust |
+| `work-order` | crate | 2 | 165 | 527 | Rust, rust |
+| `codegraph-core` | external_crate | 39 | 1918 | 9101 | Rust, rust |
+| `codegraph-parser` | external_crate | 29 | 1060 | 7486 | Rust, rust |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | Rust, rust |
+| `imports` | repo_surface | 236 | 14297 | 55441 | JavaScript, Python, Rust, javascript, python, rust |
 
 ## Edges
 
 | Source | Kind | Target |
 |---|---|---|
-| `crate:cli` | codegraph:Calls | `crate:core` |
 | `crate:cli` | codegraph:Calls | `crate:knowledge` |
 | `crate:cli` | codegraph:Imports | `crate:knowledge` |
 | `crate:cli` | codegraph:References | `crate:knowledge` |
 | `crate:cli` | codegraph:Calls | `crate:merge-tools` |
 | `crate:cli` | codegraph:Imports | `crate:merge-tools` |
-| `crate:cli` | codegraph:Calls | `crate:runner` |
-| `crate:cli` | codegraph:Imports | `crate:runner` |
-| `crate:cli` | codegraph:Calls | `crate:spec` |
-| `crate:cli` | codegraph:Imports | `crate:spec` |
-| `crate:cli` | codegraph:References | `crate:spec` |
 | `crate:cli` | codegraph:Calls | `external:codegraph-core` |
 | `crate:cli` | codegraph:Calls | `external:codegraph-parser` |
-| `crate:core` | codegraph:Calls | `crate:spec` |
+| `crate:cli` | codegraph:Calls | `repo:imports` |
+| `crate:cli` | codegraph:Imports | `repo:imports` |
+| `crate:cli` | codegraph:References | `repo:imports` |
+| `crate:core` | codegraph:Calls | `crate:cli` |
 | `crate:core` | codegraph:Calls | `external:codegraph-core` |
-| `crate:knowledge` | codegraph:Imports | `crate:cli` |
+| `crate:core` | codegraph:Calls | `repo:imports` |
+| `crate:core` | codegraph:References | `repo:imports` |
+| `crate:knowledge` | codegraph:Calls | `crate:cli` |
 | `crate:knowledge` | codegraph:Calls | `crate:core` |
 | `crate:knowledge` | codegraph:Imports | `crate:core` |
-| `crate:knowledge` | codegraph:Calls | `crate:spec` |
 | `crate:knowledge` | codegraph:Calls | `external:codegraph-core` |
 | `crate:knowledge` | codegraph:Imports | `external:codegraph-core` |
 | `crate:knowledge` | codegraph:Calls | `external:codegraph-parser` |
 | `crate:knowledge` | codegraph:Imports | `external:codegraph-parser` |
-| `crate:merge-tools` | codegraph:Calls | `crate:core` |
-| `crate:merge-tools` | codegraph:Calls | `crate:spec` |
-| `crate:runner` | codegraph:Calls | `crate:core` |
-| `crate:runner` | codegraph:Calls | `crate:spec` |
+| `crate:knowledge` | codegraph:Calls | `repo:imports` |
+| `crate:knowledge` | codegraph:References | `repo:imports` |
+| `crate:merge-tools` | codegraph:Calls | `crate:cli` |
+| `crate:merge-tools` | codegraph:Calls | `repo:imports` |
+| `crate:merge-tools` | codegraph:References | `repo:imports` |
+| `crate:runner` | codegraph:Calls | `crate:cli` |
 | `crate:runner` | codegraph:Calls | `external:codegraph-core` |
+| `crate:runner` | codegraph:Calls | `repo:imports` |
+| `crate:runner` | codegraph:References | `repo:imports` |
+| `crate:spec` | codegraph:Calls | `crate:cli` |
 | `crate:spec` | codegraph:Calls | `external:codegraph-core` |
-| `crate:tui` | codegraph:Calls | `crate:core` |
-| `crate:tui` | codegraph:Calls | `crate:runner` |
-| `crate:tui` | codegraph:Imports | `crate:runner` |
-| `crate:tui` | codegraph:References | `crate:runner` |
-| `crate:tui` | codegraph:Calls | `crate:spec` |
+| `crate:spec` | codegraph:Calls | `repo:imports` |
+| `crate:spec` | codegraph:References | `repo:imports` |
 | `crate:tui` | codegraph:Calls | `external:codegraph-core` |
-| `external:codegraph-core` | codegraph:Calls | `crate:core` |
-| `external:codegraph-core` | codegraph:Calls | `crate:spec` |
-| `external:codegraph-core` | codegraph:References | `crate:spec` |
-| `external:codegraph-parser` | codegraph:Calls | `crate:core` |
-| `external:codegraph-parser` | codegraph:Calls | `crate:spec` |
+| `crate:tui` | codegraph:Calls | `repo:imports` |
+| `crate:tui` | codegraph:References | `repo:imports` |
+| `crate:work-order` | codegraph:Calls | `crate:cli` |
+| `crate:work-order` | codegraph:Calls | `repo:imports` |
+| `crate:work-order` | codegraph:References | `repo:imports` |
+| `external:codegraph-core` | codegraph:Calls | `crate:cli` |
+| `external:codegraph-core` | codegraph:Calls | `repo:imports` |
+| `external:codegraph-core` | codegraph:Imports | `repo:imports` |
+| `external:codegraph-core` | codegraph:References | `repo:imports` |
+| `external:codegraph-parser` | codegraph:Calls | `crate:cli` |
 | `external:codegraph-parser` | codegraph:Calls | `external:codegraph-core` |
 | `external:codegraph-parser` | codegraph:Imports | `external:codegraph-core` |
 | `external:codegraph-parser` | codegraph:References | `external:codegraph-core` |
+| `external:codegraph-parser` | codegraph:Calls | `repo:imports` |
+| `external:codegraph-parser` | codegraph:References | `repo:imports` |
+| `external:repomix-shared` | codegraph:References | `repo:imports` |
+| `repo:imports` | codegraph:Calls | `crate:cli` |
+| `repo:imports` | codegraph:Calls | `external:codegraph-core` |
+| `repo:imports` | codegraph:Imports | `external:codegraph-core` |
+| `repo:imports` | codegraph:References | `external:codegraph-core` |
+| `repo:imports` | codegraph:Calls | `external:codegraph-parser` |
 | `stage:architecture-map` | precedes | `stage:specification` |
 | `stage:architecture-map` | uses | `surface:codegraph-rust` |
 | `stage:architecture-map` | uses | `surface:repomix-rs` |
@@ -113,4 +128,4 @@
 ## Findings
 
 - CodeGraph-backed parsing completed without source failures
-- repomix context package measured 319 files and 720698 tokens
+- repomix context package measured 315 files and 182183 tokens

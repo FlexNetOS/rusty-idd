@@ -85,6 +85,7 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
         &mut findings,
     );
 
+    let secret_allowlist = load_secret_allowlist(root);
     for abs in stable_walk(root).map_err(|e| format!("walk failed: {e}"))? {
         let rel = relative_path(root, &abs);
         if validation_scan_should_skip(&rel) {
@@ -95,7 +96,9 @@ pub fn validate_workspace(path: impl AsRef<Path>) -> Result<Vec<ValidationFindin
         if content.is_empty() {
             continue;
         }
-        scan_secret_patterns(&rel, &content, &mut findings);
+        if !is_secret_allowlisted(&rel, &secret_allowlist) {
+            scan_secret_patterns(&rel, &content, &mut findings);
+        }
         if is_github_workflow(&rel) {
             scan_workflow_risks(&rel, &content, &mut findings);
             scan_workflow_policy(&rel, &content, &mut findings);
@@ -145,6 +148,28 @@ fn require_file(root: &Path, rel: &str, findings: &mut Vec<ValidationFinding>) {
 
 fn validation_scan_should_skip(rel: &str) -> bool {
     rel.contains(".git/") || rel.starts_with("target/") || rel.starts_with("third_party/upstream/")
+}
+
+/// Load secret-scan allowlist entries from `.idd/secret-allowlist.txt` (one path
+/// substring per line; `#` comments and blanks ignored). A file whose relative
+/// path contains any entry is exempt from secret-pattern findings — used to
+/// allowlist placeholder/detection-regex/test-fixture matches (e.g. a secret-
+/// DETECTION module's own regexes), NOT to skip scanning for real secrets
+/// elsewhere. Returns an empty list if the file is absent.
+fn load_secret_allowlist(root: &Path) -> Vec<String> {
+    std::fs::read_to_string(root.join(".idd/secret-allowlist.txt"))
+        .map(|s| {
+            s.lines()
+                .map(str::trim)
+                .filter(|l| !l.is_empty() && !l.starts_with('#'))
+                .map(ToOwned::to_owned)
+                .collect()
+        })
+        .unwrap_or_default()
+}
+
+fn is_secret_allowlisted(rel: &str, allowlist: &[String]) -> bool {
+    allowlist.iter().any(|entry| rel.contains(entry.as_str()))
 }
 
 fn flag_committed_env_file(file: &str, findings: &mut Vec<ValidationFinding>) {
@@ -331,12 +356,23 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         });
     }
 
-    if content.contains("dtolnay/rust-toolchain@stable") {
+    if content.contains("dtolnay/rust-toolchain@") {
         findings.push(ValidationFinding {
             severity: FindingSeverity::Critical,
             file: file.to_string(),
-            message: "workflow uses floating Rust toolchain @stable; pin an explicit version"
-                .to_string(),
+            message:
+                "workflow must use scripts/ci/envctl-rust-env.sh instead of dtolnay/rust-toolchain"
+                    .to_string(),
+        });
+    }
+
+    if content.contains("Swatinem/rust-cache@") {
+        findings.push(ValidationFinding {
+            severity: FindingSeverity::Critical,
+            file: file.to_string(),
+            message:
+                "workflow must use explicit meta-owned cache paths instead of Swatinem/rust-cache"
+                    .to_string(),
         });
     }
 
@@ -346,6 +382,20 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
             &compact,
             "branches: [main, develop]",
             "primary CI must run on both main and develop pushes",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-env.sh ci",
+            "primary CI must materialize the envctl-owned Rust toolchain/cache",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-audit.sh",
+            "primary CI must audit the actual envctl-owned Rust compiler/cache surface",
             findings,
         );
         require_workflow_contains(
@@ -382,8 +432,15 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
         require_workflow_contains(
             file,
             content,
-            "Swatinem/rust-cache@v2",
-            "promotion verification must use the shared Rust cache",
+            "scripts/ci/envctl-rust-env.sh promote",
+            "promotion verification must materialize the envctl-owned Rust toolchain/cache",
+            findings,
+        );
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-audit.sh",
+            "promotion verification must audit the actual envctl-owned Rust compiler/cache surface",
             findings,
         );
         require_workflow_contains(
@@ -398,6 +455,16 @@ fn scan_workflow_policy(file: &str, content: &str, findings: &mut Vec<Validation
             content,
             "cargo audit --deny warnings",
             "promotion verification must deny new cargo-audit warnings",
+            findings,
+        );
+    }
+
+    if file.ends_with("/release.yml") {
+        require_workflow_contains(
+            file,
+            content,
+            "scripts/ci/envctl-rust-env.sh release",
+            "release workflow must materialize the envctl-owned Rust toolchain",
             findings,
         );
     }
@@ -519,6 +586,21 @@ mod tests {
         flag_committed_env_file(".env.production", &mut findings);
         assert_eq!(findings.len(), 1);
         assert_eq!(findings[0].severity, FindingSeverity::Critical);
+    }
+
+    #[test]
+    fn secret_allowlist_exempts_listed_placeholder_files() {
+        // An allowlisted detection-module/test-fixture path is exempt; other
+        // files are still scanned (allowlist exempts placeholders, not real
+        // secrets elsewhere).
+        let allow = vec!["imports/prompt_hub/prompt-hub/src/privacy.rs".to_string()];
+        assert!(is_secret_allowlisted(
+            "imports/prompt_hub/prompt-hub/src/privacy.rs",
+            &allow
+        ));
+        assert!(!is_secret_allowlisted("crates/cli/src/lib.rs", &allow));
+        // Empty allowlist exempts nothing.
+        assert!(!is_secret_allowlisted("anything.rs", &[]));
     }
 
     #[test]
