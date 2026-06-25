@@ -23,7 +23,7 @@ crossbeam-channel = "0.5"
 dashmap = "6"
 dirs = "6"
 futures = "0.3"
-hashbrown = "0.16"
+hashbrown = "0.17"
 indicatif = "0.18"
 memmap2 = "0.9"
 notify = "8"
@@ -57,7 +57,7 @@ windows-sys = { version = "0.61", features = [
 ] }
 
 [dev-dependencies]
-criterion = "0.5"
+criterion = "0.8"
 tempfile = "3"
 tokio-test = "0.4"
 
