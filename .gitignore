@@ -1,19 +1,30 @@
+# rusty-idd local artifacts — anchored to the repo ROOT (leading `/`) so they
+# never strip imported owned-repo trees under `imports/` (faithful adopt, ADR-0018:
+# imported repos carry their own .idea/.worktrees/.kb/.handoff/etc. and must be
+# kept intact). Anchoring is the gitignore-policy upgrade that lets `imports/`
+# hold complete dotfolders/files.
 /target
+/.worktrees/
+/.idd/runs/
 
-# Local execution and regenerated backup artifacts
+# IDE configs (root only — imported repos' .idea/.vscode are kept under imports/)
+/.idea/
+/.vscode/
+
+# Local regenerated backup artifacts (rusty-idd's own tree). Unanchored: the
+# validate/manifest tooling rotates `*.idd-bak-N` snapshots beside their source
+# (.idd/MANIFEST.tsv.idd-bak-*, AI_MERGE/validation_report.md.idd-bak-*), so this
+# must match at any depth — they are regenerable runtime litter, never tracked.
+# (The `!imports/**` net below keeps any such file under an adopted repo intact.)
 *.idd-bak-*
-.worktrees/
-.idd/runs/
-# Swap files
+
+# Universal junk (safe to ignore anywhere)
 *.swp
 *.swo
 *~
-
-# IDE configs
-.vscode/
-.idea/
-*.iml
-
-# OS artifacts
 .DS_Store
 Thumbs.db
+
+# Faithful-adopt safety net: never ignore anything under imports/ (ADR-0018).
+# Re-includes any file the patterns above would otherwise exclude there.
+!imports/**

@@ -1,0 +1,1369 @@
+{
+  "schema_version": 1,
+  "workspace_fingerprint": "fnv1a64:5c8140d95293d4b5",
+  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "source_graph": {
+    "provider": "codegraph-rust",
+    "files": 141,
+    "nodes": 8832,
+    "edges": 36415,
+    "languages": [
+      "rust"
+    ],
+    "hotspots": 20,
+    "parse_failures": 0
+  },
+  "context_package": {
+    "provider": "repomix-rs",
+    "files": 357,
+    "tokens": 741254,
+    "output_style": "markdown",
+    "top_files_by_tokens": [
+      [
+        "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/00_repo_a_inventory.md",
+        102353
+      ],
+      [
+        "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/01_repo_b_inventory.md",
+        102353
+      ],
+      [
+        "AI_MERGE/35_e2e_test_suite/00_rusty_idd_inventory_before.md",
+        101899
+      ],
+      [
+        "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/00_repo_a_inventory.md",
+        95914
+      ],
+      [
+        "AI_MERGE/34_grit_full_integration/01_rusty_idd_inventory_before_adoption.md",
+        95446
+      ],
+      [
+        "crates/tui/src/app.rs",
+        9464
+      ],
+      [
+        "crates/knowledge/src/lib.rs",
+        8632
+      ],
+      [
+        "AI_MERGE/38_handoff_kb_refresh/handoff-tracked-files.md",
+        7982
+      ],
+      [
+        "AI_MERGE/36_handoff_full_adoption/handoff-tracked-files.md",
+        7659
+      ],
+      [
+        "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md",
+        7088
+      ],
+      [
+        "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/03_env_and_secret_contracts.md",
+        7088
+      ],
+      [
+        "AI_MERGE/11_integration_research_audit_roadmap.md",
+        5761
+      ],
+      [
+        "docs/rusty-idd/codex-environment.md",
+        4484
+      ],
+      [
+        "docs/rusty-idd/spec-engine-design.md",
+        4132
+      ],
+      [
+        "docs/rusty-idd/lifecycle-contract.md",
+        3666
+      ],
+      [
+        "AI_MERGE/34_handoff_single_repo_architecture.md",
+        3140
+      ],
+      [
+        "crates/cli/src/commands/codex.rs",
+        3081
+      ],
+      [
+        "crates/core/src/templates.rs",
+        2595
+      ],
+      [
+        "AI_MERGE/16_upstream_knowledge_revisit.md",
+        2540
+      ],
+      [
+        "docs/rusty-idd/production-readiness-audit.md",
+        2502
+      ],
+      [
+        "AI_MERGE/35_e2e_test_suite/plan-workspace/AI_MERGE/02_feature_matrix.md",
+        2469
+      ],
+      [
+        "AI_MERGE/14_upstream_full_adoption.md",
+        2421
+      ],
+      [
+        "Justfile",
+        2319
+      ],
+      [
+        "AI_MERGE/34_grit_full_integration/00_grit_inventory.md",
+        2098
+      ],
+      [
+        "AI_MERGE/34_grit_full_integration/plan-workspace/AI_MERGE/01_repo_b_inventory.md",
+        2098
+      ]
+    ],
+    "suspicious_files": 0,
+    "skipped_files": 0
+  },
+  "components": [
+    {
+      "id": "crate:cli",
+      "name": "cli",
+      "kind": "crate",
+      "files": 26,
+      "nodes": 1000,
+      "edges": 4547,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 291,
+          "name": "try_run",
+          "file": "crates/cli/src/commands/knowledge.rs",
+          "line_start": 255,
+          "line_end": 516,
+          "score": 1356,
+          "reasons": [
+            "262 lines",
+            "100 graph links",
+            "97 call links",
+            "13 unresolved calls",
+            "cyclomatic complexity 19"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/cli/src/commands/codex.rs",
+        "crates/cli/src/commands/core.rs",
+        "crates/cli/src/commands/harness.rs",
+        "crates/cli/src/commands/knowledge.rs",
+        "crates/cli/src/commands/merge_tools.rs",
+        "crates/cli/src/commands/mod.rs",
+        "crates/cli/src/commands/run.rs",
+        "crates/cli/src/commands/spec.rs",
+        "crates/cli/src/commands/spec_adr.rs",
+        "crates/cli/src/commands/spec_archive.rs",
+        "crates/cli/src/commands/spec_plan_integration.rs",
+        "crates/cli/src/commands/spec_scaffold.rs"
+      ]
+    },
+    {
+      "id": "crate:core",
+      "name": "core",
+      "kind": "crate",
+      "files": 12,
+      "nodes": 448,
+      "edges": 2479,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/core/src/cli.rs",
+        "crates/core/src/env_contract.rs",
+        "crates/core/src/fs_utils.rs",
+        "crates/core/src/lib.rs",
+        "crates/core/src/manifest.rs",
+        "crates/core/src/model.rs",
+        "crates/core/src/planner.rs",
+        "crates/core/src/scanner.rs",
+        "crates/core/src/templates.rs",
+        "crates/core/src/validation.rs",
+        "crates/core/tests/smoke.rs",
+        "crates/core/tests/template_agent_surface.rs"
+      ]
+    },
+    {
+      "id": "crate:knowledge",
+      "name": "knowledge",
+      "kind": "crate",
+      "files": 1,
+      "nodes": 639,
+      "edges": 4653,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 4817,
+          "name": "integration_readiness_report",
+          "file": "crates/knowledge/src/lib.rs",
+          "line_start": 4532,
+          "line_end": 4867,
+          "score": 1649,
+          "reasons": [
+            "336 lines",
+            "123 graph links",
+            "117 call links",
+            "7 unresolved calls",
+            "cyclomatic complexity 26"
+          ]
+        },
+        {
+          "node_id": 5031,
+          "name": "integration_owner_surfaces_join_work_item_to_system_repos",
+          "file": "crates/knowledge/src/lib.rs",
+          "line_start": 6676,
+          "line_end": 6926,
+          "score": 1488,
+          "reasons": [
+            "251 lines",
+            "121 graph links",
+            "120 call links",
+            "10 unresolved calls"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/knowledge/src/lib.rs"
+      ]
+    },
+    {
+      "id": "crate:merge-tools",
+      "name": "merge-tools",
+      "kind": "crate",
+      "files": 1,
+      "nodes": 45,
+      "edges": 234,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/merge-tools/src/lib.rs"
+      ]
+    },
+    {
+      "id": "crate:runner",
+      "name": "runner",
+      "kind": "crate",
+      "files": 4,
+      "nodes": 770,
+      "edges": 3135,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 5646,
+          "name": "implementation_loop",
+          "file": "crates/runner/src/runner.rs",
+          "line_start": 428,
+          "line_end": 769,
+          "score": 2025,
+          "reasons": [
+            "342 lines",
+            "156 graph links",
+            "143 call links",
+            "2 unresolved calls",
+            "cyclomatic complexity 52"
+          ]
+        },
+        {
+          "node_id": 5605,
+          "name": "new",
+          "file": "crates/runner/src/runner.rs",
+          "line_start": 54,
+          "line_end": 63,
+          "score": 1408,
+          "reasons": [
+            "145 graph links",
+            "137 call links"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/runner/src/config.rs",
+        "crates/runner/src/data.rs",
+        "crates/runner/src/lib.rs",
+        "crates/runner/src/runner.rs"
+      ]
+    },
+    {
+      "id": "crate:spec",
+      "name": "spec",
+      "kind": "crate",
+      "files": 24,
+      "nodes": 461,
+      "edges": 1969,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 6083,
+          "name": "contains",
+          "file": "crates/spec/src/model/spec.rs",
+          "line_start": 30,
+          "line_end": 32,
+          "score": 3356,
+          "reasons": [
+            "337 graph links",
+            "334 call links"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/spec/src/adr/mod.rs",
+        "crates/spec/src/archive/mod.rs",
+        "crates/spec/src/lib.rs",
+        "crates/spec/src/model/block.rs",
+        "crates/spec/src/model/delta.rs",
+        "crates/spec/src/model/merge.rs",
+        "crates/spec/src/model/mod.rs",
+        "crates/spec/src/model/requirement.rs",
+        "crates/spec/src/model/spec.rs",
+        "crates/spec/src/parse/common.rs",
+        "crates/spec/src/parse/delta_parser.rs",
+        "crates/spec/src/parse/emit.rs"
+      ]
+    },
+    {
+      "id": "crate:tui",
+      "name": "tui",
+      "kind": "crate",
+      "files": 3,
+      "nodes": 1006,
+      "edges": 3985,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 6368,
+          "name": "new",
+          "file": "crates/tui/src/app.rs",
+          "line_start": 114,
+          "line_end": 148,
+          "score": 2601,
+          "reasons": [
+            "35 lines",
+            "259 graph links",
+            "254 call links",
+            "1 unresolved calls"
+          ]
+        },
+        {
+          "node_id": 6383,
+          "name": "handle_config_input",
+          "file": "crates/tui/src/app.rs",
+          "line_start": 702,
+          "line_end": 834,
+          "score": 1707,
+          "reasons": [
+            "133 lines",
+            "151 graph links",
+            "148 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 19"
+          ]
+        },
+        {
+          "node_id": 7085,
+          "name": "draw_config_screen",
+          "file": "crates/tui/src/ui.rs",
+          "line_start": 330,
+          "line_end": 543,
+          "score": 1429,
+          "reasons": [
+            "214 lines",
+            "112 graph links",
+            "108 call links",
+            "13 unresolved calls",
+            "cyclomatic complexity 21"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/tui/src/app.rs",
+        "crates/tui/src/lib.rs",
+        "crates/tui/src/ui.rs"
+      ]
+    },
+    {
+      "id": "external:codegraph-core",
+      "name": "codegraph-core",
+      "kind": "external_crate",
+      "files": 39,
+      "nodes": 1918,
+      "edges": 9070,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 3187,
+          "name": "visit_dir",
+          "file": "crates/external/codegraph-core/src/watch/mod.rs",
+          "line_start": 247,
+          "line_end": 258,
+          "score": 2022,
+          "reasons": [
+            "198 graph links",
+            "194 call links",
+            "14 unresolved calls",
+            "cyclomatic complexity 4"
+          ]
+        },
+        {
+          "node_id": 3189,
+          "name": "process_path_event",
+          "file": "crates/external/codegraph-core/src/watch/mod.rs",
+          "line_start": 526,
+          "line_end": 719,
+          "score": 1695,
+          "reasons": [
+            "194 lines",
+            "137 graph links",
+            "131 call links",
+            "11 unresolved calls",
+            "cyclomatic complexity 35"
+          ]
+        },
+        {
+          "node_id": 1871,
+          "name": "apply_env_overrides",
+          "file": "crates/external/codegraph-core/src/config_manager.rs",
+          "line_start": 674,
+          "line_end": 895,
+          "score": 1383,
+          "reasons": [
+            "222 lines",
+            "91 graph links",
+            "88 call links",
+            "4 unresolved calls",
+            "cyclomatic complexity 65"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/external/codegraph-core/benches/core_micro.rs",
+        "crates/external/codegraph-core/src/advanced_config.rs",
+        "crates/external/codegraph-core/src/arena.rs",
+        "crates/external/codegraph-core/src/buffer_pool.rs",
+        "crates/external/codegraph-core/src/cli_config.rs",
+        "crates/external/codegraph-core/src/compression.rs",
+        "crates/external/codegraph-core/src/config.rs",
+        "crates/external/codegraph-core/src/config_manager.rs",
+        "crates/external/codegraph-core/src/embedding_config.rs",
+        "crates/external/codegraph-core/src/error.rs",
+        "crates/external/codegraph-core/src/incremental/mod.rs",
+        "crates/external/codegraph-core/src/incremental/updater.rs"
+      ]
+    },
+    {
+      "id": "external:codegraph-parser",
+      "name": "codegraph-parser",
+      "kind": "external_crate",
+      "files": 29,
+      "nodes": 1060,
+      "edges": 7485,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [
+        {
+          "node_id": 3934,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/rust.rs",
+          "line_start": 97,
+          "line_end": 496,
+          "score": 3544,
+          "reasons": [
+            "400 lines",
+            "302 graph links",
+            "299 call links",
+            "7 unresolved calls",
+            "cyclomatic complexity 31"
+          ]
+        },
+        {
+          "node_id": 3786,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/java.rs",
+          "line_start": 109,
+          "line_end": 457,
+          "score": 2871,
+          "reasons": [
+            "349 lines",
+            "237 graph links",
+            "234 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 41"
+          ]
+        },
+        {
+          "node_id": 3859,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/php.rs",
+          "line_start": 130,
+          "line_end": 428,
+          "score": 2375,
+          "reasons": [
+            "299 lines",
+            "196 graph links",
+            "193 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 32"
+          ]
+        },
+        {
+          "node_id": 3704,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
+          "line_start": 105,
+          "line_end": 394,
+          "score": 2220,
+          "reasons": [
+            "290 lines",
+            "182 graph links",
+            "179 call links",
+            "5 unresolved calls",
+            "cyclomatic complexity 29"
+          ]
+        },
+        {
+          "node_id": 3910,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
+          "line_start": 122,
+          "line_end": 394,
+          "score": 2193,
+          "reasons": [
+            "273 lines",
+            "180 graph links",
+            "177 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 33"
+          ]
+        },
+        {
+          "node_id": 3728,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
+          "line_start": 109,
+          "line_end": 394,
+          "score": 2186,
+          "reasons": [
+            "286 lines",
+            "180 graph links",
+            "177 call links",
+            "3 unresolved calls",
+            "cyclomatic complexity 28"
+          ]
+        },
+        {
+          "node_id": 4001,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/swift.rs",
+          "line_start": 108,
+          "line_end": 387,
+          "score": 2141,
+          "reasons": [
+            "280 lines",
+            "175 graph links",
+            "172 call links",
+            "4 unresolved calls",
+            "cyclomatic complexity 30"
+          ]
+        },
+        {
+          "node_id": 3761,
+          "name": "walk",
+          "file": "crates/external/codegraph-parser/src/languages/go.rs",
+          "line_start": 104,
+          "line_end": 296,
+          "score": 1456,
+          "reasons": [
+            "193 lines",
+            "118 graph links",
+            "115 call links",
+            "4 unresolved calls",
+            "cyclomatic complexity 23"
+          ]
+        }
+      ],
+      "evidence_paths": [
+        "crates/external/codegraph-parser/src/complexity.rs",
+        "crates/external/codegraph-parser/src/diff.rs",
+        "crates/external/codegraph-parser/src/edge.rs",
+        "crates/external/codegraph-parser/src/fast_io.rs",
+        "crates/external/codegraph-parser/src/fast_ml/enhancer.rs",
+        "crates/external/codegraph-parser/src/fast_ml/mod.rs",
+        "crates/external/codegraph-parser/src/fast_ml/pattern_matcher.rs",
+        "crates/external/codegraph-parser/src/fast_ml/symbol_resolver.rs",
+        "crates/external/codegraph-parser/src/file_collect.rs",
+        "crates/external/codegraph-parser/src/integration_tests.rs",
+        "crates/external/codegraph-parser/src/language.rs",
+        "crates/external/codegraph-parser/src/languages/cpp.rs"
+      ]
+    },
+    {
+      "id": "external:repomix-shared",
+      "name": "repomix-shared",
+      "kind": "external_crate",
+      "files": 2,
+      "nodes": 11,
+      "edges": 34,
+      "languages": [
+        "Rust",
+        "rust"
+      ],
+      "hotspots": [],
+      "evidence_paths": [
+        "crates/external/repomix-shared/src/lib.rs",
+        "crates/external/repomix-shared/src/types.rs"
+      ]
+    }
+  ],
+  "integration_surfaces": [
+    {
+      "id": "surface:codegraph-rust",
+      "name": "CodeGraph Rust",
+      "kind": "architecture_graph",
+      "provider": "codegraph-rust",
+      "default_scope": "in-process knowledge indexing",
+      "capabilities": [
+        "multi-language tree-sitter registry",
+        "symbol/import/call/type graph extraction",
+        "impact and hotspot evidence"
+      ],
+      "evidence_paths": [
+        "crates/external/codegraph-core",
+        "crates/external/codegraph-parser",
+        "third_party/upstream/codegraph-rust",
+        "docs/rusty-idd/merge-tools-package.md",
+        "AI_MERGE/16_upstream_knowledge_revisit.md"
+      ]
+    },
+    {
+      "id": "surface:repomix-rs",
+      "name": "repomix-rs",
+      "kind": "context_package",
+      "provider": "repomix-rs",
+      "default_scope": "bounded context packing and token policy",
+      "capabilities": [
+        "compressed context packs",
+        "token accounting and top-file metrics",
+        "security and suspicious-file signals",
+        "git-aware context options"
+      ],
+      "evidence_paths": [
+        "third_party/upstream/repomix-rs",
+        "Cargo.toml",
+        "docs/rusty-idd/merge-tools-package.md",
+        "AI_MERGE/16_upstream_knowledge_revisit.md"
+      ]
+    },
+    {
+      "id": "surface:openspec",
+      "name": "Rusty IDD OpenSpec lifecycle",
+      "kind": "lifecycle_control_plane",
+      "provider": "rusty-idd",
+      "default_scope": "proposal, spec, design, ADR, task, validation, archive",
+      "capabilities": [
+        "goal intake",
+        "spec delta tracking",
+        "ordered implementation tasks",
+        "validation and merge evidence"
+      ],
+      "evidence_paths": [
+        "openspec",
+        "crates/spec",
+        "crates/runner",
+        "docs/rusty-idd/proposal.md"
+      ]
+    },
+    {
+      "id": "surface:audit-manifest",
+      "name": "Audit and manifest evidence",
+      "kind": "evidence_control_plane",
+      "provider": "rusty-idd",
+      "default_scope": "deterministic generated control-plane artifacts",
+      "capabilities": [
+        "AI_MERGE audit records",
+        "ADR traceability",
+        ".idd manifest baseline",
+        "knowledge artifact freshness"
+      ],
+      "evidence_paths": [
+        "AI_MERGE",
+        "adr",
+        ".idd/MANIFEST.tsv"
+      ]
+    }
+  ],
+  "automation_stages": [
+    {
+      "id": "stage:intake",
+      "name": "Goal intake and bounded context",
+      "purpose": "turn repo state and user goal into bounded agent context",
+      "surfaces": [
+        "surface:repomix-rs",
+        "surface:openspec"
+      ],
+      "artifact_paths": [
+        "openspec/changes/*/proposal.md"
+      ]
+    },
+    {
+      "id": "stage:architecture-map",
+      "name": "Architecture mapping",
+      "purpose": "map source structure, integrations, and impact before implementation",
+      "surfaces": [
+        "surface:codegraph-rust",
+        "surface:repomix-rs"
+      ],
+      "artifact_paths": [
+        ".idd/knowledge/index.json",
+        ".idd/knowledge/architecture.json"
+      ]
+    },
+    {
+      "id": "stage:specification",
+      "name": "Specification and decisions",
+      "purpose": "convert architecture map into spec deltas, design, ADRs, and tasks",
+      "surfaces": [
+        "surface:openspec",
+        "surface:audit-manifest"
+      ],
+      "artifact_paths": [
+        "openspec/changes/*/specs/**/*.md",
+        "adr/*.md",
+        "openspec/changes/*/tasks.md"
+      ]
+    },
+    {
+      "id": "stage:implementation",
+      "name": "Implementation",
+      "purpose": "apply graph-informed, spec-backed code changes",
+      "surfaces": [
+        "surface:codegraph-rust",
+        "surface:openspec"
+      ],
+      "artifact_paths": [
+        "crates/**",
+        "openspec/changes/*/tasks.md"
+      ]
+    },
+    {
+      "id": "stage:validation",
+      "name": "Validation and regeneration",
+      "purpose": "run gates and refresh deterministic control-plane artifacts",
+      "surfaces": [
+        "surface:codegraph-rust",
+        "surface:repomix-rs",
+        "surface:audit-manifest"
+      ],
+      "artifact_paths": [
+        ".idd/knowledge/report.md",
+        ".idd/MANIFEST.tsv",
+        "AI_MERGE/*.md"
+      ]
+    },
+    {
+      "id": "stage:handoff",
+      "name": "Handoff and merge evidence",
+      "purpose": "record evidence, rollback, and merge-ready traceability",
+      "surfaces": [
+        "surface:audit-manifest",
+        "surface:openspec"
+      ],
+      "artifact_paths": [
+        "AI_MERGE/*.md",
+        "openspec/changes/archive/**"
+      ]
+    }
+  ],
+  "edges": [
+    {
+      "source": "crate:cli",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 8868"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:knowledge",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 8622"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:knowledge",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 8486"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:knowledge",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 8735"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:merge-tools",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 8790"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:merge-tools",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 8784"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:runner",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 8808"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:runner",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 8797"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 7346"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:spec",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 8815"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "crate:spec",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 8905"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 7817"
+      ]
+    },
+    {
+      "source": "crate:cli",
+      "target": "external:codegraph-parser",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 8741"
+      ]
+    },
+    {
+      "source": "crate:core",
+      "target": "crate:cli",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 11673"
+      ]
+    },
+    {
+      "source": "crate:core",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 11030"
+      ]
+    },
+    {
+      "source": "crate:core",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 10905"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "crate:cli",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 26977"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "crate:cli",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 25889"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 26557"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "crate:core",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 25904"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 26627"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 26583"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 25894"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "external:codegraph-parser",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 26834"
+      ]
+    },
+    {
+      "source": "crate:knowledge",
+      "target": "external:codegraph-parser",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 25899"
+      ]
+    },
+    {
+      "source": "crate:merge-tools",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 30020"
+      ]
+    },
+    {
+      "source": "crate:merge-tools",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 29915"
+      ]
+    },
+    {
+      "source": "crate:runner",
+      "target": "crate:cli",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 30541"
+      ]
+    },
+    {
+      "source": "crate:runner",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 30543"
+      ]
+    },
+    {
+      "source": "crate:runner",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 30079"
+      ]
+    },
+    {
+      "source": "crate:runner",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 30365"
+      ]
+    },
+    {
+      "source": "crate:spec",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 32590"
+      ]
+    },
+    {
+      "source": "crate:tui",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 34141"
+      ]
+    },
+    {
+      "source": "crate:tui",
+      "target": "crate:runner",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 33477"
+      ]
+    },
+    {
+      "source": "crate:tui",
+      "target": "crate:runner",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 33441"
+      ]
+    },
+    {
+      "source": "crate:tui",
+      "target": "crate:runner",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 33466"
+      ]
+    },
+    {
+      "source": "crate:tui",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 33573"
+      ]
+    },
+    {
+      "source": "crate:tui",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 33679"
+      ]
+    },
+    {
+      "source": "external:codegraph-core",
+      "target": "crate:cli",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 15967"
+      ]
+    },
+    {
+      "source": "external:codegraph-core",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 13526"
+      ]
+    },
+    {
+      "source": "external:codegraph-core",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 12893"
+      ]
+    },
+    {
+      "source": "external:codegraph-core",
+      "target": "crate:spec",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 15849"
+      ]
+    },
+    {
+      "source": "external:codegraph-parser",
+      "target": "crate:cli",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 19958"
+      ]
+    },
+    {
+      "source": "external:codegraph-parser",
+      "target": "crate:core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 20045"
+      ]
+    },
+    {
+      "source": "external:codegraph-parser",
+      "target": "crate:spec",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 19426"
+      ]
+    },
+    {
+      "source": "external:codegraph-parser",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 19421"
+      ]
+    },
+    {
+      "source": "external:codegraph-parser",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:Imports",
+      "evidence": [
+        "knowledge edge 19486"
+      ]
+    },
+    {
+      "source": "external:codegraph-parser",
+      "target": "external:codegraph-core",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 19631"
+      ]
+    },
+    {
+      "source": "stage:architecture-map",
+      "target": "stage:specification",
+      "kind": "precedes",
+      "evidence": []
+    },
+    {
+      "source": "stage:architecture-map",
+      "target": "surface:codegraph-rust",
+      "kind": "uses",
+      "evidence": [
+        ".idd/knowledge/index.json",
+        ".idd/knowledge/architecture.json"
+      ]
+    },
+    {
+      "source": "stage:architecture-map",
+      "target": "surface:repomix-rs",
+      "kind": "uses",
+      "evidence": [
+        ".idd/knowledge/index.json",
+        ".idd/knowledge/architecture.json"
+      ]
+    },
+    {
+      "source": "stage:handoff",
+      "target": "surface:audit-manifest",
+      "kind": "uses",
+      "evidence": [
+        "AI_MERGE/*.md",
+        "openspec/changes/archive/**"
+      ]
+    },
+    {
+      "source": "stage:handoff",
+      "target": "surface:openspec",
+      "kind": "uses",
+      "evidence": [
+        "AI_MERGE/*.md",
+        "openspec/changes/archive/**"
+      ]
+    },
+    {
+      "source": "stage:implementation",
+      "target": "stage:validation",
+      "kind": "precedes",
+      "evidence": []
+    },
+    {
+      "source": "stage:implementation",
+      "target": "surface:codegraph-rust",
+      "kind": "uses",
+      "evidence": [
+        "crates/**",
+        "openspec/changes/*/tasks.md"
+      ]
+    },
+    {
+      "source": "stage:implementation",
+      "target": "surface:openspec",
+      "kind": "uses",
+      "evidence": [
+        "crates/**",
+        "openspec/changes/*/tasks.md"
+      ]
+    },
+    {
+      "source": "stage:intake",
+      "target": "stage:architecture-map",
+      "kind": "precedes",
+      "evidence": []
+    },
+    {
+      "source": "stage:intake",
+      "target": "surface:openspec",
+      "kind": "uses",
+      "evidence": [
+        "openspec/changes/*/proposal.md"
+      ]
+    },
+    {
+      "source": "stage:intake",
+      "target": "surface:repomix-rs",
+      "kind": "uses",
+      "evidence": [
+        "openspec/changes/*/proposal.md"
+      ]
+    },
+    {
+      "source": "stage:specification",
+      "target": "stage:implementation",
+      "kind": "precedes",
+      "evidence": []
+    },
+    {
+      "source": "stage:specification",
+      "target": "surface:audit-manifest",
+      "kind": "uses",
+      "evidence": [
+        "openspec/changes/*/specs/**/*.md",
+        "adr/*.md",
+        "openspec/changes/*/tasks.md"
+      ]
+    },
+    {
+      "source": "stage:specification",
+      "target": "surface:openspec",
+      "kind": "uses",
+      "evidence": [
+        "openspec/changes/*/specs/**/*.md",
+        "adr/*.md",
+        "openspec/changes/*/tasks.md"
+      ]
+    },
+    {
+      "source": "stage:validation",
+      "target": "stage:handoff",
+      "kind": "precedes",
+      "evidence": []
+    },
+    {
+      "source": "stage:validation",
+      "target": "surface:audit-manifest",
+      "kind": "uses",
+      "evidence": [
+        ".idd/knowledge/report.md",
+        ".idd/MANIFEST.tsv",
+        "AI_MERGE/*.md"
+      ]
+    },
+    {
+      "source": "stage:validation",
+      "target": "surface:codegraph-rust",
+      "kind": "uses",
+      "evidence": [
+        ".idd/knowledge/report.md",
+        ".idd/MANIFEST.tsv",
+        "AI_MERGE/*.md"
+      ]
+    },
+    {
+      "source": "stage:validation",
+      "target": "surface:repomix-rs",
+      "kind": "uses",
+      "evidence": [
+        ".idd/knowledge/report.md",
+        ".idd/MANIFEST.tsv",
+        "AI_MERGE/*.md"
+      ]
+    },
+    {
+      "source": "surface:codegraph-rust",
+      "target": "external:codegraph-parser",
+      "kind": "implemented_by",
+      "evidence": [
+        "crates/external/codegraph-core",
+        "crates/external/codegraph-parser",
+        "third_party/upstream/codegraph-rust",
+        "docs/rusty-idd/merge-tools-package.md",
+        "AI_MERGE/16_upstream_knowledge_revisit.md"
+      ]
+    },
+    {
+      "source": "surface:openspec",
+      "target": "crate:spec",
+      "kind": "implemented_by",
+      "evidence": [
+        "openspec",
+        "crates/spec",
+        "crates/runner",
+        "docs/rusty-idd/proposal.md"
+      ]
+    }
+  ],
+  "findings": [
+    "CodeGraph-backed parsing completed without source failures",
+    "repomix context package measured 357 files and 741254 tokens"
+  ]
+}
