@@ -34,6 +34,7 @@ members = [
     "crates/runner",
     "crates/spec",
     "crates/tui",
+    "crates/work-order",
 ]
 
 [patch.crates-io]

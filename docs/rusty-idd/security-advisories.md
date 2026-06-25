@@ -17,6 +17,7 @@ explicit rationale and a re-evaluation trigger, rather than walling all work.
 | Advisory | Crate | Disposition | Slice |
 |----------|-------|-------------|-------|
 | RUSTSEC-2026-0009 | `time` 0.3.41 → **0.3.47** | Fixed by forward upgrade (`cargo update -p time --precise 0.3.47`). DoS via stack exhaustion. No longer reported. | A2 |
+| RUSTSEC-2026-0186 | `memmap2` 0.9.10 → **0.9.11** | Fixed by forward upgrade (`cargo update -p memmap2 --precise 0.9.11`). Unchecked pointer offset warning. No longer reported. | envctl-owned-rust-toolchain-cache |
 
 ## Accepted risk (no forward upgrade path)
 

@@ -6,6 +6,10 @@ generated knowledge artifacts. The harness follows Rusty IDD's intent-driven
 flow; `AI_MERGE/` is a tool/evidence surface, not Rusty IDD's main intent or
 control plane.
 
+The always-on harness must stay small. Stage-specific capability belongs in
+Rusty IDD workflow packages generated with `rusty-idd harness package`, not in a
+growing `.codex`, `.claude`, `.kimi`, or `.agents` toolbox.
+
 The setup was checked against the current Codex manual fetched on 2026-06-21.
 The manual does not define a canonical "7 layer" or "8 layer" Codex model.
 Configuration precedence has six layers: CLI overrides, trusted project
@@ -31,6 +35,7 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
 | Runtime audit CLI | `rusty-idd codex runtime-audit` | Rust-native proof that repo-local Codex hooks, agents, loops, and targets do not depend on Python. |
 | System audit CLI | `rusty-idd codex system-audit` | Rust-native proof that the active Codex binary and parent-managed source-build path are Rust-first. |
 | Model loop CLI | `rusty-idd codex model-loop` | Rust-native command that emits or executes exact read-only `codex exec` commands for the default loop. |
+| Harness package CLI | `rusty-idd harness package` | Rust-native package creation for stage-scoped roles, contracts, tools, helpers, hooks, gates, and evidence schemas. |
 | Merge tool package | `rusty-idd merge-tools show` | Rusty IDD-owned package for merge-goal inventory, planning, implementation, verification, evidence, and legacy-surface disposition. |
 
 ## Intentional Exclusions
@@ -49,23 +54,29 @@ project-control surfaces below are the intentionally tracked Rusty IDD build.
 - Custom prompts are deprecated by Codex in favor of skills and are not
   repo-shared through `.codex`.
 - Memories are user/app state, not the authoritative repository rule surface.
-- Plugins are a distribution surface for sharing skills, apps, and MCP bundles;
-  this repo keeps local skills directly under `.agents/skills` until packaging
-  is justified by reuse, installability, or output-quality evidence.
+- Plugins are a distribution surface for sharing skills, apps, and MCP bundles.
+  They are not the default answer to tool overflow. Rusty IDD first creates or
+  selects a stage-scoped harness package; plugin or MCP use must be declared by
+  that package as a narrow feature-gated dependency.
 - Provider credentials, model providers, notification commands, telemetry, and
   host tool installation remain user/admin or parent `meta`/`envctl` concerns.
 
-## Agent-Owned Tool Growth
+## Task-Scoped Package Growth
 
 Codex agents are responsible for the quality of their own output. When a miss,
 slow path, stale artifact, weak verification, or repeated manual step shows that
-an additional Codex surface would materially improve accuracy or speed, the
-agent must decide and add the narrowest tracked tool rather than waiting for the
-user to name it.
+additional task-specific support would materially improve accuracy or speed, the
+agent must first create or select the right Rusty IDD harness package instead of
+adding another always-loaded skill, hook, rule, or custom agent.
 
-Allowed growth surfaces include repo skills, project rules, hooks, custom
+The package is the scoped unit of capability: contracts, stage tools, helpers,
+hooks, validation gates, evidence schema, and agent roles. Adapter directories
+such as `.codex`, `.claude`, `.kimi`, and `.agents` may launch or reference the
+package, but they must not become the source of truth for package content.
+
+Allowed package dependencies include repo skills, project rules, hooks, custom
 agents, model-loop passes, local Rust helpers, plugin packaging, and
-feature-gated MCP or cloud/vector helpers. Every addition must preserve the
+feature-gated MCP or cloud/vector helpers. Every dependency must preserve the
 repo boundary, avoid user-global installs, document the reason, and pass the
 relevant gates.
 
@@ -89,12 +100,18 @@ The default harness order is:
 1. Capture the user goal.
 2. Refresh or read `.idd/knowledge/*`.
 3. Generate graph-backed plan context.
-4. Create or select an OpenSpec change.
-5. Write proposal, spec deltas, design, ADR decisions, and tasks in schema order.
-6. Use `rusty-idd spec status` and `rusty-idd spec next` to gate execution.
-7. Implement only after the artifacts are ready and implementation is
+4. Create or select the stage-scoped harness package, starting with:
+
+```bash
+cargo run --bin rusty-idd -- harness package --stage scan --target .
+```
+
+5. Create or select an OpenSpec change.
+6. Write proposal, spec deltas, design, ADR decisions, and tasks in schema order.
+7. Use `rusty-idd spec status` and `rusty-idd spec next` to gate execution.
+8. Implement only after the artifacts are ready and implementation is
    explicitly authorized.
-8. Validate, regenerate deterministic artifacts, and record optional AI_MERGE
+9. Validate, regenerate deterministic artifacts, and record optional AI_MERGE
    evidence when audit or merge records are required.
 
 For merge, migration, or repository-unification goals, use the Rusty IDD-owned
@@ -158,10 +175,12 @@ Use `--execute` only when you intentionally want to run the loop:
 cargo run --bin rusty-idd -- codex model-loop --execute
 ```
 
-The default passes are read-only:
+The default passes are read-only. Cheap read-heavy discovery uses
+`gpt-5.5-mini`; the final verification pass stays on `gpt-5.5` for higher
+confidence before implementation or handoff.
 
-- `explore`: fast read-only scan with `gpt-5.4-mini`.
-- `gap-hunt`: high-reasoning read-only audit with `gpt-5.5`.
+- `explore`: fast read-only scan with `gpt-5.5-mini`.
+- `gap-hunt`: focused read-only audit with `gpt-5.5-mini`.
 - `verify`: high-reasoning read-only verification with `gpt-5.5`.
 
 Write-capable implementation is intentionally outside the default loop. Use a
@@ -256,7 +275,8 @@ The audit checks the active `codex` binary first. On this workstation, the
 managed path resolves to the source-built Rust executable under
 `../codex/codex-rs/target/release/codex`. The parent `envctl` component builds
 that executable directly with Cargo, high-parallel jobs, release incremental
-artifacts, LTO disabled for local workstation builds, and `mold` when present.
+artifacts, LTO disabled for local workstation builds, and the parent-managed
+Rust linker/cache contract when present.
 
 Python still appears in upstream Codex source material, but the audit classifies
 it as developer/package tooling:
@@ -269,6 +289,88 @@ it as developer/package tooling:
   wheel-only `sdk/python-runtime`.
 
 Those surfaces do not contradict the active runtime being Rust-native.
+
+## Rust Toolchain And Cache Ownership
+
+Rusty IDD Rust builds must use the parent `meta` / `envctl` Rust environment,
+not user-global or system-depth state. A compliant activation owns all mutable
+Rust toolchain and cache state under the meta root.
+
+Rusty IDD recognizes two meta-owned Rust layouts:
+
+- `isolated`: CI/bootstrap state under `$META_ROOT/.env/rust`.
+- `toolchains`: local workstation envctl state under
+  `$META_ROOT/.toolchains/{cargo,rustup}`.
+
+GitHub Actions defaults to `isolated`. Local activation defaults to
+`toolchains` when `$META_ROOT/.toolchains/cargo/bin/rustup` and
+`$META_ROOT/.toolchains/rustup` exist. Operators may override the layout with
+`RUSTY_IDD_RUST_LAYOUT=isolated` or `RUSTY_IDD_RUST_LAYOUT=toolchains`.
+
+The CI isolated layout uses:
+
+```text
+RUSTUP_HOME=$META_ROOT/.env/rust/rustup
+CARGO_HOME=$META_ROOT/.env/rust/cargo
+RUSTC_WRAPPER=$META_ROOT/.env/rust/bin/kache
+# audit cache root: $META_ROOT/.cache/rust/kache
+```
+
+The local envctl toolchains layout uses:
+
+```text
+RUSTUP_HOME=$META_ROOT/.toolchains/rustup
+CARGO_HOME=$META_ROOT/.toolchains/cargo
+RUSTY_IDD_RUST_BIN=$META_ROOT/.toolchains/cargo/bin
+```
+
+User-global-looking wrappers such as `~/.cargo/bin/cargo` are acceptable only
+when their resolved real path is under `META_ROOT`. Audits must report the
+actual Cargo-executed `rustc` and `cargo` paths, not just the visible wrapper
+or channel label.
+
+The target compiler surface is nightly Rust with `rustc_codegen_gcc` available
+as a runtime backend. The target linker is parent-managed `wild-linker`; mold is
+not the compliant linker for this workflow. The compiler cache preference order
+is `kache`, then `hurry` or `zccache`. The strict audit can classify
+`sccache` only as a separately approved last-resort fallback at version
+`0.15.0` or newer with UDS/unix socket transport, but the checked-in CI
+bootstrap does not fall back to sccache.
+
+Strict audit mode reports the actual Cargo-executed compiler path and rejects
+non-meta-owned paths:
+
+```bash
+cargo run --bin rusty-idd -- codex system-audit \
+  --rust-toolchain \
+  --meta-root .. \
+  --rust-toolchain-name "$RUSTUP_TOOLCHAIN" \
+  --codegen-backend rustc_codegen_gcc \
+  --cache-root "$META_ROOT/.cache/rust/kache" \
+  --linker-path "$META_ROOT/.env/rust/bin/wild"
+```
+
+The parent `meta` / `envctl` layer is responsible for installing or updating
+nightly Rust, `rustc_codegen_gcc`, `wild-linker`, `kache`, `hurry`, `zccache`,
+or any separately approved fallback cache tool. Agents working in this
+repository must not repair a missing Rust tool by writing to `~/.rustup`,
+`~/.cargo`, `/usr/bin`, `/opt`, or other user/system-owned locations.
+
+GitHub workflows call `scripts/ci/envctl-rust-env.sh` to materialize the
+meta-owned `RUSTUP_HOME`, `CARGO_HOME`, cache root, `wild`, and kache-compatible
+wrapper before running Cargo. Local workstation validation can call the same
+script with `RUSTY_IDD_RUST_LAYOUT=toolchains` or rely on auto-detection when
+the envctl `.toolchains` state exists. Primary CI and promotion verification
+then call `scripts/ci/envctl-rust-audit.sh`, which reports the actual `rustc`
+and `cargo` paths used by Cargo and rejects the sccache path for this
+implementation.
+
+Workflow caches must resolve the parent meta root to a canonical path before
+restore/save. Do not pass raw `../meta` paths to `actions/cache`; GitHub rejects
+relative parent segments, which prevents the envctl Rust cache from being saved
+even though the workflow appears to request the right files. Cache parent
+`.env/rust` and `.cache/rust` tool state separately from workspace `target` so
+Cargo.lock changes do not invalidate the toolchain/tool cache.
 
 ## Tool Installation
 

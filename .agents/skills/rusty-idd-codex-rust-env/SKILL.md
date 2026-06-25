@@ -29,6 +29,9 @@ Use this skill to operate the repo-local Codex environment.
 - `rusty-idd codex system-audit`: Rust-native audit proving the active Codex binary and
   parent-managed source-build path are Rust-first, while classifying upstream Python tooling.
 - `rusty-idd codex model-loop`: Rust-native model-loop command generator/runner.
+- `rusty-idd harness package`: Rust-native task-scoped package generator for
+  stage-specific roles, contracts, helpers, hooks, tools, validation gates, and
+  evidence schemas.
 - `.agents/skills/*/SKILL.md`: repo-scoped workflows.
 - `.idd/knowledge/index.json` and `.idd/knowledge/report.md`: compact codebase knowledge.
 
@@ -39,48 +42,53 @@ Use this skill to operate the repo-local Codex environment.
    current `.idd/knowledge/plan-context.*`.
 3. Generate or refresh graph-backed context before edits when the goal is new:
    `rusty-idd knowledge plan-context --workspace . --out .idd/knowledge/plan-context.md --goal "..."`
-4. Query symbols/files/impact before rescanning source.
-5. Use `rusty-idd spec status` or `rusty-idd spec next` to verify the active
+4. Create or select the task-scoped harness package for the current workflow
+   stage. For scan work, use:
+   `rusty-idd harness package --stage scan --target .`
+   Treat `.codex`, `.claude`, `.kimi`, and `.agents` as thin adapters or
+   compatibility views, not as the source of truth for stage tools.
+5. Query symbols/files/impact before rescanning source.
+6. Use `rusty-idd spec status` or `rusty-idd spec next` to verify the active
    OpenSpec change before any write-capable implementation.
    Record the active change in `.idd/workflow/active-change` when hooks need a
    deterministic change selector.
-6. Use subagents only when explicitly useful:
+7. Use subagents only when explicitly useful:
    - `rusty-idd-explorer` for read-heavy mapping.
    - `rusty-idd-gap-hunter` for omissions.
    - `rusty-idd-verifier` for evidence and gates.
    - keep one writer, usually `rusty-idd-implementer`, only after OpenSpec is ready.
-7. Treat `AI_MERGE/` as a tool/evidence surface for audit, migration, rollback,
+8. Treat `AI_MERGE/` as a tool/evidence surface for audit, migration, rollback,
    and merge records. Do not use it as the main intent source.
-8. Apply the adopt-first workflow for integrations.
-9. Own tool-surface growth when it improves output:
-   - Add or update skills, rules, hooks, custom agents, model-loop passes,
-     plugin packaging, MCP configuration, or local Rust helpers when evidence
-     shows they would materially improve accuracy, speed, verification, or
-     repeatability.
+9. Apply the adopt-first workflow for integrations.
+10. Own package growth when it improves output:
+   - Create or update the Rusty IDD task-scoped package first.
+   - Add skills, rules, hooks, custom agents, model-loop passes, plugin
+     packaging, MCP configuration, or local Rust helpers only as declared
+     package dependencies.
    - Keep the addition narrow, tracked, documented, and verified.
    - Do not wait for the user to request the exact tool when the need is clear
      from prior misses or current audit evidence.
-10. Upgrade only:
+11. Upgrade only:
    - Prefer the latest stable, more capable tracked path when improving tools,
      dependencies, models, actions, skills, hooks, or generated artifacts.
    - Never downgrade a working surface to make a task easier unless concrete
      build, audit, compatibility, or owner-boundary evidence requires a scoped
      hold.
-11. Treat stale or orphaned work as unfinished by default:
+12. Treat stale or orphaned work as unfinished by default:
    - If a stale artifact, orphaned file, skipped TODO, ignored output, or
      disconnected tool surface appears, either prove it is intentionally local
      and ignored or finish it.
    - Finishing means documenting the decision, regenerating affected artifacts,
      and running the relevant gates.
-12. For multi-model loop work, start with a dry run:
+13. For multi-model loop work, start with a dry run:
    `cargo run --bin rusty-idd -- codex model-loop`
    The default loop is read-only and stops at design/verification. Use a
    write-capable pass only after explicit authorization and ready OpenSpec
    artifacts.
-13. Verify with focused gates, then broaden.
-14. Record validation and PR handoff evidence under
+14. Verify with focused gates, then broaden.
+15. Record validation and PR handoff evidence under
    `.idd/evidence/autonomous-workflow/` before final Stop handoff.
-15. Refresh generated artifacts and run the Codex invariant check.
+16. Refresh generated artifacts and run the Codex invariant check.
 
 ## Verification
 
@@ -88,6 +96,7 @@ Use this skill to operate the repo-local Codex environment.
 just codex-env-check
 just codex-runtime-audit
 cargo run --bin rusty-idd -- codex system-audit
+cargo run --bin rusty-idd -- harness package --stage scan --target .
 cargo run --bin rusty-idd -- codex model-loop
 cargo run --bin rusty-idd -- codex workflow-check --phase pre-tool
 cargo run --bin rusty-idd -- codex workflow-check --phase stop
@@ -108,6 +117,7 @@ Use `just ci` before claiming a complete repo-wide change.
   `meta`/`envctl` tool contract.
 - Do not commit ad hoc context packs.
 - Do not widen daemon or host-service surfaces from this repo.
-- MCP, vector, cloud, plugin, and provider surfaces may be added only when the
-  agent has evidence that they improve output accuracy, speed, verification, or
-  repeatability, and only with a narrow feature gate or documented boundary.
+- MCP, vector, cloud, plugin, and provider surfaces may be added only when a
+  task-scoped package declares evidence that they improve output accuracy,
+  speed, verification, or repeatability, and only with a narrow feature gate or
+  documented boundary.

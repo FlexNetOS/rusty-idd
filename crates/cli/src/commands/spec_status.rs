@@ -175,8 +175,17 @@ pub fn run_status(change_dir: &Path, json: bool) -> i32 {
     0
 }
 
+/// Build the artifact-DAG snapshot for a change — the shared oracle data behind
+/// both `spec status --json` and the front door's `next --json`
+/// ([`crate::commands::next`]). One snapshot type means the two can never
+/// disagree.
+pub fn snapshot_for(change_dir: &Path) -> Result<StatusSnapshot, String> {
+    let schema = load_for(change_dir)?;
+    status_snapshot(change_dir, &schema)
+}
+
 #[derive(Debug, Serialize)]
-struct StatusSnapshot {
+pub struct StatusSnapshot {
     change: String,
     change_dir: String,
     schema: SchemaSummary,
@@ -242,6 +251,16 @@ fn status_snapshot(change_dir: &Path, schema: &Schema) -> Result<StatusSnapshot,
         archivable: schema.is_archivable(&done),
         next,
     })
+}
+
+/// Resolve the next ready artifact id for a change without printing — the
+/// reusable oracle behind both `spec next` and the top-level `next` front door
+/// ([`crate::commands::next`]). Returns `None` when the change is complete
+/// (ready to archive) or fully blocked.
+pub fn next_artifact_id(change_dir: &Path) -> Option<String> {
+    let schema = load_for(change_dir).ok()?;
+    let done = done_set(change_dir, &schema);
+    schema.next_ready(&done).map(|a| a.id.clone())
 }
 
 /// `spec next <change_dir>` — print just the next ready artifact id (scriptable),

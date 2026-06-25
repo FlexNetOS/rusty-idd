@@ -1,0 +1,15 @@
+{
+  "$comment": "Rusty IDD project-layer settings (layered on top of the user-global Claude config). SessionStart auto-invokes the Rusty IDD front door (rusty-idd next) so the computed next-step imperative is presented automatically — see .claude/rusty-idd-adapter.md and ADR-0015. This .claude dir is a THIN ADAPTER (ADR-0010); the workflow lives in the engine.",
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- next --base \"$root\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
