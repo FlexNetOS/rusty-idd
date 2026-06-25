@@ -1,0 +1,18 @@
+[package]
+name = "work-order"
+version = "0.1.0"
+# Explicit (not workspace-inherited): preserves handoff's original edition + the
+# more-permissive Apache-2.0 OR MIT license through the migration into rusty-idd
+# (whose workspace default is MIT). Faithful adopt — do not silently relicense.
+edition = "2021"
+license = "Apache-2.0 OR MIT"
+description = "handoff.task.v1 work-order envelope + SwarmBundle->WorkOrder seam (S1 spike)"
+
+[dependencies]
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+blake3 = "1"
+# HFTASK-0057 (PRD §7.3/§23): JSON Schema generation for the handoff.task.v1 envelope.
+# `derive` gives `#[derive(JsonSchema)]`; serde attrs are honored so the generated schema
+# matches the serde wire shape (no serialization change).
+schemars = { version = "0.8", features = ["derive"] }

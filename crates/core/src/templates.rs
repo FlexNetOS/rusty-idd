@@ -116,10 +116,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@1.96.0
+      - name: Resolve meta-owned Rust root
+        id: rust-meta
+        run: |
+          meta_root="$(cd "$GITHUB_WORKSPACE/.." && pwd -P)/meta"
+          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
+          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
+      - name: Restore meta-owned Rust tool cache
+        uses: actions/cache@v4
         with:
-          components: rustfmt, clippy
-      - uses: Swatinem/rust-cache@v2
+          path: |
+            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
+            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
+          key: rusty-idd-envctl-rust-tools-nightly-${{ runner.os }}-${{ hashFiles('scripts/ci/envctl-rust-env.sh', 'scripts/ci/envctl-rust-audit.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-tools-nightly-${{ runner.os }}-
+      - name: Restore workspace target cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            target
+          key: rusty-idd-target-nightly-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh', 'scripts/ci/envctl-rust-audit.sh') }}
+          restore-keys: |
+            rusty-idd-target-nightly-${{ runner.os }}-
+      - name: Envctl Rust toolchain and cache
+        env:
+          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
+        run: scripts/ci/envctl-rust-env.sh ci
+      - name: Strict envctl Rust toolchain audit
+        run: scripts/ci/envctl-rust-audit.sh
       - name: Merge-tools verification
         run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Format
@@ -134,10 +159,6 @@ jobs:
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
           git diff --exit-code -- .idd/MANIFEST.tsv
-      - name: Install cargo-audit
-        uses: taiki-e/install-action@v2
-        with:
-          tool: cargo-audit
       - name: Security audit
         run: cargo audit --deny warnings
 "#;

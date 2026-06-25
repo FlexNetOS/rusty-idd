@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="ALL" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="dd11aab9-4453-4893-977f-d869045acc98" name="Changes" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="CopilotPersistence">
+    <persistenceIdMap>
+      <entry key="_/home/drdave/Desktop/meta/prompt_hub" value="3FKKO82sSkJadhP5eU9CUtcTLDQ" />
+    </persistenceIdMap>
+  </component>
+  <component name="EmbeddingIndexingInfo">
+    <option name="cachedIndexableFilesCount" value="55044" />
+    <option name="fileBasedEmbeddingIndicesEnabled" value="true" />
+  </component>
+  <component name="ExecutionTargetManager" SELECTED_TARGET="RsBuildProfile:test" />
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
+  "lastFilter": {
+    "state": "OPEN",
+    "assignee": "drdave-flexnetos"
+  }
+}]]></component>
+  <component name="GitToolBoxStore">
+    <option name="recentBranches">
+      <RecentBranches>
+        <option name="branchesForRepo">
+          <list>
+            <RecentBranchesForRepo>
+              <option name="branches">
+                <list>
+                  <RecentBranch>
+                    <option name="branchName" value="main" />
+                    <option name="lastUsedInstant" value="1781829330" />
+                  </RecentBranch>
+                  <RecentBranch>
+                    <option name="branchName" value="integrate/s4c2-commit-d7f609f-r7" />
+                    <option name="lastUsedInstant" value="1781828340" />
+                  </RecentBranch>
+                </list>
+              </option>
+              <option name="repositoryRootUrl" value="file://$PROJECT_DIR$" />
+            </RecentBranchesForRepo>
+          </list>
+        </option>
+      </RecentBranches>
+    </option>
+  </component>
+  <component name="GithubProjectSettings">
+    <option name="branchProtectionPatterns">
+      <list>
+        <option value="main" />
+      </list>
+    </option>
+  </component>
+  <component name="GithubPullRequestsUISettings"><![CDATA[{
+  "selectedUrlAndAccountId": {
+    "url": "git@github.com:FlexNetOS/prompt_hub.git",
+    "accountId": "e19c57cf-1fb5-4a14-8fd0-176836c4bea2"
+  }
+}]]></component>
+  <component name="MacroExpansionManager">
+    <option name="directoryName" value="QJdVzrsZ" />
+  </component>
+  <component name="McpProjectServerCommands">
+    <commands />
+    <urls />
+  </component>
+  <component name="NextEditCompletionFeaturesState">
+    <decayedCancelled>
+      <entry key="MS100" value="1.257274544391802" />
+      <entry key="MS500" value="3.382354909696684" />
+      <entry key="S2" value="7.962320837605504" />
+      <entry key="S5" value="10.884005374956853" />
+      <entry key="S10" value="12.598627582256853" />
+      <entry key="S30" value="24.894263215389007" />
+      <entry key="S60" value="43.17823292008843" />
+      <entry key="M2" value="61.38244536686125" />
+      <entry key="M5" value="77.39233487421009" />
+      <entry key="M10" value="83.86226031172725" />
+      <entry key="M15" value="86.17296545904887" />
+      <entry key="M30" value="89.61318813700406" />
+      <entry key="H1" value="101.61702057392125" />
+      <entry key="H2" value="130.02077281566395" />
+      <entry key="H4" value="163.2694236262988" />
+      <entry key="D1" value="211.1710303298001" />
+      <entry key="W1" value="222.08714609216364" />
+    </decayedCancelled>
+    <decayedSelected>
+      <entry key="MS100" value="0.0" />
+      <entry key="MS500" value="0.0" />
+      <entry key="S2" value="0.0" />
+      <entry key="S5" value="0.0" />
+      <entry key="S10" value="0.0" />
+      <entry key="S30" value="0.0" />
+      <entry key="S60" value="0.0" />
+      <entry key="M2" value="0.0" />
+      <entry key="M5" value="0.0" />
+      <entry key="M10" value="0.0" />
+      <entry key="M15" value="0.0" />
+      <entry key="M30" value="0.0" />
+      <entry key="H1" value="0.0" />
+      <entry key="H2" value="0.0" />
+      <entry key="H4" value="0.0" />
+      <entry key="D1" value="0.0" />
+      <entry key="W1" value="0.0" />
+    </decayedSelected>
+    <decayedShown>
+      <entry key="MS100" value="1.222727793835177" />
+      <entry key="MS500" value="3.3630778154928884" />
+      <entry key="S2" value="7.951090225713335" />
+      <entry key="S5" value="10.877869701031077" />
+      <entry key="S10" value="12.59507214838718" />
+      <entry key="S30" value="24.89182590579064" />
+      <entry key="S60" value="43.17605404980803" />
+      <entry key="M2" value="61.380871838624465" />
+      <entry key="M5" value="77.39153397359034" />
+      <entry key="M10" value="83.86182508998708" />
+      <entry key="M15" value="86.17266701954006" />
+      <entry key="M30" value="89.61303256643119" />
+      <entry key="H1" value="101.6169311151965" />
+      <entry key="H2" value="130.02071417646704" />
+      <entry key="H4" value="163.26938615463752" />
+      <entry key="D1" value="211.17102212595464" />
+      <entry key="W1" value="222.08714485640826" />
+    </decayedShown>
+  </component>
+  <component name="ProjectColorInfo"><![CDATA[{
+  "associatedIndex": 8,
+  "fromUser": false
+}]]></component>
+  <component name="ProjectId" id="3FKKO82sSkJadhP5eU9CUtcTLDQ" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.MCP Project settings loaded": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "RunOnceActivity.rust.reset.selective.auto.import": "true",
+    "RunOnceActivity.typescript.service.memoryLimit.init": "true",
+    "codeWithMe.voiceChat.enabledByDefault": "false",
+    "com.intellij.ml.llm.matterhorn.ej.ui.settings.DefaultModelSelectionForGA.v1": "true",
+    "copilot.chat.legacySessionMetadata.migrated": "true",
+    "git-widget-placeholder": "main",
+    "junie.onboarding.icon.badge.shown": "true",
+    "last_opened_file_path": "/home/drdave/Desktop/meta/prompt_hub",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "org.rust.cargo.project.model.impl.CargoExternalSystemProjectAware.subscribe.first.balloon": "",
+    "to.speed.mode.migration.done": "true",
+    "vue.rearranger.settings.migration": "true"
+  },
+  "keyToStringList": {
+    "GitStage.ChangesTree.GroupingKeys": [
+      "directory",
+      "module",
+      "repository"
+    ]
+  }
+}]]></component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="dd11aab9-4453-4893-977f-d869045acc98" name="Changes" comment="" />
+      <created>1781818285816</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1781818285816</updated>
+      <workItem from="1781818288758" duration="9625000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+</project>
