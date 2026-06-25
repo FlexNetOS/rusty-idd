@@ -1,14 +1,18 @@
-# Handoff KB Refresh Task Evidence
+# Task Evidence: integrate-agent-harness
 
-- Task: `KBTASK-RUSTY-IDD-ADOPT-FULL-HANDOFF`
-- Change: `refresh-handoff-kb-upstream`
-- Goal file: `.idd/goals/refresh-handoff-kb-upstream.md`
-- Branch: `fix/refresh-handoff-kb-mirror`
+- Task: Replace always-loaded harness/tool overflow with task-scoped Rusty IDD
+  agent harness packages.
+- Branch: `feature/scoped-agent-swarm-packages`
+- Base: `origin/develop`
+- Worktree: `.worktrees/scoped-agent-swarm-packages`
+- Active OpenSpec change: `integrate-agent-harness`
+- Status: claimed
 
-Final parity proof found that `meta/handoff` advanced to commit
-`6365c12fc38f5d7247d81f9fdbd3a55817797904` with 550 tracked files, adding a
-tracked `.kb` knowledge surface after the earlier handoff adoption PRs.
+## Checkpoint
 
-This refresh replaces the Rusty IDD handoff mirror from committed handoff HEAD,
-updates the upstream pin, records dirty source working-tree state as evidence,
-and excludes uncommitted source edits from the mirror.
+- Created fresh feature worktree from `origin/develop`.
+- Recalled ICM context for Rusty IDD harness tool overflow, scoped packages,
+  and meta/envctl Rust toolchain/cache constraints.
+- Refreshed `.idd/knowledge/plan-context.md` for the goal.
+- Created OpenSpec proposal, design, spec delta, task list, and ADR before
+  implementation.
