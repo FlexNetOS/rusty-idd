@@ -209,6 +209,54 @@ fn archive_yes_flag_is_accepted_and_archives() {
 }
 
 #[test]
+fn archive_creates_base_for_new_capability() {
+    // A new capability has NO base spec yet; its delta is pure ADDED. Archive
+    // must SEED the base spec instead of aborting (the front-door loop ends in
+    // `spec archive`, so a new-capability change must be archivable).
+    let root = tempfile::tempdir().unwrap();
+    let delta = root
+        .path()
+        .join("openspec/changes/add-thing/specs/brand-new-cap");
+    std::fs::create_dir_all(&delta).unwrap();
+    std::fs::write(
+        delta.join("spec.md"),
+        "## ADDED Requirements\n\n### Requirement: Do the thing\n\
+         The system SHALL do the thing.\n\n#### Scenario: it does\n\
+         - **WHEN** asked\n- **THEN** it does the thing\n",
+    )
+    .unwrap();
+    // Base specs root must exist for resolution, but the capability dir must NOT.
+    std::fs::create_dir_all(root.path().join("openspec/specs")).unwrap();
+    let change_dir = root.path().join("openspec/changes/add-thing");
+
+    let out = Command::new(bin())
+        .args(["spec", "archive"])
+        .arg(&change_dir)
+        .arg("-y")
+        .output()
+        .expect("run rusty-idd");
+    assert!(
+        out.status.success(),
+        "archive of a new capability must succeed: {}",
+        String::from_utf8_lossy(&out.stderr)
+    );
+
+    // The base spec was created with the ADDED requirement and a title.
+    let base_spec = root.path().join("openspec/specs/brand-new-cap/spec.md");
+    assert!(base_spec.is_file(), "base spec must be created");
+    let doc = parse_spec(&std::fs::read_to_string(&base_spec).unwrap());
+    assert_eq!(doc.title.as_deref(), Some("Brand New Cap"));
+    let names: Vec<&str> = doc.requirements.iter().map(|r| r.name.as_str()).collect();
+    assert_eq!(names, vec!["Do the thing"]);
+    // And the change dir was moved to archive/.
+    assert!(!change_dir.exists());
+    assert!(root
+        .path()
+        .join("openspec/changes/archive/add-thing")
+        .is_dir());
+}
+
+#[test]
 fn archive_aborts_transactionally_on_bad_delta() {
     let root = tempfile::tempdir().unwrap();
     let base = root.path().join("openspec/specs/widget-export");

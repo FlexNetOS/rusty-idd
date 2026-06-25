@@ -1,0 +1,12 @@
+[build]
+rustflags = ["-W", "clippy::all", "-D", "warnings"]
+
+# Use the default system linker (cc/gcc + ld). The upstream config hard-coded
+# clang + lld, which are not installed on this workstation; restore the
+# clang/lld lines once those tools are present (faster linking).
+
+[registries.crates-io]
+protocol = "sparse"
+
+[net]
+git-fetch-with-cli = true
