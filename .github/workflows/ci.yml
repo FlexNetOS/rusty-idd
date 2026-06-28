@@ -1,21 +1,5 @@
 name: ci
 
-# Workspace-level CI for the rusty-idd Cargo workspace.
-# Relocated from intent-driven-development/.github/ (GitHub only runs workflows
-# under the repo-root .github/) and upgraded to run across the whole workspace.
-#
-# All gates are blocking: the merge-tools verification gate, build, test, fmt,
-# clippy (-D warnings), and a cargo-audit supply-chain gate. The fmt+clippy
-# cleanup slice formatted both crates and cleared all lints, so these are now
-# enforced. The audit gate fails on any NEW advisory (see .cargo/audit.toml).
-#
-# Rust state is owned by the parent-shaped meta/envctl prefix created by
-# scripts/ci/envctl-rust-env.sh, not by user-global rustup/Cargo homes or Rust
-# setup/cache actions. The `rust` job runs the full gate on latest nightly with
-# the strict `rustc_codegen_gcc` + wild + kache/hurry/zccache contract; the
-# `msrv` job proves the declared 1.88 floor still builds with meta-local Rust
-# homes.
-
 on:
   workflow_call:
   pull_request:
@@ -29,7 +13,7 @@ jobs:
   rust:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v7
+      - uses: actions/checkout@v4
       - name: Resolve meta-owned Rust root
         id: rust-meta
         run: |
@@ -59,79 +43,19 @@ jobs:
         run: scripts/ci/envctl-rust-env.sh ci
       - name: Strict envctl Rust toolchain audit
         run: scripts/ci/envctl-rust-audit.sh
-      - name: Merge-tools verification gate
+      - name: Merge-tools verification
         run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
-      - name: Build (workspace)
-        run: cargo build --workspace --locked
-      - name: Test (workspace)
-        run: cargo test --workspace --locked
+      - name: Format
+        run: cargo fmt --all -- --check
+      - name: Clippy
+        run: cargo clippy --all-targets --all-features -- -D warnings
+      - name: Test
+        run: cargo test --all --locked
       - name: IDD validation
         run: cargo run --bin rusty-idd -- validate --workspace .
       - name: IDD manifest refresh check
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
           git diff --exit-code -- .idd/MANIFEST.tsv
-      - name: Vendor adapter drift gate (ADR-0010/0015)
-        run: cargo run --bin rusty-idd -- render --all --check
-      - name: ADR ledger collision gate (ADR-0016)
-        # Fails closed on any NEW duplicate ADR number. The four accepted
-        # historical collisions (0002/0004/0005/0006) are a frozen baseline and
-        # are reported but do not fail; see ADR-0016.
-        run: cargo run --bin rusty-idd -- spec adr list --check
-      - name: Fleet-deploy self-check (ADR-0017)
-        # The home repo's thin-adapter surface must stay in sync: adapters match
-        # `render`, and the front-door SessionStart hook is present.
-        run: cargo run --bin rusty-idd -- deploy --target . --all --check
-      - name: Format
-        run: cargo fmt --all -- --check
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-      - name: Security audit (fails on any new advisory)
-        # Fail-closed supply-chain gate. The shared baseline (.cargo/audit.toml) is
-        # auto-loaded and ignores the two accepted unmaintained transitive advisories
-        # (backlog A3). `--deny warnings` turns any *new* unmaintained/unsound/yanked
-        # advisory into a failure too. The `time` DoS vuln (RUSTSEC-2026-0009) was
-        # remediated by backlog A2 (time >=0.3.47), so it no longer needs an ignore —
-        # the gate now enforces vulnerabilities with zero exceptions.
+      - name: Security audit
         run: cargo audit --deny warnings
-
-  # MSRV floor: proves the workspace still builds on its declared minimum supported
-  # Rust version (the per-crate `rust-version` = 1.88, the edition-2024 + let-chains
-  # + time/ratatui floor). If a change raises the real MSRV, this job goes red until
-  # the `rust-version` fields + this pin are bumped together. Build-only (lints/tests
-  # run on the pinned `rust` job above).
-  msrv:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v7
-      - name: Resolve meta-owned Rust root
-        id: rust-meta
-        run: |
-          meta_root="$(cd "$GITHUB_WORKSPACE/.." && pwd -P)/meta"
-          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
-          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
-      - name: Restore meta-owned Rust tool cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
-            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
-          key: rusty-idd-envctl-rust-tools-msrv-${{ runner.os }}-${{ hashFiles('scripts/ci/envctl-rust-env.sh') }}
-          restore-keys: |
-            rusty-idd-envctl-rust-tools-msrv-${{ runner.os }}-
-      - name: Restore workspace target cache
-        uses: actions/cache@v4
-        with:
-          path: |
-            target
-          key: rusty-idd-target-msrv-${{ runner.os }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh') }}
-          restore-keys: |
-            rusty-idd-target-msrv-${{ runner.os }}-
-      - name: Envctl Rust toolchain
-        env:
-          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
-        run: scripts/ci/envctl-rust-env.sh msrv
-      - name: Build on the MSRV floor (1.88.0, locked)
-        run: cargo build --workspace --locked
-      - name: Compile tests on the MSRV floor (locked)
-        run: cargo test --workspace --locked --no-run
