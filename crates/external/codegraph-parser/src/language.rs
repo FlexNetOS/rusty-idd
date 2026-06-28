@@ -128,7 +128,7 @@ impl LanguageRegistry {
 
         configs.retain(|_, config| {
             (MIN_COMPATIBLE_LANGUAGE_VERSION..=LANGUAGE_VERSION)
-                .contains(&config.language.version())
+                .contains(&config.language.abi_version())
         });
 
         Self { configs }
@@ -166,7 +166,7 @@ mod tests {
     fn registered_languages_use_supported_versions() {
         let registry = LanguageRegistry::new();
         for (language, config) in &registry.configs {
-            let version = config.language.version();
+            let version = config.language.abi_version();
             assert!(
                 (MIN_COMPATIBLE_LANGUAGE_VERSION..=LANGUAGE_VERSION).contains(&version),
                 "Language {:?} uses incompatible Tree-sitter version {} (supported {}..={})",
