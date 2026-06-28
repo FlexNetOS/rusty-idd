@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:c2638d70127083b2`
+- Workspace fingerprint: `fnv1a64:7e37bb4bbfbe9aab`
 - Indexed source files: 387
-- Graph nodes: 25252
+- Graph nodes: 25253
 - Graph edges: 91112
 - Resolved call edges: 50003
 - Functions with complexity: 6535
 - Packed files: 135
-- Packed tokens: 95533
+- Packed tokens: 95557
 - Suspicious files: 0
 
 ## Hotspots

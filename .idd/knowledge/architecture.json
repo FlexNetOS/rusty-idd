@@ -1,11 +1,11 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:c2638d70127083b2",
-  "workspace_root": "/home/drdave/Desktop/meta/rusty-idd",
+  "workspace_fingerprint": "fnv1a64:7e37bb4bbfbe9aab",
+  "workspace_root": "/home/drdave/Desktop/meta/.worktrees/rusty-idd-pr132-codegraph/rusty-idd",
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 387,
-    "nodes": 25252,
+    "nodes": 25253,
     "edges": 91112,
     "languages": [
       "javascript",
@@ -18,7 +18,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 315,
-    "tokens": 182183,
+    "tokens": 182207,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -1475,6 +1475,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 315 files and 182183 tokens"
+    "repomix context package measured 315 files and 182207 tokens"
   ]
 }
