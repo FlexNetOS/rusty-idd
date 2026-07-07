@@ -83,7 +83,7 @@ path	size_bytes	fnv1a64
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
 .idd/knowledge/architecture.json	36817	22a824edf63854d3
 .idd/knowledge/architecture.md	7677	eba1fdfc4f35b09b
-.idd/knowledge/index.json	56416654	0965f760496a846e
+.idd/knowledge/index.json	56416715	86a2e2a95fd79140
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -96,7 +96,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4438	37bd3f02a1f06747
+.idd/knowledge/report.md	4438	f0efebef0bfedffa
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -371,7 +371,7 @@ crates/core/tests/template_agent_surface.rs	5586	207c01004c0adbf6
 crates/external/codegraph-core/Cargo.toml	1556	5fe98b4607609cf1
 crates/external/codegraph-core/LICENSE-APACHE	238	97541c8fd7e1bbfd
 crates/external/codegraph-core/LICENSE-MIT	216	f10b55a73b635a7e
-crates/external/codegraph-core/benches/core_micro.rs	2303	b037caba653f5396
+crates/external/codegraph-core/benches/core_micro.rs	2296	a3fa304edd11d7d4
 crates/external/codegraph-core/src/advanced_config.rs	17008	da30d6c0ef0ba9ca
 crates/external/codegraph-core/src/arena.rs	171	5be8fc7f232da2da
 crates/external/codegraph-core/src/buffer_pool.rs	3892	04798a15362d6fab
@@ -4600,7 +4600,7 @@ third_party/upstream/repomix-rs/crates/core/src/security/mod.rs	140	c9b37ef19707
 third_party/upstream/repomix-rs/crates/core/src/security/secretlint.rs	18852	76c6a853221ddc1d
 third_party/upstream/repomix-rs/crates/core/src/security/validate.rs	1063	024e206be307be46
 third_party/upstream/repomix-rs/crates/core/src/tree_sitter/compress.rs	3478	7bf9e3f48e3587bb
-third_party/upstream/repomix-rs/crates/core/src/tree_sitter/languages.rs	6539	ae6a01014d367b1f
+third_party/upstream/repomix-rs/crates/core/src/tree_sitter/languages.rs	6350	c32c1c7a9ec75b9b
 third_party/upstream/repomix-rs/crates/core/src/tree_sitter/mod.rs	37	95a5fe451232d046
 third_party/upstream/repomix-rs/crates/core/src/tree_sitter/queries/c.scm	535	78cb26986348977a
 third_party/upstream/repomix-rs/crates/core/src/tree_sitter/queries/cpp.scm	473	82d14aed3bf5dcd6
@@ -4618,7 +4618,7 @@ third_party/upstream/repomix-rs/crates/core/src/tree_sitter/queries/swift.scm	28
 third_party/upstream/repomix-rs/crates/core/src/tree_sitter/queries/typescript.scm	680	8440e165bb38a1bf
 third_party/upstream/repomix-rs/crates/core/src/tree_sitter/queries/vue.scm	219	175559a7f8da483e
 third_party/upstream/repomix-rs/crates/core/tests/integration_test.rs	27243	b62eaf45758dd3c5
-third_party/upstream/repomix-rs/crates/core/tests/new_languages_test.rs	3948	ac2072de63880942
+third_party/upstream/repomix-rs/crates/core/tests/new_languages_test.rs	3882	1851eef3cf5a9b24
 third_party/upstream/repomix-rs/crates/mcp/Cargo.toml	520	0d9bd8ce6ca570aa
 third_party/upstream/repomix-rs/crates/mcp/src/helpers.rs	4267	4d7251338e1859eb
 third_party/upstream/repomix-rs/crates/mcp/src/lib.rs	85	c72fa33890a57aaf
