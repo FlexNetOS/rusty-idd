@@ -106,6 +106,9 @@ fn manifest_should_skip(rel: &str) -> bool {
 fn is_upstream_generated_local_artifact(rel: &str) -> bool {
     rel.starts_with("third_party/upstream/codegraph-rust/docs/specifications/")
         || rel == "third_party/upstream/repomix-rs/.mind-mesh/agent/repomix.md"
+        // The vendored repomix test suite writes repomix-output.* fixtures into
+        // its own src dir when `cargo test --workspace` runs before validation.
+        || rel.starts_with("third_party/upstream/repomix-rs/crates/core/src/repomix-output.")
 }
 
 fn fnv1a64_file(path: &Path) -> io::Result<u64> {
