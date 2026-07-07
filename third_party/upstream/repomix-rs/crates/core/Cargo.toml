@@ -6,7 +6,7 @@ description = "Core engine for repomix: search, collect, process, and pack repos
 license = "MIT"
 
 [dependencies]
-repomix-shared = { path = "../shared" }
+repomix-shared = { path = "../../../../../crates/external/repomix-shared" }
 repomix-config = { path = "../config" }
 anyhow = "1.0"
 thiserror = "1.0"

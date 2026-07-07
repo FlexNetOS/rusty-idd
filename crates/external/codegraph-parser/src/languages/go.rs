@@ -131,7 +131,7 @@ impl<'a> GoCollector<'a> {
             "import_declaration" => {
                 // Handle both single imports and import blocks
                 for i in 0..node.child_count() {
-                    if let Some(child) = node.child(i) {
+                    if let Some(child) = node.child(i as u32) {
                         if child.kind() == "import_spec" || child.kind() == "import_spec_list" {
                             self.extract_import_spec(&child, &ctx);
                         }
@@ -244,7 +244,7 @@ impl<'a> GoCollector<'a> {
             // Go Type declarations (struct, interface)
             "type_declaration" => {
                 for i in 0..node.child_count() {
-                    if let Some(spec) = node.child(i) {
+                    if let Some(spec) = node.child(i as u32) {
                         if spec.kind() == "type_spec" {
                             self.extract_type_spec(&spec, &mut ctx);
                         }
