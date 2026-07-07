@@ -65,8 +65,14 @@ jobs:
         run: cargo build --workspace --locked
       - name: Test (workspace)
         run: cargo test --workspace --locked
+      - name: IDD validation diagnostics (temporary)
+        if: always()
+        run: |
+          echo "=== tree state before validation ==="
+          git status --porcelain || true
+          git diff --stat || true
       - name: IDD validation
-        run: cargo run --bin rusty-idd -- validate --workspace .
+        run: cargo run --bin rusty-idd -- validate --workspace . || { echo "=== validation report ==="; cat ./AI_MERGE/validation_report.md || true; exit 1; }
       - name: IDD manifest refresh check
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
