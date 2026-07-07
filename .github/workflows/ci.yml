@@ -68,9 +68,12 @@ jobs:
       - name: IDD validation diagnostics (temporary)
         if: always()
         run: |
-          echo "=== tree state before validation ==="
-          git status --porcelain || true
-          git diff --stat || true
+          echo "=== tree state before validation (incl. ignored) ==="
+          git status --porcelain --ignored=matching | head -60 || true
+          echo "=== untracked incl. gitignored (walker-visible candidates) ==="
+          git ls-files --others | grep -vE '^target/' | head -60 || true
+          echo "=== walker-visible file count ==="
+          find . -path ./target -prune -o -path ./.git -prune -o -type f -print | wc -l
       - name: IDD validation
         run: cargo run --bin rusty-idd -- validate --workspace . || { echo "=== validation report ==="; cat ./AI_MERGE/validation_report.md || true; exit 1; }
       - name: IDD manifest refresh check
