@@ -163,12 +163,7 @@ path	size_bytes	fnv1a64
 .handoff/hooks/hooks.toml	3881	40ec91e97675c111
 .handoff/hooks/loop-entry.sh	2998	03871ccf05c54125
 .handoff/hooks/session-end.sh	2756	ab6abb0f2138dd1f
-.handoff/ledger.db	286720	2a97458ac42bf03e
-.handoff/ledger.db.rvf	145038	165b52fb0c1bc4f8
 .handoff/ledger.events.jsonl	284664	b6b99b26f947f31c
-.handoff/locks/handoff_claim_TASK-155B24-0001.lock	117	edb07e1df10f51e4
-.handoff/locks/handoff_claim_TASK-854F41-0001.lock	117	c241a97c9c725ce6
-.handoff/locks/handoff_claim_TASK-8DFD48-0001.lock	117	b0b9869150b4ea41
 .handoff/loop/DONE	1274	0f701d4a3e7e1685
 .handoff/loop/evaluation.md	2975	48391dfcfdf6ee59
 .handoff/loop/findings/D1-ledger-witness-rvf.md	13505	52a6098ac30849b7
@@ -672,7 +667,7 @@ crates/core/src/cli.rs	12202	01c684965768b6dc
 crates/core/src/env_contract.rs	10406	86e95fa4951658ea
 crates/core/src/fs_utils.rs	7618	9d4b5ec19008475c
 crates/core/src/lib.rs	1070	50ef44045d6927d5
-crates/core/src/manifest.rs	9371	680c59bbe82933b8
+crates/core/src/manifest.rs	9610	df4f7c9a0f32991f
 crates/core/src/model.rs	5129	8869d0e5711e7e2b
 crates/core/src/planner.rs	26459	e5f3c83c5972e018
 crates/core/src/scanner.rs	10736	1ebdb83670340439
