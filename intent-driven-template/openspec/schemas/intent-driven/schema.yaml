@@ -5,7 +5,6 @@ artifacts:
   - id: proposal
     generates: proposal.md
     description: Initial proposal document outlining the change
-    template: proposal
     template: proposal.md
     instruction: >
       Create the proposal document that establishes WHY this change is needed.
@@ -44,7 +43,6 @@ artifacts:
   - id: specs
     generates: specs/**/*.md
     description: OpenSpec Markdown specs with Gherkin-style behaviour scenarios
-    template: spec
     template: spec.md
     instruction: >
       Create OpenSpec Markdown spec files that define WHAT the system should do.
@@ -124,7 +122,6 @@ artifacts:
   - id: design
     generates: design.md
     description: Technical design document with implementation details
-    template: design
     template: design.md
     instruction: >
       Create the design document that explains HOW to implement the change.
@@ -182,9 +179,6 @@ artifacts:
     requires:
       - proposal
   - id: adr
-    generates: ../../../adr/*.md
-    description: Architecture Decision Records distilled from design for future reference
-    template: adr
     generates: "../../../adr/*.md"
     description: Architecture Decision Records distilled from design for future reference
     template: adr.md
@@ -243,7 +237,6 @@ artifacts:
   - id: tasks
     generates: tasks.md
     description: Implementation checklist with trackable tasks
-    template: tasks
     template: tasks.md
     instruction: >
       Create the task list that breaks down the implementation work.

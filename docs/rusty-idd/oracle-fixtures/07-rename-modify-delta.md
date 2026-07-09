@@ -9,11 +9,6 @@ The system SHALL name exported files using the widget set name AND a timestamp s
 - **THEN** the file is named "alpha-2026.csv"
 
 ## RENAMED Requirements
-- FROM: Export filename
-- TO: Exported file naming
 
-## MODIFIED Requirements
-### Requirement: Exported file naming
-The filename includes a timestamp suffix.
 - FROM: `### Requirement: Export filename`
 - TO: `### Requirement: Exported file naming`

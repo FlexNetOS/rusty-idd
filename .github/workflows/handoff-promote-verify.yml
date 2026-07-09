@@ -1,0 +1,210 @@
+name: Promote Verify
+
+# rusty-idd two-tier promote-verify gate: develop -> master must pass a clean-merge
+# probe, locked build/test, drift, fmt/clippy, and cargo audit --deny warnings.
+
+on:
+  pull_request:
+    branches: [master]
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  checks: write
+
+env:
+  CARGO_TERM_COLOR: always
+
+jobs:
+  merge-probe:
+    name: Clean merge probe
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - name: Probe develop -> master merge
+        run: |
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git fetch origin develop
+          git checkout origin/master
+          git merge --no-commit --no-ff origin/develop
+
+  test:
+    name: Test
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+    steps:
+      # Mirror ci.yml's checkout layout: the repo lives under handoff/ so the
+      # ledger/hf path deps (../../meta-ruvector, ../../envctl) resolve to sibling
+      # clones at the workspace root.
+      - uses: actions/checkout@v6
+        with:
+          path: handoff
+      - name: Clone rvf-crypto provider (meta-ruvector)
+        shell: bash
+        run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
+      - name: Clone envctl provider (envctl)
+        shell: bash
+        run: |
+          if [ "${RUNNER_OS:-}" = "Windows" ]; then
+            mkdir -p envctl/crates/secrets-engine/src
+            {
+              printf '%s\n' '[package]'
+              printf '%s\n' 'name = "envctl-secrets-engine"'
+              printf '%s\n' 'version = "0.0.0"'
+              printf '%s\n' 'edition = "2021"'
+              printf '\n%s\n' '[lib]'
+              printf '%s\n' 'name = "envctl_secrets"'
+              printf '%s\n' 'path = "src/lib.rs"'
+              printf '\n%s\n' '[features]'
+              printf '%s\n' 'default = []'
+              printf '%s\n' 'inmem-store = []'
+            } > envctl/crates/secrets-engine/Cargo.toml
+            printf '// Windows CI manifest-only stub; the optional secrets feature is not built here.\n' > envctl/crates/secrets-engine/src/lib.rs
+          else
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+      - uses: dtolnay/rust-toolchain@1.96.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: handoff
+      - name: Run tests
+        working-directory: handoff
+        run: cargo test --workspace
+
+  clippy:
+    name: Clippy
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: handoff
+      - name: Clone rvf-crypto provider (meta-ruvector)
+        run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
+      - name: Clone envctl provider (envctl)
+        shell: bash
+        run: |
+          if [ "${RUNNER_OS:-}" = "Windows" ]; then
+            mkdir -p envctl/crates/secrets-engine/src
+            {
+              printf '%s\n' '[package]'
+              printf '%s\n' 'name = "envctl-secrets-engine"'
+              printf '%s\n' 'version = "0.0.0"'
+              printf '%s\n' 'edition = "2021"'
+              printf '\n%s\n' '[lib]'
+              printf '%s\n' 'name = "envctl_secrets"'
+              printf '%s\n' 'path = "src/lib.rs"'
+              printf '\n%s\n' '[features]'
+              printf '%s\n' 'default = []'
+              printf '%s\n' 'inmem-store = []'
+            } > envctl/crates/secrets-engine/Cargo.toml
+            printf '// Windows CI manifest-only stub; the optional secrets feature is not built here.\n' > envctl/crates/secrets-engine/src/lib.rs
+          else
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+      - uses: dtolnay/rust-toolchain@1.96.0
+        with:
+          components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: handoff
+      - name: Run clippy
+        working-directory: handoff
+        run: cargo clippy --workspace --all-targets -- -D warnings
+
+  format:
+    name: Format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: handoff
+      - name: Clone rvf-crypto provider (meta-ruvector)
+        run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
+      - name: Clone envctl provider (envctl)
+        shell: bash
+        run: |
+          if [ "${RUNNER_OS:-}" = "Windows" ]; then
+            mkdir -p envctl/crates/secrets-engine/src
+            {
+              printf '%s\n' '[package]'
+              printf '%s\n' 'name = "envctl-secrets-engine"'
+              printf '%s\n' 'version = "0.0.0"'
+              printf '%s\n' 'edition = "2021"'
+              printf '\n%s\n' '[lib]'
+              printf '%s\n' 'name = "envctl_secrets"'
+              printf '%s\n' 'path = "src/lib.rs"'
+              printf '\n%s\n' '[features]'
+              printf '%s\n' 'default = []'
+              printf '%s\n' 'inmem-store = []'
+            } > envctl/crates/secrets-engine/Cargo.toml
+            printf '// Windows CI manifest-only stub; the optional secrets feature is not built here.\n' > envctl/crates/secrets-engine/src/lib.rs
+          else
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+      - uses: dtolnay/rust-toolchain@1.96.0
+        with:
+          components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: handoff
+      - name: Check formatting
+        working-directory: handoff
+        run: cargo fmt -p hf -p ledger -p work-order -- --check
+
+  drift:
+    name: Drift
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          path: handoff
+      - name: Clone rvf-crypto provider (meta-ruvector)
+        run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
+      - name: Clone envctl provider (envctl)
+        shell: bash
+        run: |
+          if [ "${RUNNER_OS:-}" = "Windows" ]; then
+            mkdir -p envctl/crates/secrets-engine/src
+            {
+              printf '%s\n' '[package]'
+              printf '%s\n' 'name = "envctl-secrets-engine"'
+              printf '%s\n' 'version = "0.0.0"'
+              printf '%s\n' 'edition = "2021"'
+              printf '\n%s\n' '[lib]'
+              printf '%s\n' 'name = "envctl_secrets"'
+              printf '%s\n' 'path = "src/lib.rs"'
+              printf '\n%s\n' '[features]'
+              printf '%s\n' 'default = []'
+              printf '%s\n' 'inmem-store = []'
+            } > envctl/crates/secrets-engine/Cargo.toml
+            printf '// Windows CI manifest-only stub; the optional secrets feature is not built here.\n' > envctl/crates/secrets-engine/src/lib.rs
+          else
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+      - uses: dtolnay/rust-toolchain@1.96.0
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: handoff
+      - name: Build hf
+        working-directory: handoff
+        run: cargo build -p hf
+      - name: Run hf drift
+        working-directory: handoff
+        run: ./target/debug/hf drift
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: rustsec/audit-check@v2
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
