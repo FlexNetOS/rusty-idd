@@ -367,9 +367,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57260	0ea66224c0c08ca0
-.idd/knowledge/architecture.md	13414	4fd7fb529f4b615b
-.idd/knowledge/index.json	59359554	fb2b4c004e9431f6
+.idd/knowledge/architecture.json	57260	38994af4d1c4869b
+.idd/knowledge/architecture.md	13414	97d15932c5e44415
+.idd/knowledge/index.json	59362029	7afe5182b9e13310
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -382,7 +382,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	83091dcd96aa067e
+.idd/knowledge/report.md	4445	9387bc6715517945
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
