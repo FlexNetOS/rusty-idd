@@ -367,9 +367,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57260	01054c186f19c073
-.idd/knowledge/architecture.md	13414	36307b36fe914f15
-.idd/knowledge/index.json	59361865	52c0946ba7ad9688
+.idd/knowledge/architecture.json	57260	500b6f904c59d63d
+.idd/knowledge/architecture.md	13414	3bfa1aa090c08da7
+.idd/knowledge/index.json	59361881	69139fae1d28b19d
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -382,7 +382,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	7110e001f175d9f9
+.idd/knowledge/report.md	4445	b1e894c911303a53
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -678,7 +678,7 @@ crates/core/tests/template_agent_surface.rs	5853	dc6b6a2dc0f59f1e
 crates/external/codegraph-core/Cargo.toml	1752	d3539021d4944d9a
 crates/external/codegraph-core/LICENSE-APACHE	238	97541c8fd7e1bbfd
 crates/external/codegraph-core/LICENSE-MIT	216	f10b55a73b635a7e
-crates/external/codegraph-core/benches/core_micro.rs	2296	a3fa304edd11d7d4
+crates/external/codegraph-core/benches/core_micro.rs	2296	401a4a64469f8344
 crates/external/codegraph-core/src/advanced_config.rs	17008	da30d6c0ef0ba9ca
 crates/external/codegraph-core/src/arena.rs	171	5be8fc7f232da2da
 crates/external/codegraph-core/src/buffer_pool.rs	3892	04798a15362d6fab
