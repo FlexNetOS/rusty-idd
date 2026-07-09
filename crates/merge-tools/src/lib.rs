@@ -304,6 +304,10 @@ fn foreign_manifest_allowed(rel: &str) -> bool {
         || rel.starts_with("docs/")
         || rel.starts_with("openspec/")
         || rel.starts_with(".agents/")
+        // `spike/` arrived with the handoff-kernel unification (PR #143): handoff's
+        // experimental spikes (e.g. ruvocal-mcp-bridge) carry their own JS manifests
+        // by design — same import-without-flattening allowance until promoted.
+        || rel.starts_with("spike/")
 }
 
 fn dependencies_section_has_entries(text: &str) -> bool {

@@ -123,7 +123,7 @@ case "$mode" in
     strict_rust_contract=true
     ;;
   msrv)
-    toolchain="${RUSTY_IDD_RUST_TOOLCHAIN:-1.88.0}"
+    toolchain="${RUSTY_IDD_RUST_TOOLCHAIN:-1.96.0}"
     components=()
     strict_rust_contract=false
     ;;

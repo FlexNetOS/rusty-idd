@@ -13,7 +13,8 @@ name: ci
 # scripts/ci/envctl-rust-env.sh, not by user-global rustup/Cargo homes or Rust
 # setup/cache actions. The `rust` job runs the full gate on latest nightly with
 # the strict `rustc_codegen_gcc` + wild + kache/hurry/zccache contract; the
-# `msrv` job proves the declared 1.88 floor still builds with meta-local Rust
+# `msrv` job proves the declared 1.96 floor still builds with meta-local Rust
+# (raised from 1.88 by the fork unification: the handoff kernel declares rust-version 1.96).
 # homes.
 
 on:
@@ -120,7 +121,7 @@ jobs:
         run: cargo audit --deny warnings
 
   # MSRV floor: proves the workspace still builds on its declared minimum supported
-  # Rust version (the per-crate `rust-version` = 1.88, the edition-2024 + let-chains
+  # Rust version (the per-crate `rust-version` = 1.96, the edition-2024 + let-chains
   # + time/ratatui floor). If a change raises the real MSRV, this job goes red until
   # the `rust-version` fields + this pin are bumped together. Build-only (lints/tests
   # run on the pinned `rust` job above).
@@ -179,7 +180,7 @@ jobs:
         env:
           RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
         run: scripts/ci/envctl-rust-env.sh msrv
-      - name: Build on the MSRV floor (1.88.0, locked)
+      - name: Build on the MSRV floor (1.96.0, locked)
         run: cargo build --workspace --locked
       - name: Compile tests on the MSRV floor (locked)
         run: cargo test --workspace --locked --no-run
