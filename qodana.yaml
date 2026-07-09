@@ -1,0 +1,13 @@
+# Qodana is ADVISORY for handoff (ADR-0018 D9). It gives JetBrains/Rust IDE
+# inspection feedback without blocking the fail-closed merge path; required gates remain
+# CI Test/Clippy/Format plus the AI Gatekeeper status check.
+version: "1.0"
+
+profile:
+  name: qodana.starter
+
+# Rust support is intentionally isolated to Qodana's Rust linter image. The workflow is
+# continue-on-error because this linter may require EAP/licensed capabilities or QODANA_TOKEN.
+linter: jetbrains/qodana-rust:2026.1-eap
+
+projectJDK: "21"
