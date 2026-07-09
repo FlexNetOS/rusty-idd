@@ -1,3 +1,6 @@
+// HFTASK-0082 (ADR-0019 D5 #3): this whole crate is an integration test; unwrap/expect/panic
+// are idiomatic here (tests assert), so the deny lints are allowed crate-wide.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 use rusty_idd_core::planner::generate_workspace;
 use rusty_idd_core::scanner::scan_repo;
 use rusty_idd_core::validation::validate_workspace;
@@ -62,6 +65,10 @@ fn scans_repo_and_generates_workspace() {
     let out = temp_dir("workspace");
     generate_workspace(&inv_a, &inv_b, &out, "smoke").unwrap();
     assert!(out.join("AI_MERGE/04_merge_plan.md").exists());
+    assert!(
+        out.join("AI_MERGE/03_env_and_secret_contracts.json")
+            .exists()
+    );
     assert!(out
         .join("AI_MERGE/03_env_and_secret_contracts.json")
         .exists());
@@ -70,6 +77,11 @@ fn scans_repo_and_generates_workspace() {
     assert!(out.join(".idd/MANIFEST.tsv").exists());
 
     let findings = validate_workspace(&out).unwrap();
+    assert!(
+        findings
+            .iter()
+            .all(|f| f.severity.to_string() != "critical")
+    );
     assert!(findings
         .iter()
         .all(|f| f.severity.to_string() != "critical"));

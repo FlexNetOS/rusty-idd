@@ -1,3 +1,6 @@
+// HFTASK-0082 (ADR-0019 D5 #3): this whole crate is an integration test; unwrap/expect/panic
+// are idiomatic here (tests assert), so the deny lints are allowed crate-wide.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 //! Validate golden tests (the GATE item 3).
 //!
 //! Match the JSON SHAPE of the oracle fixtures `04`/`05` (level/message/valid/
