@@ -30,6 +30,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # Fork-unification (PR #143): the handoff kernel members (ledger, handoff-*)
+      # path-depend on sibling checkouts, mirroring the meta workspace layout.
+      # Provision them beside $GITHUB_WORKSPACE exactly as handoff-ci.yml does.
+      - name: Provision sibling providers (meta-ruvector + envctl)
+        shell: bash
+        run: |
+          parent="$(cd "$GITHUB_WORKSPACE/.." && pwd -P)"
+          if [ ! -d "$parent/meta-ruvector/.git" ]; then
+            mkdir -p "$parent/meta-ruvector"
+            git -C "$parent/meta-ruvector" init
+            git -C "$parent/meta-ruvector" config core.protectNTFS false
+            git -C "$parent/meta-ruvector" remote add origin https://github.com/FlexNetOS/meta-ruvector.git
+            git -C "$parent/meta-ruvector" sparse-checkout init --cone
+            git -C "$parent/meta-ruvector" sparse-checkout set \
+              crates/rvf/rvf-runtime crates/rvf/rvf-crypto crates/rvf/rvf-types \
+              crates/rvf/rvf-index crates/rvf/rvf-quant crates/rvf/rvf-wire \
+              crates/ruvector-verified crates/ruvector-domain-expansion \
+              crates/cognitum-gate-tilezero
+            git -C "$parent/meta-ruvector" fetch --depth 1 --filter=blob:none origin HEAD
+            git -C "$parent/meta-ruvector" checkout --force FETCH_HEAD
+          fi
+          if [ ! -d "$parent/envctl" ]; then
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
+          fi
       - name: Resolve meta-owned Rust root
         id: rust-meta
         run: |
@@ -104,6 +128,30 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
+      # Fork-unification (PR #143): the handoff kernel members (ledger, handoff-*)
+      # path-depend on sibling checkouts, mirroring the meta workspace layout.
+      # Provision them beside $GITHUB_WORKSPACE exactly as handoff-ci.yml does.
+      - name: Provision sibling providers (meta-ruvector + envctl)
+        shell: bash
+        run: |
+          parent="$(cd "$GITHUB_WORKSPACE/.." && pwd -P)"
+          if [ ! -d "$parent/meta-ruvector/.git" ]; then
+            mkdir -p "$parent/meta-ruvector"
+            git -C "$parent/meta-ruvector" init
+            git -C "$parent/meta-ruvector" config core.protectNTFS false
+            git -C "$parent/meta-ruvector" remote add origin https://github.com/FlexNetOS/meta-ruvector.git
+            git -C "$parent/meta-ruvector" sparse-checkout init --cone
+            git -C "$parent/meta-ruvector" sparse-checkout set \
+              crates/rvf/rvf-runtime crates/rvf/rvf-crypto crates/rvf/rvf-types \
+              crates/rvf/rvf-index crates/rvf/rvf-quant crates/rvf/rvf-wire \
+              crates/ruvector-verified crates/ruvector-domain-expansion \
+              crates/cognitum-gate-tilezero
+            git -C "$parent/meta-ruvector" fetch --depth 1 --filter=blob:none origin HEAD
+            git -C "$parent/meta-ruvector" checkout --force FETCH_HEAD
+          fi
+          if [ ! -d "$parent/envctl" ]; then
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
+          fi
       - name: Resolve meta-owned Rust root
         id: rust-meta
         run: |

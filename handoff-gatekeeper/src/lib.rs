@@ -183,14 +183,38 @@ impl GatekeeperVerdict {
     }
 }
 
-/// Fetch the list of changed files for a PR using `gh pr diff --name-only`.
+/// Fetch the list of changed files for a PR using `gh pr diff --name-only`,
+/// falling back to the paginated files API when the diff exceeds GitHub's
+/// 300-file endpoint limit (HTTP 406 on large PRs, e.g. the fork-unification).
 fn pr_changed_files(pr: &str) -> Result<Vec<String>, String> {
-    let out = run_out("gh", &["pr", "diff", pr, "--name-only"])?;
-    Ok(out
-        .lines()
-        .map(|s| s.trim().to_string())
-        .filter(|s| !s.is_empty())
-        .collect())
+    match run_out("gh", &["pr", "diff", pr, "--name-only"]) {
+        Ok(out) => Ok(out
+            .lines()
+            .map(|s| s.trim().to_string())
+            .filter(|s| !s.is_empty())
+            .collect()),
+        Err(diff_err) => {
+            // `gh pr diff` caps at 300 files; the files API paginates past it.
+            let api = run_out(
+                "gh",
+                &[
+                    "api",
+                    &format!("repos/{{owner}}/{{repo}}/pulls/{pr}/files"),
+                    "--paginate",
+                    "--jq",
+                    ".[].filename",
+                ],
+            )
+            .map_err(|api_err| {
+                format!("gh pr diff failed ({diff_err}); files API fallback failed ({api_err})")
+            })?;
+            Ok(api
+                .lines()
+                .map(|s| s.trim().to_string())
+                .filter(|s| !s.is_empty())
+                .collect())
+        }
+    }
 }
 
 /// Run the workspace test suite as the build/test gate.
