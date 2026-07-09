@@ -72,6 +72,9 @@ jobs:
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
           fi
+          if [ ! -d loop_lib ]; then
+            git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
+          fi
 
       # Meta-owned Rust toolchain/cache (replaces the removed Rust
       # setup/cache actions per the envctl toolchain-ownership contract).
@@ -174,6 +177,9 @@ jobs:
             printf '// non-Linux CI manifest-only stub; handoff-secrets is tested on Linux with real envctl.\n' > envctl/crates/secrets-engine/src/lib.rs
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+          if [ ! -d loop_lib ]; then
+            git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
           fi
 
       # Meta-owned Rust toolchain/cache (replaces the removed Rust
@@ -344,6 +350,9 @@ jobs:
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
           fi
+          if [ ! -d loop_lib ]; then
+            git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
+          fi
 
       # Meta-owned Rust toolchain/cache (replaces the removed Rust
       # setup/cache actions per the envctl toolchain-ownership contract).
@@ -437,6 +446,9 @@ jobs:
             printf '// non-Linux CI manifest-only stub; handoff-secrets is tested on Linux with real envctl.\n' > envctl/crates/secrets-engine/src/lib.rs
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+          if [ ! -d loop_lib ]; then
+            git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
           fi
 
       # Meta-owned Rust toolchain (replaces the removed Rust setup action per the

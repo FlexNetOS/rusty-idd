@@ -65,12 +65,12 @@ path	size_bytes	fnv1a64
 .github/pull_request_template.md	543	2897fdb76da4689f
 .github/workflows/ai-gatekeeper.yml	3551	0da84589bcf86e7c
 .github/workflows/auto-release.yml	3538	8ac2bc62bbabd517
-.github/workflows/ci.yml	9384	cd517d52bbcec586
+.github/workflows/ci.yml	9690	7d2a6f034ed55e00
 .github/workflows/codeql.yml	818	738bc8d08c87ae85
 .github/workflows/differential-drive-ci.yml	3223	e81111dadcbc157d
 .github/workflows/differential-drive.yml	1202	828ed5fca22ff9ee
 .github/workflows/guard-master.yml	2175	15696e4a583f2305
-.github/workflows/handoff-ci.yml	22783	1019b228c07bb829
+.github/workflows/handoff-ci.yml	23315	3de1746d198a0c45
 .github/workflows/handoff-promote-verify.yml	13363	3090de2ac04a23f3
 .github/workflows/handoff-release.yml	5786	215f634c27c98889
 .github/workflows/notify-parent.yml	1244	f1a2a5f83e2aa3b5
@@ -367,9 +367,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57260	d7c2a9d884028e0c
-.idd/knowledge/architecture.md	13414	024d82bc1109dc00
-.idd/knowledge/index.json	59362029	3158428c9a65777d
+.idd/knowledge/architecture.json	57260	7644563e41c6fdaf
+.idd/knowledge/architecture.md	13414	9d8e7b96ed13c999
+.idd/knowledge/index.json	59362029	2c8f81f4d946cff8
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -382,7 +382,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	b5319d23dd1e560e
+.idd/knowledge/report.md	4445	57144c0a6dc61c5d
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
