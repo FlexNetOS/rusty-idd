@@ -1,8 +1,8 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:382a4ace72892143`
+- Workspace fingerprint: `fnv1a64:ddab56b644c87914`
 - Source graph provider: `codegraph-rust`
-- Source graph: 457 files, 30872 nodes, 112911 edges
+- Source graph: 457 files, 30873 nodes, 112901 edges
 - Source languages: javascript, python, rust
 - Context provider: `repomix-rs`
 - Context package: 343 files, 246871 tokens
@@ -39,13 +39,13 @@
 | `spec` | crate | 24 | 461 | 1552 | Rust, rust |
 | `tui` | crate | 3 | 1006 | 3985 | Rust, rust |
 | `work-order` | crate | 2 | 165 | 527 | Rust, rust |
-| `codegraph-core` | external_crate | 39 | 1918 | 9028 | Rust, rust |
+| `codegraph-core` | external_crate | 39 | 1919 | 9029 | Rust, rust |
 | `codegraph-parser` | external_crate | 29 | 1060 | 7486 | Rust, rust |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | Rust, rust |
 | `handoff-core` | repo_surface | 1 | 66 | 287 | Rust, rust |
 | `handoff-drift` | repo_surface | 1 | 168 | 615 | Rust, rust |
 | `handoff-fleet` | repo_surface | 1 | 188 | 941 | Rust, rust |
-| `handoff-gatekeeper` | repo_surface | 1 | 71 | 323 | Rust, rust |
+| `handoff-gatekeeper` | repo_surface | 1 | 72 | 332 | Rust, rust |
 | `handoff-hooks` | repo_surface | 1 | 75 | 218 | Rust, rust |
 | `handoff-index` | repo_surface | 1 | 92 | 329 | Rust, rust |
 | `handoff-intake` | repo_surface | 1 | 65 | 201 | Rust, rust |
@@ -55,11 +55,11 @@
 | `handoff-schema` | repo_surface | 1 | 68 | 244 | Rust, rust |
 | `handoff-secrets` | repo_surface | 1 | 28 | 72 | Rust, rust |
 | `handoff-test-support` | repo_surface | 1 | 3 | 11 | Rust, rust |
-| `hf` | repo_surface | 13 | 1646 | 6857 | Rust, rust |
-| `imports` | repo_surface | 236 | 14297 | 55028 | JavaScript, Python, Rust, javascript, python, rust |
+| `hf` | repo_surface | 13 | 1644 | 6837 | Rust, rust |
+| `imports` | repo_surface | 236 | 14297 | 55026 | JavaScript, Python, Rust, javascript, python, rust |
 | `ledger` | repo_surface | 5 | 355 | 1865 | Rust, rust |
 | `spike` | repo_surface | 2 | 12 | 50 | JavaScript, javascript |
-| `vendor` | repo_surface | 33 | 1882 | 12322 | Rust, rust |
+| `vendor` | repo_surface | 33 | 1882 | 12320 | Rust, rust |
 | `work-order` | repo_surface | 2 | 177 | 559 | Rust, rust |
 
 ## Edges

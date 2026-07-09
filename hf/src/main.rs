@@ -2263,33 +2263,9 @@ fn cmd_review_verdict(id: &str, pr: &str, verdict: &str, by: &str) {
 /// Fetch the list of changed file paths for a PR using `gh pr diff --name-only`,
 /// falling back to the paginated files API past GitHub's 300-file diff limit.
 fn review_changed_files(pr: &str) -> Result<Vec<String>, String> {
-    match run_out("gh", &["pr", "diff", pr, "--name-only"]) {
-        Ok(out) => Ok(out
-            .lines()
-            .map(|s| s.trim().to_string())
-            .filter(|s| !s.is_empty())
-            .collect()),
-        Err(diff_err) => {
-            let api = run_out(
-                "gh",
-                &[
-                    "api",
-                    &format!("repos/{{owner}}/{{repo}}/pulls/{pr}/files"),
-                    "--paginate",
-                    "--jq",
-                    ".[].filename",
-                ],
-            )
-            .map_err(|api_err| {
-                format!("gh pr diff failed ({diff_err}); files API fallback failed ({api_err})")
-            })?;
-            Ok(api
-                .lines()
-                .map(|s| s.trim().to_string())
-                .filter(|s| !s.is_empty())
-                .collect())
-        }
-    }
+    // Single source of truth: the gatekeeper's 3-tier resolver
+    // (gh pr diff -> paginated files API -> local git diff vs base).
+    handoff_gatekeeper::pr_changed_files(pr)
 }
 
 /// HFTASK-0010 Phase 1: request a cloud_ultra review for PR `pr`.

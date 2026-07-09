@@ -1,8 +1,9 @@
 #![allow(clippy::single_component_path_imports)]
 
 use codegraph_core::{CodeNode, Language, Location, NodeType};
+use std::hint::black_box;
 use criterion::{
-    black_box, criterion_group, criterion_main, Bencher, BenchmarkId, Criterion, Throughput,
+    criterion_group, criterion_main, Bencher, BenchmarkId, Criterion, Throughput,
 };
 use serde_json;
 

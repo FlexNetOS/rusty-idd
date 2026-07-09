@@ -186,7 +186,7 @@ impl GatekeeperVerdict {
 /// Fetch the list of changed files for a PR using `gh pr diff --name-only`,
 /// falling back to the paginated files API when the diff exceeds GitHub's
 /// 300-file endpoint limit (HTTP 406 on large PRs, e.g. the fork-unification).
-fn pr_changed_files(pr: &str) -> Result<Vec<String>, String> {
+pub fn pr_changed_files(pr: &str) -> Result<Vec<String>, String> {
     match run_out("gh", &["pr", "diff", pr, "--name-only"]) {
         Ok(out) => Ok(out
             .lines()
@@ -204,11 +204,29 @@ fn pr_changed_files(pr: &str) -> Result<Vec<String>, String> {
                     "--jq",
                     ".[].filename",
                 ],
-            )
-            .map_err(|api_err| {
-                format!("gh pr diff failed ({diff_err}); files API fallback failed ({api_err})")
-            })?;
-            Ok(api
+            );
+            let text = match api {
+                Ok(t) => t,
+                Err(api_err) => {
+                    // Final tier: GitHub can refuse to GENERATE huge diffs entirely
+                    // (HTTP 422 "diff is taking too long" on both endpoints — seen on
+                    // the 456-file fork-unification PR). Local git never refuses.
+                    let base = run_out("gh", &["pr", "view", pr, "--json", "baseRefName", "--jq", ".baseRefName"])
+                        .map(|s| s.trim().to_string())
+                        .unwrap_or_else(|_| "develop".to_string());
+                    let _ = run_out("git", &["fetch", "--depth=1", "origin", &base]);
+                    run_out(
+                        "git",
+                        &["diff", "--name-only", &format!("origin/{base}...HEAD")],
+                    )
+                    .map_err(|git_err| {
+                        format!(
+                            "gh pr diff failed ({diff_err}); files API failed ({api_err}); local git diff failed ({git_err})"
+                        )
+                    })?
+                }
+            };
+            Ok(text
                 .lines()
                 .map(|s| s.trim().to_string())
                 .filter(|s| !s.is_empty())

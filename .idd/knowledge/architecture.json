@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:382a4ace72892143",
+  "workspace_fingerprint": "fnv1a64:ddab56b644c87914",
   "workspace_root": "/home/flexnetos/lifeos/src/rusty-idd-unify-wt",
   "source_graph": {
     "provider": "codegraph-rust",
     "files": 457,
-    "nodes": 30872,
-    "edges": 112911,
+    "nodes": 30873,
+    "edges": 112901,
     "languages": [
       "javascript",
       "python",
@@ -225,7 +225,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 6042,
+          "node_id": 6043,
           "name": "implementation_loop",
           "file": "crates/runner/src/runner.rs",
           "line_start": 428,
@@ -287,7 +287,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 6768,
+          "node_id": 6769,
           "name": "new",
           "file": "crates/tui/src/app.rs",
           "line_start": 114,
@@ -329,8 +329,8 @@
       "name": "codegraph-core",
       "kind": "external_crate",
       "files": 39,
-      "nodes": 1918,
-      "edges": 9028,
+      "nodes": 1919,
+      "edges": 9029,
       "languages": [
         "Rust",
         "rust"
@@ -364,7 +364,7 @@
       ],
       "hotspots": [
         {
-          "node_id": 4314,
+          "node_id": 4315,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/rust.rs",
           "line_start": 97,
@@ -379,7 +379,7 @@
           ]
         },
         {
-          "node_id": 4166,
+          "node_id": 4167,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/java.rs",
           "line_start": 109,
@@ -394,7 +394,7 @@
           ]
         },
         {
-          "node_id": 4239,
+          "node_id": 4240,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/php.rs",
           "line_start": 130,
@@ -409,7 +409,7 @@
           ]
         },
         {
-          "node_id": 4084,
+          "node_id": 4085,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/cpp.rs",
           "line_start": 105,
@@ -424,7 +424,7 @@
           ]
         },
         {
-          "node_id": 4290,
+          "node_id": 4291,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/ruby.rs",
           "line_start": 122,
@@ -439,7 +439,7 @@
           ]
         },
         {
-          "node_id": 4108,
+          "node_id": 4109,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/csharp.rs",
           "line_start": 109,
@@ -454,7 +454,7 @@
           ]
         },
         {
-          "node_id": 4381,
+          "node_id": 4382,
           "name": "walk",
           "file": "crates/external/codegraph-parser/src/languages/swift.rs",
           "line_start": 108,
@@ -554,8 +554,8 @@
       "name": "handoff-gatekeeper",
       "kind": "repo_surface",
       "files": 1,
-      "nodes": 71,
-      "edges": 323,
+      "nodes": 72,
+      "edges": 332,
       "languages": [
         "Rust",
         "rust"
@@ -716,8 +716,8 @@
       "name": "hf",
       "kind": "repo_surface",
       "files": 13,
-      "nodes": 1646,
-      "edges": 6857,
+      "nodes": 1644,
+      "edges": 6837,
       "languages": [
         "Rust",
         "rust"
@@ -727,8 +727,8 @@
           "node_id": 9891,
           "name": "main",
           "file": "hf/src/main.rs",
-          "line_start": 4366,
-          "line_end": 4832,
+          "line_start": 4342,
+          "line_end": 4808,
           "score": 4978,
           "reasons": [
             "467 lines",
@@ -739,7 +739,7 @@
           ]
         },
         {
-          "node_id": 9014,
+          "node_id": 9016,
           "name": "build_hf_args",
           "file": "hf/src/bin/hf-mcp.rs",
           "line_start": 267,
@@ -775,7 +775,7 @@
       "kind": "repo_surface",
       "files": 236,
       "nodes": 14297,
-      "edges": 55028,
+      "edges": 55026,
       "languages": [
         "JavaScript",
         "Python",
@@ -791,11 +791,11 @@
           "file": "imports/prompt_hub/prompt-hub/src/garbage_collector.rs",
           "line_start": 66,
           "line_end": 108,
-          "score": 6426,
+          "score": 6406,
           "reasons": [
             "43 lines",
-            "639 graph links",
-            "635 call links",
+            "637 graph links",
+            "633 call links",
             "3 unresolved calls"
           ]
         },
@@ -958,7 +958,7 @@
       "kind": "repo_surface",
       "files": 33,
       "nodes": 1882,
-      "edges": 12322,
+      "edges": 12320,
       "languages": [
         "Rust",
         "rust"
@@ -1769,7 +1769,7 @@
       "target": "repo:handoff-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59015"
+        "knowledge edge 59023"
       ]
     },
     {
@@ -1809,7 +1809,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59088"
+        "knowledge edge 59096"
       ]
     },
     {
@@ -1817,7 +1817,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 59065"
+        "knowledge edge 59073"
       ]
     },
     {
@@ -1825,7 +1825,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59071"
+        "knowledge edge 59079"
       ]
     },
     {
@@ -1833,7 +1833,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59221"
+        "knowledge edge 59229"
       ]
     },
     {
@@ -1841,7 +1841,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 59219"
+        "knowledge edge 59227"
       ]
     },
     {
@@ -1849,7 +1849,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59232"
+        "knowledge edge 59240"
       ]
     },
     {
@@ -1857,7 +1857,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59498"
+        "knowledge edge 59506"
       ]
     },
     {
@@ -1865,7 +1865,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 59449"
+        "knowledge edge 59457"
       ]
     },
     {
@@ -1873,7 +1873,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59488"
+        "knowledge edge 59496"
       ]
     },
     {
@@ -1881,7 +1881,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59595"
+        "knowledge edge 59603"
       ]
     },
     {
@@ -1889,7 +1889,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 59582"
+        "knowledge edge 59590"
       ]
     },
     {
@@ -1897,7 +1897,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59592"
+        "knowledge edge 59600"
       ]
     },
     {
@@ -1905,7 +1905,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 59836"
+        "knowledge edge 59844"
       ]
     },
     {
@@ -1913,7 +1913,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 59696"
+        "knowledge edge 59704"
       ]
     },
     {
@@ -1921,7 +1921,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 59903"
+        "knowledge edge 59911"
       ]
     },
     {
@@ -1929,7 +1929,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 60018"
+        "knowledge edge 60026"
       ]
     },
     {
@@ -1937,7 +1937,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 60015"
+        "knowledge edge 60023"
       ]
     },
     {
@@ -1945,7 +1945,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 60021"
+        "knowledge edge 60029"
       ]
     },
     {
@@ -1953,7 +1953,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 60210"
+        "knowledge edge 60218"
       ]
     },
     {
@@ -1961,7 +1961,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 60232"
+        "knowledge edge 60240"
       ]
     },
     {
@@ -1969,7 +1969,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 62100"
+        "knowledge edge 62108"
       ]
     },
     {
@@ -1977,7 +1977,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 63879"
+        "knowledge edge 63869"
       ]
     },
     {
@@ -1985,7 +1985,7 @@
       "target": "repo:handoff-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 61932"
+        "knowledge edge 61940"
       ]
     },
     {
@@ -1993,7 +1993,7 @@
       "target": "repo:handoff-core",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 61816"
+        "knowledge edge 61824"
       ]
     },
     {
@@ -2001,7 +2001,7 @@
       "target": "repo:handoff-fleet",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 63732"
+        "knowledge edge 63722"
       ]
     },
     {
@@ -2009,7 +2009,7 @@
       "target": "repo:handoff-index",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 63386"
+        "knowledge edge 63376"
       ]
     },
     {
@@ -2017,7 +2017,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 60237"
+        "knowledge edge 60245"
       ]
     },
     {
@@ -2025,7 +2025,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 60234"
+        "knowledge edge 60242"
       ]
     },
     {
@@ -2033,7 +2033,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 60252"
+        "knowledge edge 60260"
       ]
     },
     {
@@ -2041,7 +2041,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 60368"
+        "knowledge edge 60376"
       ]
     },
     {
@@ -2049,7 +2049,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 65579"
+        "knowledge edge 65569"
       ]
     },
     {
@@ -2057,7 +2057,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 66857"
+        "knowledge edge 66847"
       ]
     },
     {
@@ -2065,7 +2065,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 95705"
+        "knowledge edge 95695"
       ]
     },
     {
@@ -2073,7 +2073,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 90838"
+        "knowledge edge 90828"
       ]
     },
     {
@@ -2081,7 +2081,7 @@
       "target": "external:codegraph-parser",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 86272"
+        "knowledge edge 86262"
       ]
     },
     {
@@ -2089,7 +2089,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 65463"
+        "knowledge edge 65453"
       ]
     },
     {
@@ -2097,7 +2097,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 65909"
+        "knowledge edge 65899"
       ]
     },
     {
@@ -2105,7 +2105,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 67978"
+        "knowledge edge 67968"
       ]
     },
     {
@@ -2113,7 +2113,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 104927"
+        "knowledge edge 104917"
       ]
     },
     {
@@ -2121,39 +2121,39 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 104470"
-      ]
-    },
-    {
-      "source": "repo:ledger",
-      "target": "repo:imports",
-      "kind": "codegraph:Calls",
-      "evidence": [
-        "knowledge edge 104379"
-      ]
-    },
-    {
-      "source": "repo:ledger",
-      "target": "repo:imports",
-      "kind": "codegraph:References",
-      "evidence": [
-        "knowledge edge 104263"
-      ]
-    },
-    {
-      "source": "repo:ledger",
-      "target": "repo:vendor",
-      "kind": "codegraph:Calls",
-      "evidence": [
-        "knowledge edge 104280"
-      ]
-    },
-    {
-      "source": "repo:ledger",
-      "target": "repo:vendor",
-      "kind": "codegraph:References",
-      "evidence": [
         "knowledge edge 104460"
+      ]
+    },
+    {
+      "source": "repo:ledger",
+      "target": "repo:imports",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 104369"
+      ]
+    },
+    {
+      "source": "repo:ledger",
+      "target": "repo:imports",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 104253"
+      ]
+    },
+    {
+      "source": "repo:ledger",
+      "target": "repo:vendor",
+      "kind": "codegraph:Calls",
+      "evidence": [
+        "knowledge edge 104270"
+      ]
+    },
+    {
+      "source": "repo:ledger",
+      "target": "repo:vendor",
+      "kind": "codegraph:References",
+      "evidence": [
+        "knowledge edge 104450"
       ]
     },
     {
@@ -2161,7 +2161,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 105776"
+        "knowledge edge 105766"
       ]
     },
     {
@@ -2169,7 +2169,7 @@
       "target": "crate:cli",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 108065"
+        "knowledge edge 108055"
       ]
     },
     {
@@ -2177,7 +2177,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 106594"
+        "knowledge edge 106584"
       ]
     },
     {
@@ -2185,7 +2185,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 105870"
+        "knowledge edge 105860"
       ]
     },
     {
@@ -2193,7 +2193,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Imports",
       "evidence": [
-        "knowledge edge 106151"
+        "knowledge edge 106141"
       ]
     },
     {
@@ -2201,7 +2201,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 106179"
+        "knowledge edge 106169"
       ]
     },
     {
@@ -2209,7 +2209,7 @@
       "target": "external:codegraph-core",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 112808"
+        "knowledge edge 112798"
       ]
     },
     {
@@ -2217,7 +2217,7 @@
       "target": "repo:imports",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 112599"
+        "knowledge edge 112589"
       ]
     },
     {
@@ -2225,7 +2225,7 @@
       "target": "repo:imports",
       "kind": "codegraph:References",
       "evidence": [
-        "knowledge edge 112531"
+        "knowledge edge 112521"
       ]
     },
     {
@@ -2233,7 +2233,7 @@
       "target": "repo:vendor",
       "kind": "codegraph:Calls",
       "evidence": [
-        "knowledge edge 112538"
+        "knowledge edge 112528"
       ]
     },
     {

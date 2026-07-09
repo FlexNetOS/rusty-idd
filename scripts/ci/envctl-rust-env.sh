@@ -144,7 +144,10 @@ if ! command -v rustup >/dev/null 2>&1; then
 fi
 
 rustup_args=(toolchain install "$toolchain" --profile minimal)
-for component in "${components[@]}"; do
+# ${arr[@]+...} guard: macOS ships bash 3.2, where `set -u` treats expanding an
+# EMPTY array as unbound (first hit by handoff-ci's matrix legs after the
+# meta-owned toolchain conversion).
+for component in ${components[@]+"${components[@]}"}; do
   rustup_args+=(--component "$component")
 done
 timed_step "rustup toolchain install $toolchain" rustup "${rustup_args[@]}"
