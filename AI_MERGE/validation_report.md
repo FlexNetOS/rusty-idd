@@ -2,4 +2,4 @@
 
 | Severity | File | Finding |
 |---|---|---|
-| info | _workspace_ | No findings |
+| warning | `.github/workflows/guard-master.yml` | pull_request_target requires explicit threat review near line 16 |
