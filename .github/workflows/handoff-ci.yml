@@ -74,12 +74,7 @@ jobs:
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
-            sed -i \
-              -e 's/^version\.workspace = true/version = "0.1.0"/' \
-              -e 's/^edition\.workspace = true/edition = "2021"/' \
-              -e 's/^license\.workspace = true/license = "MIT OR Apache-2.0"/' \
-              -e 's/^repository\.workspace = true/repository = "https:\/\/github.com\/FlexNetOS\/loop_lib"/' \
-              loop_lib/Cargo.toml
+            perl -i -pe 's/^version\.workspace = true/version = "0.1.0"/; s/^edition\.workspace = true/edition = "2021"/; s/^license\.workspace = true/license = "MIT OR Apache-2.0"/; s{^repository\.workspace = true}{repository = "https://github.com/FlexNetOS/loop_lib"}' loop_lib/Cargo.toml
           fi
 
       # Meta-owned Rust toolchain/cache (replaces the removed Rust
@@ -186,12 +181,7 @@ jobs:
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
-            sed -i \
-              -e 's/^version\.workspace = true/version = "0.1.0"/' \
-              -e 's/^edition\.workspace = true/edition = "2021"/' \
-              -e 's/^license\.workspace = true/license = "MIT OR Apache-2.0"/' \
-              -e 's/^repository\.workspace = true/repository = "https:\/\/github.com\/FlexNetOS\/loop_lib"/' \
-              loop_lib/Cargo.toml
+            perl -i -pe 's/^version\.workspace = true/version = "0.1.0"/; s/^edition\.workspace = true/edition = "2021"/; s/^license\.workspace = true/license = "MIT OR Apache-2.0"/; s{^repository\.workspace = true}{repository = "https://github.com/FlexNetOS/loop_lib"}' loop_lib/Cargo.toml
           fi
 
       # Meta-owned Rust toolchain/cache (replaces the removed Rust
@@ -364,12 +354,7 @@ jobs:
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
-            sed -i \
-              -e 's/^version\.workspace = true/version = "0.1.0"/' \
-              -e 's/^edition\.workspace = true/edition = "2021"/' \
-              -e 's/^license\.workspace = true/license = "MIT OR Apache-2.0"/' \
-              -e 's/^repository\.workspace = true/repository = "https:\/\/github.com\/FlexNetOS\/loop_lib"/' \
-              loop_lib/Cargo.toml
+            perl -i -pe 's/^version\.workspace = true/version = "0.1.0"/; s/^edition\.workspace = true/edition = "2021"/; s/^license\.workspace = true/license = "MIT OR Apache-2.0"/; s{^repository\.workspace = true}{repository = "https://github.com/FlexNetOS/loop_lib"}' loop_lib/Cargo.toml
           fi
 
       # Meta-owned Rust toolchain/cache (replaces the removed Rust
@@ -467,12 +452,7 @@ jobs:
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
-            sed -i \
-              -e 's/^version\.workspace = true/version = "0.1.0"/' \
-              -e 's/^edition\.workspace = true/edition = "2021"/' \
-              -e 's/^license\.workspace = true/license = "MIT OR Apache-2.0"/' \
-              -e 's/^repository\.workspace = true/repository = "https:\/\/github.com\/FlexNetOS\/loop_lib"/' \
-              loop_lib/Cargo.toml
+            perl -i -pe 's/^version\.workspace = true/version = "0.1.0"/; s/^edition\.workspace = true/edition = "2021"/; s/^license\.workspace = true/license = "MIT OR Apache-2.0"/; s{^repository\.workspace = true}{repository = "https://github.com/FlexNetOS/loop_lib"}' loop_lib/Cargo.toml
           fi
 
       # Meta-owned Rust toolchain (replaces the removed Rust setup action per the
