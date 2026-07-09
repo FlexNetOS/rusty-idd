@@ -79,7 +79,7 @@ path	size_bytes	fnv1a64
 .github/workflows/qodana.yml	1117	1556f9deece5b171
 .github/workflows/release.yml	2587	772935049af53219
 .github/workflows/semantic-pr-title.yml	751	0b324eb8f050906e
-.github/workflows/sync-master.yml	4448	7f6277515c742741
+.github/workflows/sync-master.yml	4889	90cf297976745bd1
 .gitignore	3414	10d9a711e87e0a00
 .handoff/README.md	729	d5cd430f0555a38d
 .handoff/active.md	63	1d71cd2652539649
@@ -367,9 +367,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57260	500b6f904c59d63d
-.idd/knowledge/architecture.md	13414	3bfa1aa090c08da7
-.idd/knowledge/index.json	59361881	69139fae1d28b19d
+.idd/knowledge/architecture.json	57264	a1f9c6105286a079
+.idd/knowledge/architecture.md	13414	b8f99144641b8988
+.idd/knowledge/index.json	59809057	a5c556683c47e04a
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -382,7 +382,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	b1e894c911303a53
+.idd/knowledge/report.md	4445	bb868be9381fd832
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4

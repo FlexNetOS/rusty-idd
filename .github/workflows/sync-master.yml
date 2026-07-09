@@ -85,17 +85,25 @@ jobs:
             sleep 30
           done
 
-      - name: Fast-forward master to develop
+      - name: Fast-forward trunk to develop
         run: |
           set -euo pipefail
           git config user.name  "flexnetos-sync[bot]"
           git config user.email "sync@flexnetos.local"
-          git fetch origin master
-          SHA="$(git rev-parse HEAD)"
-          if git merge-base --is-ancestor origin/master "$SHA"; then
-            git push origin "${SHA}:refs/heads/master"
-            echo "✅ master fast-forwarded to $(git rev-parse --short "$SHA")"
+          # Resolve the trunk ref: master where it exists (handoff convention),
+          # else the repo's default branch (rusty-idd uses main). The fleet
+          # bundle previously hardcoded master, which fataled here.
+          if git ls-remote --exit-code --heads origin master >/dev/null 2>&1; then
+            TRUNK=master
           else
-            echo "::error::develop is not a fast-forward of master — refusing to sync (would not be a clean promotion). Reconcile master↔develop manually."
+            TRUNK="$(git remote show origin | sed -n 's/.*HEAD branch: //p')"
+          fi
+          git fetch origin "$TRUNK"
+          SHA="$(git rev-parse HEAD)"
+          if git merge-base --is-ancestor "origin/$TRUNK" "$SHA"; then
+            git push origin "${SHA}:refs/heads/$TRUNK"
+            echo "✅ $TRUNK fast-forwarded to $(git rev-parse --short "$SHA")"
+          else
+            echo "::error::develop is not a fast-forward of $TRUNK — refusing to sync (would not be a clean promotion). Reconcile $TRUNK↔develop manually."
             exit 1
           fi
