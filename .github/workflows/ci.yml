@@ -47,9 +47,17 @@ jobs:
             git -C "$parent/meta-ruvector" sparse-checkout set \
               crates/rvf \
               crates/ruvector-verified crates/ruvector-domain-expansion \
-              crates/cognitum-gate-tilezero
+              crates/cognitum-gate-tilezero \
+              crates/ruvector-core crates/ruvector-coherence \
+              crates/ruvector-cognitive-container patches/hnsw_rs
             git -C "$parent/meta-ruvector" fetch --depth 1 --filter=blob:none origin HEAD
             git -C "$parent/meta-ruvector" checkout --force FETCH_HEAD
+            # The cone still carries the ROOT workspace manifest, whose members list
+            # spans ~150 crates; cargo metadata (run by cargo fmt) fails on the first
+            # member absent from the cone (ruvector-temporal-coherence). Trim members
+            # to the cone's path-dep closure (same pattern as the envctl trim below).
+            # crates/rvf is its own workspace (root excludes it) so it is not listed.
+            perl -0pi -e 's/\nmembers = \[.*?\n\]/\nmembers = [\n    "crates\/ruvector-verified",\n    "crates\/ruvector-domain-expansion",\n    "crates\/cognitum-gate-tilezero",\n    "crates\/ruvector-core",\n    "crates\/ruvector-coherence",\n    "crates\/ruvector-cognitive-container",\n]/s' "$parent/meta-ruvector/Cargo.toml"
           fi
           if [ ! -d "$parent/envctl" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
@@ -158,9 +166,17 @@ jobs:
             git -C "$parent/meta-ruvector" sparse-checkout set \
               crates/rvf \
               crates/ruvector-verified crates/ruvector-domain-expansion \
-              crates/cognitum-gate-tilezero
+              crates/cognitum-gate-tilezero \
+              crates/ruvector-core crates/ruvector-coherence \
+              crates/ruvector-cognitive-container patches/hnsw_rs
             git -C "$parent/meta-ruvector" fetch --depth 1 --filter=blob:none origin HEAD
             git -C "$parent/meta-ruvector" checkout --force FETCH_HEAD
+            # The cone still carries the ROOT workspace manifest, whose members list
+            # spans ~150 crates; cargo metadata (run by cargo fmt) fails on the first
+            # member absent from the cone (ruvector-temporal-coherence). Trim members
+            # to the cone's path-dep closure (same pattern as the envctl trim below).
+            # crates/rvf is its own workspace (root excludes it) so it is not listed.
+            perl -0pi -e 's/\nmembers = \[.*?\n\]/\nmembers = [\n    "crates\/ruvector-verified",\n    "crates\/ruvector-domain-expansion",\n    "crates\/cognitum-gate-tilezero",\n    "crates\/ruvector-core",\n    "crates\/ruvector-coherence",\n    "crates\/ruvector-cognitive-container",\n]/s' "$parent/meta-ruvector/Cargo.toml"
           fi
           if [ ! -d "$parent/envctl" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
