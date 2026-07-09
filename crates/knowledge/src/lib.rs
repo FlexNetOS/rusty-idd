@@ -1620,18 +1620,17 @@ impl EdgeResolver {
 
         let basename = symbol_basename(target);
         let source_file = self.by_id.get(&source).and_then(|node| node.file.as_ref());
-        if let Some(file) = source_file {
-            if let Some(ids) = self.by_file_name.get(&(file.clone(), basename.clone())) {
-                if ids.len() == 1 {
-                    return ids.first().copied();
-                }
-            }
+        if let Some(file) = source_file
+            && let Some(ids) = self.by_file_name.get(&(file.clone(), basename.clone()))
+            && ids.len() == 1
+        {
+            return ids.first().copied();
         }
 
-        if let Some(ids) = self.by_name.get(&basename) {
-            if ids.len() == 1 {
-                return ids.first().copied();
-            }
+        if let Some(ids) = self.by_name.get(&basename)
+            && ids.len() == 1
+        {
+            return ids.first().copied();
         }
         None
     }
@@ -2121,15 +2120,15 @@ fn architecture_components(index: &KnowledgeIndex) -> Vec<ArchitectureComponent>
     }
 
     for edge in &index.edges {
-        if let Some(component_id) = node_component.get(&edge.source) {
-            if let Some(component) = components.get_mut(component_id) {
-                component.edges.insert(edge.id);
-            }
+        if let Some(component_id) = node_component.get(&edge.source)
+            && let Some(component) = components.get_mut(component_id)
+        {
+            component.edges.insert(edge.id);
         }
-        if let Some(component_id) = node_component.get(&edge.target) {
-            if let Some(component) = components.get_mut(component_id) {
-                component.edges.insert(edge.id);
-            }
+        if let Some(component_id) = node_component.get(&edge.target)
+            && let Some(component) = components.get_mut(component_id)
+        {
+            component.edges.insert(edge.id);
         }
     }
 
@@ -2817,10 +2816,10 @@ fn system_architecture_graph(
 }
 
 fn discover_system_repos(system_root: &Path) -> Result<(Vec<SystemRepo>, String)> {
-    if let Ok(projects) = discover_meta_projects(system_root) {
-        if !projects.is_empty() {
-            return Ok((projects, "meta project list --json".to_string()));
-        }
+    if let Ok(projects) = discover_meta_projects(system_root)
+        && !projects.is_empty()
+    {
+        return Ok((projects, "meta project list --json".to_string()));
     }
     discover_git_child_repos(system_root)
         .map(|repos| (repos, "filesystem git discovery".to_string()))

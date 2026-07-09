@@ -51,10 +51,43 @@ jobs:
         shell: bash
         run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@1.96.0
+      # Meta-owned Rust toolchain (replaces the removed Rust setup action per the envctl
+      # toolchain-ownership contract). This job checks out at the repo root, so the
+      # script and lockfile are root-relative and CARGO_TARGET_DIR keeps its default
+      # (<workspace>/target), matching the package step's target/<triple>/release path.
+      - name: Resolve meta-owned Rust root
+        id: rust-meta
+        shell: bash
+        run: |
+          meta_root="$(cd "$GITHUB_WORKSPACE/.." && pwd -P)/meta"
+          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
+          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
+      - name: Restore meta-owned Rust tool cache
+        uses: actions/cache@v4
         with:
-          targets: ${{ matrix.target }}
+          path: |
+            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
+            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
+          key: rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-release-${{ matrix.target }}-${{ hashFiles('scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-release-${{ matrix.target }}-
+      - name: Restore workspace target cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/target
+          key: rusty-idd-target-1.96.0-${{ runner.os }}-release-${{ matrix.target }}-${{ hashFiles('Cargo.lock', 'scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-target-1.96.0-${{ runner.os }}-release-${{ matrix.target }}-
+      - name: Envctl Rust toolchain
+        shell: bash
+        env:
+          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
+          RUSTY_IDD_RUST_TOOLCHAIN: 1.96.0
+        run: scripts/ci/envctl-rust-env.sh release
+      - name: Add release target to the meta-owned toolchain
+        shell: bash
+        run: rustup target add ${{ matrix.target }}
 
       - name: Install cross-compilation tools (Linux ARM)
         if: matrix.target == 'aarch64-unknown-linux-gnu'

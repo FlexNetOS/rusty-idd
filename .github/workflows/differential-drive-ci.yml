@@ -33,10 +33,39 @@ jobs:
       - name: Clone envctl provider (envctl)
         run: git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
 
-      - uses: dtolnay/rust-toolchain@1.96.0
-      - uses: Swatinem/rust-cache@v2
+      # Meta-owned Rust toolchain/cache (replaces the removed Rust
+      # setup/cache actions per the envctl toolchain-ownership contract).
+      - name: Resolve meta-owned Rust root
+        id: rust-meta
+        shell: bash
+        run: |
+          meta_root="$GITHUB_WORKSPACE/meta"
+          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
+          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
+      - name: Restore meta-owned Rust tool cache
+        uses: actions/cache@v4
         with:
-          workspaces: handoff
+          path: |
+            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
+            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
+          key: rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-diffdrive-${{ hashFiles('handoff/scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-diffdrive-
+      - name: Restore workspace target cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/handoff/target
+          key: rusty-idd-target-1.96.0-${{ runner.os }}-diffdrive-${{ hashFiles('handoff/Cargo.lock', 'handoff/scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-target-1.96.0-${{ runner.os }}-diffdrive-
+      - name: Envctl Rust toolchain and cache
+        shell: bash
+        env:
+          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
+          RUSTY_IDD_RUST_TOOLCHAIN: 1.96.0
+          CARGO_TARGET_DIR: ${{ github.workspace }}/handoff/target
+        run: handoff/scripts/ci/envctl-rust-env.sh release
 
       - name: Build the real hf binary
         working-directory: handoff
