@@ -56,6 +56,15 @@ jobs:
           fi
           if [ ! -d "$parent/loop_lib" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git "$parent/loop_lib"
+            # loop_lib's manifest inherits version/edition/etc from a parent workspace
+            # it does not carry standalone; concretize so cargo metadata (run by
+            # cargo fmt) can resolve the envctl->engine->loop_lib chain.
+            sed -i \
+              -e 's/^version\.workspace = true/version = "0.1.0"/' \
+              -e 's/^edition\.workspace = true/edition = "2021"/' \
+              -e 's/^license\.workspace = true/license = "MIT OR Apache-2.0"/' \
+              -e 's/^repository\.workspace = true/repository = "https:\/\/github.com\/FlexNetOS\/loop_lib"/' \
+              "$parent/loop_lib/Cargo.toml"
           fi
       - name: Resolve meta-owned Rust root
         id: rust-meta
@@ -158,6 +167,15 @@ jobs:
           fi
           if [ ! -d "$parent/loop_lib" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git "$parent/loop_lib"
+            # loop_lib's manifest inherits version/edition/etc from a parent workspace
+            # it does not carry standalone; concretize so cargo metadata (run by
+            # cargo fmt) can resolve the envctl->engine->loop_lib chain.
+            sed -i \
+              -e 's/^version\.workspace = true/version = "0.1.0"/' \
+              -e 's/^edition\.workspace = true/edition = "2021"/' \
+              -e 's/^license\.workspace = true/license = "MIT OR Apache-2.0"/' \
+              -e 's/^repository\.workspace = true/repository = "https:\/\/github.com\/FlexNetOS\/loop_lib"/' \
+              "$parent/loop_lib/Cargo.toml"
           fi
       - name: Resolve meta-owned Rust root
         id: rust-meta
