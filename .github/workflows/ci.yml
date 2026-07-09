@@ -53,6 +53,11 @@ jobs:
           fi
           if [ ! -d "$parent/envctl" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
+            # rusty-idd only path-deps envctl-secrets-engine (self-contained). Trim the
+            # throwaway clone's workspace members to just it so cargo metadata (run by
+            # cargo fmt) stops resolving envctl's OTHER members and their external
+            # path-deps (engine->loop_lib, cli->meta_plugin_protocol, ...).
+            perl -0pi -e 's/members\s*=\s*\[[^\]]*\]/members = ["crates\/secrets-engine"]/' "$parent/envctl/Cargo.toml"
           fi
           if [ ! -d "$parent/loop_lib" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git "$parent/loop_lib"
@@ -159,6 +164,11 @@ jobs:
           fi
           if [ ! -d "$parent/envctl" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
+            # rusty-idd only path-deps envctl-secrets-engine (self-contained). Trim the
+            # throwaway clone's workspace members to just it so cargo metadata (run by
+            # cargo fmt) stops resolving envctl's OTHER members and their external
+            # path-deps (engine->loop_lib, cli->meta_plugin_protocol, ...).
+            perl -0pi -e 's/members\s*=\s*\[[^\]]*\]/members = ["crates\/secrets-engine"]/' "$parent/envctl/Cargo.toml"
           fi
           if [ ! -d "$parent/loop_lib" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git "$parent/loop_lib"

@@ -71,6 +71,7 @@ jobs:
             printf '// non-Linux CI manifest-only stub; handoff-secrets is tested on Linux with real envctl.\n' > envctl/crates/secrets-engine/src/lib.rs
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+            perl -0pi -e 's/members\s*=\s*\[[^\]]*\]/members = ["crates\/secrets-engine"]/' envctl/Cargo.toml
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
@@ -178,6 +179,7 @@ jobs:
             printf '// non-Linux CI manifest-only stub; handoff-secrets is tested on Linux with real envctl.\n' > envctl/crates/secrets-engine/src/lib.rs
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+            perl -0pi -e 's/members\s*=\s*\[[^\]]*\]/members = ["crates\/secrets-engine"]/' envctl/Cargo.toml
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
@@ -351,6 +353,7 @@ jobs:
             printf '// non-Linux CI manifest-only stub; handoff-secrets is tested on Linux with real envctl.\n' > envctl/crates/secrets-engine/src/lib.rs
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+            perl -0pi -e 's/members\s*=\s*\[[^\]]*\]/members = ["crates\/secrets-engine"]/' envctl/Cargo.toml
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
@@ -449,6 +452,7 @@ jobs:
             printf '// non-Linux CI manifest-only stub; handoff-secrets is tested on Linux with real envctl.\n' > envctl/crates/secrets-engine/src/lib.rs
           else
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+            perl -0pi -e 's/members\s*=\s*\[[^\]]*\]/members = ["crates\/secrets-engine"]/' envctl/Cargo.toml
           fi
           if [ ! -d loop_lib ]; then
             git clone --depth 1 https://github.com/FlexNetOS/loop_lib.git loop_lib
