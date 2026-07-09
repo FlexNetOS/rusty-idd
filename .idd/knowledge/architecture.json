@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:33c03b82671e40eb",
+  "workspace_fingerprint": "fnv1a64:16c9a2eb1229a9ae",
   "workspace_root": "/home/flexnetos/lifeos/src/rusty-idd-unify-wt",
   "source_graph": {
     "provider": "codegraph-rust",

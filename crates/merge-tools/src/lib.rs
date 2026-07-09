@@ -49,8 +49,17 @@ pub const MERGE_PHASES: &[MergePhase] = &[
         name: "inventory",
         purpose: "Make repositories, crates, contracts, env keys, and current behavior explicit before planning.",
         inputs: &["user merge goal", "repo state", ".idd/knowledge/*"],
-        outputs: &["RepoInventory", "feature matrix", "env/secret contract", "legacy surface inventory"],
-        gates: &["rusty-idd scan", "rusty-idd knowledge refresh", "no untracked secret material"],
+        outputs: &[
+            "RepoInventory",
+            "feature matrix",
+            "env/secret contract",
+            "legacy surface inventory",
+        ],
+        gates: &[
+            "rusty-idd scan",
+            "rusty-idd knowledge refresh",
+            "no untracked secret material",
+        ],
     },
     MergePhase {
         name: "plan",
@@ -64,14 +73,21 @@ pub const MERGE_PHASES: &[MergePhase] = &[
         purpose: "Record only durable active decisions; keep retired merge decisions as package evidence, not active ADRs.",
         inputs: &["design tradeoffs", "legacy decision summaries"],
         outputs: &["active ADR", "migration note"],
-        gates: &["rusty-idd spec adr list adr --all", "adr/ contains only active ADRs"],
+        gates: &[
+            "rusty-idd spec adr list adr --all",
+            "adr/ contains only active ADRs",
+        ],
     },
     MergePhase {
         name: "implement",
         purpose: "Apply one narrow vertical slice after OpenSpec readiness, preserving old behavior until parity is proven.",
         inputs: &["ready OpenSpec change", "task list", "adopt-first inputs"],
         outputs: &["code/docs changes", "updated generated artifacts"],
-        gates: &["adopt first", "cut only evidenced friction", "core crate remains zero-dependency"],
+        gates: &[
+            "adopt first",
+            "cut only evidenced friction",
+            "core crate remains zero-dependency",
+        ],
     },
     MergePhase {
         name: "verify",
@@ -90,7 +106,11 @@ pub const MERGE_PHASES: &[MergePhase] = &[
         name: "evidence",
         purpose: "Record PR evidence, rollback, manifest state, and optional AI_MERGE notes when audit history is required.",
         inputs: &["verification results", "migration note", "rollback path"],
-        outputs: &["PR evidence bundle", ".idd/MANIFEST.tsv", "optional AI_MERGE evidence"],
+        outputs: &[
+            "PR evidence bundle",
+            ".idd/MANIFEST.tsv",
+            "optional AI_MERGE evidence",
+        ],
         gates: &["manifest updated or justified", "AI_MERGE is evidence only"],
     },
 ];
@@ -334,10 +354,12 @@ mod tests {
         let package = package();
         assert_eq!(package.name, "Rusty IDD Merge Tool Package");
         assert!(package.phases.iter().any(|phase| phase.name == "verify"));
-        assert!(package
-            .legacy_surfaces
-            .iter()
-            .any(|surface| surface.path.contains(".claude")));
+        assert!(
+            package
+                .legacy_surfaces
+                .iter()
+                .any(|surface| surface.path.contains(".claude"))
+        );
     }
 
     #[test]
@@ -366,14 +388,18 @@ mod tests {
         let _ = fs::remove_dir_all(&root);
 
         assert!(!report.is_clean());
-        assert!(report
-            .findings
-            .iter()
-            .any(|finding| finding.contains("non-empty [dependencies]")));
-        assert!(report
-            .findings
-            .iter()
-            .any(|finding| finding.contains("foreign package manifest")));
+        assert!(
+            report
+                .findings
+                .iter()
+                .any(|finding| finding.contains("non-empty [dependencies]"))
+        );
+        assert!(
+            report
+                .findings
+                .iter()
+                .any(|finding| finding.contains("foreign package manifest"))
+        );
     }
 
     #[test]

@@ -211,17 +211,27 @@ pub fn pr_changed_files(pr: &str) -> Result<Vec<String>, String> {
                     // Final tier: GitHub can refuse to GENERATE huge diffs entirely
                     // (HTTP 422 "diff is taking too long" on both endpoints — seen on
                     // the 456-file fork-unification PR). Local git never refuses.
-                    let base = run_out("gh", &["pr", "view", pr, "--json", "baseRefName", "--jq", ".baseRefName"])
-                        .map(|s| s.trim().to_string())
-                        .unwrap_or_else(|_| "develop".to_string());
+                    let base = run_out(
+                        "gh",
+                        &[
+                            "pr",
+                            "view",
+                            pr,
+                            "--json",
+                            "baseRefName",
+                            "--jq",
+                            ".baseRefName",
+                        ],
+                    )
+                    .map(|s| s.trim().to_string())
+                    .unwrap_or_else(|_| "develop".to_string());
                     let _ = run_out("git", &["fetch", "--depth=1", "origin", &base]);
                     // CI checkouts are depth=1: HEAD's truncated history shares no
                     // merge base with the fetched base ref, so three-dot fails with
                     // "no merge base". Try to unshallow, retry three-dot, then fall
                     // back to a two-dot TREE diff — a superset of the PR's changed
                     // files (the safe direction for a gate: more scrutiny, not less).
-                    let three_dot_args =
-                        ["diff", "--name-only", &format!("origin/{base}...HEAD")];
+                    let three_dot_args = ["diff", "--name-only", &format!("origin/{base}...HEAD")];
                     match run_out("git", &three_dot_args) {
                         Ok(t) => t,
                         Err(_) => {

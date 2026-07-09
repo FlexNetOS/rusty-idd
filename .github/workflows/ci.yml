@@ -58,6 +58,11 @@ jobs:
             # to the cone's path-dep closure (same pattern as the envctl trim below).
             # crates/rvf is its own workspace (root excludes it) so it is not listed.
             perl -0pi -e 's/\nmembers = \[.*?\n\]/\nmembers = [\n    "crates\/ruvector-verified",\n    "crates\/ruvector-domain-expansion",\n    "crates\/cognitum-gate-tilezero",\n    "crates\/ruvector-core",\n    "crates\/ruvector-coherence",\n    "crates\/ruvector-cognitive-container",\n]/s' "$parent/meta-ruvector/Cargo.toml"
+            # cargo fmt --all also formats local path dependencies, so the throwaway
+            # sibling's fmt drift would fail OUR Format gate. The sibling's fmt is
+            # meta-ruvector's business (and that repo is on operator hold) — ignore
+            # the whole tree via rustfmt.toml (nightly rustfmt honors `ignore`).
+            printf 'ignore = ["/"]\n' > "$parent/meta-ruvector/rustfmt.toml"
           fi
           if [ ! -d "$parent/envctl" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"
@@ -177,6 +182,11 @@ jobs:
             # to the cone's path-dep closure (same pattern as the envctl trim below).
             # crates/rvf is its own workspace (root excludes it) so it is not listed.
             perl -0pi -e 's/\nmembers = \[.*?\n\]/\nmembers = [\n    "crates\/ruvector-verified",\n    "crates\/ruvector-domain-expansion",\n    "crates\/cognitum-gate-tilezero",\n    "crates\/ruvector-core",\n    "crates\/ruvector-coherence",\n    "crates\/ruvector-cognitive-container",\n]/s' "$parent/meta-ruvector/Cargo.toml"
+            # cargo fmt --all also formats local path dependencies, so the throwaway
+            # sibling's fmt drift would fail OUR Format gate. The sibling's fmt is
+            # meta-ruvector's business (and that repo is on operator hold) — ignore
+            # the whole tree via rustfmt.toml (nightly rustfmt honors `ignore`).
+            printf 'ignore = ["/"]\n' > "$parent/meta-ruvector/rustfmt.toml"
           fi
           if [ ! -d "$parent/envctl" ]; then
             git clone --depth 1 https://github.com/FlexNetOS/envctl.git "$parent/envctl"

@@ -154,12 +154,14 @@ fn scanner_classifies_portable_agent_surfaces_as_agent_control() {
     );
 
     let inv = scan_repo(repo_root()).unwrap();
-    assert!(inv
-        .agent_files
-        .iter()
-        .any(|path| { path == "intent-driven-template/.agent/commands/create-c4-diagram.md" }));
-    assert!(inv
-        .agent_files
-        .iter()
-        .any(|path| path == "intent-driven-template/.agents/skills/c4-diagrams/SKILL.md"));
+    assert!(
+        inv.agent_files
+            .iter()
+            .any(|path| { path == "intent-driven-template/.agent/commands/create-c4-diagram.md" })
+    );
+    assert!(
+        inv.agent_files
+            .iter()
+            .any(|path| path == "intent-driven-template/.agents/skills/c4-diagrams/SKILL.md")
+    );
 }

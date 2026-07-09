@@ -3,7 +3,7 @@ use std::fs;
 use std::path::{Path, PathBuf};
 use std::process::Command;
 
-use anyhow::{bail, Context, Result};
+use anyhow::{Context, Result, bail};
 use codegraph_core::{
     CodeNode as UpstreamCodeNode, EdgeRelationship as UpstreamEdge, EdgeType as UpstreamEdgeType,
     Language as UpstreamLanguage, NodeType as UpstreamNodeType,
@@ -3124,19 +3124,39 @@ fn system_role_name(id: &str) -> &str {
 
 fn system_role_purpose(id: &str) -> &str {
     match id {
-        "role:idd-control-plane" => "Owns OpenSpec, ADR, task, validation, manifest, and graph-driven implementation workflow",
-        "role:fleet-handoff" => "Carries central and fleet handoff state for cross-repo agent continuity",
-        "role:coordination-domain-surface" => "Provides orchestration, MCP, and domain-adjacent system coordination surfaces",
-        "role:domain-upgrade-surface" => "Contributes domain behavior through weave plus Obscura upgrade paths",
-        "role:parser-runtime-surface" => "Carries parser/runtime support such as tree-sitter through Yazelix",
-        "role:toolchain-provider" => "Provides parent-managed tools instead of user-global installs",
-        "role:spec-producer" => "Produces intent or prompt artifacts that Rusty IDD can turn into OpenSpec",
-        "role:meta-control-plane" => "Provides parent meta workspace inventory and execution surfaces",
+        "role:idd-control-plane" => {
+            "Owns OpenSpec, ADR, task, validation, manifest, and graph-driven implementation workflow"
+        }
+        "role:fleet-handoff" => {
+            "Carries central and fleet handoff state for cross-repo agent continuity"
+        }
+        "role:coordination-domain-surface" => {
+            "Provides orchestration, MCP, and domain-adjacent system coordination surfaces"
+        }
+        "role:domain-upgrade-surface" => {
+            "Contributes domain behavior through weave plus Obscura upgrade paths"
+        }
+        "role:parser-runtime-surface" => {
+            "Carries parser/runtime support such as tree-sitter through Yazelix"
+        }
+        "role:toolchain-provider" => {
+            "Provides parent-managed tools instead of user-global installs"
+        }
+        "role:spec-producer" => {
+            "Produces intent or prompt artifacts that Rusty IDD can turn into OpenSpec"
+        }
+        "role:meta-control-plane" => {
+            "Provides parent meta workspace inventory and execution surfaces"
+        }
         "role:capability-hub" => "Groups domain capability repos used by the wider system",
-        "role:agent-environment" => "Supports agent runtime, skills, prompts, or execution environment",
+        "role:agent-environment" => {
+            "Supports agent runtime, skills, prompts, or execution environment"
+        }
         "role:knowledge-memory" => "Stores memory or knowledge surfaces used by agents",
         "role:documentation-knowledge" => "Stores documentation and wiki surfaces",
-        "role:rust-code-surface" => "Contains Rust source that can be indexed by CodeGraph-backed Rusty IDD knowledge",
+        "role:rust-code-surface" => {
+            "Contains Rust source that can be indexed by CodeGraph-backed Rusty IDD knowledge"
+        }
         _ => "System role discovered from repo metadata",
     }
 }
@@ -3519,8 +3539,7 @@ fn operating_layer_definitions() -> Vec<OperatingLayerDefinition> {
         OperatingLayerDefinition {
             id: "layer:infrastructure-device-fabric",
             name: "Infrastructure and device fabric",
-            purpose:
-                "Network control plus distributed device compute, storage, inference, and memory",
+            purpose: "Network control plus distributed device compute, storage, inference, and memory",
         },
         OperatingLayerDefinition {
             id: "layer:toolchain-parser-runtime",
@@ -3723,7 +3742,12 @@ fn operating_capability_definitions() -> Vec<OperatingCapabilityDefinition> {
             purpose: "Provides foundational RTK, ICM, VOX, and GRIT surfaces from rtk-ai",
             repo_names: &["rtk_tokenkill", "icm", "vox", "grit"],
             role_ids: &[],
-            anchors: &["RTK from rtk-ai", "ICM from rtk-ai", "VOX from rtk-ai", "GRIT from rtk-ai"],
+            anchors: &[
+                "RTK from rtk-ai",
+                "ICM from rtk-ai",
+                "VOX from rtk-ai",
+                "GRIT from rtk-ai",
+            ],
         },
         OperatingCapabilityDefinition {
             id: "capability:lua-ar-interface",
@@ -3732,7 +3756,10 @@ fn operating_capability_definitions() -> Vec<OperatingCapabilityDefinition> {
             purpose: "Supports AR-glasses coding and local automation with Rust-native Lua surfaces",
             repo_names: &["lifeos", "oh_my_pi", "yazelix"],
             role_ids: &[],
-            anchors: &["Lua required for AR glasses workflow", "Brilliant Labs Noa style Rust-native agent UX"],
+            anchors: &[
+                "Lua required for AR glasses workflow",
+                "Brilliant Labs Noa style Rust-native agent UX",
+            ],
         },
         OperatingCapabilityDefinition {
             id: "capability:personal-automation",
@@ -5943,22 +5970,26 @@ mod tests {
         assert!(index.nodes.iter().any(|node| node.name == "greet"));
         assert!(!index.imports.is_empty());
         assert!(index.edges.iter().any(|edge| edge.kind == "Calls"));
-        assert!(index.nodes.iter().any(|node| node.name == "greet"
-            && node
-                .properties
-                .get("cyclomatic_complexity")
-                .and_then(|value| value.as_u64())
-                == Some(1)));
+        assert!(index.nodes.iter().any(|node| {
+            node.name == "greet"
+                && node
+                    .properties
+                    .get("cyclomatic_complexity")
+                    .and_then(|value| value.as_u64())
+                    == Some(1)
+        }));
 
         let result = query_knowledge_index(&index, KnowledgeQuery::Symbol("greet".to_string()));
         assert_eq!(result.nodes.len(), 1);
         let greet_id = result.nodes[0].id;
         let impact = query_knowledge_index(&index, KnowledgeQuery::Impact(greet_id));
         assert!(impact.nodes.iter().any(|node| node.name == "new"));
-        assert!(!impact
-            .nodes
-            .iter()
-            .any(|node| node.name == "Person" && node.kind == "Class"));
+        assert!(
+            !impact
+                .nodes
+                .iter()
+                .any(|node| node.name == "Person" && node.kind == "Class")
+        );
     }
 
     #[test]
@@ -6102,10 +6133,12 @@ mod tests {
         let index = index_workspace(IndexOptions::new(tmp.path())).unwrap();
 
         assert!(index.files.iter().any(|file| file.path == "src/lib.rs"));
-        assert!(!index
-            .files
-            .iter()
-            .any(|file| file.path.contains("third_party/upstream")));
+        assert!(
+            !index
+                .files
+                .iter()
+                .any(|file| file.path.contains("third_party/upstream"))
+        );
     }
 
     #[test]
@@ -6150,18 +6183,24 @@ mod tests {
 
         assert_eq!(graph.source_graph.provider, "codegraph-rust");
         assert_eq!(graph.context_package.provider, "repomix-rs");
-        assert!(graph
-            .automation_stages
-            .iter()
-            .any(|stage| stage.id == "stage:architecture-map"));
-        assert!(graph
-            .integration_surfaces
-            .iter()
-            .any(|surface| surface.id == "surface:codegraph-rust"));
-        assert!(graph
-            .integration_surfaces
-            .iter()
-            .any(|surface| surface.id == "surface:repomix-rs"));
+        assert!(
+            graph
+                .automation_stages
+                .iter()
+                .any(|stage| stage.id == "stage:architecture-map")
+        );
+        assert!(
+            graph
+                .integration_surfaces
+                .iter()
+                .any(|surface| surface.id == "surface:codegraph-rust")
+        );
+        assert!(
+            graph
+                .integration_surfaces
+                .iter()
+                .any(|surface| surface.id == "surface:repomix-rs")
+        );
         assert!(graph.components.iter().any(|component| {
             component.id == "crate:knowledge" && component.languages.contains(&"rust".to_string())
         }));
@@ -6210,16 +6249,20 @@ mod tests {
         assert_eq!(graph.discovery_source, "filesystem git discovery");
         assert!(graph.repos.iter().any(|repo| repo.name == "rusty-idd"
             && repo.roles.contains(&"role:idd-control-plane".to_string())));
-        assert!(graph.repos.iter().any(|repo| repo.name == "weave"
-            && repo
-                .roles
-                .contains(&"role:coordination-domain-surface".to_string())));
+        assert!(graph.repos.iter().any(|repo| {
+            repo.name == "weave"
+                && repo
+                    .roles
+                    .contains(&"role:coordination-domain-surface".to_string())
+        }));
         assert!(graph.repos.iter().any(|repo| repo.name == "envctl"
             && repo.roles.contains(&"role:toolchain-provider".to_string())));
-        assert!(graph
-            .edges
-            .iter()
-            .any(|edge| edge.kind == "maps_for_automation"));
+        assert!(
+            graph
+                .edges
+                .iter()
+                .any(|edge| edge.kind == "maps_for_automation")
+        );
 
         let graph_markdown = build_system_architecture_graph(SystemArchitectureOptions::new(
             &rusty,
@@ -6286,10 +6329,12 @@ mod tests {
         assert_eq!(architecture.context_package.provider, "repomix-rs");
         assert!(architecture.component_count > 0);
         assert!(!architecture.top_components.is_empty());
-        assert!(graph
-            .findings
-            .iter()
-            .any(|finding| { finding.contains("repos expose parsed architecture summaries") }));
+        assert!(
+            graph
+                .findings
+                .iter()
+                .any(|finding| { finding.contains("repos expose parsed architecture summaries") })
+        );
 
         fs::write(
             weave.join(".idd/knowledge/architecture.json"),
@@ -6346,14 +6391,18 @@ mod tests {
         assert_eq!(context.change.as_deref(), Some("demo-graph-context"));
         assert_eq!(context.source_graph.provider, "codegraph-rust");
         assert_eq!(context.context_package.provider, "repomix-rs");
-        assert!(context
-            .focus_components
-            .iter()
-            .any(|component| component.id == "crate:knowledge"));
-        assert!(context
-            .findings
-            .iter()
-            .any(|finding| finding.contains("system architecture graph unavailable")));
+        assert!(
+            context
+                .focus_components
+                .iter()
+                .any(|component| component.id == "crate:knowledge")
+        );
+        assert!(
+            context
+                .findings
+                .iter()
+                .any(|finding| finding.contains("system architecture graph unavailable"))
+        );
 
         let mut options = PlanContextOptions::new(tmp.path(), PlanContextFormat::Markdown);
         options.goal = Some("Use CodeGraph and repomix for planning context".to_string());
@@ -6430,10 +6479,12 @@ mod tests {
             .iter()
             .find(|capability| capability.id == "capability:env-vault-relay")
             .expect("vault relay capability");
-        assert!(vault
-            .anchors
-            .iter()
-            .any(|anchor| anchor.contains("COGNITUM")));
+        assert!(
+            vault
+                .anchors
+                .iter()
+                .any(|anchor| anchor.contains("COGNITUM"))
+        );
 
         let simulation = model
             .capabilities
@@ -6447,10 +6498,12 @@ mod tests {
             .iter()
             .find(|capability| capability.id == "capability:lua-ar-interface")
             .expect("lua interface capability");
-        assert!(interface
-            .anchors
-            .iter()
-            .any(|anchor| anchor.contains("Lua")));
+        assert!(
+            interface
+                .anchors
+                .iter()
+                .any(|anchor| anchor.contains("Lua"))
+        );
 
         let rtk = model
             .capabilities
@@ -6464,10 +6517,12 @@ mod tests {
             .iter()
             .find(|capability| capability.id == "capability:github-agent-run-upgrades")
             .expect("github agent-run capability");
-        assert!(beads
-            .anchors
-            .iter()
-            .any(|anchor| anchor.contains("beads-rs@d98da231")));
+        assert!(
+            beads
+                .anchors
+                .iter()
+                .any(|anchor| anchor.contains("beads-rs@d98da231"))
+        );
 
         let markdown = build_system_operating_model(OperatingModelOptions::new(
             &rusty,
@@ -6533,16 +6588,18 @@ mod tests {
         let plan: IntegrationAutomationPlan = serde_json::from_str(&plan_json).unwrap();
         assert!(!plan.work_items.is_empty());
         assert_eq!(plan.work_items[0].capability, "capability:idd-spec-engine");
-        assert!(plan.work_items.iter().any(|item| item.capability
-            == "capability:github-agent-run-upgrades"
-            && item
-                .adopt_first_inputs
+        assert!(plan.work_items.iter().any(|item| {
+            item.capability == "capability:github-agent-run-upgrades"
+                && item
+                    .adopt_first_inputs
+                    .iter()
+                    .any(|anchor| anchor.contains("beads-rs"))
+        }));
+        assert!(
+            plan.gates
                 .iter()
-                .any(|anchor| anchor.contains("beads-rs"))));
-        assert!(plan
-            .gates
-            .iter()
-            .any(|gate| gate == "cargo audit --deny warnings"));
+                .any(|gate| gate == "cargo audit --deny warnings")
+        );
 
         let markdown = build_integration_automation_plan(IntegrationPlanOptions::new(
             &rusty,
@@ -6650,12 +6707,14 @@ mod tests {
         assert_eq!(report.counts.planned, 1);
         assert_eq!(report.counts.scaffolded, 1);
         assert_eq!(report.counts.ready_to_archive, 1);
-        assert!(report
-            .work_items
-            .iter()
-            .any(|item| item.change_id == "integrate-fleet-handoff"
-                && item.status == "scaffolded"
-                && item.unchecked_tasks == 1));
+        assert!(
+            report
+                .work_items
+                .iter()
+                .any(|item| item.change_id == "integrate-fleet-handoff"
+                    && item.status == "scaffolded"
+                    && item.unchecked_tasks == 1)
+        );
 
         let markdown = build_integration_status_report(IntegrationStatusOptions::new(
             workspace,
@@ -6788,13 +6847,17 @@ mod tests {
             .expect("handoff owner surface");
         assert!(handoff_surface.repo_found);
         assert!(handoff_surface.has_local_architecture_graph);
-        assert!(handoff_surface
-            .roles
-            .contains(&"role:fleet-handoff".to_string()));
-        assert!(handoff_surface
-            .native_diagnostic_commands
-            .iter()
-            .any(|command| command.contains("cargo test --workspace")));
+        assert!(
+            handoff_surface
+                .roles
+                .contains(&"role:fleet-handoff".to_string())
+        );
+        assert!(
+            handoff_surface
+                .native_diagnostic_commands
+                .iter()
+                .any(|command| command.contains("cargo test --workspace"))
+        );
 
         let mut markdown_options =
             IntegrationOwnersOptions::new(&rusty, PlanContextFormat::Markdown);
@@ -6861,18 +6924,24 @@ mod tests {
         let readiness_json = build_integration_readiness_report(readiness_options).unwrap();
         let readiness: IntegrationReadinessReport = serde_json::from_str(&readiness_json).unwrap();
         assert_eq!(readiness.work_item.change_id, "integrate-env-vault-relay");
-        assert!(readiness
-            .tool_requirements
-            .iter()
-            .any(|tool| tool.id == "cargo" && tool.default_path));
-        assert!(readiness
-            .feature_gates
-            .iter()
-            .any(|gate| gate.contains("read-only")));
-        assert!(readiness
-            .native_diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic.command.contains("cargo test")));
+        assert!(
+            readiness
+                .tool_requirements
+                .iter()
+                .any(|tool| tool.id == "cargo" && tool.default_path)
+        );
+        assert!(
+            readiness
+                .feature_gates
+                .iter()
+                .any(|gate| gate.contains("read-only"))
+        );
+        assert!(
+            readiness
+                .native_diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.command.contains("cargo test"))
+        );
 
         let mut prompt_readiness_options =
             IntegrationReadinessOptions::new(&rusty, PlanContextFormat::Json);
@@ -6885,29 +6954,33 @@ mod tests {
             prompt_readiness.work_item.change_id,
             "integrate-prompt-front-door"
         );
-        assert!(prompt_readiness
-            .upstream_inputs
-            .iter()
-            .any(|upstream| upstream.source == "github.com/f/prompts.chat"
-                && upstream.required_tool_ids.contains(&"postgres".to_string())));
-        assert!(prompt_readiness
-            .upstream_inputs
-            .iter()
-            .any(|upstream| upstream.source == "github.com/f/ai-prompt"
+        assert!(
+            prompt_readiness
+                .upstream_inputs
+                .iter()
+                .any(|upstream| upstream.source == "github.com/f/prompts.chat"
+                    && upstream.required_tool_ids.contains(&"postgres".to_string()))
+        );
+        assert!(prompt_readiness.upstream_inputs.iter().any(|upstream| {
+            upstream.source == "github.com/f/ai-prompt"
                 && upstream
                     .required_tool_ids
-                    .contains(&"wordpress".to_string())));
-        assert!(prompt_readiness
-            .native_diagnostics
-            .iter()
-            .any(|diagnostic| diagnostic
-                .command
-                .contains("DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm ci")
-                && diagnostic.mutates_repo));
-        assert!(prompt_readiness
-            .tool_requirements
-            .iter()
-            .any(|tool| tool.id == "node" && tool.required_by.len() >= 2));
+                    .contains(&"wordpress".to_string())
+        }));
+        assert!(
+            prompt_readiness
+                .native_diagnostics
+                .iter()
+                .any(|diagnostic| diagnostic.command.contains(
+                    "DATABASE_URL=\"postgresql://test:test@localhost:5432/test\" npm ci"
+                ) && diagnostic.mutates_repo)
+        );
+        assert!(
+            prompt_readiness
+                .tool_requirements
+                .iter()
+                .any(|tool| tool.id == "node" && tool.required_by.len() >= 2)
+        );
 
         let mut readiness_markdown_options =
             IntegrationReadinessOptions::new(&rusty, PlanContextFormat::Markdown);
@@ -7005,14 +7078,18 @@ mod tests {
             .find(|repo| repo.name == "weave")
             .expect("weave repo");
         assert!(peer.local_architecture.is_some());
-        assert!(context
-            .operating_capabilities
-            .iter()
-            .any(|capability| capability.id == "capability:fleet-handoff"));
-        assert!(context
-            .integration_work_items
-            .iter()
-            .any(|item| item.capability == "capability:fleet-handoff"));
+        assert!(
+            context
+                .operating_capabilities
+                .iter()
+                .any(|capability| capability.id == "capability:fleet-handoff")
+        );
+        assert!(
+            context
+                .integration_work_items
+                .iter()
+                .any(|item| item.capability == "capability:fleet-handoff")
+        );
 
         let mut options = PlanContextOptions::new(&rusty, PlanContextFormat::Markdown);
         options.goal = Some("weave handoff architecture integration".to_string());
