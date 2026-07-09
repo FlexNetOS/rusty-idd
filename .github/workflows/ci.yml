@@ -45,8 +45,7 @@ jobs:
             git -C "$parent/meta-ruvector" remote add origin https://github.com/FlexNetOS/meta-ruvector.git
             git -C "$parent/meta-ruvector" sparse-checkout init --cone
             git -C "$parent/meta-ruvector" sparse-checkout set \
-              crates/rvf/rvf-runtime crates/rvf/rvf-crypto crates/rvf/rvf-types \
-              crates/rvf/rvf-index crates/rvf/rvf-quant crates/rvf/rvf-wire \
+              crates/rvf \
               crates/ruvector-verified crates/ruvector-domain-expansion \
               crates/cognitum-gate-tilezero
             git -C "$parent/meta-ruvector" fetch --depth 1 --filter=blob:none origin HEAD
@@ -145,8 +144,7 @@ jobs:
             git -C "$parent/meta-ruvector" remote add origin https://github.com/FlexNetOS/meta-ruvector.git
             git -C "$parent/meta-ruvector" sparse-checkout init --cone
             git -C "$parent/meta-ruvector" sparse-checkout set \
-              crates/rvf/rvf-runtime crates/rvf/rvf-crypto crates/rvf/rvf-types \
-              crates/rvf/rvf-index crates/rvf/rvf-quant crates/rvf/rvf-wire \
+              crates/rvf \
               crates/ruvector-verified crates/ruvector-domain-expansion \
               crates/cognitum-gate-tilezero
             git -C "$parent/meta-ruvector" fetch --depth 1 --filter=blob:none origin HEAD
