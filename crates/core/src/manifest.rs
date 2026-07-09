@@ -96,6 +96,15 @@ fn fingerprint_should_skip(rel: &str) -> bool {
         || rel == ".idd/MANIFEST.tsv"
         || rel == "AI_MERGE/validation_report.md"
         || rel == "docs/rusty-idd/architecture-diagrams.md"
+        // Runtime state (gitignored, machine-local) must never move the workspace
+        // fingerprint: a dev tree carrying these mints a fingerprint no clean CI
+        // checkout can reproduce -> phantom "knowledge is stale" criticals
+        // (first hit on the fork-unification PR #143).
+        || rel.starts_with(".handoff/ledger.db")
+        || rel.starts_with(".handoff/locks/")
+        || rel.starts_with(".idea/")
+        || rel.starts_with(".kb/.cache/")
+        || rel.starts_with(".kb/workspaces/")
         || is_upstream_generated_local_artifact(rel)
 }
 

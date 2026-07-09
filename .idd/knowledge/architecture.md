@@ -1,8 +1,8 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:ddab56b644c87914`
+- Workspace fingerprint: `fnv1a64:d27029a94835bcf0`
 - Source graph provider: `codegraph-rust`
-- Source graph: 457 files, 30873 nodes, 112901 edges
+- Source graph: 457 files, 30874 nodes, 112911 edges
 - Source languages: javascript, python, rust
 - Context provider: `repomix-rs`
 - Context package: 343 files, 246871 tokens
@@ -32,7 +32,7 @@
 | Component | Kind | Files | Nodes | Edges | Languages |
 |---|---|---:|---:|---:|---|
 | `cli` | crate | 34 | 1371 | 5852 | Rust, rust |
-| `core` | crate | 12 | 457 | 2427 | Rust, rust |
+| `core` | crate | 12 | 457 | 2432 | Rust, rust |
 | `knowledge` | crate | 1 | 639 | 4653 | Rust, rust |
 | `merge-tools` | crate | 1 | 50 | 241 | Rust, rust |
 | `runner` | crate | 4 | 785 | 3091 | Rust, rust |
@@ -45,7 +45,7 @@
 | `handoff-core` | repo_surface | 1 | 66 | 287 | Rust, rust |
 | `handoff-drift` | repo_surface | 1 | 168 | 615 | Rust, rust |
 | `handoff-fleet` | repo_surface | 1 | 188 | 941 | Rust, rust |
-| `handoff-gatekeeper` | repo_surface | 1 | 72 | 332 | Rust, rust |
+| `handoff-gatekeeper` | repo_surface | 1 | 73 | 337 | Rust, rust |
 | `handoff-hooks` | repo_surface | 1 | 75 | 218 | Rust, rust |
 | `handoff-index` | repo_surface | 1 | 92 | 329 | Rust, rust |
 | `handoff-intake` | repo_surface | 1 | 65 | 201 | Rust, rust |
