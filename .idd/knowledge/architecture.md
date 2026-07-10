@@ -1,11 +1,11 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:53740842398f93c4`
+- Workspace fingerprint: `fnv1a64:2e21cfa2cdf7b31e`
 - Source graph provider: `codegraph-rust`
-- Source graph: 457 files, 30875 nodes, 112916 edges
+- Source graph: 458 files, 30894 nodes, 112958 edges
 - Source languages: javascript, python, rust
 - Context provider: `repomix-rs`
-- Context package: 343 files, 246887 tokens
+- Context package: 344 files, 246984 tokens
 
 ## Automation Stages
 
@@ -38,7 +38,7 @@
 | `runner` | crate | 4 | 785 | 3091 | Rust, rust |
 | `spec` | crate | 24 | 461 | 1552 | Rust, rust |
 | `tui` | crate | 3 | 1006 | 3985 | Rust, rust |
-| `work-order` | crate | 2 | 165 | 527 | Rust, rust |
+| `work-order` | crate | 3 | 184 | 569 | Rust, rust |
 | `codegraph-core` | external_crate | 39 | 1919 | 9029 | Rust, rust |
 | `codegraph-parser` | external_crate | 29 | 1060 | 7486 | Rust, rust |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | Rust, rust |
@@ -59,7 +59,7 @@
 | `imports` | repo_surface | 236 | 14297 | 55026 | JavaScript, Python, Rust, javascript, python, rust |
 | `ledger` | repo_surface | 5 | 355 | 1865 | Rust, rust |
 | `spike` | repo_surface | 2 | 12 | 50 | JavaScript, javascript |
-| `vendor` | repo_surface | 33 | 1882 | 12320 | Rust, rust |
+| `vendor` | repo_surface | 33 | 1882 | 12324 | Rust, rust |
 | `work-order` | repo_surface | 2 | 177 | 559 | Rust, rust |
 
 ## Edges
@@ -113,6 +113,7 @@
 | `crate:work-order` | codegraph:Calls | `repo:imports` |
 | `crate:work-order` | codegraph:References | `repo:imports` |
 | `crate:work-order` | codegraph:Calls | `repo:vendor` |
+| `crate:work-order` | codegraph:References | `repo:vendor` |
 | `external:codegraph-core` | codegraph:Calls | `crate:cli` |
 | `external:codegraph-core` | codegraph:Calls | `repo:imports` |
 | `external:codegraph-core` | codegraph:Imports | `repo:imports` |
@@ -223,4 +224,4 @@
 ## Findings
 
 - CodeGraph-backed parsing completed without source failures
-- repomix context package measured 343 files and 246887 tokens
+- repomix context package measured 344 files and 246984 tokens
