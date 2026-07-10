@@ -1,13 +1,13 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:2f6f24e39610b03f`
+- Workspace fingerprint: `fnv1a64:a3160ec9e969f63a`
 - Indexed source files: 457
 - Graph nodes: 30876
 - Graph edges: 112917
 - Resolved call edges: 62244
 - Functions with complexity: 7946
 - Packed files: 135
-- Packed tokens: 101935
+- Packed tokens: 101751
 - Suspicious files: 0
 
 ## Hotspots
@@ -46,7 +46,7 @@
 | 3666 | `docs/rusty-idd/lifecycle-contract.md` |
 | 3198 | `docs/rusty-idd/dot-directory-architecture.md` |
 | 3081 | `crates/cli/src/commands/codex.rs` |
-| 2872 | `AGENTS.md` |
+| 2688 | `AGENTS.md` |
 | 2672 | `docs/rusty-idd/security-advisories.md` |
 | 2595 | `crates/core/src/templates.rs` |
 | 2527 | `Makefile` |

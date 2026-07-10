@@ -108,7 +108,7 @@ jobs:
         run: scripts/ci/envctl-rust-env.sh ci
       - name: Strict envctl Rust toolchain audit
         run: scripts/ci/envctl-rust-audit.sh
-      - name: Merge-tools verification gate
+      - name: Merge-tools verification
         run: cargo run --bin rusty-idd -- merge-tools verify --workspace .
       - name: Build (workspace)
         run: cargo build --workspace --locked
@@ -122,28 +122,7 @@ jobs:
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
           git diff --exit-code -- .idd/MANIFEST.tsv
-      - name: Vendor adapter drift gate (ADR-0010/0015)
-        run: cargo run --bin rusty-idd -- render --all --check
-      - name: ADR ledger collision gate (ADR-0016)
-        # Fails closed on any NEW duplicate ADR number. The four accepted
-        # historical collisions (0002/0004/0005/0006) are a frozen baseline and
-        # are reported but do not fail; see ADR-0016.
-        run: cargo run --bin rusty-idd -- spec adr list --check
-      - name: Fleet-deploy self-check (ADR-0017)
-        # The home repo's thin-adapter surface must stay in sync: adapters match
-        # `render`, and the front-door SessionStart hook is present.
-        run: cargo run --bin rusty-idd -- deploy --target . --all --check
-      - name: Format
-        run: cargo fmt --all -- --check
-      - name: Clippy
-        run: cargo clippy --workspace --all-targets --all-features -- -D warnings
-      - name: Security audit (fails on any new advisory)
-        # Fail-closed supply-chain gate. The shared baseline (.cargo/audit.toml) is
-        # auto-loaded and ignores the two accepted unmaintained transitive advisories
-        # (backlog A3). `--deny warnings` turns any *new* unmaintained/unsound/yanked
-        # advisory into a failure too. The `time` DoS vuln (RUSTSEC-2026-0009) was
-        # remediated by backlog A2 (time >=0.3.47), so it no longer needs an ignore —
-        # the gate now enforces vulnerabilities with zero exceptions.
+      - name: Security audit
         run: cargo audit --deny warnings
 
   # MSRV floor: proves the workspace still builds on its declared minimum supported

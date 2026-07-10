@@ -74,3 +74,13 @@ Thumbs.db
 # Faithful-adopt safety net: never ignore anything under imports/ (ADR-0018).
 # Re-includes any file the patterns above would otherwise exclude there.
 !imports/**
+
+# handoff continuity: binary ledger cache + migration artifacts are gitignored
+# (committed truth = .handoff/ledger.events.jsonl — ADR-0018 D1 / HFTASK-0067)
+.handoff/**/ledger.db
+.handoff/**/*.db-wal
+.handoff/**/*.db-shm
+.handoff/**/*.rvf
+.handoff/**/*.rvf.lock
+.handoff/**/*.sqlite.bak
+.handoff/**/*.redb.tmp

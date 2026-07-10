@@ -15,8 +15,8 @@ body:
     attributes:
       label: Rusty IDD artifacts
       value: |
-        Use AGENTS.md, .idd/knowledge, OpenSpec artifacts, and ADRs as the source of truth.
-        Treat AI_MERGE as audit/evidence only when the workflow calls for it.
+        Use AGENTS.md, .idd/knowledge, and OpenSpec artifacts as the source of truth.
+        Treat AI_MERGE as an audit/evidence surface when the workflow calls for it.
     validations:
       required: true
   - type: textarea
