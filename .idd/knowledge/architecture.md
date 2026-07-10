@@ -1,11 +1,11 @@
 # Architecture Graph
 
-- Workspace fingerprint: `fnv1a64:2e21cfa2cdf7b31e`
+- Workspace fingerprint: `fnv1a64:db760da2498ce270`
 - Source graph provider: `codegraph-rust`
-- Source graph: 458 files, 30894 nodes, 112958 edges
+- Source graph: 458 files, 30934 nodes, 113105 edges
 - Source languages: javascript, python, rust
 - Context provider: `repomix-rs`
-- Context package: 344 files, 246984 tokens
+- Context package: 343 files, 246887 tokens
 
 ## Automation Stages
 
@@ -38,11 +38,11 @@
 | `runner` | crate | 4 | 785 | 3091 | Rust, rust |
 | `spec` | crate | 24 | 461 | 1552 | Rust, rust |
 | `tui` | crate | 3 | 1006 | 3985 | Rust, rust |
-| `work-order` | crate | 3 | 184 | 569 | Rust, rust |
+| `work-order` | crate | 2 | 165 | 527 | Rust, rust |
 | `codegraph-core` | external_crate | 39 | 1919 | 9029 | Rust, rust |
 | `codegraph-parser` | external_crate | 29 | 1060 | 7486 | Rust, rust |
 | `repomix-shared` | external_crate | 2 | 11 | 34 | Rust, rust |
-| `handoff-core` | repo_surface | 1 | 66 | 287 | Rust, rust |
+| `handoff-core` | repo_surface | 1 | 66 | 288 | Rust, rust |
 | `handoff-drift` | repo_surface | 1 | 168 | 615 | Rust, rust |
 | `handoff-fleet` | repo_surface | 1 | 188 | 941 | Rust, rust |
 | `handoff-gatekeeper` | repo_surface | 1 | 73 | 337 | Rust, rust |
@@ -56,11 +56,11 @@
 | `handoff-secrets` | repo_surface | 1 | 28 | 72 | Rust, rust |
 | `handoff-test-support` | repo_surface | 1 | 3 | 11 | Rust, rust |
 | `hf` | repo_surface | 13 | 1644 | 6837 | Rust, rust |
-| `imports` | repo_surface | 236 | 14297 | 55026 | JavaScript, Python, Rust, javascript, python, rust |
+| `imports` | repo_surface | 236 | 14297 | 55038 | JavaScript, Python, Rust, javascript, python, rust |
 | `ledger` | repo_surface | 5 | 355 | 1865 | Rust, rust |
 | `spike` | repo_surface | 2 | 12 | 50 | JavaScript, javascript |
-| `vendor` | repo_surface | 33 | 1882 | 12324 | Rust, rust |
-| `work-order` | repo_surface | 2 | 177 | 559 | Rust, rust |
+| `vendor` | repo_surface | 33 | 1882 | 12332 | Rust, rust |
+| `work-order` | repo_surface | 3 | 229 | 748 | Rust, rust |
 
 ## Edges
 
@@ -113,7 +113,6 @@
 | `crate:work-order` | codegraph:Calls | `repo:imports` |
 | `crate:work-order` | codegraph:References | `repo:imports` |
 | `crate:work-order` | codegraph:Calls | `repo:vendor` |
-| `crate:work-order` | codegraph:References | `repo:vendor` |
 | `external:codegraph-core` | codegraph:Calls | `crate:cli` |
 | `external:codegraph-core` | codegraph:Calls | `repo:imports` |
 | `external:codegraph-core` | codegraph:Imports | `repo:imports` |
@@ -134,6 +133,7 @@
 | `repo:handoff-core` | codegraph:Calls | `repo:imports` |
 | `repo:handoff-core` | codegraph:References | `repo:imports` |
 | `repo:handoff-core` | codegraph:Calls | `repo:vendor` |
+| `repo:handoff-core` | codegraph:Calls | `repo:work-order` |
 | `repo:handoff-drift` | codegraph:Calls | `repo:imports` |
 | `repo:handoff-drift` | codegraph:References | `repo:imports` |
 | `repo:handoff-drift` | codegraph:Calls | `repo:vendor` |
@@ -200,6 +200,7 @@
 | `repo:work-order` | codegraph:Calls | `repo:imports` |
 | `repo:work-order` | codegraph:References | `repo:imports` |
 | `repo:work-order` | codegraph:Calls | `repo:vendor` |
+| `repo:work-order` | codegraph:References | `repo:vendor` |
 | `stage:architecture-map` | precedes | `stage:specification` |
 | `stage:architecture-map` | uses | `surface:codegraph-rust` |
 | `stage:architecture-map` | uses | `surface:repomix-rs` |
@@ -224,4 +225,4 @@
 ## Findings
 
 - CodeGraph-backed parsing completed without source failures
-- repomix context package measured 344 files and 246984 tokens
+- repomix context package measured 343 files and 246887 tokens

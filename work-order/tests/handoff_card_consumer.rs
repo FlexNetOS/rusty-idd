@@ -1,7 +1,9 @@
+// HFTASK-0080 (ADR-0019 D5 #3): this whole crate is a test; unwrap/expect are idiomatic here.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 //! Additive RED suite — convergence acceptance criteria for the `work-order` crate.
 //!
 //! Context (plan/rusty-idd-red-tests, test-coverage dimension):
-//! `work-order` IS the `handoff.task.v1` envelope (`crates/work-order/src/lib.rs:37-73`)
+//! `work-order` IS the `handoff.task.v1` envelope (`work-order/src/lib.rs`)
 //! but it is an UNCONSUMED S1 spike (codemap: 24 dead symbols, zero product callers). The
 //! convergence seam to the fleet is a **filesystem + JSON-schema contract**: rusty-idd reads
 //! cards from `.handoff/tasks/*.json` (`crates/cli/src/commands/codex.rs:592` →
@@ -20,12 +22,15 @@
 //! `from_card`/`load`/`validate` counterpart).
 //!
 //! Each test asserts the END-STATE the convergence requires (a malformed/tampered card is
-//! REJECTED on load). All three are RED today because the default deserialize path accepts
-//! the bad card. They flip GREEN when Feature Forge makes `WorkOrder` deserialization
-//! fail-closed (see `## FF test-build spec`). A well-formed card MUST keep loading — the
-//! baseline assertion guards against an over-broad fix.
+//! REJECTED on load). GREEN since `WorkOrder` deserialization went fail-closed via
+//! `#[serde(try_from = "WorkOrderRaw")]` (`lib.rs`): the discriminator, the published id
+//! pattern, and the blake3 `intent_lock` are all enforced on load (`CardError`). This suite
+//! is now the pinned consumer contract — a regression to fail-open turns it RED again. A
+//! well-formed card MUST keep loading — the baseline assertion guards against an over-broad
+//! fix. (It began life as the additive RED suite whose flip to GREEN was the acceptance
+//! signal.)
 
-use work_order::{work_orders_from_bundle, SwarmBundle, WorkOrder};
+use work_order::{SwarmBundle, WorkOrder, work_orders_from_bundle};
 
 /// A real, well-formed `handoff.task.v1` card produced by the crate's own seam.
 fn valid_card_value() -> serde_json::Value {
@@ -100,15 +105,18 @@ fn consumer_rejects_card_with_drifted_intent_lock() {
     let mut card = valid_card_value();
     card["objective"] = serde_json::json!("Totally different objective injected after minting");
     // Sanity: the lock is now stale relative to the content (proves the card IS tampered).
-    let tampered: WorkOrder =
-        serde_json::from_str(&card.to_string()).expect("tampered card is still valid JSON");
+    // Built by mutating a validly-loaded order — the fail-closed loader (correctly) refuses
+    // to materialize the tampered card, so the precondition can't go through deserialize.
+    let mut tampered =
+        load_card(&valid_card_value()).expect("baseline card loads (see baseline test)");
+    tampered.objective = "Totally different objective injected after minting".to_string();
     assert!(
         !tampered.intent_unchanged(),
         "precondition: the mutated objective must make the recorded intent_lock stale"
     );
     assert!(
         load_card(&card).is_err(),
-        "RED: a card whose content no longer matches its recorded intent_lock must be rejected \
-         by a provable load, but the deserialize path accepted the tampered card"
+        "a card whose content no longer matches its recorded intent_lock must be rejected \
+         by a provable load (fail-closed consumer, CardError::IntentLockDrift)"
     );
 }
