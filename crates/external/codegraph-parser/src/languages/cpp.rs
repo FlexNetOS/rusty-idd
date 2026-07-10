@@ -417,7 +417,7 @@ impl<'a> CppCollector<'a> {
             _ => {
                 // Try to find identifier child
                 for i in 0..declarator.child_count() {
-                    if let Some(child) = declarator.child(i) {
+                    if let Some(child) = declarator.child(i as u32) {
                         if child.kind() == "identifier" || child.kind() == "field_identifier" {
                             return self.node_text(&child);
                         }
