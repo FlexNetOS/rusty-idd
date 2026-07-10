@@ -1,0 +1,76 @@
+name: differential-drive-ci
+
+# handoff-LOCAL dogfood of the relay-#134 live differential-drive doctrine against handoff's OWN
+# `hf` binary. ADVISORY — NOT one of the four required checks (Test ubuntu/macos, Clippy, Format),
+# so it never blocks the develop->trunk promotion gate (sync-master.yml / hf promote).
+#
+# This caller replicates ci.yml's meta-ruvector-sibling layout because `ledger` path-deps
+# ../../meta-ruvector/crates/rvf/rvf-crypto — so it cannot reuse the generic differential-drive.yml
+# (a workflow_call job runs on a fresh runner and cannot inherit a caller's filesystem). It is
+# therefore NOT part of the fleet-deployed bundle: deploy_diff_drive ships only the generic
+# differential-drive.yml + scripts/differential-drive.sh. Each repo authors its own cases file.
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  differential-drive:
+    name: differential-drive (live)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          path: handoff
+
+      - name: Clone rvf-crypto provider (meta-ruvector)
+        run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
+
+      - name: Clone envctl provider (envctl)
+        run: git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+
+      # Meta-owned Rust toolchain/cache (replaces the removed Rust
+      # setup/cache actions per the envctl toolchain-ownership contract).
+      - name: Resolve meta-owned Rust root
+        id: rust-meta
+        shell: bash
+        run: |
+          meta_root="$GITHUB_WORKSPACE/meta"
+          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
+          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
+      - name: Restore meta-owned Rust tool cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
+            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
+          key: rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-diffdrive-${{ hashFiles('handoff/scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-diffdrive-
+      - name: Restore workspace target cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/handoff/target
+          key: rusty-idd-target-1.96.0-${{ runner.os }}-diffdrive-${{ hashFiles('handoff/Cargo.lock', 'handoff/scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-target-1.96.0-${{ runner.os }}-diffdrive-
+      - name: Envctl Rust toolchain and cache
+        shell: bash
+        env:
+          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
+          RUSTY_IDD_RUST_TOOLCHAIN: 1.96.0
+          CARGO_TARGET_DIR: ${{ github.workspace }}/handoff/target
+        run: handoff/scripts/ci/envctl-rust-env.sh release
+
+      - name: Build the real hf binary
+        working-directory: handoff
+        run: cargo build -p hf
+
+      - name: Live differential-drive (drive the REAL hf binary, diff output; fail-closed)
+        working-directory: handoff
+        run: bash scripts/differential-drive.sh

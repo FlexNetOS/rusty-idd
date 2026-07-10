@@ -1,3 +1,4 @@
+//! EDGE: structural validation of a parsed spec -> a [`ValidationReport`] that
 //! EDGE: structural validation of a parsed spec -> a [`Report`] that
 //! serializes to match the SHAPE of the oracle fixtures (`04`/`05`).
 

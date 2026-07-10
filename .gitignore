@@ -4,6 +4,52 @@
 # kept intact). Anchoring is the gitignore-policy upgrade that lets `imports/`
 # hold complete dotfolders/files.
 /target
+node_modules/
+# === .handoff durability policy (ADR-0016 / ADR-0018 D1 — HFTASK-0067) ===
+# The kernel owns the canonical commit-vs-ignore taxonomy. ADR-0018 D1: COMMIT all durable
+# .handoff state — tasks/, decisions/, context/, hooks/, policy.toml, the rendered views
+# (packets/, active.md, deliveries/), AND `.handoff/ledger.events.jsonl` (the committed
+# continuity truth, the deterministic JSONL export). Only the BINARY LEDGER CACHE + ephemeral
+# runtime + out-of-tree migration artifacts are ignored below — the binary ledger is re-derived
+# from the JSONL via `hf import`. Never add a bare `.handoff/`/`.claude/` ignore (Git can't
+# re-include past an excluded parent dir). `**` also covers the top-level path + grit worktrees.
+.handoff/**/ledger.db
+.handoff/**/*.db-wal
+.handoff/**/*.db-shm
+.handoff/**/*.rvf
+.handoff/**/*.rvf.lock
+.handoff/**/*.sqlite.bak
+.handoff/**/*.redb.tmp
+/.handoff/workspaces/
+# Generated navigation maps (HFTASK-0050): derived, rebuilt by `hf index` / `hf plan` —
+# a rebuild cache like ledger.db, never committed (would churn + trip the drift sentinel).
+/.handoff/maps/
+
+.grit
+/_workspace/
+/_workspace_prev/
+
+# HFTASK-0048: the on-disk lock mirror is ephemeral advisory state (the ledger is
+# authoritative); like the binary ledger cache, it is never committed.
+/.handoff/locks/
+
+# === .kb durability policy (ADR-0003 / ADR-0018 D7 — HFTASK-0072) ===
+# Same text-vs-binary precedent as the .handoff ledger above (HFTASK-0067): COMMIT the
+# DURABLE TEXT of the kb (`.kb/store/**` — the markdown documents + JSON commits/refs/
+# manifest, the committed planning truth, analogous to `ledger.events.jsonl`) and ignore
+# ONLY the BINARY DB CACHE (`.kb/.cache/gitkb.db*`, re-derived via `git kb code index`) plus
+# the EPHEMERAL editing surface (`.kb/workspaces/` — checked-out copies, rebuilt from store).
+# NOTE: `git kb init` wrongly ignores `.kb/store/` by default; we OVERRIDE that here so the
+# durable continuity text is committed, never the churning binary. Never commit a binary DB.
+.kb/.cache/
+.kb/workspace/
+.kb/workspaces/
+.kb/config.toml
+
+# Vendored syntect fork (postcard) — ignore build artifacts + regen-only testdata symlink
+vendor/syntect/target/
+vendor/syntect/testdata
+vendor/syntect/Cargo.lock
 /.worktrees/
 /.idd/runs/
 
