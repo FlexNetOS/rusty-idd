@@ -238,12 +238,12 @@ fn parse_flags(args: &[String]) -> BTreeMap<String, String> {
                 i += 1;
                 continue;
             }
-            if let Some(value) = args.get(i + 1) {
-                if !value.starts_with("--") {
-                    flags.insert(body.to_string(), value.to_string());
-                    i += 2;
-                    continue;
-                }
+            // clippy 1.96 `collapsible_if`: collapsed via `filter` (this crate is
+            // edition 2021, so let-chains are not available here).
+            if let Some(value) = args.get(i + 1).filter(|v| !v.starts_with("--")) {
+                flags.insert(body.to_string(), value.to_string());
+                i += 2;
+                continue;
             }
             flags.insert(body.to_string(), "true".to_string());
         }

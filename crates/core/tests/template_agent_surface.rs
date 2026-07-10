@@ -1,3 +1,6 @@
+// HFTASK-0082 (ADR-0019 D5 #3): this whole crate is an integration test; unwrap/expect/panic
+// are idiomatic here (tests assert), so the deny lints are allowed crate-wide.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 use rusty_idd_core::model::FileCategory;
 use rusty_idd_core::scanner::{classify_file, scan_repo};
 use std::fs;
@@ -151,12 +154,14 @@ fn scanner_classifies_portable_agent_surfaces_as_agent_control() {
     );
 
     let inv = scan_repo(repo_root()).unwrap();
-    assert!(inv
-        .agent_files
-        .iter()
-        .any(|path| { path == "intent-driven-template/.agent/commands/create-c4-diagram.md" }));
-    assert!(inv
-        .agent_files
-        .iter()
-        .any(|path| path == "intent-driven-template/.agents/skills/c4-diagrams/SKILL.md"));
+    assert!(
+        inv.agent_files
+            .iter()
+            .any(|path| { path == "intent-driven-template/.agent/commands/create-c4-diagram.md" })
+    );
+    assert!(
+        inv.agent_files
+            .iter()
+            .any(|path| path == "intent-driven-template/.agents/skills/c4-diagrams/SKILL.md")
+    );
 }
