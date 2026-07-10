@@ -1,0 +1,126 @@
+{
+  "generated_at": "2026-06-26",
+  "target": "lifeos-meta-front-door-integration",
+  "nodes": [
+    {
+      "id": "prompt_hub",
+      "label": "Owner intent and prompt source-of-truth"
+    },
+    {
+      "id": "rusty-idd",
+      "label": "Spec/goal/work-definition engine"
+    },
+    {
+      "id": "planning-engineer",
+      "label": "Evidence roadmap builder"
+    },
+    {
+      "id": "feature-forge",
+      "label": "Implementation loop"
+    },
+    {
+      "id": "envctl",
+      "label": "Install/verify/env state authority"
+    },
+    {
+      "id": "handoff",
+      "label": "Continuity ledger"
+    },
+    {
+      "id": "weave",
+      "label": "A2A/jobs/lanes/session mesh"
+    },
+    {
+      "id": "lifeos",
+      "label": "Owner UI/front door"
+    },
+    {
+      "id": "odysseus",
+      "label": "Candidate AI workspace panel"
+    },
+    {
+      "id": "meta-ruvector",
+      "label": "Vector/memory/agent substrate"
+    },
+    {
+      "id": "network-plane",
+      "label": "network-control/lane/obscura"
+    }
+  ],
+  "edges": [
+    {
+      "from": "prompt_hub",
+      "to": "rusty-idd",
+      "relationship": "intent/prompt selected into OpenSpec goal"
+    },
+    {
+      "from": "rusty-idd",
+      "to": "planning-engineer",
+      "relationship": "ready goal/spec drives planning loop"
+    },
+    {
+      "from": "planning-engineer",
+      "to": "feature-forge",
+      "relationship": "roadmap chunks become buildable tasks"
+    },
+    {
+      "from": "feature-forge",
+      "to": "envctl",
+      "relationship": "implementation installs/verifies components through manifests"
+    },
+    {
+      "from": "envctl",
+      "to": "lifeos",
+      "relationship": "publishes launch/status/config to UI"
+    },
+    {
+      "from": "lifeos",
+      "to": "odysseus",
+      "relationship": "hosts /ai panel or webview/reverse-proxy candidate"
+    },
+    {
+      "from": "odysseus",
+      "to": "weave",
+      "relationship": "agent/MCP/events bridge candidate"
+    },
+    {
+      "from": "weave",
+      "to": "handoff",
+      "relationship": "jobs/messages/leases complement continuity ledger"
+    },
+    {
+      "from": "handoff",
+      "to": "rusty-idd",
+      "relationship": "resume/handoff feeds next goal/spec state"
+    },
+    {
+      "from": "meta-ruvector",
+      "to": "lifeos",
+      "relationship": "memory/vector/agent substrate exposed via APIs/MCP/WASM only after gating"
+    },
+    {
+      "from": "network-plane",
+      "to": "lifeos",
+      "relationship": "network/fleet/privacy surfaces surfaced in UI"
+    },
+    {
+      "from": "network-plane",
+      "to": "weave",
+      "relationship": "obscura governed web access via weave policy"
+    }
+  ],
+  "sources": [
+    "M1",
+    "M2",
+    "L1",
+    "P2",
+    "R1",
+    "W2",
+    "H2",
+    "E1",
+    "N1",
+    "N2",
+    "N3",
+    "O1"
+  ]
+}

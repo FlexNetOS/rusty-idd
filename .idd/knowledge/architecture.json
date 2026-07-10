@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:db760da2498ce270",
+  "workspace_fingerprint": "fnv1a64:750d25d21de6e8b2",
   "workspace_root": "/home/flexnetos/lifeos/src/rusty-idd-reconcile-wt",
   "source_graph": {
     "provider": "codegraph-rust",
@@ -18,7 +18,7 @@
   "context_package": {
     "provider": "repomix-rs",
     "files": 343,
-    "tokens": 246887,
+    "tokens": 246703,
     "output_style": "markdown",
     "top_files_by_tokens": [
       [
@@ -74,12 +74,12 @@
         3081
       ],
       [
-        "AGENTS.md",
-        2872
-      ],
-      [
         "docs/adr-0004-fleet-handoff-rollout.md",
         2705
+      ],
+      [
+        "AGENTS.md",
+        2688
       ],
       [
         "docs/rusty-idd/security-advisories.md",
@@ -2429,6 +2429,6 @@
   ],
   "findings": [
     "CodeGraph-backed parsing completed without source failures",
-    "repomix context package measured 343 files and 246887 tokens"
+    "repomix context package measured 343 files and 246703 tokens"
   ]
 }
