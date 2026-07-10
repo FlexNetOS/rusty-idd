@@ -61,7 +61,7 @@ path	size_bytes	fnv1a64
 .github/ISSUE_TEMPLATE/idd-task.yml	1245	7c47324ba56aa24d
 .github/codeql/codeql-config.yml	66	58726b78cbc4d539
 .github/copilot-instructions.md	876	4191163413d91609
-.github/dependabot.yml	259	02585c0dbfca7494
+.github/dependabot.yml	381	4e875fa5d64a7e3e
 .github/pull_request_template.md	543	2897fdb76da4689f
 .github/workflows/ai-gatekeeper.yml	3551	0da84589bcf86e7c
 .github/workflows/auto-release.yml	3538	8ac2bc62bbabd517
@@ -367,9 +367,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57264	a1f9c6105286a079
-.idd/knowledge/architecture.md	13414	b8f99144641b8988
-.idd/knowledge/index.json	59809057	a5c556683c47e04a
+.idd/knowledge/architecture.json	57264	bbdf4da2afc1bc03
+.idd/knowledge/architecture.md	13414	df9746de7e657376
+.idd/knowledge/index.json	59809057	9382f56ddbc912cc
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -382,7 +382,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	bb868be9381fd832
+.idd/knowledge/report.md	4445	845a4c4b1dc5f6fc
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -578,7 +578,7 @@ AI_MERGE/unify-handoff-prompthub/10_prompthub_parity_test_plan.md	735	0978b9d6fb
 AI_MERGE/unify-handoff-prompthub/11_handoff_provider_matrix.md	1030	71cf68fb2c77758f
 AI_MERGE/unify-handoff-prompthub/11_prompthub_provider_matrix.md	1030	71cf68fb2c77758f
 AI_MERGE/unify-handoff-prompthub/REGENERATE.md	1212	5acb9f48dd9842bc
-AI_MERGE/validation_report.md	187	c5274630154b6888
+AI_MERGE/validation_report.md	425	15a0b63aade9fd61
 CLAUDE.md	34438	27772ec4bfc94b01
 CONTRIBUTING.md	1941	f54726b382a82c1d
 Cargo.lock	149046	6e04bb8b1b787405
