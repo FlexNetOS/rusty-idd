@@ -61,7 +61,7 @@ path	size_bytes	fnv1a64
 .github/ISSUE_TEMPLATE/idd-task.yml	1245	13cd5261d1b74d4d
 .github/codeql/codeql-config.yml	66	58726b78cbc4d539
 .github/copilot-instructions.md	876	4191163413d91609
-.github/dependabot.yml	259	02585c0dbfca7494
+.github/dependabot.yml	381	4e875fa5d64a7e3e
 .github/pull_request_template.md	543	2897fdb76da4689f
 .github/workflows/ai-gatekeeper.yml	3551	0da84589bcf86e7c
 .github/workflows/auto-release.yml	3538	8ac2bc62bbabd517
@@ -386,9 +386,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57264	e90dcbad01586277
-.idd/knowledge/architecture.md	13414	d59faa41687188ee
-.idd/knowledge/index.json	59809709	2b8e572a573459af
+.idd/knowledge/architecture.json	57264	c14e9ba6daff8c19
+.idd/knowledge/architecture.md	13414	f3b9de73dfb6fdc0
+.idd/knowledge/index.json	59809709	da00283966610879
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -401,7 +401,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	23734b016d96682f
+.idd/knowledge/report.md	4445	e0e63f2ae60ab891
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
