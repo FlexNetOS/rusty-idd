@@ -367,9 +367,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57264	0de16273eb232264
-.idd/knowledge/architecture.md	13414	d6e47b526d35d360
-.idd/knowledge/index.json	59809709	355add3685584983
+.idd/knowledge/architecture.json	57264	f19be8159b08bbf8
+.idd/knowledge/architecture.md	13414	8ec1378a788f77dc
+.idd/knowledge/index.json	59809709	7faf5f90e8b6f7fb
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -382,7 +382,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	ce46b508f5a6d476
+.idd/knowledge/report.md	4445	9c9dac2c97b9d15e
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -4969,7 +4969,7 @@ third_party/upstream/repomix-rs/crates/config/src/load.rs	10782	348c91ab5767b910
 third_party/upstream/repomix-rs/crates/config/src/schema.rs	6221	d2e546e6d2c0f22c
 third_party/upstream/repomix-rs/crates/config/src/tests.rs	2577	da1176160b0a6264
 third_party/upstream/repomix-rs/crates/core/Cargo.toml	1216	d8e07c6005b00110
-third_party/upstream/repomix-rs/crates/core/src/file/collect.rs	4579	8c18bf31611ae4da
+third_party/upstream/repomix-rs/crates/core/src/file/collect.rs	4680	f3550cc0c7c17611
 third_party/upstream/repomix-rs/crates/core/src/file/manipulate.rs	11718	3f8c28977910eaeb
 third_party/upstream/repomix-rs/crates/core/src/file/mod.rs	212	e124544c9a821e47
 third_party/upstream/repomix-rs/crates/core/src/file/process.rs	3908	70ff486897f07d9c
