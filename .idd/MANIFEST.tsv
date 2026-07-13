@@ -386,9 +386,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57264	c14e9ba6daff8c19
-.idd/knowledge/architecture.md	13414	f3b9de73dfb6fdc0
-.idd/knowledge/index.json	59809709	da00283966610879
+.idd/knowledge/architecture.json	57669	2329b3ab4886c2cc
+.idd/knowledge/architecture.md	13537	5ea9ff73b36d6854
+.idd/knowledge/index.json	59685731	f04535edaa22be69
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -401,7 +401,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	e0e63f2ae60ab891
+.idd/knowledge/report.md	4445	99f83059ece406f0
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -1053,7 +1053,7 @@ docs/rusty-idd/security-advisories.md	9712	bb25258a0c9aee0c
 docs/rusty-idd/slice-sequence.md	4787	31b0327da33791ae
 docs/rusty-idd/spec-engine-design.md	16111	564ef04dbe9afc91
 handoff-core/Cargo.toml	814	c4246d7b137d8dfe
-handoff-core/src/lib.rs	14161	be0152a40b29114c
+handoff-core/src/lib.rs	14530	4541b630e4a653d0
 handoff-drift/Cargo.toml	406	658fd40c4ec5a228
 handoff-drift/src/lib.rs	40689	9f5f24d796dfb57d
 handoff-fleet/Cargo.toml	416	c4395e2165f96b98
@@ -5115,4 +5115,5 @@ vendor/syntect/tests/public_api.rs	756	55bcd6db24452b7c
 vendor/syntect/tests/snapshots/public-api.txt	123656	80b2ec806c64fed9
 work-order/Cargo.toml	603	e52d4234c6839761
 work-order/src/intake.rs	16950	38e85f2b93aceec7
-work-order/src/lib.rs	29519	90ab12b9331c30ae
+work-order/src/lib.rs	39315	f87005f21eca24ac
+work-order/tests/handoff_card_consumer.rs	6518	fa9ce85fe03c9621
