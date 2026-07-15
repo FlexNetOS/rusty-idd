@@ -22,7 +22,7 @@ jobs:
     name: Clean merge probe
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - name: Probe develop -> master merge
@@ -44,7 +44,7 @@ jobs:
       # Mirror ci.yml's checkout layout: the repo lives under handoff/ so the
       # ledger/hf path deps (../../meta-ruvector, ../../envctl) resolve to sibling
       # clones at the workspace root.
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: handoff
       - name: Clone rvf-crypto provider (meta-ruvector)
@@ -112,7 +112,7 @@ jobs:
     name: Clippy
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: handoff
       - name: Clone rvf-crypto provider (meta-ruvector)
@@ -182,7 +182,7 @@ jobs:
     name: Format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: handoff
       - name: Clone rvf-crypto provider (meta-ruvector)
@@ -245,7 +245,7 @@ jobs:
     name: Drift
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
         with:
           path: handoff
       - name: Clone rvf-crypto provider (meta-ruvector)
@@ -316,7 +316,7 @@ jobs:
     name: Audit
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
       - uses: rustsec/audit-check@v2
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
