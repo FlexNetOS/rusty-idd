@@ -1,41 +1,64 @@
-# rusty-idd — Cargo workspace.
-#
-# Members under crates/:
-#   crates/core    — the std-only, zero-dependency idd crate (was intent-driven-development)
-#   crates/runner  — the non-UI execution layer (runner/config/data, split out of the tui)
-#   crates/tui     — the ratatui OpenSpec TUI (lib + bin); depends on crates/runner
-#   crates/spec    — the ported OpenSpec lifecycle engine (parse / merge / validate)
-#   crates/merge-tools — reusable merge-goal workflow package derived from legacy merge surfaces
-#   crates/cli     — the unified `rusty-idd` clap binary wiring the crates together
-#
-# resolver = "3" is required because members mix editions (core 2021 + tui/runner 2024);
-# the virtual root has no package.edition to infer it from, so it is set explicitly.
-
-[workspace.package]
-version   = "0.1.0"
-authors   = ["FlexNetOS contributors"]
-repository = "https://github.com/FlexNetOS/rusty-idd"
-homepage   = "https://github.com/FlexNetOS/rusty-idd"
-documentation = "https://docs.rs/rusty-idd-cli"
-license  = "MIT"
-edition  = "2021"
-rust-version = "1.88"
-
 [workspace]
 resolver = "3"
-members = [
-    "crates/cli",
-    "crates/core",
-    "crates/external/codegraph-core",
-    "crates/external/codegraph-parser",
-    "crates/external/repomix-shared",
-    "crates/knowledge",
-    "crates/merge-tools",
-    "crates/runner",
-    "crates/spec",
-    "crates/tui",
-    "crates/work-order",
-]
+# UNIFIED WORKSPACE (fork reconciliation 2026-07-09): handoff kernel + rusty-idd toolkit
+# + rusty-idd's post-fork additions (external/*, knowledge, merge-tools). `work-order` builds
+# from the ROOT copy (newer: HFTASK-0084) so all handoff path-deps hold; `crates/work-order`
+# (rusty-idd's earlier faithful-adopt migration of the same package) is deliberately NOT a
+# member — one package name, one member. `imports/` and `third_party/` remain non-member
+# vendored snapshots, as in rusty-idd.
+members = ["work-order", "ledger", "handoff-core", "handoff-policy", "handoff-schema", "handoff-lease", "handoff-hooks", "handoff-index", "handoff-fleet", "handoff-drift", "handoff-route", "handoff-test-support", "handoff-secrets", "handoff-gatekeeper", "handoff-intake", "hf", "crates/cli", "crates/core", "crates/runner", "crates/spec", "crates/tui", "crates/external/codegraph-core", "crates/external/codegraph-parser", "crates/external/repomix-shared", "crates/knowledge", "crates/merge-tools"]
 
+[workspace.package]
+edition = "2024"
+rust-version = "1.96"
+version = "0.1.0"
+license = "Apache-2.0 OR MIT"
+authors = ["FlexNetOS <team@flexnetos.com>"]
+homepage = "https://github.com/FlexNetOS/handoff"
+repository = "https://github.com/FlexNetOS/handoff"
+documentation = "https://docs.rs/handoff"
+
+# Workspace lint policy (PRD §7.2 target). Members inherit via `[lints] workspace = true`.
+# `unsafe_code = "deny"` (not `forbid`): the only unsafe in the tree is the audited FFI
+# process-liveness probe in `ledger::v2::pid_is_alive` (unix `kill(pid,0)` / windows
+# `OpenProcess`), which carries a single justified `#[allow(unsafe_code)]`. `deny` keeps that
+# unsafe VISIBLE and audited at the call site (the right kernel policy) rather than hiding it
+# inside a syscall-wrapper dependency — any NEW unsafe elsewhere is a hard error. The clippy
+# `all` group is denied here so a plain local `cargo clippy` matches the CI gate
+# (`--all-targets -D warnings`) without the CLI flag.
+#
+# HFTASK-0080 (ADR-0019 D5 #3) landed the error-handling hardening: `unwrap_used`/`expect_used`/
+# `panic` are now `deny`, so a bare `.unwrap()`/`.expect()`/`panic!` in PRODUCTION code is a hard
+# error. The fail-open class (a guard that proceeds when it cannot confirm its precondition,
+# LESSONS L7–L10) is closed at the lint level. Two documented carve-outs keep this enforceable
+# without hiding anything: EVERY crate root (kernel AND the co-located rusty-idd toolkit
+# `crates/{cli,core,runner,spec,tui}`) allows these ONLY under `#[cfg(test)]` (tests assert; that
+# is idiomatic), and integration-test crates allow them crate-wide. Every remaining production
+# `.unwrap()`/`.expect()` anywhere in the workspace is justified at its call site. HFTASK-0082
+# extended the deny to the toolkit's production code (a clean flip — it already propagated errors).
+[workspace.lints.rust]
+unsafe_code = "deny"
+
+[workspace.lints.clippy]
+all = { level = "deny", priority = -1 }
+# Error-handling hardening (HFTASK-0080). `priority = -1` would put these BELOW the `all` group;
+# they need to be at/above it so an explicit `#[allow]` at a justified call site wins. Default
+# priority (0) is higher than `all`'s -1, which is what we want.
+unwrap_used = "deny"
+expect_used = "deny"
+panic = "deny"
+
+# We host syntect locally and upgrade its dead dependencies ourselves (owner directive,
+# 2026-06-26). `vendor/syntect` is a FlexNetOS fork of syntect master (rev 4aa78031, which had
+# already moved off the unmaintained `yaml-rust 0.4` -> maintained `yaml-rust2`) with the
+# unmaintained `bincode` (RUSTSEC-2025-0141, permanently frozen, ALL versions flagged) REPLACED
+# by the maintained `postcard` for the .packdump/.themedump format. The bundled `assets/*` were
+# regenerated in postcard format. Result: BOTH unmaintained advisories are gone from the tree
+# (not suppressed). syntect is still package-version 5.3.0, so this satisfies tui-markdown's
+# `^5.3.0` requirement. See docs/rusty-idd/security-advisories.md for the fork rationale and the
+# upstream-reconcile exit condition (drop the fork when syntect 6.0.0 ships its own bincode
+# replacement, trishume/syntect#623/#694).
 [patch.crates-io]
+syntect = { path = "vendor/syntect" }
+# rusty-idd side: local repomix-shared overrides any crates.io version pulled transitively.
 repomix-shared = { path = "crates/external/repomix-shared" }

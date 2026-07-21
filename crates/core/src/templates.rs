@@ -286,6 +286,10 @@ pub const PR_TEMPLATE: &str = r#"## IDD PR Evidence
 - [ ] `.idd/knowledge/*` refreshed or intentionally unchanged
 - [ ] Manifest updated or intentionally unchanged
 - [ ] AI_MERGE evidence updated only if audit, migration, rollback, or merge records are required
+  - [ ] Feature matrix updated if capability changed
+  - [ ] Env/secrets contract updated if config changed
+  - [ ] Conflict register updated if collision found
+  - [ ] Agent queue updated
 "#;
 
 pub const COPILOT_INSTRUCTIONS: &str = r#"# Repository Instructions for AI Coding Agents

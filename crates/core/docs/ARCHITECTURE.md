@@ -15,6 +15,9 @@ src/
   fs_utils.rs        # stable filesystem helpers and backup-on-overwrite writes
 ```
 
+## Control-plane model
+
+`idd` does not try to become the AI agent. It creates the material that AI agents need to operate safely:
 ## Workflow model
 
 `idd` does not try to become the AI agent. In the unified Rusty IDD workflow, it
@@ -25,6 +28,11 @@ one evidence output, not the primary intent model:
 flowchart TD
     A[Repo A] --> C[idd scan]
     B[Repo B] --> C
+    C --> D[AI_MERGE + JSON sidecars]
+    D --> E[GitHub Issue / Agent Task]
+    E --> F[Small PR]
+    F --> G[CI + idd validate + manifest]
+    G --> H[Integration Branch]
     C --> D[.idd knowledge + OpenSpec]
     D --> E[ADR + tasks]
     E --> F[Small PR]

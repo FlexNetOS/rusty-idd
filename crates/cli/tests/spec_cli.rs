@@ -1,3 +1,6 @@
+// HFTASK-0082 (ADR-0019 D5 #3): this whole crate is an integration test; unwrap/expect/panic
+// are idiomatic here (tests assert), so the deny lints are allowed crate-wide.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 //! Integration tests for the `rusty-idd spec` subcommands, run against the
 //! compiled binary and the oracle fixtures.
 
