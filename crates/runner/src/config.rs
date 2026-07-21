@@ -33,7 +33,12 @@ pub struct TuiConfig {
     #[serde(default)]
     pub run_finished_command: String,
     /// Consecutive no-progress retries per task before stalling. Defaults to 1.
-    #[serde(default = "default_retry_on_failure")]
+    /// Omitted from serialized output when left at the default, keeping written
+    /// `openspec/tui-config.yaml` files minimal.
+    #[serde(
+        default = "default_retry_on_failure",
+        skip_serializing_if = "is_default_retry_on_failure"
+    )]
     pub retry_on_failure: u32,
 }
 
@@ -51,6 +56,10 @@ fn default_interactive_command() -> String {
 
 fn default_retry_on_failure() -> u32 {
     DEFAULT_RETRY_ON_FAILURE
+}
+
+fn is_default_retry_on_failure(v: &u32) -> bool {
+    *v == DEFAULT_RETRY_ON_FAILURE
 }
 
 impl Default for TuiConfig {
@@ -299,6 +308,9 @@ mod tests {
     /// This locks `openspec/tui-config.yaml` compatibility across the
     /// serde_yaml→serde_norway migration so existing user config files keep
     /// loading and saving unchanged.
+    ///
+    /// A non-default `retry_on_failure` (2) is used so the field is still
+    /// emitted under `skip_serializing_if`, exercising the full golden layout.
     #[test]
     fn test_golden_yaml_on_disk_format_is_stable() {
         let config = TuiConfig {
@@ -307,14 +319,14 @@ mod tests {
             post_implementation_prompt: "commit {name}".to_string(),
             interactive_command: "claude-i".to_string(),
             run_finished_command: "notify done".to_string(),
-            retry_on_failure: 1,
+            retry_on_failure: 2,
         };
         let golden = "command: my-tool {prompt}\n\
                       prompt: do {name} stuff\n\
                       post_implementation_prompt: commit {name}\n\
                       interactive_command: claude-i\n\
                       run_finished_command: notify done\n\
-                      retry_on_failure: 1\n";
+                      retry_on_failure: 2\n";
         assert_eq!(serde_norway::to_string(&config).unwrap(), golden);
         // And it round-trips back to the same struct.
         let back: TuiConfig = serde_norway::from_str(golden).unwrap();
@@ -327,6 +339,28 @@ mod tests {
         assert_eq!(back.interactive_command, config.interactive_command);
         assert_eq!(back.run_finished_command, config.run_finished_command);
         assert_eq!(back.retry_on_failure, config.retry_on_failure);
+    }
+
+    /// The default `retry_on_failure` (1) is omitted from serialized output by
+    /// `skip_serializing_if`, keeping written config files minimal, yet still
+    /// round-trips back to the default on load.
+    #[test]
+    fn test_default_retry_on_failure_is_skipped_in_serialization() {
+        let config = TuiConfig {
+            command: "my-tool {prompt}".to_string(),
+            prompt: "do {name} stuff".to_string(),
+            post_implementation_prompt: "commit {name}".to_string(),
+            interactive_command: "claude-i".to_string(),
+            run_finished_command: "notify done".to_string(),
+            retry_on_failure: DEFAULT_RETRY_ON_FAILURE,
+        };
+        let yaml = serde_norway::to_string(&config).unwrap();
+        assert!(
+            !yaml.contains("retry_on_failure"),
+            "default retry_on_failure should be skipped, got: {yaml}"
+        );
+        let back: TuiConfig = serde_norway::from_str(&yaml).unwrap();
+        assert_eq!(back.retry_on_failure, DEFAULT_RETRY_ON_FAILURE);
     }
 
     /// Config files written before `retry_on_failure` existed (no such line)

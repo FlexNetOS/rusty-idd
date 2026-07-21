@@ -170,8 +170,12 @@ fn prefetch_range_impl(m: &MappedFile, offset: usize, len: usize) {
 
 #[cfg(windows)]
 fn prefetch_range_impl(m: &MappedFile, offset: usize, len: usize) {
-    use core::mem::size_of;
-    use windows_sys::Win32::System::Memory::{PrefetchVirtualMemory, _WIN32_MEMORY_RANGE_ENTRY};
+    // windows-sys >=0.60: the struct lost its leading underscore
+    // (WIN32_MEMORY_RANGE_ENTRY), HANDLE became a pointer, and the ranges
+    // parameter is `*const`. Use the current-process pseudo-handle instead of
+    // the old `0` sentinel.
+    use windows_sys::Win32::System::Memory::{PrefetchVirtualMemory, WIN32_MEMORY_RANGE_ENTRY};
+    use windows_sys::Win32::System::Threading::GetCurrentProcess;
 
     let end = offset.saturating_add(len).min(m.len);
     if end <= offset {
@@ -180,13 +184,13 @@ fn prefetch_range_impl(m: &MappedFile, offset: usize, len: usize) {
     let ptr = unsafe { m.mmap.as_ptr().add(offset) } as *mut core::ffi::c_void;
     let bytes = end - offset;
 
-    let mut range = _WIN32_MEMORY_RANGE_ENTRY {
+    let range = WIN32_MEMORY_RANGE_ENTRY {
         VirtualAddress: ptr,
         NumberOfBytes: bytes,
     };
     unsafe {
         // Best-effort; ignore failure.
-        let _ = PrefetchVirtualMemory(0, 1, &mut range as *mut _ as *mut _, 0);
+        let _ = PrefetchVirtualMemory(GetCurrentProcess(), 1, &range, 0);
     }
 }
 

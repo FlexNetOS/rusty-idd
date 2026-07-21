@@ -1,3 +1,6 @@
+// HFTASK-0082 (ADR-0019 D5 #3): this whole crate is an integration test; unwrap/expect/panic
+// are idiomatic here (tests assert), so the deny lints are allowed crate-wide.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 //! Smoke test for `rusty-idd run`: a change whose tasks are all already checked
 //! must finish cleanly without spawning any agent process.
 
