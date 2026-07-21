@@ -477,15 +477,15 @@ For documentation, see: https://github.com/your-repo/codegraph-rust
 // Helpers for the CLI tool
 pub mod crypto {
     use super::*;
-    use rand::rngs::OsRng;
-    use rand::TryRngCore;
+    use rand::rngs::SysRng;
+    use rand::TryRng;
 
     pub fn generate_key() -> String {
         let mut key = [0u8; 32];
-        // rand 0.9 OsRng implements RngCore; use trait method on a mutable instance
-        let mut rng = OsRng;
-        // rand 0.9 switched to Result-returning try_fill_bytes
-        rng.try_fill_bytes(&mut key).expect("OsRng available");
+        // rand 0.10 replaced OsRng with SysRng; use TryRng trait method on a mutable instance
+        let mut rng = SysRng;
+        // try_fill_bytes returns a Result via the TryRng trait
+        rng.try_fill_bytes(&mut key).expect("SysRng available");
         general_purpose::STANDARD.encode(key)
     }
 
@@ -494,8 +494,8 @@ pub mod crypto {
         anyhow::ensure!(key.len() == 32, "key must be 32 bytes (base64)");
         let cipher = ChaCha20Poly1305::new(Key::from_slice(&key));
         let mut nonce = [0u8; 12];
-        let mut rng = OsRng;
-        rng.try_fill_bytes(&mut nonce).expect("OsRng available");
+        let mut rng = SysRng;
+        rng.try_fill_bytes(&mut nonce).expect("SysRng available");
         let nonce_obj = Nonce::from_slice(&nonce);
         let mut out = Vec::with_capacity(12 + plaintext.len() + 16);
         out.extend_from_slice(&nonce);
