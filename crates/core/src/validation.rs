@@ -667,8 +667,10 @@ jobs:
         scan_knowledge_staleness(root, &mut findings);
 
         assert_eq!(findings.len(), 2);
-        assert!(findings
-            .iter()
-            .all(|finding| finding.severity == FindingSeverity::Critical));
+        assert!(
+            findings
+                .iter()
+                .all(|finding| finding.severity == FindingSeverity::Critical)
+        );
     }
 }

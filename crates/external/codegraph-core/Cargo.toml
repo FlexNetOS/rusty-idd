@@ -54,6 +54,9 @@ libc = "0.2"
 windows-sys = { version = "0.61", features = [
     "Win32_Foundation",
     "Win32_System_Memory",
+    # GetCurrentProcess for PrefetchVirtualMemory (windows-sys >=0.60 renamed
+    # _WIN32_MEMORY_RANGE_ENTRY -> WIN32_MEMORY_RANGE_ENTRY and made HANDLE a pointer).
+    "Win32_System_Threading",
 ] }
 
 [dev-dependencies]
