@@ -1214,7 +1214,7 @@ mod tests {
             handles.push(thread::spawn(move || {
                 for i in 0..PER_WRITER {
                     let ts = (w as u64) * 1_000_000 + i as u64;
-                    led.lock()
+                    led.lock().unwrap_or_else(std::sync::PoisonError::into_inner)
                         .unwrap()
                         .append("checkpoint", &format!("HFTASK-W{w}"), "{}", ts)
                         .expect("append must not fail under concurrency");
