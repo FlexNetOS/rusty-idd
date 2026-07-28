@@ -113,13 +113,15 @@ fn decode_utf16_if_bom(bytes: &[u8]) -> Option<String> {
         return Some(String::new());
     }
 
-    let u16_units: Vec<u16> = bytes[skip..]
-        .chunks_exact(2)
+    // (pairs, remainder): a trailing odd byte is ignored, exactly like chunks_exact(2) did.
+    let (pairs, _) = bytes[skip..].as_chunks::<2>();
+    let u16_units: Vec<u16> = pairs
+        .iter()
         .map(|chunk| {
             if le {
-                u16::from_le_bytes([chunk[0], chunk[1]])
+                u16::from_le_bytes(*chunk)
             } else {
-                u16::from_be_bytes([chunk[0], chunk[1]])
+                u16::from_be_bytes(*chunk)
             }
         })
         .collect();

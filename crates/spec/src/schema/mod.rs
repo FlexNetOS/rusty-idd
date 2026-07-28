@@ -7,6 +7,7 @@
 //! the change is **archivable** when all artifacts are done.
 //!
 //! This module is the serde edge: the deserialized structs live here. Graph
+//! algorithms are in [`graph`]; filesystem "is this artifact produced?" lives in
 //! algorithms live in the graph module; filesystem "is this artifact produced?" lives in
 //! the CLI (the FS edge), which feeds a `done` set into these queries.
 

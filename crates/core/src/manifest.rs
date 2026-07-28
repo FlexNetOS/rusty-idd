@@ -90,22 +90,41 @@ pub fn workspace_fingerprint(root: impl AsRef<Path>) -> Result<String, String> {
     Ok(format!("fnv1a64:{hash:016x}"))
 }
 
+/// Runtime state (gitignored, machine-local) must never enter EITHER generated
+/// surface — the fingerprint OR the manifest. A dev tree carrying these mints
+/// artifacts no clean CI checkout can reproduce: phantom "knowledge is stale"
+/// criticals and manifest-refresh diffs (both hit on the fork-unification
+/// PR #143 — locks/ledgers in one round, then again in the committed manifest).
+fn runtime_state_should_skip(rel: &str) -> bool {
+    rel.starts_with(".handoff/ledger.db")
+        || rel.starts_with(".handoff/locks/")
+        || rel.starts_with(".idea/")
+        || rel.starts_with(".kb/.cache/")
+        || rel.starts_with(".kb/workspaces/")
+}
+
 fn fingerprint_should_skip(rel: &str) -> bool {
     rel.starts_with(".idd/knowledge/")
         || rel.starts_with(".idd/runs/")
         || rel == ".idd/MANIFEST.tsv"
         || rel == "AI_MERGE/validation_report.md"
         || rel == "docs/rusty-idd/architecture-diagrams.md"
+        || runtime_state_should_skip(rel)
         || is_upstream_generated_local_artifact(rel)
 }
 
 fn manifest_should_skip(rel: &str) -> bool {
-    rel.starts_with(".idd/runs/") || is_upstream_generated_local_artifact(rel)
+    rel.starts_with(".idd/runs/")
+        || runtime_state_should_skip(rel)
+        || is_upstream_generated_local_artifact(rel)
 }
 
 fn is_upstream_generated_local_artifact(rel: &str) -> bool {
     rel.starts_with("third_party/upstream/codegraph-rust/docs/specifications/")
         || rel == "third_party/upstream/repomix-rs/.mind-mesh/agent/repomix.md"
+        // The vendored repomix test suite writes repomix-output.* fixtures into
+        // its own src dir when `cargo test --workspace` runs before validation.
+        || rel.starts_with("third_party/upstream/repomix-rs/crates/core/src/repomix-output.")
 }
 
 fn fnv1a64_file(path: &Path) -> io::Result<u64> {

@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::fs;
 use std::path::{Path, PathBuf};
+use std::process::Command;
 
 // Types backing active and archived change lists.
 #[derive(Debug, Deserialize, Clone)]
@@ -35,6 +36,29 @@ pub struct ArtifactStatus {
 pub struct SpecItem {
     pub name: String,
     pub path: PathBuf,
+}
+
+/// Construct a `Command` for invoking the `openspec` CLI.
+///
+/// On Windows, npm-installed tools use `.cmd` wrappers that `Command::new`
+/// cannot resolve directly. We use `cmd /C openspec` so that `cmd.exe`
+/// handles PATHEXT resolution. On Unix/macOS, invoke the binary directly.
+///
+/// Retained from the legacy TUI: rusty-idd now discovers changes locally (see
+/// `list_changes`), but this cross-platform launcher is kept available for
+/// callers that still need to shell out to the Node `openspec` CLI.
+#[cfg(windows)]
+#[allow(dead_code)]
+fn openspec_command() -> Command {
+    let mut cmd = Command::new("cmd");
+    cmd.args(["/C", "openspec"]);
+    cmd
+}
+
+#[cfg(not(windows))]
+#[allow(dead_code)]
+fn openspec_command() -> Command {
+    Command::new("openspec")
 }
 
 /// List active changes by reading `openspec/changes/` directory entries.
@@ -719,6 +743,18 @@ mod tests {
         assert_eq!(result.artifacts[0].status, "done");
         assert_eq!(result.artifacts[3].id, "tasks");
         assert_eq!(result.artifacts[3].status, "pending");
+    }
+
+    /// Retained from the legacy TUI: verifies the cross-platform `openspec`
+    /// launcher resolves to the expected program on each OS.
+    #[test]
+    fn test_openspec_command_returns_valid_command() {
+        let cmd = openspec_command();
+        let program = format!("{:?}", cmd.get_program());
+        #[cfg(not(windows))]
+        assert_eq!(program, "\"openspec\"");
+        #[cfg(windows)]
+        assert_eq!(program, "\"cmd\"");
     }
 
     #[test]
