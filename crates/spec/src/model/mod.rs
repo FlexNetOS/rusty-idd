@@ -2,6 +2,7 @@
 //!
 //! This submodule is intentionally dependency-light: no `comrak`, no `serde`,
 //! no I/O. It is the hexagonal core (see `spec-engine-design.md` §1, §3) so the
+//! merge logic in [`merge`] is unit-testable without a Markdown parser in the
 //! merge logic is unit-testable without a Markdown parser in the
 //! loop. Parsing (comrak), serialization (serde), and filesystem access all
 //! live at the crate edges (`parse`, `validate`, `archive`).

@@ -5,8 +5,11 @@ updates:
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    # PRs target develop (git topology: main is the promoted trunk)
+    target-branch: develop
   - package-ecosystem: github-actions
     directory: /
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
+    target-branch: develop

@@ -224,9 +224,18 @@ mod tests {
         fs::write(root.join("subdir/m.txt"), "").unwrap();
 
         let files = stable_walk(root).unwrap();
+        // Compare with `/`-joined components so the assertion is separator-agnostic
+        // (Windows renders PathBuf as `subdir\m.txt`; first exposed by handoff-ci's matrix).
         let relative_names: Vec<String> = files
             .iter()
-            .map(|p| p.strip_prefix(root).unwrap().to_string_lossy().to_string())
+            .map(|p| {
+                p.strip_prefix(root)
+                    .unwrap()
+                    .components()
+                    .map(|c| c.as_os_str().to_string_lossy())
+                    .collect::<Vec<_>>()
+                    .join("/")
+            })
             .collect();
 
         // subdir/ comes after a.txt but before z.txt (sorted by PathBuf components)

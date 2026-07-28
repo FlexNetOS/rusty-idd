@@ -100,6 +100,7 @@ pub fn apply_delta(base: &SpecDoc, delta: &super::Delta) -> Result<SpecDoc, Merg
 ///
 /// Unlike [`apply_delta`] (which is a programmatic whole-block replacement
 /// faithful to the CLI `archive`), `sync_delta` implements the agent-driven
+/// [`sync`] capability:
 /// `sync` capability:
 /// - **MODIFIED** requirements merge their scenarios: new scenarios in the
 ///   delta are appended to the base; if the delta requirement has a non-empty

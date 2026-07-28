@@ -69,6 +69,7 @@ rusty-idd tui
 ### Configuration
 
 - Built-in TUI config editor accessible with `C`
+- Configurable fields: Command, Prompt, Post-Implementation Prompt, Interactive Command, Run Finished Command
 - Configurable fields: Command, Prompt, Post-Implementation Prompt, Interactive Command, Run Finished Command, Retry On Failure
 - Config stored in `openspec/tui-config.yaml`
 
