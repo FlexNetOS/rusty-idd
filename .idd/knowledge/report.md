@@ -1,20 +1,20 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:388e43c5350f6f96`
-- Indexed source files: 457
-- Graph nodes: 30875
-- Graph edges: 112916
-- Resolved call edges: 62243
-- Functions with complexity: 7946
+- Workspace fingerprint: `fnv1a64:c13ab8d9278a1b4f`
+- Indexed source files: 458
+- Graph nodes: 30935
+- Graph edges: 113106
+- Resolved call edges: 62332
+- Functions with complexity: 7961
 - Packed files: 135
-- Packed tokens: 101727
+- Packed tokens: 101751
 - Suspicious files: 0
 
 ## Hotspots
 
 | Score | Node | File | Reasons |
 |---:|---|---|---|
-| 33054 | `to_string` (26506) | `vendor/syntect/src/parsing/scope.rs` | 3304 graph links, 3301 call links, 1 unresolved calls, cyclomatic complexity 4 |
+| 33124 | `to_string` (26506) | `vendor/syntect/src/parsing/scope.rs` | 3311 graph links, 3308 call links, 1 unresolved calls, cyclomatic complexity 4 |
 | 6406 | `collect` (17619) | `imports/prompt_hub/prompt-hub/src/garbage_collector.rs` | 43 lines, 637 graph links, 633 call links, 3 unresolved calls |
 | 4978 | `main` (9893) | `hf/src/main.rs` | 467 lines, 433 graph links, 432 call links, 32 unresolved calls, cyclomatic complexity 23 |
 | 4242 | `main` (14852) | `imports/handoff/hf/src/main.rs` | 358 lines, 372 graph links, 371 call links, 29 unresolved calls, cyclomatic complexity 21 |

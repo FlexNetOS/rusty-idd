@@ -75,7 +75,7 @@ pub fn set_watch_test_notifier(sender: tokio::sync::mpsc::UnboundedSender<PathBu
     let mut guard = WATCH_TEST_NOTIFIER
         .get_or_init(|| Mutex::new(None))
         .lock()
-        .unwrap();
+        .unwrap_or_else(std::sync::PoisonError::into_inner);
     *guard = Some(sender);
 }
 
@@ -4351,7 +4351,7 @@ impl ProjectIndexer {
                                 if let Some(tx) = WATCH_TEST_NOTIFIER
                                     .get_or_init(|| Mutex::new(None))
                                     .lock()
-                                    .unwrap()
+                                    .unwrap_or_else(std::sync::PoisonError::into_inner)
                                     .as_ref()
                                 {
                                     let _ = tx.send(path.clone());
@@ -4369,7 +4369,7 @@ impl ProjectIndexer {
                                     if let Some(tx) = WATCH_TEST_NOTIFIER
                                         .get_or_init(|| Mutex::new(None))
                                         .lock()
-                                        .unwrap()
+                                        .unwrap_or_else(std::sync::PoisonError::into_inner)
                                         .as_ref()
                                     {
                                         let _ = tx.send(path.clone());

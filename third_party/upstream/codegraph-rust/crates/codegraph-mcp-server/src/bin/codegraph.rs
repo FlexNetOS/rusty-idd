@@ -2199,12 +2199,12 @@ impl DebugLogWriter {
 
 impl Write for DebugLogWriter {
     fn write(&mut self, buf: &[u8]) -> io::Result<usize> {
-        let mut guard = self.file.lock().unwrap();
+        let mut guard = self.file.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         guard.write(buf)
     }
 
     fn flush(&mut self) -> io::Result<()> {
-        let mut guard = self.file.lock().unwrap();
+        let mut guard = self.file.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         guard.flush()
     }
 }

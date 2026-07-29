@@ -16,11 +16,7 @@ fn test_compression(lang: &str, ext: &str, code: &str) -> bool {
 
     match compress_file(code, path, config) {
         Ok(Some(result)) => {
-            println!(
-                "✓ {} compression succeeded ({} bytes)",
-                lang,
-                result.len()
-            );
+            println!("✓ {} compression succeeded ({} bytes)", lang, result.len());
             if result.len() < 200 {
                 println!("  Output: {}", result);
             } else {
@@ -123,7 +119,7 @@ fn test_kotlin_query_compiles() {
     use tree_sitter::{Language, Query};
     let lang: Language = tree_sitter_kotlin_ng::LANGUAGE.into();
     let query_src = include_str!("../src/tree_sitter/queries/kotlin.scm");
-    
+
     match Query::new(&lang, query_src) {
         Ok(_) => println!("✓ Kotlin query compiled successfully"),
         Err(e) => {
