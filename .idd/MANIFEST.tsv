@@ -410,9 +410,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57656	7cdf0c9e948e153b
-.idd/knowledge/architecture.md	13537	0a52c5f1d06c72c4
-.idd/knowledge/index.json	58231284	6d9b01bd07b1a551
+.idd/knowledge/architecture.json	57656	f03c8357ef2834f6
+.idd/knowledge/architecture.md	13537	dc343ba37e9c5efd
+.idd/knowledge/index.json	58231284	6424d50715da6bdf
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -425,7 +425,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	541147fe54a11490
+.idd/knowledge/report.md	4445	2765b5a18e7b8949
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -732,7 +732,7 @@ crates/external/codegraph-core/src/buffer_pool.rs	3892	04798a15362d6fab
 crates/external/codegraph-core/src/cli_config.rs	19561	3b202782a9b69d9e
 crates/external/codegraph-core/src/compression.rs	2514	f71fd262b5a49bd7
 crates/external/codegraph-core/src/config.rs	17670	8831a27a51306938
-crates/external/codegraph-core/src/config_manager.rs	36797	9080b5e67b9078f7
+crates/external/codegraph-core/src/config_manager.rs	36826	75661f068d608b56
 crates/external/codegraph-core/src/embedding_config.rs	14792	5ce008abc060db78
 crates/external/codegraph-core/src/error.rs	1623	84eb5706347070f4
 crates/external/codegraph-core/src/incremental/mod.rs	38	d9124d07ee9e4662
@@ -809,7 +809,7 @@ crates/runner/Cargo.toml	784	aaa554fcecc12025
 crates/runner/src/config.rs	24992	3ee62d5ab4003a0b
 crates/runner/src/data.rs	63213	6bf0ac09a47eb0b9
 crates/runner/src/lib.rs	928	c2d4c1b10c4f0bd9
-crates/runner/src/runner.rs	76462	70bfd2a298035a06
+crates/runner/src/runner.rs	76496	fdd1902eed37ef1e
 crates/spec/Cargo.toml	1456	3d93fa9972e1a1c1
 crates/spec/src/adr/mod.rs	8138	21c3436c5f1b0bdb
 crates/spec/src/archive/mod.rs	3819	bb520236d5d62470
@@ -1114,7 +1114,7 @@ hf/src/contract.rs	19590	8d28aeeb752e8273
 hf/src/delivery.rs	12828	a5fb0aef7640703c
 hf/src/durability.rs	26190	5f53176f8910df15
 hf/src/kb.rs	19215	50d06eac824b5584
-hf/src/main.rs	303247	22a72cdc45d6ba7a
+hf/src/main.rs	303273	cd4866ddc1a54082
 hf/src/prompt_hub.rs	6925	b110a3a8f80e5bf6
 hf/src/routing.rs	10370	bf008e05fad1d86f
 hf/src/session.rs	32311	1d0245aae6bb3e44
@@ -2200,7 +2200,7 @@ ledger/Cargo.toml	2036	17df6be78faea1e5
 ledger/src/export.rs	5874	4732d0388d7113de
 ledger/src/lib.rs	2037	01fb5675b0e41936
 ledger/src/migrate.rs	8068	603997ddc3374322
-ledger/src/v1.rs	79385	27748bfb2501a707
+ledger/src/v1.rs	79410	5607e78be6e3b577
 ledger/src/v2.rs	27899	bdc4b6d736b7d00f
 openspec/changes/add-architecture-diagram-artifacts/design.md	2079	ae564b46326e749f
 openspec/changes/add-architecture-diagram-artifacts/proposal.md	1362	ef1c5cd77c5249f9
