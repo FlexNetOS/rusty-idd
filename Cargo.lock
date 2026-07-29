@@ -688,7 +688,7 @@ dependencies = [
  "tree-sitter",
  "tree-sitter-c-sharp",
  "tree-sitter-cpp",
- "tree-sitter-go",
+ "tree-sitter-go 0.25.0",
  "tree-sitter-java",
  "tree-sitter-javascript",
  "tree-sitter-php",
@@ -866,6 +866,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8b2a41393f66f16b0823bb79094d54ac5fbd34ab292ddafb9a0456ac9f87d201"
 dependencies = [
  "libc",
+]
+
+[[package]]
+name = "crc32c"
+version = "0.6.8"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3a47af21622d091a8f0fb295b88bc886ac74efcc613efc19f5d0b21de5c89e47"
+dependencies = [
+ "rustc_version",
 ]
 
 [[package]]
@@ -1144,7 +1153,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "9ed9a281f7bc9b7576e61468ba615a66a5c8cfdff42420a70aa82701a3b1e292"
 dependencies = [
  "block-buffer",
- "const-oid",
  "crypto-common",
  "subtle",
 ]
@@ -3693,9 +3701,7 @@ dependencies = [
 
 [[package]]
 name = "repomix-config"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cab74b58e843898be3fefa014495b542bf8583368505bdc086a079c4d01c51bf"
+version = "2.0.1"
 dependencies = [
  "anyhow",
  "dirs 5.0.1",
@@ -3709,9 +3715,7 @@ dependencies = [
 
 [[package]]
 name = "repomix-core"
-version = "2.0.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5d243b31aabf3aaa6f4b15a031ef3af9e3ad6de03b20fbc09db74f70fffdaf2"
+version = "2.0.1"
 dependencies = [
  "anyhow",
  "arboard",
@@ -3736,14 +3740,19 @@ dependencies = [
  "tree-sitter",
  "tree-sitter-c",
  "tree-sitter-cpp",
- "tree-sitter-go",
+ "tree-sitter-dart-orchard",
+ "tree-sitter-go 0.23.4",
  "tree-sitter-java",
  "tree-sitter-javascript",
+ "tree-sitter-kotlin-ng",
  "tree-sitter-php",
  "tree-sitter-python",
  "tree-sitter-ruby",
  "tree-sitter-rust 0.23.3",
+ "tree-sitter-svelte-ng",
+ "tree-sitter-swift",
  "tree-sitter-typescript",
+ "tree-sitter-vue-updated",
  "walkdir",
 ]
 
@@ -3999,7 +4008,7 @@ dependencies = [
 
 [[package]]
 name = "ruvector-domain-expansion"
-version = "2.2.3"
+version = "2.3.0"
 dependencies = [
  "rand 0.8.6",
  "serde",
@@ -4040,14 +4049,27 @@ name = "rvf-runtime"
 version = "0.3.0"
 dependencies = [
  "crc32fast",
+ "rvf-crypto",
  "rvf-index",
  "rvf-quant",
  "rvf-types",
+ "rvf-wire",
 ]
 
 [[package]]
 name = "rvf-types"
 version = "0.2.1"
+
+[[package]]
+name = "rvf-wire"
+version = "0.1.0"
+dependencies = [
+ "crc32c",
+ "rvf-crypto",
+ "rvf-types",
+ "subtle",
+ "xxhash-rust",
+]
 
 [[package]]
 name = "ryu"
@@ -4194,6 +4216,7 @@ version = "1.0.150"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e8014e44b4736ed0538adeecded0fce2a272f22dc9578a7eb6b2d9993c74cfb9"
 dependencies = [
+ "indexmap",
  "itoa",
  "memchr",
  "serde",
@@ -4659,9 +4682,9 @@ dependencies = [
 
 [[package]]
 name = "tikv-jemalloc-sys"
-version = "0.6.1+5.3.0-1-ge13ca993e8ccb9ba9847cc330696e02839f328f7"
+version = "0.7.1+5.3.1-0-g81034ce1f1373e37dc865038e1bc8eeecf559ce8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cd8aa5b2ab86a2cefa406d889139c162cbb230092f7d1d7cbc1716405d852a3b"
+checksum = "1a2825c78386b4ae0314074867860ba9577875de945f05992c38815cbec327f0"
 dependencies = [
  "cc",
  "libc",
@@ -4669,9 +4692,9 @@ dependencies = [
 
 [[package]]
 name = "tikv-jemallocator"
-version = "0.6.1"
+version = "0.7.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0359b4327f954e0567e69fb191cf1436617748813819c94b8cd4a431422d053a"
+checksum = "249f09e49ab1609436f34c776e84231bead18d6a955f119f939bdc1d847561bd"
 dependencies = [
  "libc",
  "tikv-jemalloc-sys",
@@ -4964,13 +4987,14 @@ dependencies = [
 
 [[package]]
 name = "tree-sitter"
-version = "0.24.7"
+version = "0.26.11"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a5387dffa7ffc7d2dae12b50c6f7aab8ff79d6210147c6613561fc3d474c6f75"
+checksum = "af1c71c1c4cc0920b20d6b0f6572e7682cd07a6a2faec71067a31fa394c586df"
 dependencies = [
  "cc",
  "regex",
  "regex-syntax",
+ "serde_json",
  "streaming-iterator",
  "tree-sitter-language",
 ]
@@ -5006,10 +5030,30 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-dart-orchard"
+version = "0.3.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "3fcc68a1fd54afbeabc13b64a07b1ef611805690800fa2a57c1d1b90970a902e"
+dependencies = [
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-go"
 version = "0.23.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b13d476345220dbe600147dd444165c5791bf85ef53e28acbedd46112ee18431"
+dependencies = [
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
+name = "tree-sitter-go"
+version = "0.25.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c8560a4d2f835cc0d4d2c2e03cbd0dde2f6114b43bc491164238d333e28b16ea"
 dependencies = [
  "cc",
  "tree-sitter-language",
@@ -5030,6 +5074,16 @@ name = "tree-sitter-javascript"
 version = "0.23.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bf40bf599e0416c16c125c3cec10ee5ddc7d1bb8b0c60fa5c4de249ad34dc1b1"
+dependencies = [
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
+name = "tree-sitter-kotlin-ng"
+version = "1.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "e800ebbda938acfbf224f4d2c34947a31994b1295ee6e819b65226c7b51b4450"
 dependencies = [
  "cc",
  "tree-sitter-language",
@@ -5092,6 +5146,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "tree-sitter-svelte-ng"
+version = "1.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "ef0a71f9cf5e94373cc86c64893630c8a29bb25d3390a248268d08af2165fa37"
+dependencies = [
+ "cc",
+ "tree-sitter-language",
+]
+
+[[package]]
 name = "tree-sitter-swift"
 version = "0.7.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -5109,6 +5173,16 @@ checksum = "6c5f76ed8d947a75cc446d5fccd8b602ebf0cde64ccf2ffa434d873d7a575eff"
 dependencies = [
  "cc",
  "tree-sitter-language",
+]
+
+[[package]]
+name = "tree-sitter-vue-updated"
+version = "0.1.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "78cced828e25f82c788b240454a9def2a29f58f8f78214c20f51032a2b840dde"
+dependencies = [
+ "cc",
+ "tree-sitter",
 ]
 
 [[package]]
@@ -5864,6 +5938,12 @@ name = "x11rb-protocol"
 version = "0.13.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "ea6fc2961e4ef194dcbfe56bb845534d0dc8098940c7e5c012a258bfec6701bd"
+
+[[package]]
+name = "xxhash-rust"
+version = "0.8.18"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "aee1b19627c7c60102ab80d3a9cbe18de90bfe03bfa6c3715447681f0e8c8af6"
 
 [[package]]
 name = "yaml-rust2"
