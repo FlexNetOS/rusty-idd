@@ -148,11 +148,7 @@ static LANGUAGE_REGISTRY: Lazy<HashMap<&'static str, LanguageConfig>> = Lazy::ne
     map.insert(
         "swift",
         LanguageConfig {
-            compress_query: load_query(
-                &swift_lang,
-                include_str!("queries/swift.scm"),
-                "swift",
-            ),
+            compress_query: load_query(&swift_lang, include_str!("queries/swift.scm"), "swift"),
             language: swift_lang,
             extensions: vec!["swift"],
         },
@@ -163,11 +159,7 @@ static LANGUAGE_REGISTRY: Lazy<HashMap<&'static str, LanguageConfig>> = Lazy::ne
     map.insert(
         "kotlin",
         LanguageConfig {
-            compress_query: load_query(
-                &kotlin_lang,
-                include_str!("queries/kotlin.scm"),
-                "kotlin",
-            ),
+            compress_query: load_query(&kotlin_lang, include_str!("queries/kotlin.scm"), "kotlin"),
             language: kotlin_lang,
             extensions: vec!["kt", "kts"],
         },
@@ -201,11 +193,7 @@ static LANGUAGE_REGISTRY: Lazy<HashMap<&'static str, LanguageConfig>> = Lazy::ne
     map.insert(
         "svelte",
         LanguageConfig {
-            compress_query: load_query(
-                &svelte_lang,
-                include_str!("queries/svelte.scm"),
-                "svelte",
-            ),
+            compress_query: load_query(&svelte_lang, include_str!("queries/svelte.scm"), "svelte"),
             language: svelte_lang,
             extensions: vec!["svelte"],
         },
