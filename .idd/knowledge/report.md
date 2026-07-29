@@ -1,6 +1,6 @@
 # Knowledge Report
 
-- Workspace fingerprint: `fnv1a64:306523ea8d7efdaa`
+- Workspace fingerprint: `fnv1a64:fce5a785c30f66ba`
 - Indexed source files: 458
 - Graph nodes: 30935
 - Graph edges: 113106

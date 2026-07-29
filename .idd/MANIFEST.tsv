@@ -35,7 +35,7 @@ path	size_bytes	fnv1a64
 .claude/rules/ollama-provider.md	663	fb040c05a6788b8b
 .claude/rules/refactoring-safety.md	798	85cbb45433e77066
 .claude/rusty-idd-adapter.md	502	96a1182ec131e025
-.claude/settings.json	1659	5a1cf0c77877003e
+.claude/settings.json	1090	3c29fb4d918589b2
 .claude/skills/doc-sync/SKILL.md	2756	255bba8abee9ceb8
 .claude/skills/drift-reconcile/SKILL.md	5547	b0c56504faf036e2
 .claude/skills/fleet-handoff/SKILL.md	8592	3d7113162238cc74
@@ -410,9 +410,9 @@ path	size_bytes	fnv1a64
 .idd/goals/rusty-idd-consumes-handoff-dotdirs.md	1727	32583e849f836e76
 .idd/goals/rusty-idd-handoff-single-repo.md	1363	2bce60f732e942c8
 .idd/goals/unify-handoff-prompthub.md	4680	3418031cf31d14e8
-.idd/knowledge/architecture.json	57656	f03c8357ef2834f6
-.idd/knowledge/architecture.md	13537	dc343ba37e9c5efd
-.idd/knowledge/index.json	58231284	6424d50715da6bdf
+.idd/knowledge/architecture.json	57656	527245873e520db2
+.idd/knowledge/architecture.md	13537	bc9b3ef2d27853f1
+.idd/knowledge/index.json	58231260	e73ae0b7f1dd4963
 .idd/knowledge/integration-owners.json	3596	bf92808c6fbf859c
 .idd/knowledge/integration-owners.md	1332	197b5a54559e090a
 .idd/knowledge/integration-plan.json	29408	a5873ab0113562de
@@ -425,7 +425,7 @@ path	size_bytes	fnv1a64
 .idd/knowledge/operating-model.md	21734	f92692171e704ffd
 .idd/knowledge/plan-context.json	91637	f704549f7d947e49
 .idd/knowledge/plan-context.md	22964	8b11c64d848f3e3a
-.idd/knowledge/report.md	4445	2765b5a18e7b8949
+.idd/knowledge/report.md	4445	06da3fac529d89f1
 .idd/knowledge/system-architecture.json	85188	e0606e6d3d9fc4c2
 .idd/knowledge/system-architecture.md	23976	d066fc99e002a8fd
 .idd/secret-allowlist.txt	734	cd7e45efde815fc4
@@ -626,7 +626,7 @@ AI_MERGE/unify-handoff-prompthub/REGENERATE.md	1212	5acb9f48dd9842bc
 AI_MERGE/validation_report.md	187	c5274630154b6888
 CLAUDE.md	34438	27772ec4bfc94b01
 CONTRIBUTING.md	1941	f54726b382a82c1d
-Cargo.lock	150776	f503fdd34f3fcd08
+Cargo.lock	151555	12803dcca977739c
 Cargo.toml	4388	d4075a37796a082f
 FLEET_GUIDE.md	14786	7538d5b458e2ad95
 GEMINI.md	609	ce93a61c7f63579f
@@ -722,7 +722,7 @@ crates/core/src/templates.rs	16847	42cc0de13daf23c8
 crates/core/src/validation.rs	24097	2a67336ce6eb1cbf
 crates/core/tests/smoke.rs	2879	b5450d203bbba3a6
 crates/core/tests/template_agent_surface.rs	5853	dc6b6a2dc0f59f1e
-crates/external/codegraph-core/Cargo.toml	1752	231f9489e4093759
+crates/external/codegraph-core/Cargo.toml	1753	0f0b69bf36957a93
 crates/external/codegraph-core/LICENSE-APACHE	238	97541c8fd7e1bbfd
 crates/external/codegraph-core/LICENSE-MIT	216	f10b55a73b635a7e
 crates/external/codegraph-core/benches/core_micro.rs	2296	401a4a64469f8344
@@ -731,7 +731,7 @@ crates/external/codegraph-core/src/arena.rs	171	5be8fc7f232da2da
 crates/external/codegraph-core/src/buffer_pool.rs	3892	04798a15362d6fab
 crates/external/codegraph-core/src/cli_config.rs	19561	3b202782a9b69d9e
 crates/external/codegraph-core/src/compression.rs	2514	f71fd262b5a49bd7
-crates/external/codegraph-core/src/config.rs	17670	8831a27a51306938
+crates/external/codegraph-core/src/config.rs	17681	6c6f6c7b12347c4e
 crates/external/codegraph-core/src/config_manager.rs	36826	75661f068d608b56
 crates/external/codegraph-core/src/embedding_config.rs	14792	5ce008abc060db78
 crates/external/codegraph-core/src/error.rs	1623	84eb5706347070f4

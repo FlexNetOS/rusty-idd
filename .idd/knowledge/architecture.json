@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "workspace_fingerprint": "fnv1a64:306523ea8d7efdaa",
+  "workspace_fingerprint": "fnv1a64:fce5a785c30f66ba",
   "workspace_root": "/home/flexnetos/meta/src/rusty-idd",
   "source_graph": {
     "provider": "codegraph-rust",
