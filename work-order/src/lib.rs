@@ -53,7 +53,15 @@ impl PrioStr for WorkOrder {
 
 /// The handoff.task.v1 envelope (mirrors `~/Downloads/tmp/handoff/handoff/schemas/task.schema.json`),
 /// plus provenance fields that link it back to the front door and make it provable.
+///
+/// Deserialization is **fail-closed** (`try_from = "WorkOrderRaw"`): a card whose `schema`
+/// discriminator is foreign, whose `id` violates the published pattern, or whose content no
+/// longer matches its recorded blake3 `intent_lock` is rejected on load with a [`CardError`]
+/// — the validating consumer the convergence suite (`tests/handoff_card_consumer.rs`)
+/// demands. The kernel's schema-gated drift-review loader is the one sanctioned bypass
+/// ([`WorkOrder::from_value_unvalidated`]).
 #[derive(Debug, Clone, Serialize, Deserialize, JsonSchema)]
+#[serde(try_from = "WorkOrderRaw")]
 pub struct WorkOrder {
     /// const "handoff.task.v1" — the schema discriminator. A card carrying any other value is
     /// not a handoff.task.v1 envelope and is rejected by the validator.
@@ -116,6 +124,124 @@ pub struct IntentLock {
     /// revision and must be re-minted. Supplied externally (the capsule lives at the hf layer).
     #[serde(default, skip_serializing_if = "String::is_empty")]
     pub northstar_revision: String,
+}
+
+/// Why a card was rejected by the fail-closed load path (the validating consumer).
+#[derive(Debug, Clone, PartialEq, Eq)]
+pub enum CardError {
+    /// `schema` != `handoff.task.v1` (task.schema.json discriminator, `^handoff\.task\.v1$`).
+    ForeignSchema(String),
+    /// `id` violates the published `^[A-Z]*TASK-[A-Z0-9][A-Z0-9-]*$` pattern.
+    InvalidId(String),
+    /// Recomputed objective/path_scope/acceptance hashes no longer match the recorded
+    /// `intent_lock` — the card was tampered with after minting.
+    IntentLockDrift { id: String },
+}
+
+impl std::fmt::Display for CardError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            CardError::ForeignSchema(s) => write!(
+                f,
+                "card rejected: schema discriminator {s:?} is not \"handoff.task.v1\""
+            ),
+            CardError::InvalidId(id) => write!(
+                f,
+                "card rejected: id {id:?} violates the published ^[A-Z]*TASK-[A-Z0-9][A-Z0-9-]*$ pattern"
+            ),
+            CardError::IntentLockDrift { id } => write!(
+                f,
+                "card rejected: {id} content no longer matches its recorded intent_lock (tampered after minting)"
+            ),
+        }
+    }
+}
+
+impl std::error::Error for CardError {}
+
+/// `^[A-Z]*TASK-[A-Z0-9][A-Z0-9-]*$` without a regex dependency: some occurrence of `TASK-`
+/// must be preceded only by ASCII uppercase letters and followed by a non-empty
+/// `[A-Z0-9][A-Z0-9-]*` suffix.
+fn id_matches_published_pattern(id: &str) -> bool {
+    id.match_indices("TASK-").any(|(i, _)| {
+        let prefix_ok = id[..i].chars().all(|c| c.is_ascii_uppercase());
+        let suffix = &id[i + "TASK-".len()..];
+        let mut chars = suffix.chars();
+        let head_ok =
+            matches!(chars.next(), Some(c) if c.is_ascii_uppercase() || c.is_ascii_digit());
+        prefix_ok
+            && head_ok
+            && chars.all(|c| c.is_ascii_uppercase() || c.is_ascii_digit() || c == '-')
+    })
+}
+
+/// Unvalidated wire shape backing [`WorkOrder`]'s fail-closed `Deserialize` (`try_from`).
+/// Field-for-field identical to [`WorkOrder`]; validation lives in the `TryFrom` impl.
+#[derive(Deserialize)]
+struct WorkOrderRaw {
+    schema: String,
+    id: String,
+    title: String,
+    status: Status,
+    priority: Priority,
+    objective: String,
+    path_scope: Vec<String>,
+    acceptance_criteria: Vec<String>,
+    test_commands: Vec<String>,
+    #[serde(default)]
+    dependencies: Vec<String>,
+    #[serde(default)]
+    blocked_by: Vec<String>,
+    #[serde(default)]
+    allows_network: bool,
+    #[serde(default)]
+    allows_dependency_addition: bool,
+    correlation_id: String,
+    #[serde(default)]
+    role: Option<String>,
+    intent_lock: IntentLock,
+}
+
+impl WorkOrderRaw {
+    /// Field-for-field move into the validated type (no checks — callers decide).
+    fn into_order(self) -> WorkOrder {
+        WorkOrder {
+            schema: self.schema,
+            id: self.id,
+            title: self.title,
+            status: self.status,
+            priority: self.priority,
+            objective: self.objective,
+            path_scope: self.path_scope,
+            acceptance_criteria: self.acceptance_criteria,
+            test_commands: self.test_commands,
+            dependencies: self.dependencies,
+            blocked_by: self.blocked_by,
+            allows_network: self.allows_network,
+            allows_dependency_addition: self.allows_dependency_addition,
+            correlation_id: self.correlation_id,
+            role: self.role,
+            intent_lock: self.intent_lock,
+        }
+    }
+}
+
+impl TryFrom<WorkOrderRaw> for WorkOrder {
+    type Error = CardError;
+
+    fn try_from(raw: WorkOrderRaw) -> Result<Self, Self::Error> {
+        if raw.schema != "handoff.task.v1" {
+            return Err(CardError::ForeignSchema(raw.schema));
+        }
+        if !id_matches_published_pattern(&raw.id) {
+            return Err(CardError::InvalidId(raw.id));
+        }
+        let order = raw.into_order();
+        if !order.intent_unchanged() {
+            return Err(CardError::IntentLockDrift { id: order.id });
+        }
+        Ok(order)
+    }
 }
 
 /// Per-surface drift verdict (`true` = unchanged) across all five IntentLock surfaces.
@@ -204,6 +330,17 @@ impl WorkOrder {
         lock.constraint_hash = self.constraint_hash();
         lock.northstar_revision = northstar_revision.to_string();
         lock
+    }
+
+    /// Deserialize a card WITHOUT the fail-closed envelope checks (discriminator, id pattern,
+    /// intent-lock match). The one sanctioned caller is the kernel's schema-gated card loader
+    /// (`handoff-core::try_parse_card`): the jsonschema gate upstream already enforces the
+    /// discriminator + id pattern, and a card with a DRIFTED intent_lock must still LOAD there
+    /// so the drift sentinel can report it and prescribe `hf relock` (loading is not trusting —
+    /// PRD §12.3). Every other consumer gets the fail-closed `Deserialize` path.
+    pub fn from_value_unvalidated(value: serde_json::Value) -> Result<Self, String> {
+        let raw: WorkOrderRaw = serde_json::from_value(value).map_err(|e| e.to_string())?;
+        Ok(raw.into_order())
     }
 
     /// Recompute the intent-lock from current fields and report whether it still matches
@@ -616,6 +753,97 @@ mod tests {
         assert!(
             !o.intent_components("blake3:rev-B").northstar,
             "a doctrine revision must mark the order's northstar surface drifted"
+        );
+    }
+
+    #[test]
+    fn id_pattern_accepts_canonical_and_slug_forms_rejects_freeform() {
+        for ok in [
+            "TASK-0001",
+            "HFTASK-0058",
+            "PHTASK-0025",
+            "KBTASK-FLEET-HANDOFF-ROLLOUT",
+            "KBTASK-HFTASK-0058",
+            synthesized_task_id("wf-0001", 1).as_str(), // HFTASK-0084 scoped form
+        ] {
+            assert!(id_matches_published_pattern(ok), "{ok} must match");
+        }
+        for bad in [
+            "task-lowercase-not-canonical",
+            "TASK-",        // empty suffix
+            "TASK-x",       // lowercase suffix head
+            "0058-HFTASK",  // digits before TASK-
+            "NOTHING",      // no TASK- at all
+            "TASK-A_B",     // underscore not in class
+            "hfTASK-0001x", // lowercase prefix + tail
+        ] {
+            assert!(!id_matches_published_pattern(bad), "{bad} must be rejected");
+        }
+    }
+
+    #[test]
+    fn fail_closed_load_reports_typed_card_errors() {
+        let order = work_orders_from_bundle(&sample_bundle()).remove(0);
+
+        let mut v: serde_json::Value = serde_json::from_str(&order.to_json()).unwrap();
+        v["schema"] = serde_json::json!("openai.task.v1");
+        let e = serde_json::from_str::<WorkOrder>(&v.to_string()).unwrap_err();
+        assert!(e.to_string().contains("schema discriminator"), "{e}");
+
+        let mut v: serde_json::Value = serde_json::from_str(&order.to_json()).unwrap();
+        v["id"] = serde_json::json!("free-form");
+        let e = serde_json::from_str::<WorkOrder>(&v.to_string()).unwrap_err();
+        assert!(e.to_string().contains("violates the published"), "{e}");
+
+        let mut v: serde_json::Value = serde_json::from_str(&order.to_json()).unwrap();
+        v["objective"] = serde_json::json!("tampered objective after minting");
+        let e = serde_json::from_str::<WorkOrder>(&v.to_string()).unwrap_err();
+        assert!(e.to_string().contains("intent_lock"), "{e}");
+    }
+
+    #[test]
+    fn unvalidated_loader_still_loads_a_drifted_card_for_drift_review() {
+        // The kernel's relock flow depends on this: a tampered card must be LOADABLE through
+        // the explicit bypass (then reported by the drift sentinel), while the default
+        // Deserialize path rejects it.
+        let order = work_orders_from_bundle(&sample_bundle()).remove(0);
+        let mut v: serde_json::Value = serde_json::from_str(&order.to_json()).unwrap();
+        v["objective"] = serde_json::json!("tampered objective after minting");
+
+        assert!(serde_json::from_str::<WorkOrder>(&v.to_string()).is_err());
+        let loaded = WorkOrder::from_value_unvalidated(v).expect("bypass loads the drifted card");
+        assert!(
+            !loaded.intent_unchanged(),
+            "the loaded card must still be reportable as drifted"
+        );
+    }
+
+    #[test]
+    fn committed_v1_card_corpus_still_loads_fail_closed() {
+        // Live-data regression: every handoff.task.v1 card committed under .handoff/tasks
+        // must survive the fail-closed loader (no over-tightening against real cards).
+        // Pre-envelope legacy cards (no `schema` field) were never loadable as WorkOrder
+        // and stay out of contract.
+        let dir = std::path::Path::new(env!("CARGO_MANIFEST_DIR")).join("../.handoff/tasks");
+        let mut v1_seen = 0usize;
+        for entry in std::fs::read_dir(&dir).expect(".handoff/tasks exists in the repo") {
+            let path = entry.unwrap().path();
+            if path.extension().and_then(|e| e.to_str()) != Some("json") {
+                continue;
+            }
+            let text = std::fs::read_to_string(&path).unwrap();
+            let value: serde_json::Value = serde_json::from_str(&text).unwrap();
+            if value.get("schema").and_then(|s| s.as_str()) != Some("handoff.task.v1") {
+                continue; // pre-envelope legacy card: out of contract
+            }
+            v1_seen += 1;
+            if let Err(e) = serde_json::from_str::<WorkOrder>(&text) {
+                panic!("committed card {} no longer loads: {e}", path.display());
+            }
+        }
+        assert!(
+            v1_seen > 0,
+            "corpus check must actually exercise cards (fail-closed: zero cards = FAIL)"
         );
     }
 

@@ -1059,7 +1059,7 @@ mod tests {
     #[test]
     fn test_indexing_tier_env_override() {
         static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-        let _guard = ENV_LOCK.lock().expect("env lock");
+        let _guard = ENV_LOCK.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
 
         std::env::set_var("CODEGRAPH_INDEX_TIER", "balanced");
         let config = ConfigManager::apply_env_overrides(CodeGraphConfig::default());

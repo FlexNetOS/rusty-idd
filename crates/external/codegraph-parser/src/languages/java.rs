@@ -114,7 +114,7 @@ impl<'a> JavaCollector<'a> {
             "package_declaration" => {
                 // Extract package name from the identifier
                 for i in 0..node.child_count() {
-                    if let Some(child) = node.child(i) {
+                    if let Some(child) = node.child(i as u32) {
                         if child.kind() == "scoped_identifier" || child.kind() == "identifier" {
                             let name = self.node_text(&child);
                             let loc = self.location(&node);
@@ -146,7 +146,7 @@ impl<'a> JavaCollector<'a> {
 
                 // Extract the import path
                 for i in 0..node.child_count() {
-                    if let Some(child) = node.child(i) {
+                    if let Some(child) = node.child(i as u32) {
                         if child.kind() == "scoped_identifier" || child.kind() == "identifier" {
                             let path = self.node_text(&child);
                             let loc = self.location(&node);
