@@ -55,7 +55,7 @@ pub async fn get_pi(
     let correct_digits = precision::significant_digits(value);
     let error = precision::compare_with_known(value);
 
-    let mut app_state = state.lock().unwrap();
+    let mut app_state = state.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
     app_state.cache_result("leibniz", iterations, value);
 
     HttpResponse::Ok().json(PiResponse {
@@ -78,7 +78,7 @@ pub async fn get_pi_algorithm(
     let iterations = query.iterations.unwrap_or(10_000);
     let digits = query.digits.unwrap_or(10);
 
-    if let Some(cached) = state.lock().unwrap().get_cached(&algo, iterations) {
+    if let Some(cached) = state.lock().unwrap_or_else(std::sync::PoisonError::into_inner).get_cached(&algo, iterations) {
         let formatted = precision::to_decimal_string(cached, digits);
         return HttpResponse::Ok().json(PiResponse {
             value: cached,
@@ -109,7 +109,7 @@ pub async fn get_pi_algorithm(
     let correct_digits = precision::significant_digits(value);
     let error = precision::compare_with_known(value);
 
-    state.lock().unwrap().cache_result(&algo, iterations, value);
+    state.lock().unwrap_or_else(std::sync::PoisonError::into_inner).cache_result(&algo, iterations, value);
 
     HttpResponse::Ok().json(PiResponse {
         value,
@@ -148,7 +148,7 @@ pub async fn compare_algorithms(
         let correct_digits = precision::significant_digits(value);
         let error = precision::compare_with_known(value);
 
-        state.lock().unwrap().cache_result(name, iterations, value);
+        state.lock().unwrap_or_else(std::sync::PoisonError::into_inner).cache_result(name, iterations, value);
 
         results.push(ComparisonEntry {
             algorithm: name.to_string(),
@@ -224,7 +224,7 @@ pub async fn stream_convergence(
 pub async fn get_history(
     state: web::Data<Mutex<AppState>>,
 ) -> HttpResponse {
-    let app_state = state.lock().unwrap();
+    let app_state = state.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
     let stats = app_state.get_stats();
 
     HttpResponse::Ok().json(serde_json::json!({
@@ -238,7 +238,7 @@ pub async fn get_history(
 pub async fn health_check(
     state: web::Data<Mutex<AppState>>,
 ) -> HttpResponse {
-    let app_state = state.lock().unwrap();
+    let app_state = state.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
     let stats = app_state.get_stats();
 
     HttpResponse::Ok().json(HealthResponse {
