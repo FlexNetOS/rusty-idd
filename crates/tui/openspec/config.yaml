@@ -10,17 +10,20 @@ context: |
     Screen enum defines views, stateless draw() in ui.rs
   - Screen-based navigation with push/pop screen stack
   - Input handling via handle_*_input() methods on App
+  - Data layer calls openspec CLI as subprocess (data.rs)
   - Data layer reads OpenSpec changes and artifact status from local files (data.rs)
   - Background processes via mpsc channels + Arc<AtomicBool> (runner.rs)
   - Config stored as YAML via serde (config.rs)
 
   Modules: main (event loop), app (state + input), ui (rendering),
+           data (openspec CLI + filesystem), config (TUI settings),
            data (OpenSpec filesystem), config (TUI settings),
            runner (implementation process management)
 
   Conventions:
   - All new features must include unit tests
   - Tests use tempdir for filesystem operations
+  - Cross-platform support (Windows cmd wrapper for openspec CLI)
   - Cross-platform support without requiring a Node/OpenSpec runtime binary
   - No async runtime — uses threads + mpsc for concurrency
   - The project must compile without warnings

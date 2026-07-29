@@ -1,0 +1,91 @@
+name: AI Gatekeeper
+
+# ADR-0018 D8 / gh-aw #25439: model/steward judgment is a REQUIRED STATUS CHECK,
+# not a bot approval. Branch protection should require this job name: "AI Gatekeeper".
+
+on:
+  pull_request:
+    branches: [master, develop]
+    types: [opened, synchronize, reopened, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: read
+  checks: read
+
+env:
+  CARGO_TERM_COLOR: always
+  GH_TOKEN: ${{ github.token }}
+
+jobs:
+  gatekeeper:
+    name: AI Gatekeeper
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+        with:
+          path: handoff
+
+      - name: Clone rvf-crypto provider (meta-ruvector)
+        run: git clone --depth 1 https://github.com/FlexNetOS/meta-ruvector.git meta-ruvector
+
+      - name: Clone envctl provider (envctl)
+        shell: bash
+        run: |
+          if [ "${RUNNER_OS:-}" = "Windows" ]; then
+            mkdir -p envctl/crates/secrets-engine/src
+            {
+              printf '%s\n' '[package]'
+              printf '%s\n' 'name = "envctl-secrets-engine"'
+              printf '%s\n' 'version = "0.0.0"'
+              printf '%s\n' 'edition = "2021"'
+              printf '\n%s\n' '[lib]'
+              printf '%s\n' 'name = "envctl_secrets"'
+              printf '%s\n' 'path = "src/lib.rs"'
+              printf '\n%s\n' '[features]'
+              printf '%s\n' 'default = []'
+              printf '%s\n' 'inmem-store = []'
+            } > envctl/crates/secrets-engine/Cargo.toml
+            printf '// Windows CI manifest-only stub; the optional secrets feature is not built here.\n' > envctl/crates/secrets-engine/src/lib.rs
+          else
+            git clone --depth 1 https://github.com/FlexNetOS/envctl.git envctl
+          fi
+
+      # Meta-owned Rust toolchain/cache (replaces the removed Rust
+      # setup/cache actions per the envctl toolchain-ownership contract).
+      - name: Resolve meta-owned Rust root
+        id: rust-meta
+        shell: bash
+        run: |
+          meta_root="$GITHUB_WORKSPACE/meta"
+          mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
+          echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
+      - name: Restore meta-owned Rust tool cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
+            ${{ steps.rust-meta.outputs.meta_root }}/.cache/rust
+          key: rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-gatekeeper-${{ hashFiles('handoff/scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-envctl-rust-tools-1.96.0-${{ runner.os }}-gatekeeper-
+      - name: Restore workspace target cache
+        uses: actions/cache@v4
+        with:
+          path: |
+            ${{ github.workspace }}/handoff/target
+          key: rusty-idd-target-1.96.0-${{ runner.os }}-gatekeeper-${{ hashFiles('handoff/Cargo.lock', 'handoff/scripts/ci/envctl-rust-env.sh') }}
+          restore-keys: |
+            rusty-idd-target-1.96.0-${{ runner.os }}-gatekeeper-
+      - name: Envctl Rust toolchain and cache
+        shell: bash
+        env:
+          RUSTY_IDD_META_ROOT: ${{ steps.rust-meta.outputs.meta_root }}
+          RUSTY_IDD_RUST_TOOLCHAIN: 1.96.0
+          CARGO_TARGET_DIR: ${{ github.workspace }}/handoff/target
+        run: handoff/scripts/ci/envctl-rust-env.sh release
+
+      - name: Run witnessed AI gatekeeper
+        working-directory: handoff
+        run: cargo run -p hf --bin hf -- gatekeeper check "${{ github.event.pull_request.number }}" --task HFTASK-0073

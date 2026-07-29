@@ -1,3 +1,6 @@
+// HFTASK-0082 (ADR-0019 D5 #3): this whole crate is an integration test; unwrap/expect/panic
+// are idiomatic here (tests assert), so the deny lints are allowed crate-wide.
+#![allow(clippy::unwrap_used, clippy::expect_used, clippy::panic)]
 //! Archive golden tests.
 //!
 //! Two gates over `(01-base + 02-delta) → 03-archived` (and the U5 rename+modify
