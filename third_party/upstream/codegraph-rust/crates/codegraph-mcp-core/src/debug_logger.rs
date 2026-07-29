@@ -65,7 +65,7 @@ impl DebugLogger {
                     log_path: log_path.clone(),
                 };
 
-                *DEBUG_LOGGER.lock().unwrap() = Some(logger);
+                *DEBUG_LOGGER.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = Some(logger);
                 eprintln!("🐛 Debug logging enabled: {}", log_path.display());
             }
             Err(e) => {
@@ -78,7 +78,7 @@ impl DebugLogger {
     pub fn is_enabled() -> bool {
         DEBUG_LOGGER
             .lock()
-            .unwrap()
+            .unwrap_or_else(std::sync::PoisonError::into_inner)
             .as_ref()
             .map(|l| l.enabled)
             .unwrap_or(false)
@@ -198,7 +198,7 @@ impl DebugLogger {
 
     /// Write a JSON entry to the log file
     fn write_entry(entry: &JsonValue) {
-        let mut logger_guard = DEBUG_LOGGER.lock().unwrap();
+        let mut logger_guard = DEBUG_LOGGER.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
         if let Some(logger) = logger_guard.as_mut() {
             if let Some(file) = &mut logger.file {
                 if let Ok(json_line) = serde_json::to_string(entry) {
@@ -264,7 +264,7 @@ mod tests {
         let dir = std::env::temp_dir().join(format!("cg_debug_{}", Uuid::new_v4()));
         fs::create_dir_all(&dir).unwrap();
         // reset global logger to avoid cross-test accumulation
-        *DEBUG_LOGGER.lock().unwrap() = None;
+        *DEBUG_LOGGER.lock().unwrap_or_else(std::sync::PoisonError::into_inner) = None;
         std::env::set_var("CODEGRAPH_DEBUG", "1");
         std::env::set_var("CODEGRAPH_DEBUG_DIR", &dir);
         DebugLogger::init();

@@ -147,7 +147,11 @@ pub fn try_parse_card(p: &Path) -> Result<WorkOrder, String> {
     let value: serde_json::Value =
         serde_json::from_str(&s).map_err(|e| format!("invalid JSON: {e}"))?;
     handoff_schema::validate_card(&value).map_err(|v| format!("schema violation [{v}]"))?;
-    serde_json::from_value::<WorkOrder>(value).map_err(|e| format!("deserialize: {e}"))
+    // Drift-review loader (the sanctioned `from_value_unvalidated` caller): the jsonschema gate
+    // above already enforces the discriminator + id pattern, and a card with a DRIFTED
+    // intent_lock must still LOAD here so the drift sentinel can report it and prescribe
+    // `hf relock`. The fail-closed `Deserialize` path would reject it before it could surface.
+    WorkOrder::from_value_unvalidated(value).map_err(|e| format!("deserialize: {e}"))
 }
 
 /// Load a card LOUDLY: on any failure emit a fail-closed WARNING (the card is never silently

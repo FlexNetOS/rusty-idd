@@ -250,7 +250,7 @@ impl SurrealDbStorage {
                 CodeGraphError::Database(format!("Failed to set schema version: {}", e))
             })?;
 
-        *self.schema_version.write().unwrap() = 1;
+        *self.schema_version.write().unwrap_or_else(std::sync::PoisonError::into_inner) = 1;
 
         info!("Schema initialized successfully");
         Ok(())
@@ -259,7 +259,7 @@ impl SurrealDbStorage {
     /// Run database migrations (unused when schema managed externally)
     #[allow(dead_code)]
     async fn migrate(&self) -> Result<()> {
-        let _current_version = *self.schema_version.read().unwrap();
+        let _current_version = *self.schema_version.read().unwrap_or_else(std::sync::PoisonError::into_inner);
         info!("Running migrations from version {}", _current_version);
         // TODO: Fix lifetime issues with async closures in migrations
         // Migrations temporarily disabled
@@ -2439,7 +2439,7 @@ mod tests {
             move || {
                 let counts_inner = counts_clone.clone();
                 async move {
-                    let mut data = counts_inner.lock().unwrap();
+                    let mut data = counts_inner.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
                     let value = data.remove(0);
                     Ok(value)
                 }
@@ -2463,7 +2463,7 @@ mod tests {
             move || {
                 let counts_inner = counts_clone.clone();
                 async move {
-                    let mut data = counts_inner.lock().unwrap();
+                    let mut data = counts_inner.lock().unwrap_or_else(std::sync::PoisonError::into_inner);
                     let value = data.remove(0);
                     Ok(value)
                 }
