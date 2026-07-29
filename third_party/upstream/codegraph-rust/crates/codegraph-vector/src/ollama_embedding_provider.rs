@@ -530,14 +530,14 @@ mod tests {
         let embed_once = move |_slice: &[String]| {
             let calls_inner = calls_clone.clone();
             async move {
-                *calls_inner.lock().unwrap() += 1;
+                *calls_inner.lock().unwrap_or_else(std::sync::PoisonError::into_inner) += 1;
                 Err(CodeGraphError::External("some other error".to_string()))
             }
         };
 
         let res = embed_resilient_with(&texts, embed_once).await;
         assert!(res.is_err());
-        assert_eq!(*calls.lock().unwrap(), 1);
+        assert_eq!(*calls.lock().unwrap_or_else(std::sync::PoisonError::into_inner), 1);
     }
 }
 

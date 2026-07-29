@@ -903,7 +903,7 @@ impl ConfigManager {
                 return Err(ConfigError::ValidationError(format!(
                     "Invalid embedding provider: {}. Must be one of: auto, onnx, ollama, openai, jina, lmstudio",
                     other
-                )))
+                )));
             }
         }
 
@@ -914,7 +914,7 @@ impl ConfigManager {
                 return Err(ConfigError::ValidationError(format!(
                     "Invalid insights mode: {}. Must be one of: context-only, balanced, deep",
                     other
-                )))
+                )));
             }
         }
 
@@ -934,7 +934,7 @@ impl ConfigManager {
                 return Err(ConfigError::ValidationError(format!(
                     "Invalid log level: {}. Must be one of: trace, debug, info, warn, error",
                     other
-                )))
+                )));
             }
         }
 
@@ -1039,7 +1039,9 @@ mod tests {
     #[test]
     fn test_indexing_tier_env_override() {
         static ENV_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
-        let _guard = ENV_LOCK.lock().expect("env lock");
+        let _guard = ENV_LOCK
+            .lock()
+            .unwrap_or_else(std::sync::PoisonError::into_inner);
 
         std::env::set_var("CODEGRAPH_INDEX_TIER", "balanced");
         let config = ConfigManager::apply_env_overrides(CodeGraphConfig::default());

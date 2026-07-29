@@ -893,7 +893,7 @@ mod tests {
             }
 
             fn into_string(&self) -> String {
-                let bytes = self.inner.lock().unwrap().clone();
+                let bytes = self.inner.lock().unwrap_or_else(std::sync::PoisonError::into_inner).clone();
                 String::from_utf8(bytes).unwrap()
             }
         }
@@ -914,7 +914,7 @@ mod tests {
 
         impl Write for BufferGuard {
             fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-                self.inner.lock().unwrap().extend_from_slice(buf);
+                self.inner.lock().unwrap_or_else(std::sync::PoisonError::into_inner).extend_from_slice(buf);
                 Ok(buf.len())
             }
 

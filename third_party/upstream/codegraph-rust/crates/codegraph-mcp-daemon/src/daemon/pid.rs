@@ -134,8 +134,8 @@ mod tests {
         let pid_path = temp_dir.path().join("test.pid");
         let pid_file = PidFile::new(&pid_path);
 
-        pid_file.write().unwrap();
-        let read_pid = pid_file.read().unwrap();
+        pid_file.write().unwrap_or_else(std::sync::PoisonError::into_inner);
+        let read_pid = pid_file.read().unwrap_or_else(std::sync::PoisonError::into_inner);
 
         assert_eq!(read_pid, Some(std::process::id()));
     }
@@ -146,7 +146,7 @@ mod tests {
         let pid_path = temp_dir.path().join("test.pid");
         let pid_file = PidFile::new(&pid_path);
 
-        pid_file.write().unwrap();
+        pid_file.write().unwrap_or_else(std::sync::PoisonError::into_inner);
         assert!(pid_path.exists());
 
         pid_file.remove().unwrap();
@@ -156,7 +156,7 @@ mod tests {
     #[test]
     fn test_pid_file_nonexistent_read() {
         let pid_file = PidFile::new("/nonexistent/path/test.pid");
-        let result = pid_file.read().unwrap();
+        let result = pid_file.read().unwrap_or_else(std::sync::PoisonError::into_inner);
         assert_eq!(result, None);
     }
 }
