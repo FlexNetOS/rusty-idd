@@ -1,32 +1,12 @@
 {
-  "$comment": "handoff repo project-layer settings (layered on top of the envctl user-global source of truth). SessionStart auto-invokes the handoff-loop; SessionEnd is the continuity safety net. See .handoff/hooks/*.sh and .handoff/hooks/hooks.toml (the kernel contract).",
+  "$comment": "Rusty IDD project-layer settings (layered on top of the user-global Claude config). SessionStart auto-invokes the Rusty IDD front door (rusty-idd next) so the computed next-step imperative is presented automatically \u2014 see .claude/rusty-idd-adapter.md and ADR-0015. This .claude dir is a THIN ADAPTER (ADR-0010); the workflow lives in the engine.",
   "hooks": {
-    "SessionEnd": [
-      {
-        "hooks": [
-          {
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.handoff/hooks/session-end.sh\"",
-            "type": "command"
-          }
-        ]
-      }
-    ],
     "SessionStart": [
       {
         "hooks": [
           {
-            "command": "bash \"$CLAUDE_PROJECT_DIR/.handoff/hooks/loop-entry.sh\"",
-            "type": "command"
-          }
-        ]
-      },
-      {
-        "hooks": [
-          {
-            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec rusty-idd next --base \"$root\"'",
-            "statusMessage": "Rusty IDD front door: computing the next step",
-            "timeout": 180,
-            "type": "command"
+            "type": "command",
+            "command": "sh -lc 'root=\"$(git rev-parse --show-toplevel)\"; exec cargo run --quiet --manifest-path \"$root/Cargo.toml\" --bin rusty-idd -- next --base \"$root\"'"
           }
         ]
       },
@@ -49,15 +29,5 @@
         ]
       }
     ]
-  },
-  "permissions": {
-    "allow": [
-      "Bash(git push:*)",
-      "Bash(git -C * push:*)"
-    ]
-  },
-  "statusLine": {
-    "command": "bash \"${CLAUDE_PROJECT_DIR}/.claude/statusline-command.sh\"",
-    "type": "command"
   }
 }
