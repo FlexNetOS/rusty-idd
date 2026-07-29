@@ -86,7 +86,7 @@ jobs:
           mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
           echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
       - name: Restore meta-owned Rust tool cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
@@ -95,7 +95,7 @@ jobs:
           restore-keys: |
             rusty-idd-envctl-rust-tools-nightly-${{ runner.os }}-
       - name: Restore workspace target cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             target
@@ -117,7 +117,7 @@ jobs:
         # tree-sitter (fails identically on pristine develop; tracked in #144).
         run: cargo test --workspace --locked --exclude codegraph-parser
       - name: IDD validation
-        run: cargo run --bin rusty-idd -- validate --workspace .
+        run: cargo run --bin rusty-idd -- validate --workspace . || { echo "=== validation report ==="; cat ./AI_MERGE/validation_report.md || true; exit 1; }
       - name: IDD manifest refresh check
         run: |
           cargo run --bin rusty-idd -- manifest --workspace . --out .idd/MANIFEST.tsv
@@ -189,7 +189,7 @@ jobs:
           mkdir -p "$meta_root/.env/rust" "$meta_root/.cache/rust"
           echo "meta_root=$meta_root" >> "$GITHUB_OUTPUT"
       - name: Restore meta-owned Rust tool cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             ${{ steps.rust-meta.outputs.meta_root }}/.env/rust
@@ -198,7 +198,7 @@ jobs:
           restore-keys: |
             rusty-idd-envctl-rust-tools-msrv-${{ runner.os }}-
       - name: Restore workspace target cache
-        uses: actions/cache@v4
+        uses: actions/cache@v6
         with:
           path: |
             target
